@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<usfx xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://eBible.org/usfx.xsd"><languageCode>eng</languageCode>
+<book id="GEN"><id id="GEN">Genesis
+</id><h>Genesis
+</h><toc level="1">The First Book of Moses, called Genesis
+</toc><toc level="2">Genesis
+</toc><toc level="3">Gen
+</toc><p sfm="mt" style="mt1">The First Book of Moses, called Genesis
+</p><c id="1" />
+<p style="p"><v id="1" bcv="GEN.1.1" />
+<wj>
+<w s="G1321">Teaching</w>
+<w s="G0846">them</w>
+<w s="G5083">to observe</w>
+<w s="G3956">all things</w>
+<w s="G3745">whatsoever</w>
+<w s="G1781">I have commanded</w>
+<w s="G5213">you</w>:
+<w s="G2532">and</w>,
+<w s="G2400">lo</w>,
+<w s="G1473">I</w>
+<w s="G1510">am</w>
+<w s="G3326">with</w>
+<w s="G5216">you</w>
+<w s="G3956">alway</w>,
+<add>even</add>
+<w s="G2193">unto</w>
+<w s="G4930">the end</w>
+<w s="G0165">of the world</w>.</wj>
+<w s="G0281">Amen</w>.
+<ve /></p>
+</book>
+</usfx>

@@ -1,0 +1,38 @@
+import 'dart:io';
+
+import 'package:path_provider/path_provider.dart';
+
+import '../../domain/entities/translation_info.dart';
+
+class TranslationInfoModel extends TranslationInfo {
+  const TranslationInfoModel({
+    required super.id,
+    required super.name,
+    required super.language,
+    super.downloadStatus = DownloadStatus.notDownloaded,
+  });
+
+  Future<bool> checkIfAlreadyInstalled() async {
+    final dir = (await getApplicationSupportDirectory()).path;
+    final dirDestination = Directory('$dir/$id');
+    return await dirDestination.exists();
+  }
+
+  TranslationInfoModel copyWith({
+    String Function()? id,
+    String Function()? name,
+    String Function()? language,
+    DownloadStatus Function()? downloadStatus,
+    int Function()? downloadedBytes,
+    int Function()? totalBytes,
+    List<int> Function()? content,
+  }) {
+    return TranslationInfoModel(
+      id: id != null ? id() : this.id,
+      name: name != null ? name() : this.name,
+      language: language != null ? language() : this.language,
+      downloadStatus:
+          downloadStatus != null ? downloadStatus() : this.downloadStatus,
+    );
+  }
+}
