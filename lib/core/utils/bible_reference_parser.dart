@@ -1,5 +1,5 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:the_smyrna_bible_v2/features/scripture_finder/domain/entity/bible_reference.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/scripture_finder/domain/entity/bible_reference.dart';
 
 import '../error/failure.dart';
 

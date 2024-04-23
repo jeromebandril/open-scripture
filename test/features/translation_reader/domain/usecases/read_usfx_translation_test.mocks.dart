@@ -9,7 +9,7 @@ import 'package:fpdart/fpdart.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i7;
 import 'package:the_smyrna_bible_v2/core/error/failure.dart' as _i5;
-import 'package:the_smyrna_bible_v2/features/translation_reader/domain/repositories/reader_repository.dart'
+import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/domain/repositories/reader_repository.dart'
     as _i2;
 import 'package:the_smyrna_bible_v2/features/translations_installer_manager/domain/entities/translation.dart'
     as _i6;

@@ -1,15 +1,16 @@
 import 'package:get_it/get_it.dart';
 import 'package:the_smyrna_bible_v2/core/models/translation_manager_model.dart';
 import 'package:the_smyrna_bible_v2/core/utils/bible_reference_parser.dart';
-import 'package:the_smyrna_bible_v2/features/translation_reader/data/datasources/translations_datasource.dart';
-import 'package:the_smyrna_bible_v2/features/translation_reader/data/models/translation_pool_model.dart';
-import 'package:the_smyrna_bible_v2/features/translation_reader/data/models/translation_reader_model.dart';
-import 'package:the_smyrna_bible_v2/features/translation_reader/data/repositories/reader_repository_impl.dart';
-import 'package:the_smyrna_bible_v2/features/translation_reader/domain/repositories/reader_repository.dart';
-import 'package:the_smyrna_bible_v2/features/translation_reader/domain/usecases/close_usfx_translation.dart';
-import 'package:the_smyrna_bible_v2/features/translation_reader/domain/usecases/display_chapter.dart';
-import 'package:the_smyrna_bible_v2/features/translation_reader/domain/usecases/read_usfx_translation.dart';
-import 'package:the_smyrna_bible_v2/features/translation_reader/presentation/bloc/reader_bloc.dart';
+import 'package:the_smyrna_bible_v2/features/app_screen_manager/presentation/bloc/app_screen_manager_bloc.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/data/datasources/translations_datasource.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/data/models/translation_pool_model.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/data/models/translation_reader_model.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/data/repositories/reader_repository_impl.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/domain/repositories/reader_repository.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/domain/usecases/close_usfx_translation.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/domain/usecases/display_chapter.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/domain/usecases/read_usfx_translation.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/presentation/bloc/reader_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/translations_installer_manager/data/datasources/translation_manager_remote_datasource.dart';
 import 'package:the_smyrna_bible_v2/features/translations_installer_manager/data/datasources/translation_manager_local_datasource.dart';
 import 'package:the_smyrna_bible_v2/features/translations_installer_manager/data/repositories/translation_manager_repository_impl.dart';
@@ -51,6 +52,9 @@ Future<void> init() async {
     () => SingleTranslationDownloadBloc(
       downloadTranslation: sl(),
     ),
+  );
+  sl.registerFactory(
+    () => AppScreenManagerBloc(),
   );
 
   // Use cases

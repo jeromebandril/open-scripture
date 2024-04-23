@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_smyrna_bible_v2/core/widgets/hoverable_container.dart';
 import 'package:the_smyrna_bible_v2/features/translations_installer_manager/data/models/translation_info_model.dart';
 import 'package:the_smyrna_bible_v2/features/translations_installer_manager/domain/entities/translation_info.dart';
+import 'package:the_smyrna_bible_v2/features/translations_installer_manager/presentation/bloc/single_translation_download/single_translation_download_bloc.dart';
 import 'package:the_smyrna_bible_v2/injection_container.dart';
 
 import '../bloc/all_translations_overview/all_translations_bloc.dart';
@@ -29,6 +30,8 @@ class SectionHeader extends StatelessWidget {
     );
   }
 }
+
+// OVERVIEWS
 
 class TranslationManagerWidget extends StatelessWidget {
   const TranslationManagerWidget({super.key});
@@ -196,9 +199,13 @@ class InstalledTranslationOverview extends StatelessWidget {
   }
 }
 
+/*
 const Map<DownloadStatus, String> downloadStatusString = {
   DownloadStatus.downloading: 'Downloading...'
 };
+*/
+
+// SPECIFIC OVERVIEW TILES TYPES
 
 class DownloadingOverviewTile extends StatefulWidget {
   final TranslationInfoModel translationInfo;
@@ -313,9 +320,9 @@ class _AllTranslationsTileState extends State<AllTranslationsTile> {
           initialColor: isAlreadyInstalled ||
                   widget.translationInfo.downloadStatus ==
                       DownloadStatus.downloading
-              ? Colors.grey.shade300
+              ? Colors.grey.shade100
               : null,
-          hoveredColor: Colors.grey.shade400,
+          hoveredColor: Colors.grey.shade200,
           child: Row(
             children: [
               SizedBox(
@@ -379,7 +386,10 @@ class _AllTranslationsTileState extends State<AllTranslationsTile> {
   }
 
   void dispatch(context, String id) {
-    // BlocProvider.of<AllTranslationsBloc>(context).add();
+    //BlocProvider.of<AllTranslationsBloc>(context).add();
+    BlocProvider.of<SingleTranslationDownloadBloc>(context).add(
+      SingleTranslationDownloadPressed(id),
+    );
   }
 }
 

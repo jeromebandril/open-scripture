@@ -31,3 +31,10 @@ class NoLoadedDataFailure extends Failure {
   @override
   List<Object?> get props => [];
 }
+
+class SplitFailure extends Failure {
+  const SplitFailure();
+
+  @override
+  List<Object?> get props => [];
+}
