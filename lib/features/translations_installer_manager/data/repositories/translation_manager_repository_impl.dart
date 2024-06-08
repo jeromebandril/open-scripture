@@ -70,41 +70,15 @@ class TranslationManagerRepositoryImpl implements TranslationManagerRepository {
   }
 
   @override
-  Stream<Either<Failure, List<int>>> downloadTranslation(
+  Future<Either<Failure, Stream<List<int>>>> downloadTranslation(
     String id,
-  ) async* {
-    TranslationInfoModel? downloadingTranslation;
-
-    // update general list and retrive the translation info
-    _tAllStreamController.value.fold((_) => null, (list) {
-      final translationInfos = [...list];
-      final index = translationInfos.indexWhere((t) => t.id == id);
-
-      if (index == -1) {
-        throw ServerException();
-      } else {
-        final t = translationInfos[index];
-        downloadingTranslation = t;
-        final newT = t.copyWith(
-          downloadStatus: () => DownloadStatus.downloading,
-        );
-        translationInfos[index] = newT;
-
-        _tAllStreamController.add(Right(translationInfos));
-      }
-    });
-
-    // add translation to download queue and start download
-    if (downloadingTranslation != null) {
-      await for (var data in remoteDataSource.downloadTranslationFiles(id)) {
-        yield Right(data);
-      }
-    }
+  ) async {
+    return Right(remoteDataSource.downloadTranslationFiles(id));
   }
 
   @override
-  Future<void> installTranslation(String path) async {
-    await localDataSource.installTranslation(path);
+  Future<void> installTranslation(String id) async {
+    await localDataSource.installTranslation(id);
   }
 
   @override

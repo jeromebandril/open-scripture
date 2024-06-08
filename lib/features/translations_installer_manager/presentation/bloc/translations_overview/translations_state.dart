@@ -1,4 +1,4 @@
-part of 'all_translations_bloc.dart';
+part of 'translations_bloc.dart';
 
 enum AllTranslationsStatus {
   initial,

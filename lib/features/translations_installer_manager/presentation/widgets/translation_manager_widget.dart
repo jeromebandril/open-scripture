@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
 import 'package:the_smyrna_bible_v2/core/widgets/hoverable_container.dart';
-import 'package:the_smyrna_bible_v2/features/translations_installer_manager/data/models/translation_info_model.dart';
 import 'package:the_smyrna_bible_v2/features/translations_installer_manager/domain/entities/translation_info.dart';
-import 'package:the_smyrna_bible_v2/features/translations_installer_manager/presentation/bloc/single_translation_download/single_translation_download_bloc.dart';
+import 'package:the_smyrna_bible_v2/features/translations_installer_manager/presentation/bloc/translation_download_progress/translation_download_progress_bloc.dart';
 import 'package:the_smyrna_bible_v2/injection_container.dart';
+import 'package:collection/collection.dart';
 
-import '../bloc/all_translations_overview/all_translations_bloc.dart';
+import '../bloc/translations_overview/translations_bloc.dart';
 import '../bloc/installed_translations_overview/installed_translations_bloc.dart';
-
-// TODO:
-// - right now the whole lists are updated on changes
-// - DownloadOverview is not scrolling
-//
-//
 
 class SectionHeader extends StatelessWidget {
   final String text;
@@ -45,6 +40,9 @@ class TranslationManagerWidget extends StatelessWidget {
             ..add(AllTranslationsSubscriptionRequested()),
         ),
         BlocProvider(
+          create: (_) => sl<TranslationDownloadProgressBloc>(),
+        ),
+        BlocProvider(
           create: (_) => sl<InstalledTranslationsBloc>()
             ..add(InstalledTranslationsSubscriptionRequested()),
         ),
@@ -57,10 +55,12 @@ class TranslationManagerWidget extends StatelessWidget {
             Expanded(
               child: AllTranslationsOverview(),
             ),
+            Gap(8),
             Expanded(
               child: Column(
                 children: [
                   Expanded(child: DownloadingTranslationsOverview()),
+                  Gap(8),
                   Expanded(child: InstalledTranslationOverview()),
                 ],
               ),
@@ -72,15 +72,20 @@ class TranslationManagerWidget extends StatelessWidget {
   }
 }
 
+/*
+  All translation overview will have a first layer of filtering
+  with an expandable sections based on language (es: italian, english, and 
+  each section will reaveal all the bible in that language) using [ExpandableTile]
+*/
 class AllTranslationsOverview extends StatelessWidget {
   const AllTranslationsOverview({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        border: Border.all(width: 1, color: Colors.black),
+        border: Border.all(width: 1, color: Colors.black26),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
         children: [
@@ -88,7 +93,7 @@ class AllTranslationsOverview extends StatelessWidget {
           Expanded(
             child: BlocBuilder<AllTranslationsBloc, AllTranslationsState>(
               builder: (context, state) {
-                print("building");
+                // error feedbacks
                 if (state.translationInfos.isEmpty) {
                   if (state.status == AllTranslationsStatus.loading) {
                     return const Center(child: CircularProgressIndicator());
@@ -97,13 +102,31 @@ class AllTranslationsOverview extends StatelessWidget {
                   }
                 }
 
+                // successful (group by language)
+                var map = groupBy<TranslationInfo, String>(
+                  state.translationInfos,
+                  (info) => info.language,
+                );
+
                 return ListView.builder(
-                  itemCount: state.translationInfos.length,
+                  addAutomaticKeepAlives: true,
+                  itemCount: map.values.length,
                   itemBuilder: (_, index) {
-                    return AllTranslationsTile(
-                      translationInfo:
-                          state.translationInfos[index] as TranslationInfoModel,
-                      index: index,
+                    String key = map.keys.elementAt(index);
+                    List<AllTranslationsTile> tiles = [];
+                    int groupIndex = 1;
+                    for (var info in map[key]!) {
+                      tiles.add(
+                        AllTranslationsTile(
+                          translationInfo: info,
+                          index: groupIndex,
+                        ),
+                      );
+                      groupIndex++;
+                    }
+                    return ExpandableTile(
+                      title: "$key (${tiles.length})",
+                      tiles: tiles,
                     );
                   },
                 );
@@ -122,31 +145,27 @@ class DownloadingTranslationsOverview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        border: Border.all(width: 1, color: Colors.black),
+        border: Border.all(width: 1, color: Colors.black26),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
         children: [
           const SectionHeader('DOWNLOAD QUEUE'),
           Expanded(
-            child: BlocBuilder<AllTranslationsBloc, AllTranslationsState>(
+            child: BlocBuilder<TranslationDownloadProgressBloc,
+                TranslationDownloadProgressState>(
               builder: (context, state) {
-                if (state.status == AllTranslationsStatus.loading) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (state.status == AllTranslationsStatus.error) {
-                  return const SizedBox();
-                } else {
-                  final list = state.getDownloadingList();
-                  return ListView.builder(
-                    itemCount: list.length,
-                    itemBuilder: (_, index) {
-                      return DownloadingOverviewTile(
-                        translationInfo: list[index] as TranslationInfoModel,
-                      );
-                    },
-                  );
-                }
+                //final list = state.getDownloadingList();
+                final list = state.downloadingTranslations.entries.toList();
+                return ListView.builder(
+                  itemCount: list.length,
+                  itemBuilder: (_, index) {
+                    return DownloadingOverviewTile(
+                      translationInfo: list[index].value,
+                    );
+                  },
+                );
               },
             ),
           ),
@@ -162,9 +181,9 @@ class InstalledTranslationOverview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        border: Border.all(width: 1, color: Colors.black),
+        border: Border.all(width: 1, color: Colors.black26),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
         children: [
@@ -181,8 +200,7 @@ class InstalledTranslationOverview extends StatelessWidget {
                       itemCount: state.installedTranslations.length,
                       itemBuilder: (_, index) {
                         return InstalledTranslationsOverviewTile(
-                          translationInfo: state.installedTranslations[index]
-                              as TranslationInfoModel,
+                          translationInfo: state.installedTranslations[index],
                         );
                       },
                     );
@@ -199,16 +217,10 @@ class InstalledTranslationOverview extends StatelessWidget {
   }
 }
 
-/*
-const Map<DownloadStatus, String> downloadStatusString = {
-  DownloadStatus.downloading: 'Downloading...'
-};
-*/
-
 // SPECIFIC OVERVIEW TILES TYPES
 
 class DownloadingOverviewTile extends StatefulWidget {
-  final TranslationInfoModel translationInfo;
+  final TranslationInfo translationInfo;
   const DownloadingOverviewTile({super.key, required this.translationInfo});
 
   @override
@@ -242,28 +254,40 @@ class _DownloadingOverviewTileState extends State<DownloadingOverviewTile> {
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          const VerticalDivider(),
           SizedBox(
             width: 150,
             child: Text(
-              widget.translationInfo.name,
+              widget.translationInfo.received.toString(),
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          const VerticalDivider(),
           SizedBox(
             width: 150,
             child: Text(
-              widget.translationInfo.language,
+              widget.translationInfo.total.toString(),
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          const VerticalDivider(),
+          if (widget.translationInfo.downloadStatus !=
+              DownloadStatus.downloaded)
+            IconButton(
+              onPressed: () => togglePauseDownload(
+                context,
+                widget.translationInfo,
+              ),
+              icon: Icon(
+                widget.translationInfo.downloadStatus == DownloadStatus.paused
+                    ? Icons.play_arrow_rounded
+                    : Icons.pause_rounded,
+              ),
+              padding: EdgeInsets.zero,
+            ),
           Expanded(
             child: _hovered
                 ? TextButton(
                     onPressed: () {},
-                    child: const Text('cancel'),
+                    child:
+                        Text(widget.translationInfo.downloadStatus.toString()),
                   )
                 : Column(
                     children: [
@@ -272,8 +296,14 @@ class _DownloadingOverviewTileState extends State<DownloadingOverviewTile> {
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(fontSize: 12),
                       ),
-                      const LinearProgressIndicator(
-                        value: 0.9,
+                      LinearProgressIndicator(
+                        value: widget.translationInfo.downloadStatus ==
+                                    DownloadStatus.installed ||
+                                widget.translationInfo.downloadStatus ==
+                                    DownloadStatus.installing
+                            ? 1
+                            : widget.translationInfo.received /
+                                widget.translationInfo.total,
                       ),
                     ],
                   ),
@@ -282,11 +312,19 @@ class _DownloadingOverviewTileState extends State<DownloadingOverviewTile> {
       ),
     );
   }
+
+  void togglePauseDownload(ctx, TranslationInfo translationInfo) {
+    BlocProvider.of<TranslationDownloadProgressBloc>(context).add(
+      translationInfo.downloadStatus == DownloadStatus.paused
+          ? TranslationDownloadProgressResume(translationInfo.id)
+          : TranslationDownloadProgressPause(translationInfo.id),
+    );
+  }
 }
 
 class AllTranslationsTile extends StatefulWidget {
   final int index;
-  final TranslationInfoModel translationInfo;
+  final TranslationInfo translationInfo;
 
   const AllTranslationsTile({
     super.key,
@@ -304,7 +342,8 @@ class _AllTranslationsTileState extends State<AllTranslationsTile> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: widget.translationInfo.checkIfAlreadyInstalled(),
+      future: Future.value(
+          false), //widget.translationInfo.checkIfAlreadyInstalled(),
       builder: (_, snapshot) {
         bool isAlreadyInstalled = snapshot.hasData && snapshot.data!;
 
@@ -386,15 +425,14 @@ class _AllTranslationsTileState extends State<AllTranslationsTile> {
   }
 
   void dispatch(context, String id) {
-    //BlocProvider.of<AllTranslationsBloc>(context).add();
-    BlocProvider.of<SingleTranslationDownloadBloc>(context).add(
-      SingleTranslationDownloadPressed(id),
+    BlocProvider.of<TranslationDownloadProgressBloc>(context).add(
+      TranslationDownloadProgressPressed(id),
     );
   }
 }
 
 class InstalledTranslationsOverviewTile extends StatelessWidget {
-  final TranslationInfoModel translationInfo;
+  final TranslationInfo translationInfo;
 
   const InstalledTranslationsOverviewTile({
     super.key,
@@ -429,6 +467,56 @@ class InstalledTranslationsOverviewTile extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class ExpandableTile extends StatefulWidget {
+  final String title;
+  final List<Widget> tiles;
+
+  const ExpandableTile({
+    required this.title,
+    required this.tiles,
+    super.key,
+  });
+
+  @override
+  State<ExpandableTile> createState() => _ExpandableTileState();
+}
+
+class _ExpandableTileState extends State<ExpandableTile> {
+  bool isExpand = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        HoverableContainer(
+          height: 40,
+          hoveredColor: const Color.fromRGBO(175, 193, 175, 1),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(widget.title),
+              IconButton(
+                onPressed: () => setState(() => isExpand = !isExpand),
+                icon: const Icon(Icons.arrow_drop_down_circle_sharp),
+              )
+            ],
+          ),
+        ),
+        Visibility(
+          visible: isExpand,
+          child: Container(
+            color: Colors.grey.shade200,
+            child: Column(
+              children: widget.tiles,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

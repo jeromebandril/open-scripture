@@ -6,7 +6,6 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parser;
-import 'package:rxdart/rxdart.dart';
 import 'package:the_smyrna_bible_v2/core/constants/constants.dart';
 import 'package:the_smyrna_bible_v2/core/error/exception.dart';
 
@@ -42,13 +41,10 @@ class TranslationManagerRemoteDataSourceImpl
     String id,
   ) async* {
     try {
-      final BehaviorSubject<List<int>> downloadController =
-          BehaviorSubject.seeded(
-        const [],
-      );
       final url = Uri.parse('${ApplicationConstants.baseURL}/${id}_usfx.zip');
       final appPath = await ApplicationConstants.getApplicationPath();
       final translationDir = Directory('$appPath/$id');
+      final downloadController = StreamController<List<int>>();
       dio.downloadUri(
         url,
         '${translationDir.path}/temp.txt',
@@ -56,9 +52,9 @@ class TranslationManagerRemoteDataSourceImpl
         onReceiveProgress: (received, total) {
           downloadController.add([received, total]);
         },
-      );
+      ).then((value) => downloadController.close());
 
-      yield* downloadController.asBroadcastStream();
+      yield* downloadController.stream;
     } catch (e) {
       throw ServerException();
     }

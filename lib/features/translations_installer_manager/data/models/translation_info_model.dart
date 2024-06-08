@@ -18,21 +18,20 @@ class TranslationInfoModel extends TranslationInfo {
     return await dirDestination.exists();
   }
 
-  TranslationInfoModel copyWith({
-    String Function()? id,
-    String Function()? name,
-    String Function()? language,
-    DownloadStatus Function()? downloadStatus,
-    int Function()? downloadedBytes,
-    int Function()? totalBytes,
-    List<int> Function()? content,
-  }) {
-    return TranslationInfoModel(
-      id: id != null ? id() : this.id,
-      name: name != null ? name() : this.name,
-      language: language != null ? language() : this.language,
-      downloadStatus:
-          downloadStatus != null ? downloadStatus() : this.downloadStatus,
-    );
-  }
+  // TranslationInfoModel copyWith({
+  //   String Function()? id,
+  //   String Function()? name,
+  //   String Function()? language,
+  //   int Function()? downloadedBytes,
+  //   int Function()? totalBytes,
+  //   DownloadStatus Function()? downloadStatus,
+  // }) {
+  //   return TranslationInfoModel(
+  //     id: id != null ? id() : this.id,
+  //     name: name != null ? name() : this.name,
+  //     language: language != null ? language() : this.language,
+  //     downloadStatus:
+  //         downloadStatus != null ? downloadStatus() : this.downloadStatus,
+  //   );
+  // }
 }

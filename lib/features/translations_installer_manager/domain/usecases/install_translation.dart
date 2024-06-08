@@ -4,13 +4,13 @@ import 'package:the_smyrna_bible_v2/core/usecases/usecase.dart';
 import '../../../../core/error/failure.dart';
 import '../repositories/translation_manager_repository.dart';
 
-class InstallUsfxTranslation implements FutureUseCase<bool, String> {
+class InstallUsfxTranslation implements FutureUseCase<void, String> {
   TranslationManagerRepository repository;
 
   InstallUsfxTranslation(this.repository);
 
   @override
-  Future<Either<Failure, bool>> call(String path) async {
-    return await repository.installTranslation(path);
+  Future<Either<Failure, void>> call(String id) async {
+    return Future.value(Right(await repository.installTranslation(id)));
   }
 }

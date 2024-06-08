@@ -4,9 +4,9 @@ import '../../../../core/error/failure.dart';
 import '../entities/translation_info.dart';
 
 abstract class TranslationManagerRepository {
-  Stream<Either<Failure, List<int>>> downloadTranslation(String id);
+  Future<Either<Failure, Stream<List<int>>>> downloadTranslation(String id);
 
-  Future<dynamic> installTranslation(String path);
+  Future<void> installTranslation(String id);
 
   Future<dynamic> uninstallTranslation(String id);
 

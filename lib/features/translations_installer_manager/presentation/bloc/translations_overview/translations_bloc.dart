@@ -11,8 +11,8 @@ import '../../../domain/entities/translation_info.dart';
 import '../../../domain/usecases/get_translations_info_list.dart';
 import '../translation_manager_bloc.dart';
 
-part 'all_translations_event.dart';
-part 'all_translations_state.dart';
+part 'translations_event.dart';
+part 'translations_state.dart';
 
 /// This bloc manages all downloadable translations available
 /// from the remote datasource

@@ -9,13 +9,13 @@ import '../models/translation_info_model.dart';
 abstract class TranslationManagerLocalDataSource {
   /// Try to install a translation locally.
   /// It receives a path to the temp_file were the content of
-  /// type [List<int>] has been written during download,
-  /// and convert it into expected files.
+  /// type [List<int>] has been downloaded,
+  /// and convert it into expected files/structure.
   ///
   /// Throws a [InstallationException] if it fails
   Future<void> installTranslation(String path);
 
-  /// Uninstall a local translation.
+  /// Uninstall a local translation (removes files).
   ///
   /// Throws a [InstallationException] if it fails
   Future<void> uninstallTranslation(String path);
@@ -30,21 +30,29 @@ abstract class TranslationManagerLocalDataSource {
 class TranslationManagerLocalDataSourceImpl
     implements TranslationManagerLocalDataSource {
   @override
-  Future<void> installTranslation(String path) async {
+  Future<void> installTranslation(String id) async {
     try {
-      File rawFile = File(path);
+      final path = await ApplicationConstants.getApplicationPath();
+      File rawFile = File("$path/$id/temp.txt");
       final bytes = await rawFile.readAsBytes();
 
       // convert raw file into usfx.xml file format
       // should find both metadata.xml and translation_usfx.xml
-      File goodFile = File('$path/filename_usfx.xml');
+      File goodFile = File('$path/$id/${id}_usfx.xml');
+      File metadataFile = File('$path/$id/${id}metadata.xml');
       final Archive archive = ZipDecoder().decodeBytes(bytes);
 
       for (final ArchiveFile file in archive) {
-        if (file.name == 'filename_usfx.xml') {
-          goodFile.writeAsString(file.content);
+        if (file.name == '${id}_usfx.xml') {
+          goodFile.writeAsBytesSync(file.content);
+        }
+        if (file.name == '${id}metadata.xml') {
+          metadataFile.writeAsBytesSync(file.content);
         }
       }
+
+      // delete the temp file
+      rawFile.deleteSync();
     } catch (e) {
       throw InstallationException();
     }

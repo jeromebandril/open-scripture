@@ -1,4 +1,4 @@
-part of 'all_translations_bloc.dart';
+part of 'translations_bloc.dart';
 
 sealed class AllTranslationsEvent extends Equatable {
   const AllTranslationsEvent();
