@@ -1,6 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:http/http.dart';
-import 'package:the_smyrna_bible_v2/features/translations_installer_manager/domain/entities/translation.dart';
 
 enum DownloadStatus {
   notDownloaded,
