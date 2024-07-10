@@ -192,7 +192,7 @@ class BibleReferenceParser {
         chapter: chapter - 1, // corrections for zero based counting
         verse: verse - 1,
       );
-
+      print(reference);
       return Right(reference);
     } on Exception {
       return Left(InvalidInputFailure());

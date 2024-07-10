@@ -7,6 +7,5 @@ import '../../../../translations_installer_manager/domain/entities/translation.d
 abstract class ReaderRepository {
   Future<Either<Failure, Translation>> getTranslation(String id);
   Future<Either<Failure, void>> removeTranslation(String id);
-  Future<Either<Failure, BibleReference>> displayChapter(
-      BibleReference reference);
+  Future<Either<Failure, BibleReference>> getChapter(BibleReference reference);
 }

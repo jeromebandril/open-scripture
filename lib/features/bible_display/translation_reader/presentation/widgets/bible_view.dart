@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_smyrna_bible_v2/core/widgets/adjustable_text_size.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/presentation/bloc/reader_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/presentation/widgets/bible_finder.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/presentation/widgets/bible_searchbar.dart';
 
 import '../../../scripture_finder/domain/entity/bible_reference.dart';
 import '../../../../translations_installer_manager/domain/entities/translation.dart';
 
-class BibleViewer extends StatelessWidget {
-  const BibleViewer({super.key});
+class BibleView extends StatelessWidget {
+  final List<String> items;
+  const BibleView({required this.items, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,30 +18,35 @@ class BibleViewer extends StatelessWidget {
         Expanded(
           child: BlocBuilder<ReaderBloc, ReaderState>(
             builder: (context, state) {
+              // error case
               if (state.status == ReaderStatus.reading) {
                 return const Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     LinearProgressIndicator(),
-                    Text('Initializing...')
+                    Text('Opening the bible...')
                   ],
                 );
               }
               if (state.status == ReaderStatus.error) {
                 return const Text('ERROR');
               }
+
+              // success case
               return Builder(builder: (context) {
                 return Column(
                   children: [
-                    const SizedBox(
+                    SizedBox(
                       height: 50,
-                      child: BibleFinder(),
+                      child: BibleSearchbar(
+                        items: items,
+                      ),
                     ),
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(12, 24, 0, 0),
-                        child: ChapterView(
+                        child: VerseList(
                           translations: state.viewer.translations,
                           referenceToDisplay: state.references,
                         ),
@@ -59,26 +65,26 @@ class BibleViewer extends StatelessWidget {
   // for testing
   void read(context) {
     BlocProvider.of<ReaderBloc>(context).add(
-      const ReaderReadTranslation('eng-kjv'),
+      const ReaderLoadTranslation('eng-kjv'),
     );
   }
 }
 
-class ChapterView extends StatefulWidget {
+class VerseList extends StatefulWidget {
   final List<Translation> translations;
   final List<BibleReference> referenceToDisplay;
 
-  const ChapterView({
+  const VerseList({
     super.key,
     required this.translations,
     required this.referenceToDisplay,
   });
 
   @override
-  State<ChapterView> createState() => _ChapterViewState();
+  State<VerseList> createState() => _VerseListState();
 }
 
-class _ChapterViewState extends State<ChapterView> {
+class _VerseListState extends State<VerseList> {
   late ScrollController scrollController;
 
   @override

@@ -49,6 +49,8 @@ dependencies:
   get_it: ^7.6.7
   rxdart: ^0.27.7
   dio: ^5.4.1
+  collection: ^1.18.0
+  gap: ^3.0.1
 
 dev_dependencies:
   flutter_test:

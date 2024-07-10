@@ -5,8 +5,8 @@ import 'package:mockito/annotations.dart';
 import 'package:the_smyrna_bible_v2/core/error/failure.dart';
 import 'package:the_smyrna_bible_v2/core/usecases/usecase.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/domain/repositories/reader_repository.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/domain/usecases/read_usfx_translation.dart';
-import 'package:the_smyrna_bible_v2/features/translations_manager/domain/entities/translation.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/domain/usecases/load_usfx_translation.dart';
+import 'package:the_smyrna_bible_v2/features/translations_installer_manager/domain/entities/translation.dart';
 
 import 'close_usfx_translation_test.mocks.dart';
 

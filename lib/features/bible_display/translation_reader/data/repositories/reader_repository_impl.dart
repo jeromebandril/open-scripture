@@ -5,42 +5,14 @@ import 'package:the_smyrna_bible_v2/core/models/translation_model.dart';
 import 'package:the_smyrna_bible_v2/core/utils/bible_reference_parser.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/scripture_finder/domain/entity/bible_reference.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/data/datasources/translations_datasource.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/data/models/translation_pool_model.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/data/models/translation_reader_model.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/domain/repositories/reader_repository.dart';
 
 class ReaderRepositoryImpl implements ReaderRepository {
-  final TranslationPoolModel translationPool;
-  final TranslationReaderModel reader;
   final TranslationsDataSource dataSource;
 
   ReaderRepositoryImpl({
-    required this.translationPool,
-    required this.reader,
     required this.dataSource,
   });
-
-  void test(BibleReference reference) {
-    // for each translation
-
-    reader.translations.forEach(
-      (t) {
-        final book = t.bookNames.values
-            .where(
-              (element) => element.abbr == reference.book,
-            )
-            .singleOrNull;
-
-        if (book != null) {
-          book.chapters[reference.chapter].paragraphs.forEach((paragraph) {
-            paragraph.verses.forEach((verse) {
-              verse.words;
-            });
-          });
-        }
-      },
-    );
-  }
 
   @override
   Future<Either<Failure, TranslationModel>> getTranslation(String id) async {
@@ -68,8 +40,7 @@ class ReaderRepositoryImpl implements ReaderRepository {
   }
 
   @override
-  Future<Either<Failure, BibleReference>> displayChapter(
-      BibleReference ref) async {
+  Future<Either<Failure, BibleReference>> getChapter(BibleReference ref) async {
     try {
       final book = reader.translations.first.bookNames.values
           .where(
@@ -79,12 +50,17 @@ class ReaderRepositoryImpl implements ReaderRepository {
                 bookData.short.toUpperCase().contains(ref.book),
           )
           .firstOrNull;
-
+      print(book);
       if (book == null) throw InvalidInputException();
       if (ref.chapter > book.chapters.length || ref.chapter < 0) {
         throw InvalidInputException();
       }
+      List<BibleReference> temp = [];
 
+      // for (int i = 0; i < bible[book][chapter - 1].length; i++) {
+      //   temp.add(BibleReference(book: book, chapter: chapter - 1, verse: i));
+      // }
+      // create List of reference from verse one to last verse of the chapter
       return Right(ref);
     } on InvalidInputException {
       return Left(InvalidInputFailure());

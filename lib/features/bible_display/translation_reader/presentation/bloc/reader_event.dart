@@ -7,19 +7,19 @@ sealed class ReaderEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class ReaderReadTranslation extends ReaderEvent {
+class ReaderLoadTranslation extends ReaderEvent {
   final String id;
 
-  const ReaderReadTranslation(this.id);
+  const ReaderLoadTranslation(this.id);
 
   @override
   List<Object> get props => [id];
 }
 
-class ReaderViewChapter extends ReaderEvent {
+class ReaderAnalyzePrompt extends ReaderEvent {
   final String text;
 
-  const ReaderViewChapter(this.text);
+  const ReaderAnalyzePrompt(this.text);
 
   @override
   List<Object> get props => [text];
