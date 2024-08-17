@@ -7,7 +7,7 @@ import '../../../../core/models/translation_manager_model.dart';
 import '../../domain/entities/translation_info.dart';
 import '../datasources/translation_manager_remote_datasource.dart';
 import '../../domain/repositories/translation_manager_repository.dart';
-import '../datasources/translation_manager_local_datasource.dart';
+import '../../../../core/datasources/translation_manager_local_datasource.dart';
 import '../models/translation_info_model.dart';
 
 // ignore_for_file: constant_identifier_names
