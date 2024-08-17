@@ -16,11 +16,11 @@ class ReaderLoadTranslation extends ReaderEvent {
   List<Object> get props => [id];
 }
 
-class ReaderAnalyzePrompt extends ReaderEvent {
-  final String text;
+class ReaderSetContent extends ReaderEvent {
+  final BibleReference ref;
 
-  const ReaderAnalyzePrompt(this.text);
+  const ReaderSetContent(this.ref);
 
   @override
-  List<Object> get props => [text];
+  List<Object> get props => [ref];
 }
