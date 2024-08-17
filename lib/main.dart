@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/widgets/split_view_container.dart';
 import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/settings_window.dart';
 import 'package:the_smyrna_bible_v2/features/toolbar/presentation/widgets/toolbar.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/split_viewer/presenter/bloc/split_viewer_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/presentation/bloc/reader_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/presentation/widgets/bible_view.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/bloc/split_screen_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/window_stack_manager/presentation/widgets/window_stack_manager_wrapper.dart';
+import 'features/bible_display/searchbar/presenter/bloc/b_searchbar_bloc.dart';
 import 'features/translations_installer_manager/presentation/bloc/installed_translations_overview/installed_translations_bloc.dart';
 import 'injection_container.dart' as di;
 
@@ -37,15 +37,14 @@ class MyApp extends StatelessWidget {
       home: MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (_) => di.sl<ReaderBloc>()
-              ..add(const ReaderLoadTranslation('eng-kjv')),
-          ),
-          BlocProvider(create: (_) => di.sl<SplitViewerBloc>()),
+              create: (_) =>
+                  di.sl<SplitScreenBloc>()..add(const SplitScreenX())),
           BlocProvider(create: (_) => di.sl<WindowStackManagerBloc>()),
           BlocProvider(
             create: (_) => di.sl<InstalledTranslationsBloc>()
               ..add(InstalledTranslationsSubscriptionRequested()),
           ),
+          BlocProvider(create: (_) => di.sl<BSearchbarBloc>()),
         ],
         child: const Home(),
       ),
@@ -98,13 +97,14 @@ class Home extends StatelessWidget {
           //
           // Main screen
           //
-          child: BibleView(
-            items: BlocProvider.of<InstalledTranslationsBloc>(context)
-                .state
-                .installedTranslations
-                .map((e) => e.language)
-                .toList(),
-          ),
+          // child: BibleView(
+          //   items: BlocProvider.of<InstalledTranslationsBloc>(context)
+          //       .state
+          //       .installedTranslations
+          //       .map((e) => e.language)
+          //       .toList(),
+          // ),
+          child: const SplitScreenContainer(child: Text("")),
         ),
       ),
     );
