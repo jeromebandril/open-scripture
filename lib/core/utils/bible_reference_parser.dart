@@ -1,6 +1,6 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/scripture_finder/domain/entity/bible_reference.dart';
 
+import '../../features/bible_display/searchbar/domain/entity/bible_reference.dart';
 import '../error/failure.dart';
 
 class BibleReferenceParser {
@@ -192,7 +192,6 @@ class BibleReferenceParser {
         chapter: chapter - 1, // corrections for zero based counting
         verse: verse - 1,
       );
-      print(reference);
       return Right(reference);
     } on Exception {
       return Left(InvalidInputFailure());

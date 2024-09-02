@@ -1,7 +1,7 @@
 import 'package:xml/xml.dart';
 import 'package:xml/xpath.dart';
 
-import '../../features/translations_installer_manager/domain/entities/translation.dart';
+import '../../domain/entities/translation.dart';
 
 class TranslationModel extends Translation {
   const TranslationModel({
@@ -33,7 +33,7 @@ class TranslationModel extends Translation {
     /// until it meets the last one, which text is added to the list.
     ///
     void resolve(
-      List<Word> words,
+      List<Snippet> words,
       XmlNode xe, {
       bool italics = false,
       bool wordOfJesus = false,
@@ -43,7 +43,7 @@ class TranslationModel extends Translation {
 
       if (xe is XmlText) {
         words.add(
-          Word(text: xe.value.trim(), italics: i, wordOfJesus: wj),
+          Snippet(text: xe.value.trim(), italics: i, wordOfJesus: wj),
         );
         return;
       }
@@ -52,7 +52,7 @@ class TranslationModel extends Translation {
 
       if (xe.descendantElements.isEmpty) {
         words.add(
-          Word(
+          Snippet(
             text: xe.innerText.trim(),
             italics: xe.name.local == 'add' || i,
             wordOfJesus: xe.name.local == "wj" || wj,
@@ -130,7 +130,7 @@ class TranslationModel extends Translation {
             if (element.getAttribute('sfm') == null) {
               // variables //
               bool verseStart = false;
-              List<Word> verseWords = [];
+              List<Snippet> verseWords = [];
               int verseId = 0;
               List<XmlNode> paragraphChildren = element.children
                   .where(
@@ -153,7 +153,7 @@ class TranslationModel extends Translation {
                 // if a verse has started, then this node is part
                 // of its content.
                 if (verseStart) {
-                  List<Word> temp = [];
+                  List<Snippet> temp = [];
                   resolve(temp, pNode);
                   verseWords.addAll(temp);
                 }
@@ -207,6 +207,7 @@ class TranslationModel extends Translation {
   }
 
   ///
+  /// TODO: finish
   /// Temporary freezed because I'm not storing all the informations, which
   /// are needed to reconstruct the document (ex: sfm, the preface, the footers)
   ///

@@ -1,5 +1,5 @@
-import '../../features/translations_installer_manager/domain/entities/translation.dart';
-import '../../features/translations_installer_manager/domain/entities/translation_manager.dart';
+import '../../domain/entities/translation.dart';
+import '../../../features/translations_installer_manager/domain/entities/translation_manager.dart';
 
 class TranslationManagerModel extends TranslationManager {
   TranslationManagerModel();

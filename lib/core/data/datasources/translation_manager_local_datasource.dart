@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:archive/archive_io.dart';
 import 'package:the_smyrna_bible_v2/core/constants/constants.dart';
 
-import '../error/exception.dart';
-import '../../features/translations_installer_manager/data/models/translation_info_model.dart';
+import '../../error/exception.dart';
+import '../../../features/translations_installer_manager/data/models/translation_info_model.dart';
 
 abstract class TranslationManagerLocalDataSource {
   /// Try to install a translation locally.
