@@ -63,7 +63,7 @@ class Paragraph extends Equatable {
 
 class Verse extends Equatable {
   final int number;
-  final List<Word> words;
+  final List<Snippet> words;
 
   const Verse({
     required this.number,
@@ -74,7 +74,7 @@ class Verse extends Equatable {
   List<Object?> get props => [number, words];
 }
 
-class Word extends Equatable {
+class Snippet extends Equatable {
   final String text;
   final String? scn; // = strong concordance number
   final bool wordOfJesus;
@@ -82,7 +82,7 @@ class Word extends Equatable {
   final bool underlined;
   final bool italics;
 
-  const Word({
+  const Snippet({
     required this.text,
     this.scn,
     this.wordOfJesus = false,
