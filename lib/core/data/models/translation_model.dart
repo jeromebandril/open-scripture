@@ -16,6 +16,9 @@ class TranslationModel extends Translation {
           bookNames: bookNames,
         );
 
+  ///
+  /// I hope you don't have to look at this ever again
+  ///
   factory TranslationModel.fromUSFX(String metadataXml, String sourceXml) {
     XmlDocument metadata = XmlDocument.parse(metadataXml);
     XmlDocument source = XmlDocument.parse(sourceXml);
@@ -33,7 +36,7 @@ class TranslationModel extends Translation {
     /// until it meets the last one, which text is added to the list.
     ///
     void resolve(
-      List<Snippet> words,
+      List<Snippet> snippets,
       XmlNode xe, {
       bool italics = false,
       bool wordOfJesus = false,
@@ -42,7 +45,7 @@ class TranslationModel extends Translation {
       bool wj = wordOfJesus;
 
       if (xe is XmlText) {
-        words.add(
+        snippets.add(
           Snippet(text: xe.value.trim(), italics: i, wordOfJesus: wj),
         );
         return;
@@ -51,7 +54,7 @@ class TranslationModel extends Translation {
       xe as XmlElement;
 
       if (xe.descendantElements.isEmpty) {
-        words.add(
+        snippets.add(
           Snippet(
             text: xe.innerText.trim(),
             italics: xe.name.local == 'add' || i,
@@ -73,7 +76,7 @@ class TranslationModel extends Translation {
             .toList();
 
         for (var d in list) {
-          resolve(words, d, italics: i, wordOfJesus: wj);
+          resolve(snippets, d, italics: i, wordOfJesus: wj);
         }
       }
     }
@@ -204,6 +207,11 @@ class TranslationModel extends Translation {
       language: metadata.xpath('DBLMetadata/language/name').single.innerText,
       bookNames: bookNames,
     );
+  }
+
+  factory TranslationModel.fromUSFX2MAP(String metadataXml, String sourceXml) {
+    final t = TranslationModel.fromUSFX(metadataXml, sourceXml);
+    return t;
   }
 
   ///
