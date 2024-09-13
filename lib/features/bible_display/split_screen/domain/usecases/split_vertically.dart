@@ -1,24 +1,24 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:the_smyrna_bible_v2/core/error/failure.dart';
-import 'package:the_smyrna_bible_v2/core/usecases/usecase.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/split_viewer/domain/entities/split_configuration.dart';
+import 'package:the_smyrna_bible_v2/core/domain/usecases/usecase.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/domain/entities/split_configuration.dart';
 
 // ignore: constant_identifier_names
 const MAX_VERTICAL_SPLIT = 2;
 
-class SplitHorizontally
+class SplitVertically
     implements FutureUseCase<SplitConfiguration, SplitConfiguration> {
   @override
   Future<Either<Failure, SplitConfiguration>> call(old) {
     late Either<Failure, SplitConfiguration> value;
 
-    if (old.horizontal >= MAX_VERTICAL_SPLIT) {
+    if (old.horizontal.length >= MAX_VERTICAL_SPLIT) {
       value = const Left(SplitFailure());
     } else {
-      Right(
+      value = Right(
         SplitConfiguration(
           horizontal: old.horizontal,
-          vertical: old.vertical + 1,
+          vertical: [...old.vertical, 1],
         ),
       );
     }

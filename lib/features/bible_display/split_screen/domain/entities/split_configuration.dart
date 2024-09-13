@@ -1,10 +1,11 @@
 import 'package:equatable/equatable.dart';
 
 class SplitConfiguration extends Equatable {
-  final int horizontal;
-  final int vertical;
+  final List<int> horizontal;
+  final List<int> vertical;
 
-  const SplitConfiguration({this.horizontal = 0, this.vertical = 0});
+  const SplitConfiguration(
+      {this.horizontal = const [], this.vertical = const []});
 
   @override
   List<Object?> get props => [horizontal, vertical];
