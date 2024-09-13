@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/searchbar/presenter/bloc/b_searchbar_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/bloc/split_screen_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/presentation/widgets/bible_view.dart';
 
+import '../../../searchbar/presenter/bloc/b_searchbar_bloc.dart';
 import '../../../searchbar/presenter/widgets/bible_searchbar.dart';
+import '../../../translation_reader/presentation/widgets/bible_view.dart';
+import '../bloc/split_screen_bloc.dart';
 
 // TODO: layout with fibonacci ratio
 
@@ -70,7 +70,9 @@ class SplitScreenContainer extends StatelessWidget {
                       Text('focused id: ${state.focusedId}'),
                     ],
                   ),
+                  //
                   // HORIZONTAL SPLITVIEW
+                  //
                   Expanded(
                     child: Row(
                       children: [
