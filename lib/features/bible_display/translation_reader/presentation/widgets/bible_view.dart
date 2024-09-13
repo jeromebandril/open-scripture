@@ -1,21 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:the_smyrna_bible_v2/core/widgets/adjustable_text_size.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/presentation/bloc/reader_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/presentation/widgets/bible_searchbar.dart';
+import 'package:gap/gap.dart';
 
-import '../../../scripture_finder/domain/entity/bible_reference.dart';
-import '../../../../translations_installer_manager/domain/entities/translation.dart';
+import '../../../../../core/presentation/widgets/adjustable_text_size.dart';
+import '../../../../../injection_container.dart';
+import '../../../../../core/domain/entities/translation.dart';
+import '../../../../../core/domain/entities/bible_reference.dart';
+import '../../../split_screen/presenter/bloc/split_screen_bloc.dart';
+import '../../domain/entities/page.dart';
+import '../bloc/reader_bloc.dart';
 
 class BibleView extends StatelessWidget {
+  final int? uniqueId;
   final List<String> items;
-  const BibleView({required this.items, super.key});
+  const BibleView({this.uniqueId, required this.items, super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
+    return GestureDetector(
+      onTap: () => print("tap"),
+      child: BlocProvider(
+        create: (_) =>
+            sl<ReaderBloc>()..add(const ReaderLoadTranslation('eng-kjv')),
+        child: BlocListener<SplitScreenBloc, SplitScreenState>(
+          // listenWhen: (prevState, newState) {
+          //   return prevState.signalData == null && newState.signalData != null &&
+          //       newState.focusedId == uniqueId &&
+          //       newState.status == SplitStatus.success;
+          // },
+          listener: (context, state) {
+            print(
+              "> Reader: recorded a change focusedID = ${state.focusedId} and this ID = $uniqueId: ",
+            );
+            print(
+              "> Reader: set content to ${state.signalData as BibleRef}",
+            );
+            BlocProvider.of<ReaderBloc>(context).add(
+              ReaderReadChapter(state.signalData as BibleRef),
+            );
+          },
           child: BlocBuilder<ReaderBloc, ReaderState>(
             builder: (context, state) {
               // error case
@@ -32,33 +55,19 @@ class BibleView extends StatelessWidget {
               if (state.status == ReaderStatus.error) {
                 return const Text('ERROR');
               }
-
               // success case
-              return Builder(builder: (context) {
-                return Column(
-                  children: [
-                    SizedBox(
-                      height: 50,
-                      child: BibleSearchbar(
-                        items: items,
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(12, 24, 0, 0),
-                        child: VerseList(
-                          translations: state.viewer.translations,
-                          referenceToDisplay: state.references,
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              });
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(12, 24, 0, 0),
+                child: state.page != null
+                    ? VerseList(
+                        content: state.page!,
+                      )
+                    : const SizedBox(),
+              );
             },
           ),
         ),
-      ],
+      ),
     );
   }
 
@@ -71,13 +80,11 @@ class BibleView extends StatelessWidget {
 }
 
 class VerseList extends StatefulWidget {
-  final List<Translation> translations;
-  final List<BibleReference> referenceToDisplay;
+  final PageContent content;
 
   const VerseList({
     super.key,
-    required this.translations,
-    required this.referenceToDisplay,
+    required this.content,
   });
 
   @override
@@ -107,6 +114,7 @@ class _VerseListState extends State<VerseList> {
       child: Builder(
         builder: (context) {
           final list = styleFrontend(context);
+
           return SelectionArea(
             child: ListView.builder(
               controller: scrollController,
@@ -121,113 +129,85 @@ class _VerseListState extends State<VerseList> {
     );
   }
 
+  TextStyle styleVerse(Snippet w) {
+    // given the word properties
+    // style accordinly
+    return TextStyle(
+      fontWeight: w.bold
+          ? FontWeight.bold
+          : w.italics
+              ? FontWeight.w500
+              : FontWeight.normal,
+      fontStyle: w.italics ? FontStyle.italic : FontStyle.normal,
+      color: w.wordOfJesus
+          ? w.italics
+              ? Colors.red.withOpacity(0.4)
+              : Colors.red
+          : w.italics
+              ? Colors.black.withOpacity(0.4)
+              : null,
+    );
+  }
+
   List<Widget> styleFrontend(context) {
-    final List<Widget> verses = [];
-    // for each reference create Row
-    for (var ref in widget.referenceToDisplay) {
-      late Row row;
-      final List<Expanded> translationCol = [];
-      // for each translation create a column
-      for (var translation in widget.translations) {
-        late Column col;
-        final List<Widget> colVerses = [];
-
-        final book = translation.bookNames.values.where((bookData) {
-          return bookData.abbr.toUpperCase().startsWith(ref.book) &&
-              bookData.short.toUpperCase().contains(ref.book);
-          // bookData.long.toUpperCase().startsWith(ref.book) &&
-        }).firstOrNull;
-
-        // if a translation doesn't resolve the reference
-        // it will be empty
-        if (book != null) {
-          if (ref.chapter > book.chapters.length || ref.chapter < 0) {
-            return List.empty();
-          }
-          final chapter = book.chapters[ref.chapter];
-          final paragraphs = chapter.paragraphs;
-
-          if (chapter.number == 1) {
-            colVerses.add(
-              Align(
-                alignment: Alignment.center,
-                child: Text(
-                  book.long,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize:
-                        DefaultTextStyle.of(context).style.fontSize! * 1.2,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            );
-            colVerses.add(const SizedBox(height: 25));
-          }
-
-          // style the text display
-          for (var par in paragraphs) {
-            for (var verse in par.verses) {
-              late Text verseWidget;
-              final List<InlineSpan> content = [];
-              // add numbering
-              content.add(
-                TextSpan(
-                  text: '${book.abbr} ${chapter.number}:${verse.number}  ',
-                  style: TextStyle(
-                    color: Colors.blue[700],
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              );
-              // add verse words
-              for (var w in verse.words) {
-                content.add(
-                  TextSpan(
-                    text: '${w.text} ',
-                    style: TextStyle(
-                      fontWeight: w.bold
-                          ? FontWeight.bold
-                          : w.italics
-                              ? FontWeight.w500
-                              : FontWeight.normal,
-                      fontStyle:
-                          w.italics ? FontStyle.italic : FontStyle.normal,
-                      color: w.wordOfJesus
-                          ? w.italics
-                              ? Colors.red.withOpacity(0.4)
-                              : Colors.red
-                          : w.italics
-                              ? Colors.black.withOpacity(0.4)
-                              : null,
-                    ),
-                  ),
-                );
-              }
-              verseWidget = Text.rich(
-                TextSpan(children: content),
-              );
-              colVerses.add(verseWidget);
-            }
-            colVerses.add(const Text(
-              '',
-            ));
-          }
-        }
-        col = Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: colVerses,
-        );
-        translationCol.add(Expanded(child: col));
-      }
-
-      row = Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: translationCol,
+    final List<Widget> colVerses = [];
+    final String booknameAbbreviation = widget.content.booknameAbbreviation!;
+    final String booknameFull = widget.content.booknameFull!;
+    final int chapterNumber = widget.content.chapterNumber!;
+    final bool isHeterogeneous = widget.content.isHeterogeneous;
+    //
+    // If it is the first chapter of the book,
+    // then add at the start the full name of the book
+    //
+    if (chapterNumber == 1 && !isHeterogeneous) {
+      colVerses.add(
+        Align(
+          alignment: Alignment.center,
+          child: Text(
+            booknameFull,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: DefaultTextStyle.of(context).style.fontSize! * 1.2,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
       );
-      verses.add(row);
+      colVerses.add(const Gap(25));
     }
-    return verses;
+    //
+    // Add each verse
+    //
+    widget.content.content.toList().forEach((paragraph) {
+      paragraph.verses.toList().forEach((verse) {
+        late Text verseWidget;
+        final List<InlineSpan> content = [];
+        //
+        // Add numbering reference before a verse
+        //
+        content.add(
+          TextSpan(
+            text: '$booknameAbbreviation $chapterNumber:${verse.number}  ',
+            style: TextStyle(
+              color: Colors.blue[700],
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        );
+        //
+        // Add verse words with its own styling
+        //
+        for (var w in verse.words) {
+          content.add(TextSpan(text: '${w.text} ', style: styleVerse(w)));
+        }
+        verseWidget = Text.rich(TextSpan(children: content));
+        colVerses.add(verseWidget);
+      });
+      //
+      // add spacing between each paragrah
+      //
+      colVerses.add(const Gap(50));
+    });
+    return colVerses;
   }
 }

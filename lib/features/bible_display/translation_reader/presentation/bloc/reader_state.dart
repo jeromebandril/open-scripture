@@ -10,31 +10,30 @@ enum ReaderStatus {
 class ReaderState extends Equatable {
   const ReaderState({
     this.status = ReaderStatus.initial,
-    this.reference = const BibleReference(),
-    this.references = const [],
-    this.TEMP_TRANSLATION,
+    this.reference = const BibleRef(),
+    this.page,
   });
 
   final ReaderStatus status;
-  final BibleReference reference;
-  final List<BibleReference> references;
-  final Translation? TEMP_TRANSLATION;
+  final BibleRef reference;
+  final PageContent? page;
 
   ReaderState copyWith({
     ReaderStatus Function()? status,
-    BibleReference Function()? reference,
-    List<BibleReference> Function()? references,
-    Translation Function()? TEMP_TRANSLATION,
+    BibleRef Function()? reference,
+    PageContent? Function()? page,
   }) {
     return ReaderState(
       status: status != null ? status() : this.status,
       reference: reference != null ? reference() : this.reference,
-      references: references != null ? references() : this.references,
-      TEMP_TRANSLATION:
-          TEMP_TRANSLATION != null ? TEMP_TRANSLATION() : this.TEMP_TRANSLATION,
+      page: page != null ? page() : this.page,
     );
   }
 
   @override
-  List<Object> get props => [status, reference, references];
+  List<Object?> get props => [
+        status,
+        reference,
+        page,
+      ];
 }

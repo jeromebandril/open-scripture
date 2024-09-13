@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:the_smyrna_bible_v2/core/constants/constants.dart';
 import 'package:the_smyrna_bible_v2/core/error/exception.dart';
 
-import '../../../../../core/models/translation_model.dart';
+import '../../../../../core/data/models/translation_model.dart';
 
 abstract class TranslationsDataSource {
   /// Gets a choosen local saved [TranslationModel] to read
@@ -18,6 +18,7 @@ class TranslationsDataSourceImpl implements TranslationsDataSource {
   @override
   Future<TranslationModel> getTranslation(String id) async {
     try {
+      print("> BReader: reading from file system");
       final path = await ApplicationConstants.getApplicationPath();
       final sourceFile = File('$path/$id/${id}_usfx.xml');
       final metadataFile = File('$path/$id/${id}metadata.xml');

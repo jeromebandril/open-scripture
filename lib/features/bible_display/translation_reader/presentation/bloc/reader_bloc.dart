@@ -5,18 +5,19 @@ import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/do
 import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/domain/usecases/read_chapter.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/domain/usecases/open_usfx_translation.dart';
 
-import '../../../../translations_installer_manager/domain/entities/translation.dart';
-import '../../../searchbar/domain/entity/bible_reference.dart';
+import '../../../../../core/domain/entities/bible_reference.dart';
+import '../../../../../core/domain/entities/translation.dart';
+import '../../domain/entities/page.dart';
 
 part 'reader_event.dart';
 part 'reader_state.dart';
 
 class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
   final OpenUsfxTranslation openTranslation;
+  final GetTranslation getTranslation;
+  final BibleReferenceParser parser;
   // final CloseUsfxTranslation closeTranslation;
   final ReadChapter readChapter;
-  final BibleReferenceParser parser;
-  final GetTranslation getTranslation;
 
   ReaderBloc({
     required this.openTranslation,
@@ -26,7 +27,7 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
     required this.getTranslation,
   }) : super(const ReaderState()) {
     on<ReaderLoadTranslation>(_onLoadTranslation);
-    on<ReaderSetContent>(_onSetContent);
+    on<ReaderReadChapter>(_onReadChapter);
   }
 
   Future<void> _onLoadTranslation(
@@ -44,28 +45,24 @@ class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
         return emit(
           state.copyWith(
             status: () => ReaderStatus.success,
-            TEMP_TRANSLATION: () => translation,
           ),
         );
       },
     );
   }
 
-  Future<void> _onSetContent(
-    ReaderSetContent event,
+  Future<void> _onReadChapter(
+    ReaderReadChapter event,
     Emitter<ReaderState> emit,
   ) async {
-    // final eitherFailureOrReference = parser.analyze(event.text);
-
-    // return eitherFailureOrReference.fold(
     final eitherFailureOrChapter = await readChapter(event.ref);
     return eitherFailureOrChapter.fold(
-      (_) => print('> BReader: error'),
-      (verses) => emit(
+      (_) => print('> BReader: error chapter not read'),
+      (pageContent) => emit(
         state.copyWith(
           status: () => ReaderStatus.success,
           reference: () => event.ref,
-          references: () => verses,
+          page: () => pageContent,
         ),
       ),
     );
