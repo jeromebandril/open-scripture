@@ -10,7 +10,7 @@ abstract class TranslationManagerRepository {
 
   Future<dynamic> uninstallTranslation(String id);
 
-  Stream<Either<Failure, List<TranslationInfo>>> getInstalledTranslationList();
+  Future<Either<Failure, List<TranslationInfo>>> getInstalledTranslationList();
 
-  Stream<Either<Failure, List<TranslationInfo>>> getAllTranslationsList();
+  Future<Either<Failure, List<TranslationInfo>>> getAllTranslationsList();
 }

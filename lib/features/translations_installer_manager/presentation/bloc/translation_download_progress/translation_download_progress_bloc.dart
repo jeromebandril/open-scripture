@@ -15,6 +15,9 @@ part 'translation_download_progress_state.dart';
 /// - Resume download
 /// - Cancel download
 /// - View download progress
+///
+const String INSTALLATION_FAILURE_MESSAGE = 'Failed To Install';
+
 class TranslationDownloadProgressBloc extends Bloc<
     TranslationDownloadProgressEvent, TranslationDownloadProgressState> {
   final DownloadTranslation downloadTranslation;

@@ -6,7 +6,6 @@ import 'package:the_smyrna_bible_v2/features/translations_installer_manager/doma
 import '../../../../../core/error/failure.dart';
 import '../../../domain/entities/translation_info.dart';
 import '../../../domain/usecases/get_local_translations_info_list.dart';
-import '../translation_manager_bloc.dart';
 
 part 'installed_translations_event.dart';
 part 'installed_translations_state.dart';
@@ -15,6 +14,9 @@ part 'installed_translations_state.dart';
 ///
 /// - View all locally installed translations
 /// - Uninstall translations
+///
+const String NO_LOCAL_DATA_FAILURE_MESSAGE = 'No Local Data';
+
 class InstalledTranslationsBloc
     extends Bloc<InstalledTranslationsEvent, InstalledTranslationsState> {
   final GetLocalTranslationsInfoList getLocalTranslationsInfoList;
@@ -36,21 +38,18 @@ class InstalledTranslationsBloc
 
     await Future.delayed(Duration.zero);
 
-    await emit.forEach<Either<Failure, List<TranslationInfo>>>(
-      getLocalTranslationsInfoList.call(null),
-      onData: (eitherFailureOrInfos) {
-        return eitherFailureOrInfos.fold(
-          (failure) => state.copyWith(
-            status: () => InstalledTranslationsStatus.error,
-            errorMessage: () => NO_LOCAL_DATA_FAILURE_MESSAGE,
-          ),
-          (infos) => state.copyWith(
-            status: () => InstalledTranslationsStatus.loaded,
-            installedTranslationsInfos: () => infos,
-          ),
-        );
-      },
-    );
+    final eitherFailureOrData = await getLocalTranslationsInfoList(null);
+
+    emit(eitherFailureOrData.fold(
+      (failure) => state.copyWith(
+        status: () => InstalledTranslationsStatus.error,
+        errorMessage: () => NO_LOCAL_DATA_FAILURE_MESSAGE,
+      ),
+      (infos) => state.copyWith(
+        status: () => InstalledTranslationsStatus.loaded,
+        installedTranslationsInfos: () => infos,
+      ),
+    ));
   }
 
   Future<void> _onUninstall(

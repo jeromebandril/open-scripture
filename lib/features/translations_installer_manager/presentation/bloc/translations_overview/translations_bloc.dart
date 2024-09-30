@@ -19,6 +19,10 @@ part 'translations_state.dart';
 ///
 /// - view all translations
 /// - start download of a translation
+///
+const String SERVER_FAILURE_MESSAGE =
+    'Oops something went wrong, check your connection';
+
 class AllTranslationsBloc
     extends Bloc<AllTranslationsEvent, AllTranslationsState> {
   final GetTranslationsInfoList getTranslationsInfoList;
@@ -37,21 +41,17 @@ class AllTranslationsBloc
 
     await Future.delayed(Duration.zero);
 
-    await emit.forEach<Either<Failure, List<TranslationInfo>>>(
-      getTranslationsInfoList.call(null),
-      onData: (eitherFailureOrInfos) {
-        return eitherFailureOrInfos.fold(
-          (failure) => state.copyWith(
-            status: () => AllTranslationsStatus.error,
-            errorMessage: () => SERVER_FAILURE_MESSAGE,
-          ),
-          (infos) => state.copyWith(
-            status: () => AllTranslationsStatus.loaded,
-            translationInfos: () => infos,
-          ),
-        );
-      },
-    );
+    final eitherFailureOrData = await getTranslationsInfoList(null);
+    emit(eitherFailureOrData.fold(
+      (failure) => state.copyWith(
+        status: () => AllTranslationsStatus.error,
+        errorMessage: () => SERVER_FAILURE_MESSAGE,
+      ),
+      (infos) => state.copyWith(
+        status: () => AllTranslationsStatus.loaded,
+        translationInfos: () => infos,
+      ),
+    ));
   }
 
   Stream<AllTranslationsEvent> get events => events;

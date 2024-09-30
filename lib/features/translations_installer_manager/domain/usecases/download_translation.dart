@@ -1,6 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:the_smyrna_bible_v2/core/error/failure.dart';
-import 'package:the_smyrna_bible_v2/core/usecases/usecase.dart';
+import 'package:the_smyrna_bible_v2/core/domain/usecases/usecase.dart';
 
 import '../repositories/translation_manager_repository.dart';
 
