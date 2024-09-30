@@ -59,8 +59,14 @@ class TranslationManagerLocalDataSourceImpl
   }
 
   @override
-  Future<void> uninstallTranslation(String path) {
-    throw UnimplementedError();
+  Future<void> uninstallTranslation(String id) async {
+    try {
+      final path = await ApplicationConstants.getApplicationPath();
+      Directory directory = Directory("$path/$id");
+      directory.delete(recursive: true);
+    } catch (e) {
+      throw Exception();
+    }
   }
 
   @override
