@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:the_smyrna_bible_v2/core/widgets/hoverable_container.dart';
+import 'package:the_smyrna_bible_v2/core/presentation/widgets/hoverable_container.dart';
 import 'package:the_smyrna_bible_v2/features/translations_installer_manager/domain/entities/translation_info.dart';
 import 'package:the_smyrna_bible_v2/features/translations_installer_manager/presentation/bloc/translation_download_progress/translation_download_progress_bloc.dart';
 import 'package:the_smyrna_bible_v2/injection_container.dart';
@@ -456,17 +456,24 @@ class InstalledTranslationsOverviewTile extends StatelessWidget {
           children: [
             Flexible(
               child: Text(
-                translationInfo.name,
+                translationInfo.name.split("\\").last,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () =>
+                  dispatch(context, translationInfo.name.split("\\").last),
               child: const Text('Uninstall'),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  void dispatch(context, String id) {
+    BlocProvider.of<InstalledTranslationsBloc>(context).add(
+      InstalledTranslationUninstall(id),
     );
   }
 }

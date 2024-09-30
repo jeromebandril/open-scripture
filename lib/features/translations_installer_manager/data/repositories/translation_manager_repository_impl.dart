@@ -3,11 +3,11 @@ import 'package:the_smyrna_bible_v2/core/error/exception.dart';
 import 'package:fpdart/fpdart.dart';
 
 import '../../../../core/error/failure.dart';
-import '../../../../core/models/translation_manager_model.dart';
+import '../../../../core/data/models/translation_manager_model.dart';
 import '../../domain/entities/translation_info.dart';
 import '../datasources/translation_manager_remote_datasource.dart';
 import '../../domain/repositories/translation_manager_repository.dart';
-import '../../../../core/datasources/translation_manager_local_datasource.dart';
+import '../../../../core/data/datasources/translation_manager_local_datasource.dart';
 import '../models/translation_info_model.dart';
 
 // ignore_for_file: constant_identifier_names
@@ -82,7 +82,7 @@ class TranslationManagerRepositoryImpl implements TranslationManagerRepository {
   }
 
   @override
-  Future uninstallTranslation(String path) {
-    throw UnimplementedError();
+  Future uninstallTranslation(String id) async {
+    await localDataSource.uninstallTranslation(id);
   }
 }
