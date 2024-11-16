@@ -140,7 +140,7 @@ class _NavigationButton extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(4),
       ),
-      color: isActive ? Colors.black38 : Colors.transparent,
+      color: isActive ? Colors.black12 : Colors.transparent,
       child: InkWell(
         splashFactory: NoSplash.splashFactory,
         borderRadius: BorderRadius.circular(4),

@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:the_smyrna_bible_v2/core/error/exception.dart';
-import 'package:the_smyrna_bible_v2/core/models/translation_model.dart';
+import 'package:the_smyrna_bible_v2/core/data/models/translation_model.dart';
 import 'package:the_smyrna_bible_v2/features/translations_manager/data/datasources/translation_manager_local_datasource.dart';
 
 import 'translation_local_datasource_impl_test.mocks.dart';

@@ -4,12 +4,9 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:fpdart/fpdart.dart';
 
-import '../../../../../core/error/failure.dart';
 import '../../../domain/entities/translation_info.dart';
 import '../../../domain/usecases/get_translations_info_list.dart';
-import '../translation_manager_bloc.dart';
 
 part 'translations_event.dart';
 part 'translations_state.dart';

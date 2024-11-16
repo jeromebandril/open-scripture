@@ -1,6 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 
-import '../../features/bible_display/searchbar/domain/entity/bible_reference.dart';
+import '../domain/entities/bible_reference.dart';
 import '../error/failure.dart';
 
 class BibleReferenceParser {
@@ -142,7 +142,7 @@ class BibleReferenceParser {
     'Rev',
   ];
 
-  Either<Failure, BibleReference> analyze(String text) {
+  Either<Failure, BibleRef> analyze(String text) {
     try {
       //
       // Extract book and chapter+verse information
@@ -187,7 +187,7 @@ class BibleReferenceParser {
       //
       // result
       //
-      final BibleReference reference = BibleReference(
+      final BibleRef reference = BibleRef(
         book: book.toUpperCase(),
         chapter: chapter - 1, // corrections for zero based counting
         verse: verse - 1,

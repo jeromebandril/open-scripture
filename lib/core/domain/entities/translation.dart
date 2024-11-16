@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../../../features/bible_display/searchbar/domain/entity/bible_reference.dart';
-
+import 'bible_reference.dart';
 class Translation extends Equatable {
   final String name;
   final String abbreviation;
@@ -109,7 +108,7 @@ class Snippet extends Equatable {
 */
 
 class Bible {
-  final Map<BibleReference, Verse> amp;
+  final Map<BibleRef, Verse> amp;
 
   const Bible(this.amp);
 }

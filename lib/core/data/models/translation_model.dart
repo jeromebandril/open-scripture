@@ -127,6 +127,11 @@ class TranslationModel extends Translation {
           // has been already encountered).
           // This fills the paragraph with its proper content,
           // at the end it will be added to the Chapter
+          //
+          // attention: in psalms kjv there's there's no <p> elements
+          // instead there's a new element <q> which stands for "quote"
+          // that wraps each verse
+          case 'q':
           case 'p':
             List<Verse> paragraphVerses = [];
 
@@ -173,7 +178,9 @@ class TranslationModel extends Translation {
             par = Paragraph(title: '', verses: paragraphVerses);
             // when the line below happens it means it is the preface
             // chapter ??= const Chapter(number: 0, paragraphs: []);
-            if (chapterStart) chapterParagraphs.add(par);
+            if (chapterStart) {
+              chapterParagraphs.add(par);
+            }
             break;
         }
       }

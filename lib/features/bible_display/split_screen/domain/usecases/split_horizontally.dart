@@ -22,6 +22,7 @@ class SplitHorizontally
         ),
       );
     }
+
     return Future.value(value);
   }
 }

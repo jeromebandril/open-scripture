@@ -17,9 +17,9 @@ void main() async {
 }
 
 /// The Application doesn't have any route
-/// because it's design to be single page
-/// "Possible" pages instead will be displayed
-/// as floating windows
+/// because it's design to be single page app.
+/// "Possible" pages will be instead displayed
+/// as floating windows on top
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -41,9 +41,8 @@ class MyApp extends StatelessWidget {
                   di.sl<SplitScreenBloc>()..add(const SplitScreenX())),
           BlocProvider(create: (_) => di.sl<WindowStackManagerBloc>()),
           BlocProvider(
-            create: (_) => di.sl<InstalledTranslationsBloc>()
-              ..add(InstalledTranslationsSubscriptionRequested()),
-          ),
+              create: (_) => di.sl<InstalledTranslationsBloc>()
+                ..add(InstalledTranslationsSubscriptionRequested())),
           BlocProvider(create: (_) => di.sl<BSearchbarBloc>()),
         ],
         child: const Home(),

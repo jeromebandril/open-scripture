@@ -7,7 +7,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:the_smyrna_bible_v2/core/error/exception.dart';
 import 'package:the_smyrna_bible_v2/core/error/failure.dart';
 import 'package:the_smyrna_bible_v2/features/translations_manager/data/datasources/translation_manager_local_datasource.dart';
-import 'package:the_smyrna_bible_v2/core/models/translation_model.dart';
+import 'package:the_smyrna_bible_v2/core/data/models/translation_model.dart';
 import 'package:the_smyrna_bible_v2/features/translations_manager/data/datasources/translation_manager_remote_datasource.dart';
 import 'package:the_smyrna_bible_v2/features/translations_manager/data/repositories/translation_manager_repository_impl.dart';
 import 'package:the_smyrna_bible_v2/features/translations_manager/domain/entities/translation.dart';

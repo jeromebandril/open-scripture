@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../searchbar/presenter/bloc/b_searchbar_bloc.dart';
 import '../../../searchbar/presenter/widgets/bible_searchbar.dart';
 import '../../../translation_reader/presentation/widgets/bible_view.dart';
 import '../bloc/split_screen_bloc.dart';
@@ -29,100 +28,93 @@ class SplitScreenContainer extends StatelessWidget {
       },
       child: Focus(
         autofocus: true,
-        child: BlocListener<BSearchbarBloc, BSearchbarState>(
-          listenWhen: (prevState, newState) =>
-              newState.status == BSearchbarStatus.success,
-          listener: (context, state) {
-            print("> Splitview: input received");
-            print(
-              "> Splitview: proceeding to forward input to view ${state.referenceResult}",
-            );
-            BlocProvider.of<SplitScreenBloc>(context).add(
-              SplitScreenSendSignal(data: state.referenceResult),
-            );
-          },
-          child: BlocBuilder<SplitScreenBloc, SplitScreenState>(
-            builder: (context, state) {
-              return Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // TOPBAR
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+        child: BlocBuilder<SplitScreenBloc, SplitScreenState>(
+          // buildWhen: (_, state) {
+          //   print(state.status);
+          //   return state.status == SplitStatus.success;
+          // },
+          builder: (context, state) {
+            print(state.conf.horizontal.length);
+            return Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // TOPBAR
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const BSearchbar(items: []),
+                    TextButton(
+                      onPressed: () {
+                        BlocProvider.of<SplitScreenBloc>(context)
+                            .add(const SplitScreenX());
+                      },
+                      child: Text("add X split ${state.conf.horizontal}"),
+                    ),
+                    // TextButton(
+                    //   onPressed: () {
+                    //     BlocProvider.of<SplitScreenBloc>(context)
+                    //         .add(const SplitScreenY());
+                    //   },
+                    //   child: Text("add Y split ${state.conf.vertical}"),
+                    // ),
+                    Text('focused id: ${state.focusedId}'),
+                  ],
+                ),
+                //
+                // HORIZONTAL SPLITVIEW
+                //
+                Expanded(
+                  child: Row(
                     children: [
-                      const BSearchbar(items: []),
-                      TextButton(
-                        onPressed: () {
-                          BlocProvider.of<SplitScreenBloc>(context)
-                              .add(const SplitScreenX());
-                        },
-                        child: Text("add X split ${state.conf.horizontal}"),
-                      ),
-                      // TextButton(
-                      //   onPressed: () {
-                      //     BlocProvider.of<SplitScreenBloc>(context)
-                      //         .add(const SplitScreenY());
-                      //   },
-                      //   child: Text("add Y split ${state.conf.vertical}"),
-                      // ),
-                      Text('focused id: ${state.focusedId}'),
-                    ],
-                  ),
-                  //
-                  // HORIZONTAL SPLITVIEW
-                  //
-                  Expanded(
-                    child: Row(
-                      children: [
-                        for (int i = 0; i < state.conf.horizontal.length; i++)
-                          Expanded(
-                            child: GestureDetector(
-                              behavior: HitTestBehavior.deferToChild,
-                              onTap: () {
-                                print("> Widget: tapped $i");
-                                setFocus(
-                                  state.conf.horizontal[i],
-                                  context,
-                                );
-                              },
-                              child: Container(
-                                padding:
-                                    const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                                decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(2)),
-                                  color: state.conf.horizontal[i] ==
-                                          state.focusedId
-                                      ? const Color.fromRGBO(200, 200, 200, 0.5)
-                                      : Colors.white30,
-                                ),
-                                child: BibleView(
-                                  uniqueId: state.conf.horizontal[i],
-                                  items: const [],
-                                ),
+                      for (int i = 0; i < state.conf.horizontal.length; i++)
+                        Expanded(
+                          key: ValueKey(i),
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.deferToChild,
+                            onTap: () {
+                              print("> Widget: tapped $i");
+                              setFocus(
+                                state.conf.horizontal[i],
+                                context,
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(2)),
+                                color: state.conf.horizontal[i] ==
+                                        state.focusedId
+                                    ? const Color.fromRGBO(200, 200, 200, 0.2)
+                                    : Colors.white30,
+                              ),
+                              child: BibleView(
+                                key: ValueKey(i),
+                                uniqueId: state.conf.horizontal[i],
+                                items: const [],
                               ),
                             ),
-                          )
-                      ],
-                    ),
+                          ),
+                        )
+                    ],
                   ),
+                ),
 
-                  // VERTICAL
-                  // for (int i = 0; i < state.conf.vertical.length; i++)
-                  //   Expanded(
-                  //     child: Container(
-                  //       decoration: const BoxDecoration(
-                  //         borderRadius: BorderRadius.all(Radius.circular(24)),
-                  //         color: Colors.amber,
-                  //       ),
-                  //     ),
-                  //   )
-                ],
-              );
-            },
-          ),
+                // VERTICAL
+                // for (int i = 0; i < state.conf.vertical.length; i++)
+                //   Expanded(
+                //     child: Container(
+                //       decoration: const BoxDecoration(
+                //         borderRadius: BorderRadius.all(Radius.circular(24)),
+                //         color: Colors.amber,
+                //       ),
+                //     ),
+                //   )
+              ],
+            );
+          },
         ),
       ),
     );

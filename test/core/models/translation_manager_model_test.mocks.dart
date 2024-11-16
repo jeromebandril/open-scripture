@@ -4,9 +4,9 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:the_smyrna_bible_v2/core/models/translation_manager_model.dart'
+import 'package:the_smyrna_bible_v2/core/data/models/translation_manager_model.dart'
     as _i2;
-import 'package:the_smyrna_bible_v2/features/translations_installer_manager/domain/entities/translation.dart'
+import 'package:the_smyrna_bible_v2/core/domain/entities/translation.dart'
     as _i3;
 
 // ignore_for_file: type=lint

@@ -1,8 +1,8 @@
 // ignore_for_file: curly_braces_in_flow_control_structures, prefer_const_constructors
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:the_smyrna_bible_v2/core/models/translation_model.dart';
-import 'package:the_smyrna_bible_v2/features/translations_installer_manager/domain/entities/translation.dart';
+import 'package:the_smyrna_bible_v2/core/data/models/translation_model.dart';
+import 'package:the_smyrna_bible_v2/core/domain/entities/translation.dart';
 import '../../fixtures/fixture_reader.dart';
 
 void main() {
@@ -25,37 +25,41 @@ void main() {
                   Verse(
                     number: 1,
                     words: [
-                      Word(text: 'Teaching', scn: 'G1321', wordOfJesus: true),
-                      Word(text: 'them', scn: 'G0846', wordOfJesus: true),
-                      Word(text: 'to observe', scn: 'G5083', wordOfJesus: true),
-                      Word(text: 'all things', scn: 'G3956', wordOfJesus: true),
-                      Word(text: 'whatsoever', scn: 'G3745', wordOfJesus: true),
-                      Word(
+                      Snippet(
+                          text: 'Teaching', scn: 'G1321', wordOfJesus: true),
+                      Snippet(text: 'them', scn: 'G0846', wordOfJesus: true),
+                      Snippet(
+                          text: 'to observe', scn: 'G5083', wordOfJesus: true),
+                      Snippet(
+                          text: 'all things', scn: 'G3956', wordOfJesus: true),
+                      Snippet(
+                          text: 'whatsoever', scn: 'G3745', wordOfJesus: true),
+                      Snippet(
                           text: 'I have commanded',
                           scn: 'G1781',
                           wordOfJesus: true),
-                      Word(text: 'you', scn: 'G5213', wordOfJesus: true),
-                      Word(text: ':', wordOfJesus: true),
-                      Word(text: 'and', scn: 'G2532', wordOfJesus: true),
-                      Word(text: ',', wordOfJesus: true),
-                      Word(text: 'lo', scn: 'G2400', wordOfJesus: true),
-                      Word(text: ',', wordOfJesus: true),
-                      Word(text: 'I', scn: 'G1473', wordOfJesus: true),
-                      Word(text: 'am', scn: 'G1510', wordOfJesus: true),
-                      Word(text: 'with', scn: 'G3326', wordOfJesus: true),
-                      Word(text: 'you', scn: 'G5216', wordOfJesus: true),
-                      Word(text: 'alway', scn: 'G3956', wordOfJesus: true),
-                      Word(text: ',', wordOfJesus: true),
-                      Word(text: 'even', italics: true, wordOfJesus: true),
-                      Word(text: 'unto', scn: 'G2193', wordOfJesus: true),
-                      Word(text: 'the end', scn: 'G4930', wordOfJesus: true),
-                      Word(
+                      Snippet(text: 'you', scn: 'G5213', wordOfJesus: true),
+                      Snippet(text: ':', wordOfJesus: true),
+                      Snippet(text: 'and', scn: 'G2532', wordOfJesus: true),
+                      Snippet(text: ',', wordOfJesus: true),
+                      Snippet(text: 'lo', scn: 'G2400', wordOfJesus: true),
+                      Snippet(text: ',', wordOfJesus: true),
+                      Snippet(text: 'I', scn: 'G1473', wordOfJesus: true),
+                      Snippet(text: 'am', scn: 'G1510', wordOfJesus: true),
+                      Snippet(text: 'with', scn: 'G3326', wordOfJesus: true),
+                      Snippet(text: 'you', scn: 'G5216', wordOfJesus: true),
+                      Snippet(text: 'alway', scn: 'G3956', wordOfJesus: true),
+                      Snippet(text: ',', wordOfJesus: true),
+                      Snippet(text: 'even', italics: true, wordOfJesus: true),
+                      Snippet(text: 'unto', scn: 'G2193', wordOfJesus: true),
+                      Snippet(text: 'the end', scn: 'G4930', wordOfJesus: true),
+                      Snippet(
                           text: 'of the world',
                           scn: 'G0165',
                           wordOfJesus: true),
-                      Word(text: '.', wordOfJesus: true),
-                      Word(text: 'Amen', scn: 'G0281'),
-                      Word(text: '.'),
+                      Snippet(text: '.', wordOfJesus: true),
+                      Snippet(text: 'Amen', scn: 'G0281'),
+                      Snippet(text: '.'),
                     ],
                   ),
                 ],

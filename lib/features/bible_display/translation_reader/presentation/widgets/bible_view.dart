@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/searchbar/presenter/bloc/b_searchbar_bloc.dart';
 
 import '../../../../../core/presentation/widgets/adjustable_text_size.dart';
 import '../../../../../injection_container.dart';
 import '../../../../../core/domain/entities/translation.dart';
-import '../../../../../core/domain/entities/bible_reference.dart';
-import '../../../split_screen/presenter/bloc/split_screen_bloc.dart';
 import '../../domain/entities/page.dart';
 import '../bloc/reader_bloc.dart';
 
@@ -17,55 +16,46 @@ class BibleView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(key);
     return GestureDetector(
       onTap: () => print("tap"),
       child: BlocProvider(
         create: (_) =>
             sl<ReaderBloc>()..add(const ReaderLoadTranslation('eng-kjv')),
-        child: BlocListener<SplitScreenBloc, SplitScreenState>(
-          // listenWhen: (prevState, newState) {
-          //   return prevState.signalData == null && newState.signalData != null &&
-          //       newState.focusedId == uniqueId &&
-          //       newState.status == SplitStatus.success;
-          // },
-          listener: (context, state) {
-            print(
-              "> Reader: recorded a change focusedID = ${state.focusedId} and this ID = $uniqueId: ",
-            );
-            print(
-              "> Reader: set content to ${state.signalData as BibleRef}",
-            );
-            BlocProvider.of<ReaderBloc>(context).add(
-              ReaderReadChapter(state.signalData as BibleRef),
-            );
-          },
-          child: BlocBuilder<ReaderBloc, ReaderState>(
-            builder: (context, state) {
-              // error case
-              if (state.status == ReaderStatus.reading) {
-                return const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    LinearProgressIndicator(),
-                    Text('Opening the bible...')
-                  ],
+        child: BlocBuilder<ReaderBloc, ReaderState>(
+          builder: (context, state) {
+            // error case
+            if (state.status == ReaderStatus.reading) {
+              return const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  LinearProgressIndicator(),
+                  Text('Opening the bible...')
+                ],
+              );
+            }
+            if (state.status == ReaderStatus.error) {
+              return const Text('ERROR');
+            }
+            // success case
+            return BlocListener<BSearchbarBloc, BSearchbarState>(
+              listener: (context, state) {
+                if (state.referenceResult == null) return;
+                BlocProvider.of<ReaderBloc>(context).add(
+                  ReaderReadChapter(state.referenceResult!),
                 );
-              }
-              if (state.status == ReaderStatus.error) {
-                return const Text('ERROR');
-              }
-              // success case
-              return Padding(
+              },
+              child: Padding(
                 padding: const EdgeInsets.fromLTRB(12, 24, 0, 0),
                 child: state.page != null
                     ? VerseList(
                         content: state.page!,
                       )
                     : const SizedBox(),
-              );
-            },
-          ),
+              ),
+            );
+          },
         ),
       ),
     );

@@ -20,7 +20,12 @@ class SplitScreenState extends Equatable {
   final BibleRef? signalData;
 
   @override
-  List<Object?> get props => [status, conf, focusedId, signalData];
+  List<Object?> get props => [
+        status,
+        conf,
+        focusedId,
+        signalData,
+      ];
 
   SplitScreenState copyWith({
     SplitStatus Function()? status,

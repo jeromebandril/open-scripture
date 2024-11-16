@@ -1,5 +1,5 @@
 import 'package:get_it/get_it.dart';
-import 'package:the_smyrna_bible_v2/core/models/translation_manager_model.dart';
+import 'package:the_smyrna_bible_v2/core/data/models/translation_manager_model.dart';
 import 'package:the_smyrna_bible_v2/core/utils/bible_reference_parser.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/domain/usecases/split_horizontally.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/domain/usecases/split_vertically.dart';
@@ -12,7 +12,7 @@ import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/do
 import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/domain/usecases/read_chapter.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/domain/usecases/open_usfx_translation.dart';
 import 'package:the_smyrna_bible_v2/features/translations_installer_manager/data/datasources/translation_manager_remote_datasource.dart';
-import 'package:the_smyrna_bible_v2/core/datasources/translation_manager_local_datasource.dart';
+import 'package:the_smyrna_bible_v2/core/data/datasources/translation_manager_local_datasource.dart';
 import 'package:the_smyrna_bible_v2/features/translations_installer_manager/data/repositories/translation_manager_repository_impl.dart';
 import 'package:the_smyrna_bible_v2/features/translations_installer_manager/domain/repositories/translation_manager_repository.dart';
 import 'package:the_smyrna_bible_v2/features/translations_installer_manager/domain/usecases/get_local_translations_info_list.dart';
@@ -91,9 +91,17 @@ Future<void> init() async {
     () => TranslationManagerRemoteDataSourceImpl(),
   );
 
+  // Features - BSearchbar
+  // bloc
+  sl.registerFactory(
+    // !!!!
+    () => BSearchbarBloc(brParser: sl()),
+  );
+
   // Features - Bible reader
   // bloc
   sl.registerFactory(
+    // !!!!!!!
     () => ReaderBloc(
       // closeTranslation: sl(),
       readChapter: sl(),
@@ -120,7 +128,7 @@ Future<void> init() async {
     () => TranslationsDataSourceImpl(),
   );
 
-  // Features - Bible reader
+  // Features - SplitScreen
   // bloc
   sl.registerFactory(
     () => SplitScreenBloc(
@@ -130,9 +138,4 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<SplitHorizontally>(() => SplitHorizontally());
   sl.registerLazySingleton<SplitVertically>(() => SplitVertically());
-
-  // Features - BSearchbar
-  sl.registerFactory(
-    () => BSearchbarBloc(brParser: sl()),
-  );
 }

@@ -1,9 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:fpdart/fpdart.dart';
 import 'package:the_smyrna_bible_v2/features/translations_installer_manager/domain/usecases/uninstall_translation.dart';
 
-import '../../../../../core/error/failure.dart';
 import '../../../domain/entities/translation_info.dart';
 import '../../../domain/usecases/get_local_translations_info_list.dart';
 

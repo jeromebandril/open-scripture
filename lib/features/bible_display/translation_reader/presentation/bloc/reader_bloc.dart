@@ -6,7 +6,6 @@ import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/do
 import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/domain/usecases/open_usfx_translation.dart';
 
 import '../../../../../core/domain/entities/bible_reference.dart';
-import '../../../../../core/domain/entities/translation.dart';
 import '../../domain/entities/page.dart';
 
 part 'reader_event.dart';

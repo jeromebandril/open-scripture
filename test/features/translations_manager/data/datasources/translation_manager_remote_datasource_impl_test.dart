@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:the_smyrna_bible_v2/core/models/translation_model.dart';
+import 'package:the_smyrna_bible_v2/core/data/models/translation_model.dart';
 import 'package:the_smyrna_bible_v2/features/translations_installer_manager/data/datasources/translation_manager_remote_datasource.dart';
 
 import '../../../../fixtures/fixture_reader.dart';
