@@ -13,3 +13,7 @@ class InstallationException implements Exception {
 class NoLoadedDataExcepetion implements Exception {
   NoLoadedDataExcepetion();
 }
+
+class NoDbConnectionExcepetion implements Exception {
+  NoDbConnectionExcepetion();
+}

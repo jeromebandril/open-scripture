@@ -16,11 +16,11 @@ class ReaderLoadTranslation extends ReaderEvent {
   List<Object> get props => [id];
 }
 
-class ReaderReadChapter extends ReaderEvent {
-  final BibleRef ref;
+class ReaderDisplay extends ReaderEvent {
+  final BibleReference bibleRef;
 
-  const ReaderReadChapter(this.ref);
+  const ReaderDisplay(this.bibleRef);
 
   @override
-  List<Object> get props => [ref];
+  List<Object> get props => [bibleRef];
 }

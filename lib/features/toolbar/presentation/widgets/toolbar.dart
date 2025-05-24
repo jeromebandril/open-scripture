@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
   TODO:
   - manage the appearing window widget lifecycle,
   I think I prefer to destroy it on close and recreate it
-  every time (so it doesn't remain loaded in memory when
+  every time (so it doesn't remain loaded in memory while
   not been used) 
 */
 

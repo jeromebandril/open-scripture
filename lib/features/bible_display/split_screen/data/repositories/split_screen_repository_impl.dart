@@ -1,4 +1,4 @@
-import 'package:the_smyrna_bible_v2/features/bible_display/searchbar/presenter/bloc/b_searchbar_bloc.dart';
+import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/domain/repositories/split_screen_repository.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/bloc/split_screen_bloc.dart';
 

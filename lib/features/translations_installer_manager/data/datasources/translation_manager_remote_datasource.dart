@@ -6,7 +6,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parser;
-import 'package:the_smyrna_bible_v2/core/constants/constants.dart';
+import 'package:the_smyrna_bible_v2/core/constants/constants.dart' as Constants;
 import 'package:the_smyrna_bible_v2/core/error/exception.dart';
 
 import '../models/translation_info_model.dart';
@@ -27,7 +27,7 @@ abstract class TranslationManagerRemoteDataSource {
   /// from eBible.org endpoint
   ///
   /// Throws [ServerException] if it is unsuccessful
-  Future<List<TranslationInfoModel>> getAllTranslationsInfos();
+  Future<List<TranslationInfoModel>> getListOfAllTranslations();
 }
 
 class TranslationManagerRemoteDataSourceImpl
@@ -41,8 +41,8 @@ class TranslationManagerRemoteDataSourceImpl
     String id,
   ) async* {
     try {
-      final url = Uri.parse('${ApplicationConstants.baseURL}/${id}_usfx.zip');
-      final appPath = await ApplicationConstants.getApplicationPath();
+      final url = Uri.parse('${Constants.contentSourceURL}/${id}_usfx.zip');
+      final appPath = await Constants.getApplicationPath();
       final translationDir = Directory('$appPath/$id');
       final downloadController = StreamController<List<int>>();
       dio.downloadUri(
@@ -61,9 +61,9 @@ class TranslationManagerRemoteDataSourceImpl
   }
 
   @override
-  Future<List<TranslationInfoModel>> getAllTranslationsInfos() async {
+  Future<List<TranslationInfoModel>> getListOfAllTranslations() async {
     try {
-      final response = await http.get(Uri.parse(ApplicationConstants.baseURL));
+      final response = await http.get(Uri.parse(Constants.contentSourceURL));
 
       if (response.statusCode != 200) throw ServerException();
 

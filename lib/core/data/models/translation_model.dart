@@ -1,8 +1,6 @@
 import 'package:xml/xml.dart';
 import 'package:xml/xpath.dart';
 
-import '../../domain/entities/translation.dart';
-
 class TranslationModel extends Translation {
   const TranslationModel({
     required String name,
@@ -214,11 +212,6 @@ class TranslationModel extends Translation {
       language: metadata.xpath('DBLMetadata/language/name').single.innerText,
       bookNames: bookNames,
     );
-  }
-
-  factory TranslationModel.fromUSFX2MAP(String metadataXml, String sourceXml) {
-    final t = TranslationModel.fromUSFX(metadataXml, sourceXml);
-    return t;
   }
 
   ///

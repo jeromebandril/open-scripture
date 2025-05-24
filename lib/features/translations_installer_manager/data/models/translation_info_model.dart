@@ -18,6 +18,10 @@ class TranslationInfoModel extends TranslationInfo {
     return await dirDestination.exists();
   }
 
+  toDomain() {
+    return TranslationInfo(id: id, name: name, language: language);
+  }
+
   // TranslationInfoModel copyWith({
   //   String Function()? id,
   //   String Function()? name,

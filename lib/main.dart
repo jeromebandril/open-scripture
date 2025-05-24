@@ -6,13 +6,12 @@ import 'package:the_smyrna_bible_v2/features/toolbar/presentation/widgets/toolba
 import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/bloc/split_screen_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/window_stack_manager/presentation/widgets/window_stack_manager_wrapper.dart';
-import 'features/bible_display/searchbar/presenter/bloc/b_searchbar_bloc.dart';
+import 'features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
 import 'features/translations_installer_manager/presentation/bloc/installed_translations_overview/installed_translations_bloc.dart';
 import 'injection_container.dart' as di;
 
 void main() async {
   await di.init();
-
   runApp(const MyApp());
 }
 

@@ -18,6 +18,13 @@ class NoLocalDataFailure extends Failure {
   List<Object?> get props => [];
 }
 
+class NotFoundFailure extends Failure {
+  const NotFoundFailure();
+
+  @override
+  List<Object?> get props => [];
+}
+
 class InstallFailure extends Failure {
   const InstallFailure();
 
@@ -34,6 +41,13 @@ class NoLoadedDataFailure extends Failure {
 
 class SplitFailure extends Failure {
   const SplitFailure();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class VerseNotExist extends Failure {
+  const VerseNotExist();
 
   @override
   List<Object?> get props => [];

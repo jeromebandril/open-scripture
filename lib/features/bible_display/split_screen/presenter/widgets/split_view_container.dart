@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../searchbar/presenter/widgets/bible_searchbar.dart';
+import '../../../../b_searchbar/presenter/widgets/bible_searchbar.dart';
 import '../../../translation_reader/presentation/widgets/bible_view.dart';
 import '../bloc/split_screen_bloc.dart';
 

@@ -13,7 +13,7 @@ part 'installed_translations_state.dart';
 /// - View all locally installed translations
 /// - Uninstall translations
 ///
-const String NO_LOCAL_DATA_FAILURE_MESSAGE = 'No Local Data';
+const String noLocalDataFailureMessage = 'No Local Data';
 
 class InstalledTranslationsBloc
     extends Bloc<InstalledTranslationsEvent, InstalledTranslationsState> {
@@ -41,7 +41,7 @@ class InstalledTranslationsBloc
     emit(eitherFailureOrData.fold(
       (failure) => state.copyWith(
         status: () => InstalledTranslationsStatus.error,
-        errorMessage: () => NO_LOCAL_DATA_FAILURE_MESSAGE,
+        errorMessage: () => noLocalDataFailureMessage,
       ),
       (infos) => state.copyWith(
         status: () => InstalledTranslationsStatus.loaded,

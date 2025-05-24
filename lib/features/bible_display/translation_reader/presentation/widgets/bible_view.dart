@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/searchbar/presenter/bloc/b_searchbar_bloc.dart';
+import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
 
 import '../../../../../core/presentation/widgets/adjustable_text_size.dart';
 import '../../../../../injection_container.dart';
-import '../../../../../core/domain/entities/translation.dart';
-import '../../domain/entities/page.dart';
 import '../bloc/reader_bloc.dart';
 
 class BibleView extends StatelessWidget {
@@ -43,7 +41,7 @@ class BibleView extends StatelessWidget {
               listener: (context, state) {
                 if (state.referenceResult == null) return;
                 BlocProvider.of<ReaderBloc>(context).add(
-                  ReaderReadChapter(state.referenceResult!),
+                  ReaderDisplay(state.referenceResult),
                 );
               },
               child: Padding(

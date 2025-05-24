@@ -1,67 +1,55 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:the_smyrna_bible_v2/core/utils/bible_reference_parser.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/domain/usecases/get_translation.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/domain/usecases/read_chapter.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/domain/usecases/open_usfx_translation.dart';
-
-import '../../../../../core/domain/entities/bible_reference.dart';
-import '../../domain/entities/page.dart';
+import 'package:the_smyrna_bible_v2/core/domain/entities/verse.dart';
+import 'package:the_smyrna_bible_v2/features/b_searchbar/domain/entities/bible_reference.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/domain/repositories/reader_repository.dart';
 
 part 'reader_event.dart';
 part 'reader_state.dart';
 
 class ReaderBloc extends Bloc<ReaderEvent, ReaderState> {
-  final OpenUsfxTranslation openTranslation;
-  final GetTranslation getTranslation;
-  final BibleReferenceParser parser;
-  // final CloseUsfxTranslation closeTranslation;
-  final ReadChapter readChapter;
+  final ReaderRepository repo;
 
   ReaderBloc({
-    required this.openTranslation,
-    // required this.closeTranslation,
-    required this.readChapter,
-    required this.parser,
-    required this.getTranslation,
+    required this.repo,
   }) : super(const ReaderState()) {
-    on<ReaderLoadTranslation>(_onLoadTranslation);
-    on<ReaderReadChapter>(_onReadChapter);
+    // on<ReaderLoadTranslation>(_onLoadTranslation);
+    on<ReaderDisplay>(_onReaderDisplay);
   }
 
-  Future<void> _onLoadTranslation(
-    ReaderLoadTranslation event,
+  // Future<void> _onLoadTranslation(
+  //   ReaderLoadTranslation event,
+  //   Emitter<ReaderState> emit,
+  // ) async {
+  //   emit(state.copyWith(status: () => ReaderStatus.reading));
+
+  //   final eitherFailureOrTranslation = await repo.openTranslation(event.id);
+  //   eitherFailureOrTranslation.fold(
+  //     (failure) => print(
+  //       "> BReader: error while loading translation",
+  //     ), //emit(state.copyWith(status: () => ReaderStatus.error)),
+  //     (translation) {
+  //       return emit(
+  //         state.copyWith(
+  //           status: () => ReaderStatus.success,
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+
+  Future<void> _onReaderDisplay(
+    ReaderDisplay event,
     Emitter<ReaderState> emit,
   ) async {
-    emit(state.copyWith(status: () => ReaderStatus.reading));
-
-    final eitherFailureOrTranslation = await openTranslation(event.id);
-    eitherFailureOrTranslation.fold(
-      (failure) => print(
-        "> BReader: error while loading translation",
-      ), //emit(state.copyWith(status: () => ReaderStatus.error)),
-      (translation) {
-        return emit(
-          state.copyWith(
-            status: () => ReaderStatus.success,
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _onReadChapter(
-    ReaderReadChapter event,
-    Emitter<ReaderState> emit,
-  ) async {
-    final eitherFailureOrChapter = await readChapter(event.ref);
+    final eitherFailureOrChapter = await repo.getVerses(event.bibleRef);
     return eitherFailureOrChapter.fold(
       (_) => print('> BReader: error chapter not read'),
-      (pageContent) => emit(
+      (verses) => emit(
         state.copyWith(
           status: () => ReaderStatus.success,
-          reference: () => event.ref,
-          page: () => pageContent,
+          reference: () => event.bibleRef,
+          verses: () => verses,
         ),
       ),
     );
