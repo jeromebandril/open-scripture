@@ -17,13 +17,14 @@ abstract class TranslationsDataSource {
   /// Read a verse
   ///
   /// Throws a [NoDbConnectionException] if the verse does not exist
-  Future<VerseModel> getVerse(
+  Future<VerseModell> getVerse(
       String version, String book, int chapter, int verse);
 
   /// Read a verse
   ///
   /// Throws a [NoDbConnectionException] if the verse does not exist
-  Future<List<VerseModel>> getChapter(String version, String book, int chapter);
+  Future<List<VerseModell>> getChapter(
+      String version, String book, int chapter);
 
   /// Read a verse
   ///
@@ -63,13 +64,13 @@ class TranslationsDataSourceImpl implements TranslationsDataSource {
   }
 
   @override
-  Future<List<VerseModel>> getChapter(
+  Future<List<VerseModell>> getChapter(
       String version, String book, int chapter) {
     throw UnimplementedError();
   }
 
   @override
-  Future<VerseModel> getVerse(
+  Future<VerseModell> getVerse(
       String version, String book, int chapter, int verse) {
     throw UnimplementedError();
   }

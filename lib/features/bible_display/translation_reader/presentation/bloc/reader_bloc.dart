@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:the_smyrna_bible_v2/core/domain/entities/verse.dart';
+import 'package:the_smyrna_bible_v2/core/domain/entities/e_verse.dart';
 import 'package:the_smyrna_bible_v2/features/b_searchbar/domain/entities/bible_reference.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/domain/repositories/reader_repository.dart';
 

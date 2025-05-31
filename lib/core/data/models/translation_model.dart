@@ -1,5 +1,8 @@
+/*
 import 'package:xml/xml.dart';
 import 'package:xml/xpath.dart';
+
+import '../../domain/entities/bible.dart';
 
 class TranslationModel extends Translation {
   const TranslationModel({
@@ -282,3 +285,4 @@ class TranslationModel extends Translation {
     return builder.buildDocument();
   }
 }
+*/

@@ -1,12 +1,15 @@
+CREATE TABLE languages (
+  id INT NOT NULL PRIMARY KEY AUTOINCREMENT,
+  langEngName NVARCHAR(64) NOT NULL,
+  langNativeName NVARCHAR(64),
+  langAbbreviation NVARCHAR(3)   -- uses ISO 639 language codes
+)
+
 CREATE TABLE bibles (
   id INT NOT NULL PRIMARY KEY AUTOINCREMENT,
   languageId INT,
   bibleName NVARCHAR(64) NOT NULL,
   bibleNameAbbreviation NVARCHAR(32) NOT NULL,
-  -- language specifications
-  langEngName NVARCHAR(64) NOT NULL,
-  langNativeName NVARCHAR(64),
-  langAbbreviation NVARCHAR(3)   -- uses ISO 639 language codes
 );
 
 CREATE TABLE books(

@@ -16,12 +16,12 @@ class ReaderState extends Equatable {
 
   final ReaderStatus status;
   final BibleReference? reference;
-  final List<Verse> verses;
+  final List<EVerse> verses;
 
   ReaderState copyWith({
     ReaderStatus Function()? status,
     BibleReference Function()? reference,
-    List<Verse> Function()? verses,
+    List<EVerse> Function()? verses,
   }) {
     return ReaderState(
       status: status != null ? status() : this.status,

@@ -1,13 +1,13 @@
 import 'package:equatable/equatable.dart';
 
-class Verse extends Equatable {
+class EVerse extends Equatable {
   final int id;
   final int paragraphId;
   final int verseNumber;
   final String verseText;
   final int chapterNumber;
 
-  const Verse({
+  const EVerse({
     required this.id,
     required this.paragraphId,
     required this.verseNumber,

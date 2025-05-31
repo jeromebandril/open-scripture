@@ -4,7 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:the_smyrna_bible_v2/features/settings_window/presentation/bloc/settings_bloc.dart';
 
 import '../../../../injection_container.dart';
-import '../../../translations_installer_manager/presentation/widgets/translation_manager_widget.dart';
+import '../../../bible_installer_manager/presentation/widgets/translation_manager_widget.dart';
 import '../../../window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
 
 class SettingsFactory {

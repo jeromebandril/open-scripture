@@ -11,21 +11,21 @@ import 'package:the_smyrna_bible_v2/features/settings_window/presentation/bloc/s
 import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/data/datasources/translations_datasource.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/data/repositories/reader_repository_impl.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/domain/repositories/reader_repository.dart';
-import 'package:the_smyrna_bible_v2/features/translations_installer_manager/data/datasources/translation_manager_remote_datasource.dart';
-import 'package:the_smyrna_bible_v2/features/translations_installer_manager/data/datasources/translation_manager_local_datasource.dart';
-import 'package:the_smyrna_bible_v2/features/translations_installer_manager/data/repositories/translation_manager_repository_impl.dart';
-import 'package:the_smyrna_bible_v2/features/translations_installer_manager/domain/repositories/translation_manager_repository.dart';
-import 'package:the_smyrna_bible_v2/features/translations_installer_manager/domain/usecases/get_local_translations_info_list.dart';
-import 'package:the_smyrna_bible_v2/features/translations_installer_manager/domain/usecases/get_translations_info_list.dart';
-import 'package:the_smyrna_bible_v2/features/translations_installer_manager/domain/usecases/uninstall_translation.dart';
-import 'package:the_smyrna_bible_v2/features/translations_installer_manager/presentation/bloc/installed_translations_overview/installed_translations_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/translations_installer_manager/presentation/bloc/translation_download_progress/translation_download_progress_bloc.dart';
+import 'package:the_smyrna_bible_v2/features/bible_installer_manager/data/datasources/bible_manager_remote_datasource.dart';
+import 'package:the_smyrna_bible_v2/features/bible_installer_manager/data/datasources/bible_manager_local_datasource.dart';
+import 'package:the_smyrna_bible_v2/features/bible_installer_manager/data/repositories/translation_manager_repository_impl.dart';
+import 'package:the_smyrna_bible_v2/features/bible_installer_manager/domain/repositories/translation_manager_repository.dart';
+import 'package:the_smyrna_bible_v2/features/bible_installer_manager/domain/usecases/get_local_translations_info_list.dart';
+import 'package:the_smyrna_bible_v2/features/bible_installer_manager/domain/usecases/get_translations_info_list.dart';
+import 'package:the_smyrna_bible_v2/features/bible_installer_manager/domain/usecases/uninstall_translation.dart';
+import 'package:the_smyrna_bible_v2/features/bible_installer_manager/presentation/bloc/installed_translations_overview/installed_translations_bloc.dart';
+import 'package:the_smyrna_bible_v2/features/bible_installer_manager/presentation/bloc/translation_download_progress/translation_download_progress_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
 import 'features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
 import 'features/bible_display/translation_reader/presentation/bloc/reader_bloc.dart';
-import 'features/translations_installer_manager/domain/usecases/download_translation.dart';
-import 'features/translations_installer_manager/domain/usecases/install_translation.dart';
-import 'features/translations_installer_manager/presentation/bloc/translations_overview/translations_bloc.dart';
+import 'features/bible_installer_manager/domain/usecases/download_translation.dart';
+import 'features/bible_installer_manager/domain/usecases/install_translation.dart';
+import 'features/bible_installer_manager/presentation/bloc/translations_overview/translations_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -86,11 +86,11 @@ void initTranslationManagerFeature() {
   );
 
   // Data sources
-  sl.registerLazySingleton<TranslationManagerLocalDataSource>(
-    () => TranslationManagerLocalDataSourceImpl(db: sl()),
+  sl.registerLazySingleton<BibleManagerLocalDataSource>(
+    () => BibleManagerLocalDataSourceImpl(db: sl()),
   );
-  sl.registerLazySingleton<TranslationManagerRemoteDataSource>(
-    () => TranslationManagerRemoteDataSourceImpl(),
+  sl.registerLazySingleton<bibleManagerRemoteDataSource>(
+    () => BibleManagerRemoteDataSourceImpl(),
   );
 }
 

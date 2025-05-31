@@ -1,4 +1,4 @@
-import 'package:the_smyrna_bible_v2/features/translations_installer_manager/domain/repositories/translation_manager_repository.dart';
+import 'package:the_smyrna_bible_v2/features/bible_installer_manager/domain/repositories/translation_manager_repository.dart';
 
 class UninstallTranslation {
   final TranslationManagerRepository repository;

@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:the_smyrna_bible_v2/core/data/models/verse_model.dart';
 
-import 'package:the_smyrna_bible_v2/core/domain/entities/verse.dart';
+import 'package:the_smyrna_bible_v2/core/domain/entities/e_verse.dart';
 
 import 'package:the_smyrna_bible_v2/core/error/failure.dart';
 
@@ -16,12 +16,12 @@ class ReaderRepositoryImpl implements ReaderRepository {
   const ReaderRepositoryImpl({required this.localDatasource});
 
   @override
-  Future<Either<Failure, List<Verse>>> getVerses(
+  Future<Either<Failure, List<EVerse>>> getVerses(
       BibleReference reference) async {
     try {
-      final List<VerseModel> models =
+      final List<VerseModell> models =
           await localDatasource.getVerses(reference);
-      final List<Verse> verses = models.map((m) => m.toDomain()).toList();
+      final List<EVerse> verses = models.map((m) => m.toDomain()).toList();
       return Right(verses);
     } catch (e) {
       return Left(NotFoundFailure());

@@ -1,12 +1,18 @@
-import '../../domain/entities/verse.dart';
+import 'package:equatable/equatable.dart';
 
-class VerseModel extends Verse {
+class VerseModel extends Equatable {
+  final int id;
+  final int paragraphId;
+  final int verseNumber;
+  final String verseText;
+  final int chapterNumber;
+
   const VerseModel({
-    required super.id,
-    required super.paragraphId,
-    required super.verseNumber,
-    required super.verseText,
-    required super.chapterNumber,
+    required this.id,
+    required this.paragraphId,
+    required this.verseNumber,
+    required this.verseText,
+    required this.chapterNumber,
   });
 
   factory VerseModel.fromDatabase(Map<String, dynamic> map) {
@@ -19,8 +25,8 @@ class VerseModel extends Verse {
     );
   }
 
-  Verse toDomain() {
-    return Verse(
+  VerseModel toDomain() {
+    return VerseModel(
       id: id,
       paragraphId: paragraphId,
       verseNumber: verseNumber,
@@ -28,4 +34,13 @@ class VerseModel extends Verse {
       chapterNumber: chapterNumber,
     );
   }
+
+  @override
+  List<Object?> get props => [
+        id,
+        paragraphId,
+        verseNumber,
+        verseText,
+        chapterNumber,
+      ];
 }

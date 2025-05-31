@@ -1,8 +1,9 @@
+import 'package:the_smyrna_bible_v2/core/data/models/bible_model.dart';
+
 import '../../../../core/database/database.dart';
 import '../../../../core/error/exception.dart';
-import '../models/translation_info_model.dart';
 
-abstract class TranslationManagerLocalDataSource {
+abstract class BibleManagerLocalDataSource {
   /// Try to install a translation locally.
   /// It receives a path to the temp_file were the content of
   /// type [List<int>] has been downloaded,
@@ -20,29 +21,24 @@ abstract class TranslationManagerLocalDataSource {
   /// as [TranslationInfoModel] object
   ///
   /// Throws a [NoLocalDataException] if it fails
-  Future<List<TranslationInfoModel>> getInstalledTransationInfos();
+  Future<List<BibleModel>> getInstalledTransationInfos();
 }
 
-class TranslationManagerLocalDataSourceImpl
-    implements TranslationManagerLocalDataSource {
+class BibleManagerLocalDataSourceImpl implements BibleManagerLocalDataSource {
   final AppDb db;
 
-  TranslationManagerLocalDataSourceImpl({required this.db});
+  BibleManagerLocalDataSourceImpl({required this.db});
 
   /*
   * New Implementation using SQL Lite as main storage system
   */
   @override
-  Future<List<TranslationInfoModel>> getInstalledTransationInfos() async {
-    var result = await db.getBibles().get();
-    const bibles = <TranslationInfoModel>[];
+  Future<List<BibleModel>> getInstalledTransationInfos() async {
+    List<GetBiblesResult> result = await db.getBibles().get();
+    const List<BibleModel> bibles = [];
 
-    for (var r in result) {
-      bibles.add(TranslationInfoModel(
-        id: r.id,
-        name: r.bibleName,
-        language: '',
-      ));
+    for (var item in result) {
+      bibles.add(BibleModel.fromDatabase(item));
     }
 
     return bibles;

@@ -1,16 +1,13 @@
 import 'package:equatable/equatable.dart';
-import 'package:the_smyrna_bible_v2/core/database/database.dart';
 
-class BibleModel extends Equatable {
-  final int? id;
+class EBible extends Equatable {
   final String bibleName;
   final String abbreviation;
   final String? langEngName;
   final String? langNativeName;
   final String? langAbbreviation;
 
-  const BibleModel({
-    required this.id,
+  const EBible({
     required this.bibleName,
     required this.abbreviation,
     this.langEngName,
@@ -18,17 +15,8 @@ class BibleModel extends Equatable {
     this.langAbbreviation,
   });
 
-  factory BibleModel.fromDatabase(GetBiblesResult dbBible) {
-    return BibleModel(
-      id: dbBible.id,
-      bibleName: dbBible.bibleName,
-      abbreviation: dbBible.bibleNameAbbreviation,
-    );
-  }
-
   @override
   List<Object?> get props => [
-        id,
         bibleName,
         abbreviation,
         langEngName,

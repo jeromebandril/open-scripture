@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:the_smyrna_bible_v2/features/translations_installer_manager/domain/entities/translation_info.dart';
-import 'package:the_smyrna_bible_v2/features/translations_installer_manager/domain/usecases/download_translation.dart';
-import 'package:the_smyrna_bible_v2/features/translations_installer_manager/domain/usecases/install_translation.dart';
+import 'package:the_smyrna_bible_v2/features/bible_installer_manager/domain/entities/translation_info.dart';
+import 'package:the_smyrna_bible_v2/features/bible_installer_manager/domain/usecases/download_translation.dart';
+import 'package:the_smyrna_bible_v2/features/bible_installer_manager/domain/usecases/install_translation.dart';
 
 part 'translation_download_progress_event.dart';
 part 'translation_download_progress_state.dart';

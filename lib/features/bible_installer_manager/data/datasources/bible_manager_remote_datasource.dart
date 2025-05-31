@@ -11,7 +11,7 @@ import 'package:the_smyrna_bible_v2/core/error/exception.dart';
 
 import '../models/translation_info_model.dart';
 
-abstract class TranslationManagerRemoteDataSource {
+abstract class bibleManagerRemoteDataSource {
   /// Get bytes of a general bible file format
   /// And writes it temporarly in local file system,
   /// ready to be installed (converted to the preferred
@@ -21,23 +21,22 @@ abstract class TranslationManagerRemoteDataSource {
   /// progress.
   ///
   /// Throws [ServerException] if it is unsuccessful
-  Stream<List<int>> downloadTranslationFiles(String id);
+  Stream<List<int>> downloadBibleFiles(String id);
 
   /// Gets a list of available to download translations
   /// from eBible.org endpoint
   ///
   /// Throws [ServerException] if it is unsuccessful
-  Future<List<TranslationInfoModel>> getListOfAllTranslations();
+  Future<List<TranslationInfoModel>> getListOfAllBibles();
 }
 
-class TranslationManagerRemoteDataSourceImpl
-    implements TranslationManagerRemoteDataSource {
-  TranslationManagerRemoteDataSourceImpl();
+class BibleManagerRemoteDataSourceImpl implements bibleManagerRemoteDataSource {
+  BibleManagerRemoteDataSourceImpl();
 
   final dio = Dio();
 
   @override
-  Stream<List<int>> downloadTranslationFiles(
+  Stream<List<int>> downloadBibleFiles(
     String id,
   ) async* {
     try {
@@ -61,7 +60,7 @@ class TranslationManagerRemoteDataSourceImpl
   }
 
   @override
-  Future<List<TranslationInfoModel>> getListOfAllTranslations() async {
+  Future<List<TranslationInfoModel>> getListOfAllBibles() async {
     try {
       final response = await http.get(Uri.parse(Constants.contentSourceURL));
 

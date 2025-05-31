@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
-
+/*
 import '../../domain/entities/translation_info.dart';
 
 class TranslationInfoModel extends TranslationInfo {
@@ -39,3 +39,5 @@ class TranslationInfoModel extends TranslationInfo {
   //   );
   // }
 }
+
+*/
