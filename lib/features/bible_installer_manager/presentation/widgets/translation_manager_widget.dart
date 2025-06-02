@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:the_smyrna_bible_v2/core/domain/entities/e_bible.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/widgets/hoverable_container.dart';
 import 'package:the_smyrna_bible_v2/features/bible_installer_manager/domain/entities/translation_info.dart';
 import 'package:the_smyrna_bible_v2/features/bible_installer_manager/presentation/bloc/translation_download_progress/translation_download_progress_bloc.dart';
@@ -432,7 +433,7 @@ class _AllTranslationsTileState extends State<AllTranslationsTile> {
 }
 
 class InstalledTranslationsOverviewTile extends StatelessWidget {
-  final TranslationInfo translationInfo;
+  final EBible translationInfo;
 
   const InstalledTranslationsOverviewTile({
     super.key,
@@ -456,13 +457,13 @@ class InstalledTranslationsOverviewTile extends StatelessWidget {
           children: [
             Flexible(
               child: Text(
-                translationInfo.name.split("\\").last,
+                translationInfo.bibleName.split("\\").last,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
             TextButton(
               onPressed: () =>
-                  dispatch(context, translationInfo.name.split("\\").last),
+                  dispatch(context, translationInfo.bibleName.split("\\").last),
               child: const Text('Uninstall'),
             ),
           ],

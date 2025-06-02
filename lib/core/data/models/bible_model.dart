@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:the_smyrna_bible_v2/core/database/database.dart';
 
+import '../../domain/entities/e_bible.dart';
+
 class BibleModel extends Equatable {
   final int? id;
   final String bibleName;
@@ -23,6 +25,16 @@ class BibleModel extends Equatable {
       id: dbBible.id,
       bibleName: dbBible.bibleName,
       abbreviation: dbBible.bibleNameAbbreviation,
+    );
+  }
+
+  EBible toDomain() {
+    return EBible(
+      bibleName: bibleName,
+      abbreviation: abbreviation,
+      langEngName: langEngName,
+      langNativeName: langNativeName,
+      langAbbreviation: langAbbreviation,
     );
   }
 

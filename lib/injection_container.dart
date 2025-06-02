@@ -89,7 +89,7 @@ void initTranslationManagerFeature() {
   sl.registerLazySingleton<BibleManagerLocalDataSource>(
     () => BibleManagerLocalDataSourceImpl(db: sl()),
   );
-  sl.registerLazySingleton<bibleManagerRemoteDataSource>(
+  sl.registerLazySingleton<BibleManagerRemoteDataSource>(
     () => BibleManagerRemoteDataSourceImpl(),
   );
 }

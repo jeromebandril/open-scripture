@@ -13,6 +13,6 @@ class GetTranslationsInfoList
 
   @override
   Future<Either<Failure, List<TranslationInfo>>> call(_) {
-    return repository.getAllTranslationsList();
+    return repository.getAllDownloadableBibles();
   }
 }

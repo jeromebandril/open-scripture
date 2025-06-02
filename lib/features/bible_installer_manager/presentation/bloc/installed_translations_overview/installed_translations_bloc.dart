@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:the_smyrna_bible_v2/core/domain/entities/e_bible.dart';
 import 'package:the_smyrna_bible_v2/features/bible_installer_manager/domain/usecases/uninstall_translation.dart';
 
 import '../../../domain/entities/translation_info.dart';

@@ -1,7 +1,7 @@
-import 'package:the_smyrna_bible_v2/core/data/models/bible_model.dart';
-
+import '../../../../core/data/models/bible_model.dart';
 import '../../../../core/database/database.dart';
 import '../../../../core/error/exception.dart';
+import '../models/bible_info_model.dart';
 
 abstract class BibleManagerLocalDataSource {
   /// Try to install a translation locally.

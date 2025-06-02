@@ -15,12 +15,12 @@ class InstalledTranslationsState extends Equatable {
   });
 
   final InstalledTranslationsStatus status;
-  final List<TranslationInfo> installedTranslations;
+  final List<EBible> installedTranslations;
   final String? errorMessage;
 
   InstalledTranslationsState copyWith({
     InstalledTranslationsStatus Function()? status,
-    List<TranslationInfo> Function()? installedTranslationsInfos,
+    List<EBible> Function()? installedTranslationsInfos,
     String Function()? errorMessage,
   }) {
     return InstalledTranslationsState(
@@ -33,5 +33,5 @@ class InstalledTranslationsState extends Equatable {
   }
 
   @override
-  List<Object> get props => [status, installedTranslations];
+  List<Object?> get props => [status, installedTranslations, errorMessage];
 }

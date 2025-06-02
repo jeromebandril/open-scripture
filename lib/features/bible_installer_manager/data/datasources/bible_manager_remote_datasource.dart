@@ -6,12 +6,12 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parser;
-import 'package:the_smyrna_bible_v2/core/constants/constants.dart' as Constants;
+import 'package:the_smyrna_bible_v2/core/constants/constants.dart' as constants;
 import 'package:the_smyrna_bible_v2/core/error/exception.dart';
 
-import '../models/translation_info_model.dart';
+import '../models/bible_info_model.dart';
 
-abstract class bibleManagerRemoteDataSource {
+abstract class BibleManagerRemoteDataSource {
   /// Get bytes of a general bible file format
   /// And writes it temporarly in local file system,
   /// ready to be installed (converted to the preferred
@@ -27,10 +27,10 @@ abstract class bibleManagerRemoteDataSource {
   /// from eBible.org endpoint
   ///
   /// Throws [ServerException] if it is unsuccessful
-  Future<List<TranslationInfoModel>> getListOfAllBibles();
+  Future<List<BibleInfoModel>> getListOfAllBibles();
 }
 
-class BibleManagerRemoteDataSourceImpl implements bibleManagerRemoteDataSource {
+class BibleManagerRemoteDataSourceImpl implements BibleManagerRemoteDataSource {
   BibleManagerRemoteDataSourceImpl();
 
   final dio = Dio();
@@ -40,8 +40,8 @@ class BibleManagerRemoteDataSourceImpl implements bibleManagerRemoteDataSource {
     String id,
   ) async* {
     try {
-      final url = Uri.parse('${Constants.contentSourceURL}/${id}_usfx.zip');
-      final appPath = await Constants.getApplicationPath();
+      final url = Uri.parse('${constants.contentSourceURL}/${id}_usfx.zip');
+      final appPath = await constants.getApplicationPath();
       final translationDir = Directory('$appPath/$id');
       final downloadController = StreamController<List<int>>();
       dio.downloadUri(
@@ -60,15 +60,15 @@ class BibleManagerRemoteDataSourceImpl implements bibleManagerRemoteDataSource {
   }
 
   @override
-  Future<List<TranslationInfoModel>> getListOfAllBibles() async {
+  Future<List<BibleInfoModel>> getListOfAllBibles() async {
     try {
-      final response = await http.get(Uri.parse(Constants.contentSourceURL));
+      final response = await http.get(Uri.parse(constants.contentSourceURL));
 
       if (response.statusCode != 200) throw ServerException();
 
       final document = parser.parse(response.body);
       final rows = document.querySelectorAll('tr.redist');
-      final List<TranslationInfoModel> identificators = [];
+      final List<BibleInfoModel> identificators = [];
 
       if (rows.isEmpty) {
         throw ServerException();
@@ -86,7 +86,7 @@ class BibleManagerRemoteDataSourceImpl implements bibleManagerRemoteDataSource {
             if (href != null) {
               final id = Uri.parse(href).queryParameters['id'];
               if (id != null) {
-                identificators.add(TranslationInfoModel(
+                identificators.add(BibleInfoModel(
                   id: id,
                   name: name!,
                   language: language,

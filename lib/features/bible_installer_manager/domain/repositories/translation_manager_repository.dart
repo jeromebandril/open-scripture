@@ -1,5 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 
+import '../../../../core/domain/entities/e_bible.dart';
 import '../../../../core/error/failure.dart';
 import '../entities/translation_info.dart';
 
@@ -10,7 +11,7 @@ abstract class TranslationManagerRepository {
 
   Future<dynamic> uninstallTranslation(String id);
 
-  Future<Either<Failure, List<TranslationInfo>>> getInstalledTranslationList();
+  Future<Either<Failure, List<EBible>>> getAllInstalledBibles();
 
-  Future<Either<Failure, List<TranslationInfo>>> getAllTranslationsList();
+  Future<Either<Failure, List<TranslationInfo>>> getAllDownloadableBibles();
 }

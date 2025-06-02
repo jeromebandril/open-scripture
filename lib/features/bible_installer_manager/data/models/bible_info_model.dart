@@ -1,11 +1,10 @@
 import 'dart:io';
-
 import 'package:path_provider/path_provider.dart';
-/*
+
 import '../../domain/entities/translation_info.dart';
 
-class TranslationInfoModel extends TranslationInfo {
-  const TranslationInfoModel({
+class BibleInfoModel extends TranslationInfo {
+  const BibleInfoModel({
     required super.id,
     required super.name,
     required super.language,
@@ -39,5 +38,3 @@ class TranslationInfoModel extends TranslationInfo {
   //   );
   // }
 }
-
-*/
