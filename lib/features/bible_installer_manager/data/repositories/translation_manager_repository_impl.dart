@@ -1,18 +1,17 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:the_smyrna_bible_v2/core/database/database.dart';
-import 'package:the_smyrna_bible_v2/core/domain/entities/e_bible.dart';
 
+import '../../../../core/domain/entities/e_bible.dart';
 import '../../../../core/error/failure.dart';
-import '../datasources/bible_manager_remote_datasource.dart';
-import '../../domain/repositories/translation_manager_repository.dart';
-import '../datasources/bible_manager_local_datasource.dart';
-import '../models/bible_info_model.dart';
+import '../../../../core/data/datasources/bible_remote_datasource.dart';
+import '../../domain/entities/bible_download_progress.dart';
+import '../../domain/repositories/bible_manager_repository.dart';
+import '../../../../core/data/datasources/bible_local_datasource.dart';
 
 // ignore_for_file: constant_identifier_names
 
-class TranslationManagerRepositoryImpl implements TranslationManagerRepository {
-  final BibleManagerLocalDataSource localDataSource;
-  final BibleManagerRemoteDataSource remoteDataSource;
+class TranslationManagerRepositoryImpl implements BibleManagerRepository {
+  final BibleLocalDataSource localDataSource;
+  final BibleRemoteDataSource remoteDataSource;
 
   const TranslationManagerRepositoryImpl({
     required this.localDataSource,
@@ -20,33 +19,33 @@ class TranslationManagerRepositoryImpl implements TranslationManagerRepository {
   });
 
   @override
-  Future<Either<Failure, List<BibleInfoModel>>>
-      getAllDownloadableBibles() async {
-    return Right(await remoteDataSource.getListOfAllBibles());
-  }
-
-  @override
-  Future<Either<Failure, List<EBible>>> getAllInstalledBibles() async {
-    var resultModels = await localDataSource.getInstalledTransationInfos();
+  Future<Either<Failure, List<EBible>>> getAllDownloadableBibles() async {
+    var resultModels = await remoteDataSource.getListOfAllBibles();
     var resultEntities = resultModels.map((m) => m.toDomain()).toList();
     return Right(resultEntities);
   }
 
   @override
-  Future<Either<Failure, Stream<List<int>>>> downloadTranslation(
-    String id,
+  Future<Either<Failure, List<EBible>>> getAllInstalledBibles() async {
+    var resultModels = await localDataSource.getInstalledBibles();
+    var resultEntities = resultModels.map((m) => m.toDomain()).toList();
+    return Right(resultEntities);
+  }
+
+  @override
+  Future<Either<Failure, Stream<DownloadProgess>>> downloadTranslation(
+    String bibleId,
   ) async {
-    return Right(remoteDataSource.downloadBibleFiles(id));
+    return Right(remoteDataSource.downloadBibleFileContent(bibleId));
   }
 
   @override
-  Future<void> installTranslation(String id) async {
-    // Transform data and bring it into Sql lite database
-    await localDataSource.installTranslation(id);
+  Future<Either<Failure, void>> installTranslation(String bibleId) async {
+    return Right(await localDataSource.installBible(bibleId));
   }
 
   @override
-  Future uninstallTranslation(String id) async {
-    await localDataSource.uninstallTranslation(id);
+  Future uninstallTranslation(String bibleId) async {
+    await localDataSource.uninstallBible(bibleId);
   }
 }

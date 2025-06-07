@@ -1,4 +1,4 @@
-part of 'installed_translations_bloc.dart';
+part of 'installed_bibles_bloc.dart';
 
 enum InstalledTranslationsStatus {
   initial,
@@ -7,8 +7,8 @@ enum InstalledTranslationsStatus {
   error,
 }
 
-class InstalledTranslationsState extends Equatable {
-  const InstalledTranslationsState({
+class InstalledBiblesState extends Equatable {
+  const InstalledBiblesState({
     this.status = InstalledTranslationsStatus.initial,
     this.installedTranslations = const [],
     this.errorMessage,
@@ -18,16 +18,15 @@ class InstalledTranslationsState extends Equatable {
   final List<EBible> installedTranslations;
   final String? errorMessage;
 
-  InstalledTranslationsState copyWith({
+  InstalledBiblesState copyWith({
     InstalledTranslationsStatus Function()? status,
-    List<EBible> Function()? installedTranslationsInfos,
+    List<EBible> Function()? installedBibles,
     String Function()? errorMessage,
   }) {
-    return InstalledTranslationsState(
+    return InstalledBiblesState(
       status: status != null ? status() : this.status,
-      installedTranslations: installedTranslationsInfos != null
-          ? installedTranslationsInfos()
-          : installedTranslations,
+      installedTranslations:
+          installedBibles != null ? installedBibles() : installedTranslations,
       errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
     );
   }

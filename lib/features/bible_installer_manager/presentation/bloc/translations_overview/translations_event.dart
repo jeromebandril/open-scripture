@@ -7,4 +7,4 @@ sealed class AllTranslationsEvent extends Equatable {
   List<Object> get props => [];
 }
 
-final class AllTranslationsSubscriptionRequested extends AllTranslationsEvent {}
+final class AllBiblesSubscriptionRequested extends AllTranslationsEvent {}

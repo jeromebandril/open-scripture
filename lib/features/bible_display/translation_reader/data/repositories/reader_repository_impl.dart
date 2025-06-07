@@ -1,17 +1,14 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:the_smyrna_bible_v2/core/data/models/verse_model.dart';
 
-import 'package:the_smyrna_bible_v2/core/domain/entities/e_verse.dart';
-
-import 'package:the_smyrna_bible_v2/core/error/failure.dart';
-
-import 'package:the_smyrna_bible_v2/features/b_searchbar/domain/entities/bible_reference.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/data/datasources/bible_local_datasource.dart';
-
+import '../../../../../core/data/datasources/bible_local_datasource.dart';
+import '../../../../../core/data/models/verse_model.dart';
+import '../../../../../core/domain/entities/e_verse.dart';
+import '../../../../../core/error/failure.dart';
+import '../../../../b_searchbar/domain/entities/bible_reference.dart';
 import '../../domain/repositories/reader_repository.dart';
 
 class ReaderRepositoryImpl implements ReaderRepository {
-  final BibleLocalDatasource localDatasource;
+  final BibleLocalDataSource localDatasource;
 
   const ReaderRepositoryImpl({required this.localDatasource});
 
@@ -19,24 +16,14 @@ class ReaderRepositoryImpl implements ReaderRepository {
   Future<Either<Failure, List<EVerse>>> getVerses(
       BibleReference reference) async {
     try {
-      final List<VerseModell> models =
-          await localDatasource.getVerses(reference);
-      final List<EVerse> verses = models.map((m) => m.toDomain()).toList();
-      return Right(verses);
+      final List<VerseModel> verseModels =
+          await localDatasource.getVerseRange('', '', 1, 1);
+      final List<EVerse> verseEntities =
+          verseModels.map((m) => m.toDomain()).toList();
+
+      return Right(verseEntities);
     } catch (e) {
       return Left(NotFoundFailure());
     }
   }
-
-  // @override
-  // Future<Either<Failure, Translation>> getTranslation(String id) {
-  //   // TODO: implement getTranslation
-  //   throw UnimplementedError();
-  // }
-
-  // @override
-  // Future<Either<Failure, Translation>> openTranslation(String id) {
-  //   // TODO: implement openTranslation
-  //   throw UnimplementedError();
-  // }
 }

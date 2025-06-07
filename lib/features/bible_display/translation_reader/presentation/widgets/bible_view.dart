@@ -41,16 +41,20 @@ class BibleView extends StatelessWidget {
               listener: (context, state) {
                 if (state.referenceResult == null) return;
                 BlocProvider.of<ReaderBloc>(context).add(
-                  ReaderDisplay(state.referenceResult),
+                  ReaderDisplay(state.referenceResult!),
                 );
               },
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(12, 24, 0, 0),
-                child: state.page != null
+                child:
+                    /*
+                state.page != null
                     ? VerseList(
-                        content: state.page!,
+                        content: state.page,
                       )
-                    : const SizedBox(),
+                    : 
+                    */
+                    const SizedBox(),
               ),
             );
           },
@@ -67,6 +71,7 @@ class BibleView extends StatelessWidget {
   }
 }
 
+/*
 class VerseList extends StatefulWidget {
   final PageContent content;
 
@@ -199,3 +204,4 @@ class _VerseListState extends State<VerseList> {
     return colVerses;
   }
 }
+*/

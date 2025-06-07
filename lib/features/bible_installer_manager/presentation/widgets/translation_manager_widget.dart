@@ -3,13 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:the_smyrna_bible_v2/core/domain/entities/e_bible.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/widgets/hoverable_container.dart';
-import 'package:the_smyrna_bible_v2/features/bible_installer_manager/domain/entities/translation_info.dart';
-import 'package:the_smyrna_bible_v2/features/bible_installer_manager/presentation/bloc/translation_download_progress/translation_download_progress_bloc.dart';
+import 'package:the_smyrna_bible_v2/features/bible_installer_manager/domain/entities/bible_download_progress.dart';
+import 'package:the_smyrna_bible_v2/features/bible_installer_manager/presentation/bloc/bible_download_progress/bible_download_progress_bloc.dart';
 import 'package:the_smyrna_bible_v2/injection_container.dart';
 import 'package:collection/collection.dart';
 
+import '../bloc/installed_bibles_overview/installed_bibles_bloc.dart';
 import '../bloc/translations_overview/translations_bloc.dart';
-import '../bloc/installed_translations_overview/installed_translations_bloc.dart';
 
 class SectionHeader extends StatelessWidget {
   final String text;
@@ -27,26 +27,19 @@ class SectionHeader extends StatelessWidget {
   }
 }
 
-// OVERVIEWS
-
-class TranslationManagerWidget extends StatelessWidget {
-  const TranslationManagerWidget({super.key});
+class BibleDownloadManagerWidget extends StatelessWidget {
+  const BibleDownloadManagerWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (_) => sl<AllTranslationsBloc>()
-            ..add(AllTranslationsSubscriptionRequested()),
-        ),
+            create: (_) => sl<AllTranslationsBloc>()
+              ..add(AllBiblesSubscriptionRequested())),
         BlocProvider(
-          create: (_) => sl<TranslationDownloadProgressBloc>(),
-        ),
-        BlocProvider(
-          create: (_) => sl<InstalledTranslationsBloc>()
-            ..add(InstalledTranslationsSubscriptionRequested()),
-        ),
+            create: (_) => sl<InstalledBiblesBloc>()
+              ..add(InstalledBiblesSubscriptionRequested())),
       ],
       child: const Padding(
         padding: EdgeInsets.all(8.0),
@@ -54,15 +47,13 @@ class TranslationManagerWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Expanded(
-              child: AllTranslationsOverview(),
+              child: AllDownloadableBiblesOverview(),
             ),
             Gap(8),
             Expanded(
               child: Column(
                 children: [
-                  Expanded(child: DownloadingTranslationsOverview()),
-                  Gap(8),
-                  Expanded(child: InstalledTranslationOverview()),
+                  Expanded(child: AllInstalledBiblesOverview()),
                 ],
               ),
             ),
@@ -78,8 +69,8 @@ class TranslationManagerWidget extends StatelessWidget {
   with an expandable sections based on language (es: italian, english, and 
   each section will reaveal all the bible in that language) using [ExpandableTile]
 */
-class AllTranslationsOverview extends StatelessWidget {
-  const AllTranslationsOverview({super.key});
+class AllDownloadableBiblesOverview extends StatelessWidget {
+  const AllDownloadableBiblesOverview({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +86,7 @@ class AllTranslationsOverview extends StatelessWidget {
             child: BlocBuilder<AllTranslationsBloc, AllTranslationsState>(
               builder: (context, state) {
                 // error feedbacks
-                if (state.translationInfos.isEmpty) {
+                if (state.bibles.isEmpty) {
                   if (state.status == AllTranslationsStatus.loading) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (state.status == AllTranslationsStatus.error) {
@@ -104,9 +95,9 @@ class AllTranslationsOverview extends StatelessWidget {
                 }
 
                 // successful (group by language)
-                var map = groupBy<TranslationInfo, String>(
-                  state.translationInfos,
-                  (info) => info.language,
+                var map = groupBy<EBible, String>(
+                  state.bibles,
+                  (info) => info.langEngName ?? '',
                 );
 
                 return ListView.builder(
@@ -114,12 +105,12 @@ class AllTranslationsOverview extends StatelessWidget {
                   itemCount: map.values.length,
                   itemBuilder: (_, index) {
                     String key = map.keys.elementAt(index);
-                    List<AllTranslationsTile> tiles = [];
+                    List<AllBiblesTile> tiles = [];
                     int groupIndex = 1;
                     for (var info in map[key]!) {
                       tiles.add(
-                        AllTranslationsTile(
-                          translationInfo: info,
+                        AllBiblesTile(
+                          bible: info,
                           index: groupIndex,
                         ),
                       );
@@ -140,44 +131,8 @@ class AllTranslationsOverview extends StatelessWidget {
   }
 }
 
-class DownloadingTranslationsOverview extends StatelessWidget {
-  const DownloadingTranslationsOverview({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(width: 1, color: Colors.black26),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        children: [
-          const SectionHeader('DOWNLOAD QUEUE'),
-          Expanded(
-            child: BlocBuilder<TranslationDownloadProgressBloc,
-                TranslationDownloadProgressState>(
-              builder: (context, state) {
-                //final list = state.getDownloadingList();
-                final list = state.downloadingTranslations.entries.toList();
-                return ListView.builder(
-                  itemCount: list.length,
-                  itemBuilder: (_, index) {
-                    return DownloadingOverviewTile(
-                      translationInfo: list[index].value,
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class InstalledTranslationOverview extends StatelessWidget {
-  const InstalledTranslationOverview({super.key});
+class AllInstalledBiblesOverview extends StatelessWidget {
+  const AllInstalledBiblesOverview({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -190,8 +145,7 @@ class InstalledTranslationOverview extends StatelessWidget {
         children: [
           const SectionHeader('INSTALLED'),
           Expanded(
-            child: BlocBuilder<InstalledTranslationsBloc,
-                InstalledTranslationsState>(
+            child: BlocBuilder<InstalledBiblesBloc, InstalledBiblesState>(
               builder: (context, state) {
                 switch (state.status) {
                   case InstalledTranslationsStatus.loading:
@@ -221,8 +175,8 @@ class InstalledTranslationOverview extends StatelessWidget {
 // SPECIFIC OVERVIEW TILES TYPES
 
 class DownloadingOverviewTile extends StatefulWidget {
-  final TranslationInfo translationInfo;
-  const DownloadingOverviewTile({super.key, required this.translationInfo});
+  final EBible bible;
+  const DownloadingOverviewTile({super.key, required this.bible});
 
   @override
   State<DownloadingOverviewTile> createState() =>
@@ -234,183 +188,221 @@ class _DownloadingOverviewTileState extends State<DownloadingOverviewTile> {
 
   @override
   Widget build(BuildContext context) {
-    return HoverableContainer(
-      onEnter: () => setState(() {
-        _hovered = true;
-      }),
-      onExit: () => setState(() {
-        _hovered = false;
-      }),
-      height: 32,
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
-      initialColor: null,
-      hoveredColor: Colors.grey.shade400,
-      child: Row(
-        children: [
-          SizedBox(
-            width: 100,
-            child: Text(
-              widget.translationInfo.id,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          SizedBox(
-            width: 150,
-            child: Text(
-              widget.translationInfo.received.toString(),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          SizedBox(
-            width: 150,
-            child: Text(
-              widget.translationInfo.total.toString(),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          if (widget.translationInfo.downloadStatus !=
-              DownloadStatus.downloaded)
-            IconButton(
-              onPressed: () => togglePauseDownload(
-                context,
-                widget.translationInfo,
-              ),
-              icon: Icon(
-                widget.translationInfo.downloadStatus == DownloadStatus.paused
-                    ? Icons.play_arrow_rounded
-                    : Icons.pause_rounded,
-              ),
-              padding: EdgeInsets.zero,
-            ),
-          Expanded(
-            child: _hovered
-                ? TextButton(
-                    onPressed: () {},
-                    child:
-                        Text(widget.translationInfo.downloadStatus.toString()),
-                  )
-                : Column(
-                    children: [
-                      Text(
-                        widget.translationInfo.downloadStatus.toString(),
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontSize: 12),
-                      ),
-                      LinearProgressIndicator(
-                        value: widget.translationInfo.downloadStatus ==
-                                    DownloadStatus.installed ||
-                                widget.translationInfo.downloadStatus ==
-                                    DownloadStatus.installing
-                            ? 1
-                            : widget.translationInfo.received /
-                                widget.translationInfo.total,
-                      ),
-                    ],
+    return BlocProvider(
+      create: (_) => sl<BibleDownloadProgressBloc>()
+        ..add(BibleDownloadProgressPressed(widget.bible)),
+      child: HoverableContainer(
+        onEnter: () => setState(() {
+          _hovered = true;
+        }),
+        onExit: () => setState(() {
+          _hovered = false;
+        }),
+        height: 32,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
+        initialColor: null,
+        hoveredColor: Colors.grey.shade400,
+        child:
+            BlocBuilder<BibleDownloadProgressBloc, BibleDownloadProgressState>(
+          builder: (context, state) {
+            if (state.progress == null) {
+              return SizedBox(
+                child: Text("null!!"),
+              );
+            }
+
+            print('${state.progress!.received}/${state.progress!.total}');
+
+            return Row(
+              children: [
+                SizedBox(
+                  width: 100,
+                  child: Text(
+                    widget.bible.bibleName,
+                    overflow: TextOverflow.ellipsis,
                   ),
-          ),
-        ],
+                ),
+                SizedBox(
+                  width: 150,
+                  child: Text(
+                    state.progress!.received.toString(),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                SizedBox(
+                  width: 150,
+                  child: Text(
+                    state.progress!.total.toString(),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                if (state.progress!.downloadStatus != DownloadStatus.downloaded)
+                  IconButton(
+                    onPressed: () {},
+                    // onPressed: () => togglePauseDownload(
+                    //   context,
+                    //   state.progress!,
+                    // ),
+                    icon: Icon(
+                      state.progress!.downloadStatus == DownloadStatus.paused
+                          ? Icons.play_arrow_rounded
+                          : Icons.pause_rounded,
+                    ),
+                    padding: EdgeInsets.zero,
+                  ),
+                Expanded(
+                  child: _hovered
+                      ? TextButton(
+                          onPressed: () {},
+                          child:
+                              Text(state.progress!.downloadStatus.toString()),
+                        )
+                      : Column(
+                          children: [
+                            Text(
+                              state.progress!.downloadStatus.toString(),
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                            LinearProgressIndicator(
+                              value: state.progress!.downloadStatus ==
+                                          DownloadStatus.installed ||
+                                      state.progress!.downloadStatus ==
+                                          DownloadStatus.installing
+                                  ? 1
+                                  : state.progress!.received /
+                                      state.progress!.total,
+                            ),
+                          ],
+                        ),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
 
-  void togglePauseDownload(ctx, TranslationInfo translationInfo) {
-    BlocProvider.of<TranslationDownloadProgressBloc>(context).add(
-      translationInfo.downloadStatus == DownloadStatus.paused
-          ? TranslationDownloadProgressResume(translationInfo.id)
-          : TranslationDownloadProgressPause(translationInfo.id),
-    );
-  }
+  // void togglePauseDownload(ctx, BibleDownloadProgess translationInfo) {
+  //   BlocProvider.of<BibleDownloadProgressBloc>(context).add(
+  //     translationInfo.downloadStatus == DownloadStatus.paused
+  //         ? BibleDownloadProgressResume(translationInfo.id)
+  //         : BibleDownloadProgressPause(translationInfo.id),
+  //   );
+  // }
 }
 
-class AllTranslationsTile extends StatefulWidget {
+class AllBiblesTile extends StatefulWidget {
   final int index;
-  final TranslationInfo translationInfo;
+  final EBible bible;
 
-  const AllTranslationsTile({
+  const AllBiblesTile({
     super.key,
-    required this.translationInfo,
+    required this.bible,
     required this.index,
   });
 
   @override
-  State<AllTranslationsTile> createState() => _AllTranslationsTileState();
+  State<AllBiblesTile> createState() => _AllBiblesTileState();
 }
 
-class _AllTranslationsTileState extends State<AllTranslationsTile> {
-  bool _visible = false;
+class _AllBiblesTileState extends State<AllBiblesTile> {
+  bool downloading = false;
+  //bool _visible = false;
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: Future.value(
-          false), //widget.translationInfo.checkIfAlreadyInstalled(),
-      builder: (_, snapshot) {
-        bool isAlreadyInstalled = snapshot.hasData && snapshot.data!;
+    return downloading
+        ? DownloadingOverviewTile(bible: widget.bible)
+        : FutureBuilder(
+            future: Future.value(
+                false), //widget.translationInfo.checkIfAlreadyInstalled(),
+            builder: (_, snapshot) {
+              //bool isAlreadyInstalled = snapshot.hasData && snapshot.data!;
 
-        return HoverableContainer(
-          onEnter: () => setState(() {
-            _visible = true;
-          }),
-          onExit: () => setState(() {
-            _visible = false;
-          }),
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
+              return HoverableContainer(
+                height: 40,
+                // onEnter: () => setState(() {
+                //   _visible = true;
+                // }),
+                // onExit: () => setState(() {
+                //   _visible = false;
+                // }),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(8)),
+                /*
           initialColor: isAlreadyInstalled ||
                   widget.translationInfo.downloadStatus ==
-                      DownloadStatus.downloading
+                      DownloadStatus.inProgress
               ? Colors.grey.shade100
               : null,
-          hoveredColor: Colors.grey.shade200,
-          child: Row(
-            children: [
-              SizedBox(
-                width: 40,
-                child: Text('${widget.index}'),
-              ),
-              const VerticalDivider(),
-              Expanded(
-                child: Text(
-                  widget.translationInfo.id,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const VerticalDivider(),
-              Expanded(
-                flex: 2,
-                child: Text(
-                  widget.translationInfo.name,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const VerticalDivider(),
-              Expanded(
-                flex: 2,
-                child: Text(
-                  widget.translationInfo.language,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const VerticalDivider(),
+          */
+                hoveredColor: Colors.grey.shade200,
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 40,
+                      child: Text('${widget.index}'),
+                    ),
+                    const VerticalDivider(),
+                    Expanded(
+                      child: Text(
+                        widget.bible.bibleName,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const VerticalDivider(),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        widget.bible.bibleName,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const VerticalDivider(),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        widget.bible.langEngName ?? 'Unknown',
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const VerticalDivider(),
+                    Expanded(
+                      flex: 2,
+                      child: TextButton(
+                        onPressed: () => setState(() {
+                          downloading = true;
+                        }),
+                        //dispatch(context, widget.translationInfo.abbreviation),
+                        child: Text(
+                          'Download',
+                          maxLines: 1,
+                        ),
+                      ),
+                    ),
+                    /*
               Expanded(
                 flex: 2,
                 child: Visibility.maintain(
                   visible: _visible ||
                       isAlreadyInstalled ||
                       widget.translationInfo.downloadStatus ==
-                          DownloadStatus.downloading,
+                          DownloadStatus.inProgress,
                   child: TextButton(
                     onPressed: isAlreadyInstalled ||
                             widget.translationInfo.downloadStatus ==
-                                DownloadStatus.downloading
+                                DownloadStatus.inProgress
                         ? null
                         : () => dispatch(context, widget.translationInfo.id),
                     child: Text(
                       isAlreadyInstalled
                           ? 'Installed'
                           : widget.translationInfo.downloadStatus ==
-                                  DownloadStatus.downloading
+                                  DownloadStatus.inProgress
                               ? 'Downloading...'
                               : 'Download',
                       maxLines: 1,
@@ -418,16 +410,17 @@ class _AllTranslationsTileState extends State<AllTranslationsTile> {
                   ),
                 ),
               ),
-            ],
-          ),
-        );
-      },
-    );
+          */
+                  ],
+                ),
+              );
+            },
+          );
   }
 
   void dispatch(context, String id) {
-    BlocProvider.of<TranslationDownloadProgressBloc>(context).add(
-      TranslationDownloadProgressPressed(id),
+    BlocProvider.of<BibleDownloadProgressBloc>(context).add(
+      BibleDownloadProgressPressed(widget.bible),
     );
   }
 }
@@ -473,8 +466,8 @@ class InstalledTranslationsOverviewTile extends StatelessWidget {
   }
 
   void dispatch(context, String id) {
-    BlocProvider.of<InstalledTranslationsBloc>(context).add(
-      InstalledTranslationUninstall(id),
+    BlocProvider.of<InstalledBiblesBloc>(context).add(
+      InstalledBiblesUninstall(id),
     );
   }
 }

@@ -4,9 +4,8 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-
-import '../../../domain/entities/translation_info.dart';
-import '../../../domain/usecases/get_translations_info_list.dart';
+import 'package:the_smyrna_bible_v2/core/domain/entities/e_bible.dart';
+import 'package:the_smyrna_bible_v2/features/bible_installer_manager/domain/repositories/bible_manager_repository.dart';
 
 part 'translations_event.dart';
 part 'translations_state.dart';
@@ -22,12 +21,12 @@ const String SERVER_FAILURE_MESSAGE =
 
 class AllTranslationsBloc
     extends Bloc<AllTranslationsEvent, AllTranslationsState> {
-  final GetTranslationsInfoList getTranslationsInfoList;
+  final BibleManagerRepository repository;
 
   AllTranslationsBloc({
-    required this.getTranslationsInfoList,
+    required this.repository,
   }) : super(const AllTranslationsState()) {
-    on<AllTranslationsSubscriptionRequested>(_onSubscriptionRequested);
+    on<AllBiblesSubscriptionRequested>(_onSubscriptionRequested);
   }
 
   Future<void> _onSubscriptionRequested(
@@ -38,7 +37,8 @@ class AllTranslationsBloc
 
     await Future.delayed(Duration.zero);
 
-    final eitherFailureOrData = await getTranslationsInfoList(null);
+    final eitherFailureOrData = await repository.getAllDownloadableBibles();
+
     emit(eitherFailureOrData.fold(
       (failure) => state.copyWith(
         status: () => AllTranslationsStatus.error,
@@ -50,6 +50,4 @@ class AllTranslationsBloc
       ),
     ));
   }
-
-  Stream<AllTranslationsEvent> get events => events;
 }

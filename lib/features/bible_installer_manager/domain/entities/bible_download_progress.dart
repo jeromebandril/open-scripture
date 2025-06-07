@@ -4,24 +4,18 @@ enum DownloadStatus {
   notDownloaded,
   paused,
   canceled,
-  downloading,
+  inProgress,
   downloaded,
   installing,
   installed,
 }
 
-class TranslationInfo extends Equatable {
-  final String id;
-  final String name;
-  final String language;
+class DownloadProgess extends Equatable {
   final int total;
   final int received;
   final DownloadStatus downloadStatus;
 
-  const TranslationInfo({
-    required this.id,
-    required this.name,
-    required this.language,
+  const DownloadProgess({
     this.total = 0,
     this.received = 0,
     this.downloadStatus = DownloadStatus.notDownloaded,
@@ -29,23 +23,17 @@ class TranslationInfo extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        language,
         downloadStatus,
         total,
         received,
       ];
 
-  TranslationInfo copyWith({
+  DownloadProgess copyWith({
     int Function()? total,
     int Function()? received,
     DownloadStatus Function()? downloadStatus,
   }) {
-    return TranslationInfo(
-      id: this.id,
-      name: this.name,
-      language: this.language,
+    return DownloadProgess(
       total: total != null ? total() : this.total,
       received: received != null ? received() : this.received,
       downloadStatus:

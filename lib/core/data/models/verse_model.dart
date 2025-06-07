@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import '../../domain/entities/e_verse.dart';
+
 class VerseModel extends Equatable {
   final int id;
   final int paragraphId;
@@ -25,9 +27,8 @@ class VerseModel extends Equatable {
     );
   }
 
-  VerseModel toDomain() {
-    return VerseModel(
-      id: id,
+  EVerse toDomain() {
+    return EVerse(
       paragraphId: paragraphId,
       verseNumber: verseNumber,
       verseText: verseText,

@@ -7,7 +7,7 @@ import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presente
 import 'package:the_smyrna_bible_v2/features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/window_stack_manager/presentation/widgets/window_stack_manager_wrapper.dart';
 import 'features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
-import 'features/bible_installer_manager/presentation/bloc/installed_translations_overview/installed_translations_bloc.dart';
+import 'features/bible_installer_manager/presentation/bloc/installed_bibles_overview/installed_bibles_bloc.dart';
 import 'injection_container.dart' as di;
 
 void main() async {
@@ -40,8 +40,8 @@ class MyApp extends StatelessWidget {
                   di.sl<SplitScreenBloc>()..add(const SplitScreenX())),
           BlocProvider(create: (_) => di.sl<WindowStackManagerBloc>()),
           BlocProvider(
-              create: (_) => di.sl<InstalledTranslationsBloc>()
-                ..add(InstalledTranslationsSubscriptionRequested())),
+              create: (_) => di.sl<InstalledBiblesBloc>()
+                ..add(InstalledBiblesSubscriptionRequested())),
           BlocProvider(create: (_) => di.sl<BSearchbarBloc>()),
         ],
         child: const Home(),

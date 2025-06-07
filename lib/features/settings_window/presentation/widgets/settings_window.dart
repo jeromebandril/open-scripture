@@ -12,7 +12,7 @@ class SettingsFactory {
     return SettingsWindow(
       pages: const {
         'Appearance': SizedBox(),
-        'Bibles Manager': TranslationManagerWidget(),
+        'Bibles Manager': BibleDownloadManagerWidget(),
         'About': Text(
           'Application in early access, currently in development by @Jerome',
         ),

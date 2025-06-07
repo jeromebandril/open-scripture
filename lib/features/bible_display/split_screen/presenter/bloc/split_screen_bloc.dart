@@ -4,6 +4,8 @@ import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/domain/e
 import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/domain/usecases/split_horizontally.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/domain/usecases/split_vertically.dart';
 
+import '../../../../../core/domain/entities/bible_ref.dart';
+
 part 'split_screen_event.dart';
 part 'split_screen_state.dart';
 

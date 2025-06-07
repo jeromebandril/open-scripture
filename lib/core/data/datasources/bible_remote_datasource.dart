@@ -6,12 +6,13 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parser;
-import 'package:the_smyrna_bible_v2/core/constants/constants.dart' as constants;
-import 'package:the_smyrna_bible_v2/core/error/exception.dart';
 
-import '../models/bible_info_model.dart';
+import '../../../features/bible_installer_manager/domain/entities/bible_download_progress.dart';
+import '../../constants/constants.dart' as constants;
+import '../../error/exception.dart';
+import '../models/bible_model.dart';
 
-abstract class BibleManagerRemoteDataSource {
+abstract class BibleRemoteDataSource {
   /// Get bytes of a general bible file format
   /// And writes it temporarly in local file system,
   /// ready to be installed (converted to the preferred
@@ -21,46 +22,53 @@ abstract class BibleManagerRemoteDataSource {
   /// progress.
   ///
   /// Throws [ServerException] if it is unsuccessful
-  Stream<List<int>> downloadBibleFiles(String id);
+  Stream<DownloadProgess> downloadBibleFileContent(String id);
 
   /// Gets a list of available to download translations
-  /// from eBible.org endpoint
   ///
   /// Throws [ServerException] if it is unsuccessful
-  Future<List<BibleInfoModel>> getListOfAllBibles();
+  Future<List<BibleModel>> getListOfAllBibles();
 }
 
-class BibleManagerRemoteDataSourceImpl implements BibleManagerRemoteDataSource {
-  BibleManagerRemoteDataSourceImpl();
+class BibleRemoteDataSourceImpl implements BibleRemoteDataSource {
+  BibleRemoteDataSourceImpl();
 
   final dio = Dio();
 
   @override
-  Stream<List<int>> downloadBibleFiles(
-    String id,
+  Stream<DownloadProgess> downloadBibleFileContent(
+    String bibleId,
   ) async* {
     try {
-      final url = Uri.parse('${constants.contentSourceURL}/${id}_usfx.zip');
+      final url =
+          Uri.parse('${constants.contentSourceURL}/${bibleId}_usfx.zip');
       final appPath = await constants.getApplicationPath();
-      final translationDir = Directory('$appPath/$id');
-      final downloadController = StreamController<List<int>>();
-      dio.downloadUri(
-        url,
-        '${translationDir.path}/temp.txt',
-        options: Options(responseType: ResponseType.bytes),
-        onReceiveProgress: (received, total) {
-          downloadController.add([received, total]);
-        },
-      ).then((value) => downloadController.close());
+      final directory = Directory('$appPath/$bibleId');
+      final filePath = '${directory.path}/temp.txt';
 
-      yield* downloadController.stream;
+      final controller = StreamController<DownloadProgess>();
+
+      await dio.downloadUri(
+        url,
+        filePath,
+        options: Options(responseType: ResponseType.stream),
+        onReceiveProgress: (received, total) {
+          controller.add(DownloadProgess(
+            received: received,
+            total: total,
+            downloadStatus: DownloadStatus.inProgress,
+          ));
+        },
+      );
+
+      yield* controller.stream;
     } catch (e) {
       throw ServerException();
     }
   }
 
   @override
-  Future<List<BibleInfoModel>> getListOfAllBibles() async {
+  Future<List<BibleModel>> getListOfAllBibles() async {
     try {
       final response = await http.get(Uri.parse(constants.contentSourceURL));
 
@@ -68,7 +76,7 @@ class BibleManagerRemoteDataSourceImpl implements BibleManagerRemoteDataSource {
 
       final document = parser.parse(response.body);
       final rows = document.querySelectorAll('tr.redist');
-      final List<BibleInfoModel> identificators = [];
+      final List<BibleModel> identificators = [];
 
       if (rows.isEmpty) {
         throw ServerException();
@@ -86,10 +94,11 @@ class BibleManagerRemoteDataSourceImpl implements BibleManagerRemoteDataSource {
             if (href != null) {
               final id = Uri.parse(href).queryParameters['id'];
               if (id != null) {
-                identificators.add(BibleInfoModel(
-                  id: id,
-                  name: name!,
-                  language: language,
+                identificators.add(BibleModel(
+                  id: 1,
+                  bibleName: name!,
+                  langEngName: language,
+                  abbreviation: id,
                 ));
               }
             }

@@ -10,15 +10,16 @@ class BibleModel extends Equatable {
   final String? langEngName;
   final String? langNativeName;
   final String? langAbbreviation;
+  final String? originSource;
 
-  const BibleModel({
-    required this.id,
-    required this.bibleName,
-    required this.abbreviation,
-    this.langEngName,
-    this.langNativeName,
-    this.langAbbreviation,
-  });
+  const BibleModel(
+      {required this.id,
+      required this.bibleName,
+      required this.abbreviation,
+      this.langEngName,
+      this.langNativeName,
+      this.langAbbreviation,
+      this.originSource});
 
   factory BibleModel.fromDatabase(GetBiblesResult dbBible) {
     return BibleModel(
@@ -46,5 +47,6 @@ class BibleModel extends Equatable {
         langEngName,
         langNativeName,
         langAbbreviation,
+        originSource,
       ];
 }

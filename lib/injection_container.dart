@@ -6,31 +6,26 @@ import 'package:the_smyrna_bible_v2/features/b_searchbar/domain/repositories/b_s
 import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/domain/usecases/split_horizontally.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/domain/usecases/split_vertically.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/bloc/split_screen_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/data/datasources/bible_local_datasource.dart';
 import 'package:the_smyrna_bible_v2/features/settings_window/presentation/bloc/settings_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/data/datasources/translations_datasource.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/data/repositories/reader_repository_impl.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/translation_reader/domain/repositories/reader_repository.dart';
-import 'package:the_smyrna_bible_v2/features/bible_installer_manager/data/datasources/bible_manager_remote_datasource.dart';
-import 'package:the_smyrna_bible_v2/features/bible_installer_manager/data/datasources/bible_manager_local_datasource.dart';
+import 'package:the_smyrna_bible_v2/core/data/datasources/bible_remote_datasource.dart';
+import 'package:the_smyrna_bible_v2/core/data/datasources/bible_local_datasource.dart';
 import 'package:the_smyrna_bible_v2/features/bible_installer_manager/data/repositories/translation_manager_repository_impl.dart';
-import 'package:the_smyrna_bible_v2/features/bible_installer_manager/domain/repositories/translation_manager_repository.dart';
-import 'package:the_smyrna_bible_v2/features/bible_installer_manager/domain/usecases/get_local_translations_info_list.dart';
-import 'package:the_smyrna_bible_v2/features/bible_installer_manager/domain/usecases/get_translations_info_list.dart';
-import 'package:the_smyrna_bible_v2/features/bible_installer_manager/domain/usecases/uninstall_translation.dart';
-import 'package:the_smyrna_bible_v2/features/bible_installer_manager/presentation/bloc/installed_translations_overview/installed_translations_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/bible_installer_manager/presentation/bloc/translation_download_progress/translation_download_progress_bloc.dart';
+import 'package:the_smyrna_bible_v2/features/bible_installer_manager/domain/repositories/bible_manager_repository.dart';
+import 'package:the_smyrna_bible_v2/features/bible_installer_manager/presentation/bloc/installed_bibles_overview/installed_bibles_bloc.dart';
+import 'package:the_smyrna_bible_v2/features/bible_installer_manager/presentation/bloc/bible_download_progress/bible_download_progress_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
 import 'features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
 import 'features/bible_display/translation_reader/presentation/bloc/reader_bloc.dart';
-import 'features/bible_installer_manager/domain/usecases/download_translation.dart';
-import 'features/bible_installer_manager/domain/usecases/install_translation.dart';
 import 'features/bible_installer_manager/presentation/bloc/translations_overview/translations_bloc.dart';
 
 final sl = GetIt.instance;
 
 Future<void> init() async {
   initDatabase();
+
+  initCore();
 
   initTranslationManagerFeature();
 
@@ -41,27 +36,29 @@ Future<void> init() async {
   initReaderFeature();
 }
 
+void initCore() {
+  // Data sources
+  sl.registerLazySingleton<BibleLocalDataSource>(
+    () => BibleLocalDatasourceImpl(db: sl()),
+  );
+  sl.registerLazySingleton<BibleRemoteDataSource>(
+    () => BibleRemoteDataSourceImpl(),
+  );
+}
+
 void initDatabase() {
   sl.registerLazySingleton<AppDb>(() => AppDb());
 }
 
 void initTranslationManagerFeature() {
   sl.registerFactory(
-    () => AllTranslationsBloc(
-      getTranslationsInfoList: sl(),
-    ),
+    () => AllTranslationsBloc(repository: sl()),
   );
   sl.registerFactory(
-    () => InstalledTranslationsBloc(
-      getLocalTranslationsInfoList: sl(),
-      uninstallTranslation: sl(),
-    ),
+    () => InstalledBiblesBloc(repository: sl()),
   );
   sl.registerFactory(
-    () => TranslationDownloadProgressBloc(
-      downloadTranslation: sl(),
-      installTranslation: sl(),
-    ),
+    () => BibleDownloadProgressBloc(repository: sl()),
   );
   sl.registerFactory(
     () => SettingsBloc(),
@@ -70,27 +67,12 @@ void initTranslationManagerFeature() {
     () => WindowStackManagerBloc(),
   );
 
-  // Use cases
-  sl.registerLazySingleton(() => InstallUsfxTranslation(sl()));
-  sl.registerLazySingleton(() => DownloadTranslation(sl()));
-  sl.registerLazySingleton(() => GetTranslationsInfoList(sl()));
-  sl.registerLazySingleton(() => GetLocalTranslationsInfoList(sl()));
-  sl.registerLazySingleton(() => UninstallTranslation(sl()));
-
   // Repository
-  sl.registerLazySingleton<TranslationManagerRepository>(
+  sl.registerLazySingleton<BibleManagerRepository>(
     () => TranslationManagerRepositoryImpl(
       localDataSource: sl(),
       remoteDataSource: sl(),
     ),
-  );
-
-  // Data sources
-  sl.registerLazySingleton<BibleManagerLocalDataSource>(
-    () => BibleManagerLocalDataSourceImpl(db: sl()),
-  );
-  sl.registerLazySingleton<BibleManagerRemoteDataSource>(
-    () => BibleManagerRemoteDataSourceImpl(),
   );
 }
 
@@ -128,12 +110,4 @@ void initReaderFeature() {
     () => ReaderRepositoryImpl(localDatasource: sl()),
   );
   sl.registerLazySingleton(() => BibleReferenceParser());
-
-  // datasource
-  sl.registerLazySingleton<TranslationsDataSource>(
-    () => TranslationsDataSourceImpl(db: sl()),
-  );
-  sl.registerLazySingleton<BibleLocalDatasource>(
-    () => BibleLocalDatasourceImpl(db: sl()),
-  );
 }

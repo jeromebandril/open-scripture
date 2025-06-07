@@ -62,4 +62,3 @@ WHERE v.bookId = (SELECT id FROM books WHERE bookOrder = :bookNumber AND bibleId
   AND (verseNumber <= :verseEnd OR :verseEnd IS NULL);
 
 getBibles: SELECT id, languageId, bibleName, bibleNameAbbreviation FROM bibles;
-

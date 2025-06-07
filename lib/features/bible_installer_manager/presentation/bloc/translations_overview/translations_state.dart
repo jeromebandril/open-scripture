@@ -10,31 +10,26 @@ enum AllTranslationsStatus {
 class AllTranslationsState extends Equatable {
   const AllTranslationsState({
     this.status = AllTranslationsStatus.initial,
-    this.translationInfos = const [],
+    this.bibles = const [],
     this.errorMessage,
   });
 
   final AllTranslationsStatus status;
-  final List<TranslationInfo> translationInfos;
+  final List<EBible> bibles;
   final String? errorMessage;
 
   AllTranslationsState copyWith({
     AllTranslationsStatus Function()? status,
-    List<TranslationInfo> Function()? translationInfos,
+    List<EBible> Function()? translationInfos,
     String Function()? errorMessage,
   }) {
     return AllTranslationsState(
       status: status != null ? status() : this.status,
-      translationInfos:
-          translationInfos != null ? translationInfos() : this.translationInfos,
+      bibles: translationInfos != null ? translationInfos() : this.bibles,
       errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
     );
   }
 
-  List<TranslationInfo> getDownloadingList() => translationInfos
-      .where((t) => t.downloadStatus == DownloadStatus.downloading)
-      .toList();
-
   @override
-  List<Object> get props => [status, translationInfos];
+  List<Object> get props => [status, bibles];
 }
