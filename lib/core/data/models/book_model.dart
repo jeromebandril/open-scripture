@@ -16,5 +16,11 @@ class BookModel extends Equatable {
   });
 
   @override
-  List<Object?> get props => [id, longName, shortName, bibleId, bookOrder];
+  List<Object?> get props => [
+        id,
+        longName,
+        shortName,
+        bibleId,
+        bookOrder,
+      ];
 }

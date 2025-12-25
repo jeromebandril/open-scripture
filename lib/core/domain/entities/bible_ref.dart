@@ -1,16 +1,18 @@
 import 'package:equatable/equatable.dart';
 
 class BibleRef extends Equatable {
-  final String bookName;
+  final String bookId;
   final int chapter;
-  final int verse;
+  final int? verseStart;
+  final int? verseEnd;
 
   const BibleRef({
-    required this.bookName,
+    required this.bookId,
     required this.chapter,
-    required this.verse,
+    this.verseStart,
+    this.verseEnd,
   });
 
   @override
-  List<Object?> get props => [bookName, chapter, verse];
+  List<Object?> get props => [bookId, chapter, verseStart, verseEnd];
 }

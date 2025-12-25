@@ -7,11 +7,11 @@ sealed class BSearchbarEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class BSearchbarAnalyzeIntent extends BSearchbarEvent {
-  final String prompt;
+class BSearchbarParseIntent extends BSearchbarEvent {
+  final String query;
 
-  const BSearchbarAnalyzeIntent(this.prompt);
+  const BSearchbarParseIntent(this.query);
 
   @override
-  List<Object> get props => [prompt];
+  List<Object> get props => [query];
 }

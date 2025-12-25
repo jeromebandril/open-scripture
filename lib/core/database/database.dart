@@ -14,6 +14,30 @@ class AppDb extends _$AppDb {
 
   @override
   int get schemaVersion => 1;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+        onCreate: (m) async {
+          await m.createAll();
+        },
+        onUpgrade: (m, from, to) async {
+          // upgrade step-by-step
+          if (from < 2) {
+            // changes introduced in v2
+            // await m.addColumn(table, table.newColumn);
+            // await m.createTable(newTable);
+            // await m.createIndex(someIndex);
+            // await customStatement('UPDATE ...');
+          }
+          if (from < 3) {
+            // changes introduced in v3
+          }
+        },
+        beforeOpen: (details) async {
+          // runs after create/upgrade, before DB is used
+          // good place for PRAGMAs, sanity checks, seed data, etc.
+        },
+      );
 }
 
 LazyDatabase _openConnection() {

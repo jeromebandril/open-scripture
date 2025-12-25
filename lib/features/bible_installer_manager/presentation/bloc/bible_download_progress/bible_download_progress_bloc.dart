@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:the_smyrna_bible_v2/features/bible_installer_manager/domain/entities/bible_download_progress.dart';
-import 'package:the_smyrna_bible_v2/features/bible_installer_manager/domain/repositories/bible_manager_repository.dart';
 
-import '../../../../../core/domain/entities/e_bible.dart';
+import '../../../../../core/domain/entities/bible_meta.dart';
+import '../../../domain/entities/bible_download_progress.dart';
+import '../../../domain/repositories/bible_manager_repository.dart';
 
 part 'bible_download_progress_event.dart';
 part 'bible_download_progress_state.dart';
@@ -22,7 +22,7 @@ const String INSTALLATION_FAILURE_MESSAGE = 'Failed To Install';
 class BibleDownloadProgressBloc
     extends Bloc<TranslationDownloadProgressEvent, BibleDownloadProgressState> {
   final BibleManagerRepository repository;
-  StreamSubscription<DownloadProgess>? _progressSubscription;
+  StreamSubscription<InstallProgress>? _progressSubscription;
 
   BibleDownloadProgressBloc({
     required this.repository,
@@ -38,55 +38,55 @@ class BibleDownloadProgressBloc
     Emitter<BibleDownloadProgressState> emit,
   ) async {
     /* Make download */
-    final failureOrStream = await repository.downloadTranslation(
+    final failureOrStream = await repository.downloadBible(
       event.bible.abbreviation,
     );
 
     _progressSubscription?.cancel();
 
-    await failureOrStream.fold((failure) => null, (stream) async {
-      await emit.forEach(stream, onData: (progress) {
-        return state.copyWith(
-          progress: () => progress,
-          errorMessage: null,
-        );
-      }, onError: (_, __) {
-        return state.copyWith(
-          progress: null,
-          errorMessage: () => INSTALLATION_FAILURE_MESSAGE,
-        );
-      });
+    // await failureOrStream.fold((failure) => null, (stream) async {
+    //   await emit.forEach(stream, onData: (progress) {
+    //     return state.copyWith(
+    //       progress: () => progress,
+    //       errorMessage: null,
+    //     );
+    //   }, onError: (_, __) {
+    //     return state.copyWith(
+    //       progress: null,
+    //       errorMessage: () => INSTALLATION_FAILURE_MESSAGE,
+    //     );
+    //   });
 
-      // _progressSubscription = stream.listen((progress) {
-      //   //print('${progress.received}/${progress.total}');
-      //   if (!emit.isDone) {
-      //     emit();
-      //   } else {
-      //     print('isdone!');
-      //   }
-      // }, onError: (_) {
-      //   print("errore!!!");
-      // });
-    });
+    //   // _progressSubscription = stream.listen((progress) {
+    //   //   //print('${progress.received}/${progress.total}');
+    //   //   if (!emit.isDone) {
+    //   //     emit();
+    //   //   } else {
+    //   //     print('isdone!');
+    //   //   }
+    //   // }, onError: (_) {
+    //   //   print("errore!!!");
+    //   // });
+    // });
 
     /* Make installation */
-    emit(state.copyWith(
-      progress: () => state.progress!.copyWith(
-        downloadStatus: () => DownloadStatus.installing,
-      ),
-    ));
+    // emit(state.copyWith(
+    //   progress: () => state.progress!.copyWith(
+    //     stage: () => DownloadStatus.installing,
+    //   ),
+    // ));
 
-    final failureOrInstalled = await repository.installTranslation(
+    final failureOrInstalled = await repository.installBible(
       event.bible.abbreviation,
     );
 
-    await failureOrInstalled.fold((failure) {}, (_) async {
-      return emit(state.copyWith(
-        progress: () => state.progress!.copyWith(
-          downloadStatus: () => DownloadStatus.installed,
-        ),
-      ));
-    });
+    // await failureOrInstalled.fold((failure) {}, (_) async {
+    //   return emit(state.copyWith(
+    //     progress: () => state.progress!.copyWith(
+    //       stage: () => DownloadStatus.installed,
+    //     ),
+    //   ));
+    // });
 
     /*
       ).then((_) async {

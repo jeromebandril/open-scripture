@@ -3,6 +3,284 @@
 part of 'database.dart';
 
 // ignore_for_file: type=lint
+class Languages extends Table with TableInfo<Languages, Language> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  Languages(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      $customConstraints: 'NOT NULL PRIMARY KEY AUTOINCREMENT');
+  static const VerificationMeta _langEngNameMeta =
+      const VerificationMeta('langEngName');
+  late final GeneratedColumn<String> langEngName = GeneratedColumn<String>(
+      'langEngName', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _langNativeNameMeta =
+      const VerificationMeta('langNativeName');
+  late final GeneratedColumn<String> langNativeName = GeneratedColumn<String>(
+      'langNativeName', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  static const VerificationMeta _langIsoCodeMeta =
+      const VerificationMeta('langIsoCode');
+  late final GeneratedColumn<String> langIsoCode = GeneratedColumn<String>(
+      'langIsoCode', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, langEngName, langNativeName, langIsoCode];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'languages';
+  @override
+  VerificationContext validateIntegrity(Insertable<Language> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('langEngName')) {
+      context.handle(
+          _langEngNameMeta,
+          langEngName.isAcceptableOrUnknown(
+              data['langEngName']!, _langEngNameMeta));
+    } else if (isInserting) {
+      context.missing(_langEngNameMeta);
+    }
+    if (data.containsKey('langNativeName')) {
+      context.handle(
+          _langNativeNameMeta,
+          langNativeName.isAcceptableOrUnknown(
+              data['langNativeName']!, _langNativeNameMeta));
+    }
+    if (data.containsKey('langIsoCode')) {
+      context.handle(
+          _langIsoCodeMeta,
+          langIsoCode.isAcceptableOrUnknown(
+              data['langIsoCode']!, _langIsoCodeMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Language map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Language(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      langEngName: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}langEngName'])!,
+      langNativeName: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}langNativeName']),
+      langIsoCode: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}langIsoCode']),
+    );
+  }
+
+  @override
+  Languages createAlias(String alias) {
+    return Languages(attachedDatabase, alias);
+  }
+
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class Language extends DataClass implements Insertable<Language> {
+  final int id;
+  final String langEngName;
+  final String? langNativeName;
+  final String? langIsoCode;
+  const Language(
+      {required this.id,
+      required this.langEngName,
+      this.langNativeName,
+      this.langIsoCode});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['langEngName'] = Variable<String>(langEngName);
+    if (!nullToAbsent || langNativeName != null) {
+      map['langNativeName'] = Variable<String>(langNativeName);
+    }
+    if (!nullToAbsent || langIsoCode != null) {
+      map['langIsoCode'] = Variable<String>(langIsoCode);
+    }
+    return map;
+  }
+
+  LanguagesCompanion toCompanion(bool nullToAbsent) {
+    return LanguagesCompanion(
+      id: Value(id),
+      langEngName: Value(langEngName),
+      langNativeName: langNativeName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(langNativeName),
+      langIsoCode: langIsoCode == null && nullToAbsent
+          ? const Value.absent()
+          : Value(langIsoCode),
+    );
+  }
+
+  factory Language.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Language(
+      id: serializer.fromJson<int>(json['id']),
+      langEngName: serializer.fromJson<String>(json['langEngName']),
+      langNativeName: serializer.fromJson<String?>(json['langNativeName']),
+      langIsoCode: serializer.fromJson<String?>(json['langIsoCode']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'langEngName': serializer.toJson<String>(langEngName),
+      'langNativeName': serializer.toJson<String?>(langNativeName),
+      'langIsoCode': serializer.toJson<String?>(langIsoCode),
+    };
+  }
+
+  Language copyWith(
+          {int? id,
+          String? langEngName,
+          Value<String?> langNativeName = const Value.absent(),
+          Value<String?> langIsoCode = const Value.absent()}) =>
+      Language(
+        id: id ?? this.id,
+        langEngName: langEngName ?? this.langEngName,
+        langNativeName:
+            langNativeName.present ? langNativeName.value : this.langNativeName,
+        langIsoCode: langIsoCode.present ? langIsoCode.value : this.langIsoCode,
+      );
+  Language copyWithCompanion(LanguagesCompanion data) {
+    return Language(
+      id: data.id.present ? data.id.value : this.id,
+      langEngName:
+          data.langEngName.present ? data.langEngName.value : this.langEngName,
+      langNativeName: data.langNativeName.present
+          ? data.langNativeName.value
+          : this.langNativeName,
+      langIsoCode:
+          data.langIsoCode.present ? data.langIsoCode.value : this.langIsoCode,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Language(')
+          ..write('id: $id, ')
+          ..write('langEngName: $langEngName, ')
+          ..write('langNativeName: $langNativeName, ')
+          ..write('langIsoCode: $langIsoCode')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, langEngName, langNativeName, langIsoCode);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Language &&
+          other.id == this.id &&
+          other.langEngName == this.langEngName &&
+          other.langNativeName == this.langNativeName &&
+          other.langIsoCode == this.langIsoCode);
+}
+
+class LanguagesCompanion extends UpdateCompanion<Language> {
+  final Value<int> id;
+  final Value<String> langEngName;
+  final Value<String?> langNativeName;
+  final Value<String?> langIsoCode;
+  const LanguagesCompanion({
+    this.id = const Value.absent(),
+    this.langEngName = const Value.absent(),
+    this.langNativeName = const Value.absent(),
+    this.langIsoCode = const Value.absent(),
+  });
+  LanguagesCompanion.insert({
+    this.id = const Value.absent(),
+    required String langEngName,
+    this.langNativeName = const Value.absent(),
+    this.langIsoCode = const Value.absent(),
+  }) : langEngName = Value(langEngName);
+  static Insertable<Language> custom({
+    Expression<int>? id,
+    Expression<String>? langEngName,
+    Expression<String>? langNativeName,
+    Expression<String>? langIsoCode,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (langEngName != null) 'langEngName': langEngName,
+      if (langNativeName != null) 'langNativeName': langNativeName,
+      if (langIsoCode != null) 'langIsoCode': langIsoCode,
+    });
+  }
+
+  LanguagesCompanion copyWith(
+      {Value<int>? id,
+      Value<String>? langEngName,
+      Value<String?>? langNativeName,
+      Value<String?>? langIsoCode}) {
+    return LanguagesCompanion(
+      id: id ?? this.id,
+      langEngName: langEngName ?? this.langEngName,
+      langNativeName: langNativeName ?? this.langNativeName,
+      langIsoCode: langIsoCode ?? this.langIsoCode,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (langEngName.present) {
+      map['langEngName'] = Variable<String>(langEngName.value);
+    }
+    if (langNativeName.present) {
+      map['langNativeName'] = Variable<String>(langNativeName.value);
+    }
+    if (langIsoCode.present) {
+      map['langIsoCode'] = Variable<String>(langIsoCode.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LanguagesCompanion(')
+          ..write('id: $id, ')
+          ..write('langEngName: $langEngName, ')
+          ..write('langNativeName: $langNativeName, ')
+          ..write('langIsoCode: $langIsoCode')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class Bibles extends Table with TableInfo<Bibles, Bible> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -15,6 +293,12 @@ class Bibles extends Table with TableInfo<Bibles, Bible> {
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       $customConstraints: 'NOT NULL PRIMARY KEY AUTOINCREMENT');
+  static const VerificationMeta _extIdMeta = const VerificationMeta('extId');
+  late final GeneratedColumn<String> extId = GeneratedColumn<String>(
+      'extId', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL UNIQUE');
   static const VerificationMeta _languageIdMeta =
       const VerificationMeta('languageId');
   late final GeneratedColumn<int> languageId = GeneratedColumn<int>(
@@ -36,37 +320,16 @@ class Bibles extends Table with TableInfo<Bibles, Bible> {
           type: DriftSqlType.string,
           requiredDuringInsert: true,
           $customConstraints: 'NOT NULL');
-  static const VerificationMeta _langEngNameMeta =
-      const VerificationMeta('langEngName');
-  late final GeneratedColumn<String> langEngName = GeneratedColumn<String>(
-      'langEngName', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
-  static const VerificationMeta _langNativeNameMeta =
-      const VerificationMeta('langNativeName');
-  late final GeneratedColumn<String> langNativeName = GeneratedColumn<String>(
-      'langNativeName', aliasedName, true,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      $customConstraints: '');
-  static const VerificationMeta _langAbbreviationMeta =
-      const VerificationMeta('langAbbreviation');
-  late final GeneratedColumn<String> langAbbreviation = GeneratedColumn<String>(
-      'langAbbreviation', aliasedName, true,
+  static const VerificationMeta _originSourceMeta =
+      const VerificationMeta('originSource');
+  late final GeneratedColumn<String> originSource = GeneratedColumn<String>(
+      'originSource', aliasedName, true,
       type: DriftSqlType.string,
       requiredDuringInsert: false,
       $customConstraints: '');
   @override
-  List<GeneratedColumn> get $columns => [
-        id,
-        languageId,
-        bibleName,
-        bibleNameAbbreviation,
-        langEngName,
-        langNativeName,
-        langAbbreviation
-      ];
+  List<GeneratedColumn> get $columns =>
+      [id, extId, languageId, bibleName, bibleNameAbbreviation, originSource];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -79,6 +342,12 @@ class Bibles extends Table with TableInfo<Bibles, Bible> {
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('extId')) {
+      context.handle(
+          _extIdMeta, extId.isAcceptableOrUnknown(data['extId']!, _extIdMeta));
+    } else if (isInserting) {
+      context.missing(_extIdMeta);
     }
     if (data.containsKey('languageId')) {
       context.handle(
@@ -100,25 +369,11 @@ class Bibles extends Table with TableInfo<Bibles, Bible> {
     } else if (isInserting) {
       context.missing(_bibleNameAbbreviationMeta);
     }
-    if (data.containsKey('langEngName')) {
+    if (data.containsKey('originSource')) {
       context.handle(
-          _langEngNameMeta,
-          langEngName.isAcceptableOrUnknown(
-              data['langEngName']!, _langEngNameMeta));
-    } else if (isInserting) {
-      context.missing(_langEngNameMeta);
-    }
-    if (data.containsKey('langNativeName')) {
-      context.handle(
-          _langNativeNameMeta,
-          langNativeName.isAcceptableOrUnknown(
-              data['langNativeName']!, _langNativeNameMeta));
-    }
-    if (data.containsKey('langAbbreviation')) {
-      context.handle(
-          _langAbbreviationMeta,
-          langAbbreviation.isAcceptableOrUnknown(
-              data['langAbbreviation']!, _langAbbreviationMeta));
+          _originSourceMeta,
+          originSource.isAcceptableOrUnknown(
+              data['originSource']!, _originSourceMeta));
     }
     return context;
   }
@@ -131,6 +386,8 @@ class Bibles extends Table with TableInfo<Bibles, Bible> {
     return Bible(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      extId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}extId'])!,
       languageId: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}languageId']),
       bibleName: attachedDatabase.typeMapping
@@ -138,12 +395,8 @@ class Bibles extends Table with TableInfo<Bibles, Bible> {
       bibleNameAbbreviation: attachedDatabase.typeMapping.read(
           DriftSqlType.string,
           data['${effectivePrefix}bibleNameAbbreviation'])!,
-      langEngName: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}langEngName'])!,
-      langNativeName: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}langNativeName']),
-      langAbbreviation: attachedDatabase.typeMapping.read(
-          DriftSqlType.string, data['${effectivePrefix}langAbbreviation']),
+      originSource: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}originSource']),
     );
   }
 
@@ -153,42 +406,39 @@ class Bibles extends Table with TableInfo<Bibles, Bible> {
   }
 
   @override
+  List<String> get customConstraints => const [
+        'FOREIGN KEY(languageId)REFERENCES languages(id)ON DELETE CASCADE'
+      ];
+  @override
   bool get dontWriteConstraints => true;
 }
 
 class Bible extends DataClass implements Insertable<Bible> {
   final int id;
+  final String extId;
   final int? languageId;
   final String bibleName;
   final String bibleNameAbbreviation;
-
-  /// language specifications
-  final String langEngName;
-  final String? langNativeName;
-  final String? langAbbreviation;
+  final String? originSource;
   const Bible(
       {required this.id,
+      required this.extId,
       this.languageId,
       required this.bibleName,
       required this.bibleNameAbbreviation,
-      required this.langEngName,
-      this.langNativeName,
-      this.langAbbreviation});
+      this.originSource});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['extId'] = Variable<String>(extId);
     if (!nullToAbsent || languageId != null) {
       map['languageId'] = Variable<int>(languageId);
     }
     map['bibleName'] = Variable<String>(bibleName);
     map['bibleNameAbbreviation'] = Variable<String>(bibleNameAbbreviation);
-    map['langEngName'] = Variable<String>(langEngName);
-    if (!nullToAbsent || langNativeName != null) {
-      map['langNativeName'] = Variable<String>(langNativeName);
-    }
-    if (!nullToAbsent || langAbbreviation != null) {
-      map['langAbbreviation'] = Variable<String>(langAbbreviation);
+    if (!nullToAbsent || originSource != null) {
+      map['originSource'] = Variable<String>(originSource);
     }
     return map;
   }
@@ -196,18 +446,15 @@ class Bible extends DataClass implements Insertable<Bible> {
   BiblesCompanion toCompanion(bool nullToAbsent) {
     return BiblesCompanion(
       id: Value(id),
+      extId: Value(extId),
       languageId: languageId == null && nullToAbsent
           ? const Value.absent()
           : Value(languageId),
       bibleName: Value(bibleName),
       bibleNameAbbreviation: Value(bibleNameAbbreviation),
-      langEngName: Value(langEngName),
-      langNativeName: langNativeName == null && nullToAbsent
+      originSource: originSource == null && nullToAbsent
           ? const Value.absent()
-          : Value(langNativeName),
-      langAbbreviation: langAbbreviation == null && nullToAbsent
-          ? const Value.absent()
-          : Value(langAbbreviation),
+          : Value(originSource),
     );
   }
 
@@ -216,13 +463,12 @@ class Bible extends DataClass implements Insertable<Bible> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Bible(
       id: serializer.fromJson<int>(json['id']),
+      extId: serializer.fromJson<String>(json['extId']),
       languageId: serializer.fromJson<int?>(json['languageId']),
       bibleName: serializer.fromJson<String>(json['bibleName']),
       bibleNameAbbreviation:
           serializer.fromJson<String>(json['bibleNameAbbreviation']),
-      langEngName: serializer.fromJson<String>(json['langEngName']),
-      langNativeName: serializer.fromJson<String?>(json['langNativeName']),
-      langAbbreviation: serializer.fromJson<String?>(json['langAbbreviation']),
+      originSource: serializer.fromJson<String?>(json['originSource']),
     );
   }
   @override
@@ -230,53 +476,44 @@ class Bible extends DataClass implements Insertable<Bible> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'extId': serializer.toJson<String>(extId),
       'languageId': serializer.toJson<int?>(languageId),
       'bibleName': serializer.toJson<String>(bibleName),
       'bibleNameAbbreviation': serializer.toJson<String>(bibleNameAbbreviation),
-      'langEngName': serializer.toJson<String>(langEngName),
-      'langNativeName': serializer.toJson<String?>(langNativeName),
-      'langAbbreviation': serializer.toJson<String?>(langAbbreviation),
+      'originSource': serializer.toJson<String?>(originSource),
     };
   }
 
   Bible copyWith(
           {int? id,
+          String? extId,
           Value<int?> languageId = const Value.absent(),
           String? bibleName,
           String? bibleNameAbbreviation,
-          String? langEngName,
-          Value<String?> langNativeName = const Value.absent(),
-          Value<String?> langAbbreviation = const Value.absent()}) =>
+          Value<String?> originSource = const Value.absent()}) =>
       Bible(
         id: id ?? this.id,
+        extId: extId ?? this.extId,
         languageId: languageId.present ? languageId.value : this.languageId,
         bibleName: bibleName ?? this.bibleName,
         bibleNameAbbreviation:
             bibleNameAbbreviation ?? this.bibleNameAbbreviation,
-        langEngName: langEngName ?? this.langEngName,
-        langNativeName:
-            langNativeName.present ? langNativeName.value : this.langNativeName,
-        langAbbreviation: langAbbreviation.present
-            ? langAbbreviation.value
-            : this.langAbbreviation,
+        originSource:
+            originSource.present ? originSource.value : this.originSource,
       );
   Bible copyWithCompanion(BiblesCompanion data) {
     return Bible(
       id: data.id.present ? data.id.value : this.id,
+      extId: data.extId.present ? data.extId.value : this.extId,
       languageId:
           data.languageId.present ? data.languageId.value : this.languageId,
       bibleName: data.bibleName.present ? data.bibleName.value : this.bibleName,
       bibleNameAbbreviation: data.bibleNameAbbreviation.present
           ? data.bibleNameAbbreviation.value
           : this.bibleNameAbbreviation,
-      langEngName:
-          data.langEngName.present ? data.langEngName.value : this.langEngName,
-      langNativeName: data.langNativeName.present
-          ? data.langNativeName.value
-          : this.langNativeName,
-      langAbbreviation: data.langAbbreviation.present
-          ? data.langAbbreviation.value
-          : this.langAbbreviation,
+      originSource: data.originSource.present
+          ? data.originSource.value
+          : this.originSource,
     );
   }
 
@@ -284,98 +521,89 @@ class Bible extends DataClass implements Insertable<Bible> {
   String toString() {
     return (StringBuffer('Bible(')
           ..write('id: $id, ')
+          ..write('extId: $extId, ')
           ..write('languageId: $languageId, ')
           ..write('bibleName: $bibleName, ')
           ..write('bibleNameAbbreviation: $bibleNameAbbreviation, ')
-          ..write('langEngName: $langEngName, ')
-          ..write('langNativeName: $langNativeName, ')
-          ..write('langAbbreviation: $langAbbreviation')
+          ..write('originSource: $originSource')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, languageId, bibleName,
-      bibleNameAbbreviation, langEngName, langNativeName, langAbbreviation);
+  int get hashCode => Object.hash(
+      id, extId, languageId, bibleName, bibleNameAbbreviation, originSource);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Bible &&
           other.id == this.id &&
+          other.extId == this.extId &&
           other.languageId == this.languageId &&
           other.bibleName == this.bibleName &&
           other.bibleNameAbbreviation == this.bibleNameAbbreviation &&
-          other.langEngName == this.langEngName &&
-          other.langNativeName == this.langNativeName &&
-          other.langAbbreviation == this.langAbbreviation);
+          other.originSource == this.originSource);
 }
 
 class BiblesCompanion extends UpdateCompanion<Bible> {
   final Value<int> id;
+  final Value<String> extId;
   final Value<int?> languageId;
   final Value<String> bibleName;
   final Value<String> bibleNameAbbreviation;
-  final Value<String> langEngName;
-  final Value<String?> langNativeName;
-  final Value<String?> langAbbreviation;
+  final Value<String?> originSource;
   const BiblesCompanion({
     this.id = const Value.absent(),
+    this.extId = const Value.absent(),
     this.languageId = const Value.absent(),
     this.bibleName = const Value.absent(),
     this.bibleNameAbbreviation = const Value.absent(),
-    this.langEngName = const Value.absent(),
-    this.langNativeName = const Value.absent(),
-    this.langAbbreviation = const Value.absent(),
+    this.originSource = const Value.absent(),
   });
   BiblesCompanion.insert({
     this.id = const Value.absent(),
+    required String extId,
     this.languageId = const Value.absent(),
     required String bibleName,
     required String bibleNameAbbreviation,
-    required String langEngName,
-    this.langNativeName = const Value.absent(),
-    this.langAbbreviation = const Value.absent(),
-  })  : bibleName = Value(bibleName),
-        bibleNameAbbreviation = Value(bibleNameAbbreviation),
-        langEngName = Value(langEngName);
+    this.originSource = const Value.absent(),
+  })  : extId = Value(extId),
+        bibleName = Value(bibleName),
+        bibleNameAbbreviation = Value(bibleNameAbbreviation);
   static Insertable<Bible> custom({
     Expression<int>? id,
+    Expression<String>? extId,
     Expression<int>? languageId,
     Expression<String>? bibleName,
     Expression<String>? bibleNameAbbreviation,
-    Expression<String>? langEngName,
-    Expression<String>? langNativeName,
-    Expression<String>? langAbbreviation,
+    Expression<String>? originSource,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (extId != null) 'extId': extId,
       if (languageId != null) 'languageId': languageId,
       if (bibleName != null) 'bibleName': bibleName,
       if (bibleNameAbbreviation != null)
         'bibleNameAbbreviation': bibleNameAbbreviation,
-      if (langEngName != null) 'langEngName': langEngName,
-      if (langNativeName != null) 'langNativeName': langNativeName,
-      if (langAbbreviation != null) 'langAbbreviation': langAbbreviation,
+      if (originSource != null) 'originSource': originSource,
     });
   }
 
   BiblesCompanion copyWith(
       {Value<int>? id,
+      Value<String>? extId,
       Value<int?>? languageId,
       Value<String>? bibleName,
       Value<String>? bibleNameAbbreviation,
-      Value<String>? langEngName,
-      Value<String?>? langNativeName,
-      Value<String?>? langAbbreviation}) {
+      Value<String?>? originSource}) {
     return BiblesCompanion(
       id: id ?? this.id,
+      extId: extId ?? this.extId,
       languageId: languageId ?? this.languageId,
       bibleName: bibleName ?? this.bibleName,
       bibleNameAbbreviation:
           bibleNameAbbreviation ?? this.bibleNameAbbreviation,
-      langEngName: langEngName ?? this.langEngName,
-      langNativeName: langNativeName ?? this.langNativeName,
-      langAbbreviation: langAbbreviation ?? this.langAbbreviation,
+      originSource: originSource ?? this.originSource,
     );
   }
 
@@ -384,6 +612,9 @@ class BiblesCompanion extends UpdateCompanion<Bible> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (extId.present) {
+      map['extId'] = Variable<String>(extId.value);
     }
     if (languageId.present) {
       map['languageId'] = Variable<int>(languageId.value);
@@ -395,14 +626,8 @@ class BiblesCompanion extends UpdateCompanion<Bible> {
       map['bibleNameAbbreviation'] =
           Variable<String>(bibleNameAbbreviation.value);
     }
-    if (langEngName.present) {
-      map['langEngName'] = Variable<String>(langEngName.value);
-    }
-    if (langNativeName.present) {
-      map['langNativeName'] = Variable<String>(langNativeName.value);
-    }
-    if (langAbbreviation.present) {
-      map['langAbbreviation'] = Variable<String>(langAbbreviation.value);
+    if (originSource.present) {
+      map['originSource'] = Variable<String>(originSource.value);
     }
     return map;
   }
@@ -411,12 +636,11 @@ class BiblesCompanion extends UpdateCompanion<Bible> {
   String toString() {
     return (StringBuffer('BiblesCompanion(')
           ..write('id: $id, ')
+          ..write('extId: $extId, ')
           ..write('languageId: $languageId, ')
           ..write('bibleName: $bibleName, ')
           ..write('bibleNameAbbreviation: $bibleNameAbbreviation, ')
-          ..write('langEngName: $langEngName, ')
-          ..write('langNativeName: $langNativeName, ')
-          ..write('langAbbreviation: $langAbbreviation')
+          ..write('originSource: $originSource')
           ..write(')'))
         .toString();
   }
@@ -439,6 +663,12 @@ class Books extends Table with TableInfo<Books, Book> {
   late final GeneratedColumn<int> bibleId = GeneratedColumn<int>(
       'bibleId', aliasedName, false,
       type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _osisIdMeta = const VerificationMeta('osisId');
+  late final GeneratedColumn<String> osisId = GeneratedColumn<String>(
+      'osisId', aliasedName, false,
+      type: DriftSqlType.string,
       requiredDuringInsert: true,
       $customConstraints: 'NOT NULL');
   static const VerificationMeta _bookOrderMeta =
@@ -464,7 +694,7 @@ class Books extends Table with TableInfo<Books, Book> {
       $customConstraints: 'NOT NULL');
   @override
   List<GeneratedColumn> get $columns =>
-      [id, bibleId, bookOrder, longName, shortName];
+      [id, bibleId, osisId, bookOrder, longName, shortName];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -483,6 +713,12 @@ class Books extends Table with TableInfo<Books, Book> {
           bibleId.isAcceptableOrUnknown(data['bibleId']!, _bibleIdMeta));
     } else if (isInserting) {
       context.missing(_bibleIdMeta);
+    }
+    if (data.containsKey('osisId')) {
+      context.handle(_osisIdMeta,
+          osisId.isAcceptableOrUnknown(data['osisId']!, _osisIdMeta));
+    } else if (isInserting) {
+      context.missing(_osisIdMeta);
     }
     if (data.containsKey('bookOrder')) {
       context.handle(_bookOrderMeta,
@@ -504,6 +740,10 @@ class Books extends Table with TableInfo<Books, Book> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+        {bibleId, osisId},
+      ];
+  @override
   Book map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return Book(
@@ -511,6 +751,8 @@ class Books extends Table with TableInfo<Books, Book> {
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       bibleId: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}bibleId'])!,
+      osisId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}osisId'])!,
       bookOrder: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}bookOrder']),
       longName: attachedDatabase.typeMapping
@@ -526,8 +768,10 @@ class Books extends Table with TableInfo<Books, Book> {
   }
 
   @override
-  List<String> get customConstraints =>
-      const ['FOREIGN KEY(bibleId)REFERENCES bibles(id)'];
+  List<String> get customConstraints => const [
+        'FOREIGN KEY(bibleId)REFERENCES bibles(id)ON DELETE CASCADE',
+        'UNIQUE(bibleId, osisId)'
+      ];
   @override
   bool get dontWriteConstraints => true;
 }
@@ -535,12 +779,14 @@ class Books extends Table with TableInfo<Books, Book> {
 class Book extends DataClass implements Insertable<Book> {
   final int id;
   final int bibleId;
+  final String osisId;
   final int? bookOrder;
   final String? longName;
   final String shortName;
   const Book(
       {required this.id,
       required this.bibleId,
+      required this.osisId,
       this.bookOrder,
       this.longName,
       required this.shortName});
@@ -549,6 +795,7 @@ class Book extends DataClass implements Insertable<Book> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['bibleId'] = Variable<int>(bibleId);
+    map['osisId'] = Variable<String>(osisId);
     if (!nullToAbsent || bookOrder != null) {
       map['bookOrder'] = Variable<int>(bookOrder);
     }
@@ -563,6 +810,7 @@ class Book extends DataClass implements Insertable<Book> {
     return BooksCompanion(
       id: Value(id),
       bibleId: Value(bibleId),
+      osisId: Value(osisId),
       bookOrder: bookOrder == null && nullToAbsent
           ? const Value.absent()
           : Value(bookOrder),
@@ -579,6 +827,7 @@ class Book extends DataClass implements Insertable<Book> {
     return Book(
       id: serializer.fromJson<int>(json['id']),
       bibleId: serializer.fromJson<int>(json['bibleId']),
+      osisId: serializer.fromJson<String>(json['osisId']),
       bookOrder: serializer.fromJson<int?>(json['bookOrder']),
       longName: serializer.fromJson<String?>(json['longName']),
       shortName: serializer.fromJson<String>(json['shortName']),
@@ -590,6 +839,7 @@ class Book extends DataClass implements Insertable<Book> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'bibleId': serializer.toJson<int>(bibleId),
+      'osisId': serializer.toJson<String>(osisId),
       'bookOrder': serializer.toJson<int?>(bookOrder),
       'longName': serializer.toJson<String?>(longName),
       'shortName': serializer.toJson<String>(shortName),
@@ -599,12 +849,14 @@ class Book extends DataClass implements Insertable<Book> {
   Book copyWith(
           {int? id,
           int? bibleId,
+          String? osisId,
           Value<int?> bookOrder = const Value.absent(),
           Value<String?> longName = const Value.absent(),
           String? shortName}) =>
       Book(
         id: id ?? this.id,
         bibleId: bibleId ?? this.bibleId,
+        osisId: osisId ?? this.osisId,
         bookOrder: bookOrder.present ? bookOrder.value : this.bookOrder,
         longName: longName.present ? longName.value : this.longName,
         shortName: shortName ?? this.shortName,
@@ -613,6 +865,7 @@ class Book extends DataClass implements Insertable<Book> {
     return Book(
       id: data.id.present ? data.id.value : this.id,
       bibleId: data.bibleId.present ? data.bibleId.value : this.bibleId,
+      osisId: data.osisId.present ? data.osisId.value : this.osisId,
       bookOrder: data.bookOrder.present ? data.bookOrder.value : this.bookOrder,
       longName: data.longName.present ? data.longName.value : this.longName,
       shortName: data.shortName.present ? data.shortName.value : this.shortName,
@@ -624,6 +877,7 @@ class Book extends DataClass implements Insertable<Book> {
     return (StringBuffer('Book(')
           ..write('id: $id, ')
           ..write('bibleId: $bibleId, ')
+          ..write('osisId: $osisId, ')
           ..write('bookOrder: $bookOrder, ')
           ..write('longName: $longName, ')
           ..write('shortName: $shortName')
@@ -632,13 +886,15 @@ class Book extends DataClass implements Insertable<Book> {
   }
 
   @override
-  int get hashCode => Object.hash(id, bibleId, bookOrder, longName, shortName);
+  int get hashCode =>
+      Object.hash(id, bibleId, osisId, bookOrder, longName, shortName);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Book &&
           other.id == this.id &&
           other.bibleId == this.bibleId &&
+          other.osisId == this.osisId &&
           other.bookOrder == this.bookOrder &&
           other.longName == this.longName &&
           other.shortName == this.shortName);
@@ -647,12 +903,14 @@ class Book extends DataClass implements Insertable<Book> {
 class BooksCompanion extends UpdateCompanion<Book> {
   final Value<int> id;
   final Value<int> bibleId;
+  final Value<String> osisId;
   final Value<int?> bookOrder;
   final Value<String?> longName;
   final Value<String> shortName;
   const BooksCompanion({
     this.id = const Value.absent(),
     this.bibleId = const Value.absent(),
+    this.osisId = const Value.absent(),
     this.bookOrder = const Value.absent(),
     this.longName = const Value.absent(),
     this.shortName = const Value.absent(),
@@ -660,14 +918,17 @@ class BooksCompanion extends UpdateCompanion<Book> {
   BooksCompanion.insert({
     this.id = const Value.absent(),
     required int bibleId,
+    required String osisId,
     this.bookOrder = const Value.absent(),
     this.longName = const Value.absent(),
     required String shortName,
   })  : bibleId = Value(bibleId),
+        osisId = Value(osisId),
         shortName = Value(shortName);
   static Insertable<Book> custom({
     Expression<int>? id,
     Expression<int>? bibleId,
+    Expression<String>? osisId,
     Expression<int>? bookOrder,
     Expression<String>? longName,
     Expression<String>? shortName,
@@ -675,6 +936,7 @@ class BooksCompanion extends UpdateCompanion<Book> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (bibleId != null) 'bibleId': bibleId,
+      if (osisId != null) 'osisId': osisId,
       if (bookOrder != null) 'bookOrder': bookOrder,
       if (longName != null) 'longName': longName,
       if (shortName != null) 'shortName': shortName,
@@ -684,12 +946,14 @@ class BooksCompanion extends UpdateCompanion<Book> {
   BooksCompanion copyWith(
       {Value<int>? id,
       Value<int>? bibleId,
+      Value<String>? osisId,
       Value<int?>? bookOrder,
       Value<String?>? longName,
       Value<String>? shortName}) {
     return BooksCompanion(
       id: id ?? this.id,
       bibleId: bibleId ?? this.bibleId,
+      osisId: osisId ?? this.osisId,
       bookOrder: bookOrder ?? this.bookOrder,
       longName: longName ?? this.longName,
       shortName: shortName ?? this.shortName,
@@ -704,6 +968,9 @@ class BooksCompanion extends UpdateCompanion<Book> {
     }
     if (bibleId.present) {
       map['bibleId'] = Variable<int>(bibleId.value);
+    }
+    if (osisId.present) {
+      map['osisId'] = Variable<String>(osisId.value);
     }
     if (bookOrder.present) {
       map['bookOrder'] = Variable<int>(bookOrder.value);
@@ -722,6 +989,7 @@ class BooksCompanion extends UpdateCompanion<Book> {
     return (StringBuffer('BooksCompanion(')
           ..write('id: $id, ')
           ..write('bibleId: $bibleId, ')
+          ..write('osisId: $osisId, ')
           ..write('bookOrder: $bookOrder, ')
           ..write('longName: $longName, ')
           ..write('shortName: $shortName')
@@ -730,11 +998,11 @@ class BooksCompanion extends UpdateCompanion<Book> {
   }
 }
 
-class Paragraphs extends Table with TableInfo<Paragraphs, Paragraph> {
+class VerseSegments extends Table with TableInfo<VerseSegments, VerseSegment> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  Paragraphs(this.attachedDatabase, [this._alias]);
+  VerseSegments(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
       'id', aliasedName, false,
@@ -745,365 +1013,6 @@ class Paragraphs extends Table with TableInfo<Paragraphs, Paragraph> {
   static const VerificationMeta _bookIdMeta = const VerificationMeta('bookId');
   late final GeneratedColumn<int> bookId = GeneratedColumn<int>(
       'bookId', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
-  static const VerificationMeta _subtitleMeta =
-      const VerificationMeta('subtitle');
-  late final GeneratedColumn<String> subtitle = GeneratedColumn<String>(
-      'subtitle', aliasedName, true,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      $customConstraints: '');
-  static const VerificationMeta _chapterNumberMeta =
-      const VerificationMeta('chapterNumber');
-  late final GeneratedColumn<int> chapterNumber = GeneratedColumn<int>(
-      'chapterNumber', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
-  static const VerificationMeta _startVerseMeta =
-      const VerificationMeta('startVerse');
-  late final GeneratedColumn<int> startVerse = GeneratedColumn<int>(
-      'startVerse', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
-  static const VerificationMeta _endVerseMeta =
-      const VerificationMeta('endVerse');
-  late final GeneratedColumn<int> endVerse = GeneratedColumn<int>(
-      'endVerse', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
-  @override
-  List<GeneratedColumn> get $columns =>
-      [id, bookId, subtitle, chapterNumber, startVerse, endVerse];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'paragraphs';
-  @override
-  VerificationContext validateIntegrity(Insertable<Paragraph> instance,
-      {bool isInserting = false}) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('bookId')) {
-      context.handle(_bookIdMeta,
-          bookId.isAcceptableOrUnknown(data['bookId']!, _bookIdMeta));
-    } else if (isInserting) {
-      context.missing(_bookIdMeta);
-    }
-    if (data.containsKey('subtitle')) {
-      context.handle(_subtitleMeta,
-          subtitle.isAcceptableOrUnknown(data['subtitle']!, _subtitleMeta));
-    }
-    if (data.containsKey('chapterNumber')) {
-      context.handle(
-          _chapterNumberMeta,
-          chapterNumber.isAcceptableOrUnknown(
-              data['chapterNumber']!, _chapterNumberMeta));
-    } else if (isInserting) {
-      context.missing(_chapterNumberMeta);
-    }
-    if (data.containsKey('startVerse')) {
-      context.handle(
-          _startVerseMeta,
-          startVerse.isAcceptableOrUnknown(
-              data['startVerse']!, _startVerseMeta));
-    } else if (isInserting) {
-      context.missing(_startVerseMeta);
-    }
-    if (data.containsKey('endVerse')) {
-      context.handle(_endVerseMeta,
-          endVerse.isAcceptableOrUnknown(data['endVerse']!, _endVerseMeta));
-    } else if (isInserting) {
-      context.missing(_endVerseMeta);
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  Paragraph map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Paragraph(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      bookId: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}bookId'])!,
-      subtitle: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}subtitle']),
-      chapterNumber: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}chapterNumber'])!,
-      startVerse: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}startVerse'])!,
-      endVerse: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}endVerse'])!,
-    );
-  }
-
-  @override
-  Paragraphs createAlias(String alias) {
-    return Paragraphs(attachedDatabase, alias);
-  }
-
-  @override
-  List<String> get customConstraints =>
-      const ['FOREIGN KEY(bookId)REFERENCES books(id)'];
-  @override
-  bool get dontWriteConstraints => true;
-}
-
-class Paragraph extends DataClass implements Insertable<Paragraph> {
-  final int id;
-  final int bookId;
-  final String? subtitle;
-  final int chapterNumber;
-  final int startVerse;
-  final int endVerse;
-  const Paragraph(
-      {required this.id,
-      required this.bookId,
-      this.subtitle,
-      required this.chapterNumber,
-      required this.startVerse,
-      required this.endVerse});
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
-    map['bookId'] = Variable<int>(bookId);
-    if (!nullToAbsent || subtitle != null) {
-      map['subtitle'] = Variable<String>(subtitle);
-    }
-    map['chapterNumber'] = Variable<int>(chapterNumber);
-    map['startVerse'] = Variable<int>(startVerse);
-    map['endVerse'] = Variable<int>(endVerse);
-    return map;
-  }
-
-  ParagraphsCompanion toCompanion(bool nullToAbsent) {
-    return ParagraphsCompanion(
-      id: Value(id),
-      bookId: Value(bookId),
-      subtitle: subtitle == null && nullToAbsent
-          ? const Value.absent()
-          : Value(subtitle),
-      chapterNumber: Value(chapterNumber),
-      startVerse: Value(startVerse),
-      endVerse: Value(endVerse),
-    );
-  }
-
-  factory Paragraph.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return Paragraph(
-      id: serializer.fromJson<int>(json['id']),
-      bookId: serializer.fromJson<int>(json['bookId']),
-      subtitle: serializer.fromJson<String?>(json['subtitle']),
-      chapterNumber: serializer.fromJson<int>(json['chapterNumber']),
-      startVerse: serializer.fromJson<int>(json['startVerse']),
-      endVerse: serializer.fromJson<int>(json['endVerse']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'bookId': serializer.toJson<int>(bookId),
-      'subtitle': serializer.toJson<String?>(subtitle),
-      'chapterNumber': serializer.toJson<int>(chapterNumber),
-      'startVerse': serializer.toJson<int>(startVerse),
-      'endVerse': serializer.toJson<int>(endVerse),
-    };
-  }
-
-  Paragraph copyWith(
-          {int? id,
-          int? bookId,
-          Value<String?> subtitle = const Value.absent(),
-          int? chapterNumber,
-          int? startVerse,
-          int? endVerse}) =>
-      Paragraph(
-        id: id ?? this.id,
-        bookId: bookId ?? this.bookId,
-        subtitle: subtitle.present ? subtitle.value : this.subtitle,
-        chapterNumber: chapterNumber ?? this.chapterNumber,
-        startVerse: startVerse ?? this.startVerse,
-        endVerse: endVerse ?? this.endVerse,
-      );
-  Paragraph copyWithCompanion(ParagraphsCompanion data) {
-    return Paragraph(
-      id: data.id.present ? data.id.value : this.id,
-      bookId: data.bookId.present ? data.bookId.value : this.bookId,
-      subtitle: data.subtitle.present ? data.subtitle.value : this.subtitle,
-      chapterNumber: data.chapterNumber.present
-          ? data.chapterNumber.value
-          : this.chapterNumber,
-      startVerse:
-          data.startVerse.present ? data.startVerse.value : this.startVerse,
-      endVerse: data.endVerse.present ? data.endVerse.value : this.endVerse,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('Paragraph(')
-          ..write('id: $id, ')
-          ..write('bookId: $bookId, ')
-          ..write('subtitle: $subtitle, ')
-          ..write('chapterNumber: $chapterNumber, ')
-          ..write('startVerse: $startVerse, ')
-          ..write('endVerse: $endVerse')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode =>
-      Object.hash(id, bookId, subtitle, chapterNumber, startVerse, endVerse);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is Paragraph &&
-          other.id == this.id &&
-          other.bookId == this.bookId &&
-          other.subtitle == this.subtitle &&
-          other.chapterNumber == this.chapterNumber &&
-          other.startVerse == this.startVerse &&
-          other.endVerse == this.endVerse);
-}
-
-class ParagraphsCompanion extends UpdateCompanion<Paragraph> {
-  final Value<int> id;
-  final Value<int> bookId;
-  final Value<String?> subtitle;
-  final Value<int> chapterNumber;
-  final Value<int> startVerse;
-  final Value<int> endVerse;
-  const ParagraphsCompanion({
-    this.id = const Value.absent(),
-    this.bookId = const Value.absent(),
-    this.subtitle = const Value.absent(),
-    this.chapterNumber = const Value.absent(),
-    this.startVerse = const Value.absent(),
-    this.endVerse = const Value.absent(),
-  });
-  ParagraphsCompanion.insert({
-    this.id = const Value.absent(),
-    required int bookId,
-    this.subtitle = const Value.absent(),
-    required int chapterNumber,
-    required int startVerse,
-    required int endVerse,
-  })  : bookId = Value(bookId),
-        chapterNumber = Value(chapterNumber),
-        startVerse = Value(startVerse),
-        endVerse = Value(endVerse);
-  static Insertable<Paragraph> custom({
-    Expression<int>? id,
-    Expression<int>? bookId,
-    Expression<String>? subtitle,
-    Expression<int>? chapterNumber,
-    Expression<int>? startVerse,
-    Expression<int>? endVerse,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (bookId != null) 'bookId': bookId,
-      if (subtitle != null) 'subtitle': subtitle,
-      if (chapterNumber != null) 'chapterNumber': chapterNumber,
-      if (startVerse != null) 'startVerse': startVerse,
-      if (endVerse != null) 'endVerse': endVerse,
-    });
-  }
-
-  ParagraphsCompanion copyWith(
-      {Value<int>? id,
-      Value<int>? bookId,
-      Value<String?>? subtitle,
-      Value<int>? chapterNumber,
-      Value<int>? startVerse,
-      Value<int>? endVerse}) {
-    return ParagraphsCompanion(
-      id: id ?? this.id,
-      bookId: bookId ?? this.bookId,
-      subtitle: subtitle ?? this.subtitle,
-      chapterNumber: chapterNumber ?? this.chapterNumber,
-      startVerse: startVerse ?? this.startVerse,
-      endVerse: endVerse ?? this.endVerse,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
-    }
-    if (bookId.present) {
-      map['bookId'] = Variable<int>(bookId.value);
-    }
-    if (subtitle.present) {
-      map['subtitle'] = Variable<String>(subtitle.value);
-    }
-    if (chapterNumber.present) {
-      map['chapterNumber'] = Variable<int>(chapterNumber.value);
-    }
-    if (startVerse.present) {
-      map['startVerse'] = Variable<int>(startVerse.value);
-    }
-    if (endVerse.present) {
-      map['endVerse'] = Variable<int>(endVerse.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('ParagraphsCompanion(')
-          ..write('id: $id, ')
-          ..write('bookId: $bookId, ')
-          ..write('subtitle: $subtitle, ')
-          ..write('chapterNumber: $chapterNumber, ')
-          ..write('startVerse: $startVerse, ')
-          ..write('endVerse: $endVerse')
-          ..write(')'))
-        .toString();
-  }
-}
-
-class Verses extends Table with TableInfo<Verses, Verse> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  Verses(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      $customConstraints: 'NOT NULL PRIMARY KEY AUTOINCREMENT');
-  static const VerificationMeta _bookIdMeta = const VerificationMeta('bookId');
-  late final GeneratedColumn<int> bookId = GeneratedColumn<int>(
-      'bookId', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
-  static const VerificationMeta _paragraphIdMeta =
-      const VerificationMeta('paragraphId');
-  late final GeneratedColumn<int> paragraphId = GeneratedColumn<int>(
-      'paragraphId', aliasedName, false,
       type: DriftSqlType.int,
       requiredDuringInsert: true,
       $customConstraints: 'NOT NULL');
@@ -1121,23 +1030,53 @@ class Verses extends Table with TableInfo<Verses, Verse> {
       type: DriftSqlType.int,
       requiredDuringInsert: true,
       $customConstraints: 'NOT NULL');
-  static const VerificationMeta _verseTextMeta =
-      const VerificationMeta('verseText');
-  late final GeneratedColumn<String> verseText = GeneratedColumn<String>(
-      'verseText', aliasedName, false,
+  static const VerificationMeta _segmentIndexMeta =
+      const VerificationMeta('segmentIndex');
+  late final GeneratedColumn<int> segmentIndex = GeneratedColumn<int>(
+      'segmentIndex', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _paragraphStartMeta =
+      const VerificationMeta('paragraphStart');
+  late final GeneratedColumn<int> paragraphStart = GeneratedColumn<int>(
+      'paragraphStart', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      $customConstraints: 'NOT NULL DEFAULT 0',
+      defaultValue: const CustomExpression('0'));
+  static const VerificationMeta _textContentMeta =
+      const VerificationMeta('textContent');
+  late final GeneratedColumn<String> textContent = GeneratedColumn<String>(
+      'textContent', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: true,
       $customConstraints: 'NOT NULL');
+  static const VerificationMeta _subtitleMeta =
+      const VerificationMeta('subtitle');
+  late final GeneratedColumn<String> subtitle = GeneratedColumn<String>(
+      'subtitle', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      $customConstraints: '');
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, bookId, paragraphId, chapterNumber, verseNumber, verseText];
+  List<GeneratedColumn> get $columns => [
+        id,
+        bookId,
+        chapterNumber,
+        verseNumber,
+        segmentIndex,
+        paragraphStart,
+        textContent,
+        subtitle
+      ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'verses';
+  static const String $name = 'verse_segments';
   @override
-  VerificationContext validateIntegrity(Insertable<Verse> instance,
+  VerificationContext validateIntegrity(Insertable<VerseSegment> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -1149,14 +1088,6 @@ class Verses extends Table with TableInfo<Verses, Verse> {
           bookId.isAcceptableOrUnknown(data['bookId']!, _bookIdMeta));
     } else if (isInserting) {
       context.missing(_bookIdMeta);
-    }
-    if (data.containsKey('paragraphId')) {
-      context.handle(
-          _paragraphIdMeta,
-          paragraphId.isAcceptableOrUnknown(
-              data['paragraphId']!, _paragraphIdMeta));
-    } else if (isInserting) {
-      context.missing(_paragraphIdMeta);
     }
     if (data.containsKey('chapterNumber')) {
       context.handle(
@@ -1174,11 +1105,31 @@ class Verses extends Table with TableInfo<Verses, Verse> {
     } else if (isInserting) {
       context.missing(_verseNumberMeta);
     }
-    if (data.containsKey('verseText')) {
-      context.handle(_verseTextMeta,
-          verseText.isAcceptableOrUnknown(data['verseText']!, _verseTextMeta));
+    if (data.containsKey('segmentIndex')) {
+      context.handle(
+          _segmentIndexMeta,
+          segmentIndex.isAcceptableOrUnknown(
+              data['segmentIndex']!, _segmentIndexMeta));
     } else if (isInserting) {
-      context.missing(_verseTextMeta);
+      context.missing(_segmentIndexMeta);
+    }
+    if (data.containsKey('paragraphStart')) {
+      context.handle(
+          _paragraphStartMeta,
+          paragraphStart.isAcceptableOrUnknown(
+              data['paragraphStart']!, _paragraphStartMeta));
+    }
+    if (data.containsKey('textContent')) {
+      context.handle(
+          _textContentMeta,
+          textContent.isAcceptableOrUnknown(
+              data['textContent']!, _textContentMeta));
+    } else if (isInserting) {
+      context.missing(_textContentMeta);
+    }
+    if (data.containsKey('subtitle')) {
+      context.handle(_subtitleMeta,
+          subtitle.isAcceptableOrUnknown(data['subtitle']!, _subtitleMeta));
     }
     return context;
   }
@@ -1186,85 +1137,107 @@ class Verses extends Table with TableInfo<Verses, Verse> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Verse map(Map<String, dynamic> data, {String? tablePrefix}) {
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+        {bookId, chapterNumber, verseNumber, segmentIndex},
+      ];
+  @override
+  VerseSegment map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Verse(
+    return VerseSegment(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       bookId: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}bookId'])!,
-      paragraphId: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}paragraphId'])!,
       chapterNumber: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}chapterNumber'])!,
       verseNumber: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}verseNumber'])!,
-      verseText: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}verseText'])!,
+      segmentIndex: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}segmentIndex'])!,
+      paragraphStart: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}paragraphStart'])!,
+      textContent: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}textContent'])!,
+      subtitle: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}subtitle']),
     );
   }
 
   @override
-  Verses createAlias(String alias) {
-    return Verses(attachedDatabase, alias);
+  VerseSegments createAlias(String alias) {
+    return VerseSegments(attachedDatabase, alias);
   }
 
   @override
   List<String> get customConstraints => const [
-        'FOREIGN KEY(paragraphId)REFERENCES paragraphs(id)',
-        'FOREIGN KEY(bookId)REFERENCES books(id)'
+        'FOREIGN KEY(bookId)REFERENCES books(id)ON DELETE CASCADE',
+        'UNIQUE(bookId, chapterNumber, verseNumber, segmentIndex)'
       ];
   @override
   bool get dontWriteConstraints => true;
 }
 
-class Verse extends DataClass implements Insertable<Verse> {
+class VerseSegment extends DataClass implements Insertable<VerseSegment> {
   final int id;
   final int bookId;
-  final int paragraphId;
   final int chapterNumber;
   final int verseNumber;
-  final String verseText;
-  const Verse(
+  final int segmentIndex;
+  final int paragraphStart;
+  final String textContent;
+  final String? subtitle;
+  const VerseSegment(
       {required this.id,
       required this.bookId,
-      required this.paragraphId,
       required this.chapterNumber,
       required this.verseNumber,
-      required this.verseText});
+      required this.segmentIndex,
+      required this.paragraphStart,
+      required this.textContent,
+      this.subtitle});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['bookId'] = Variable<int>(bookId);
-    map['paragraphId'] = Variable<int>(paragraphId);
     map['chapterNumber'] = Variable<int>(chapterNumber);
     map['verseNumber'] = Variable<int>(verseNumber);
-    map['verseText'] = Variable<String>(verseText);
+    map['segmentIndex'] = Variable<int>(segmentIndex);
+    map['paragraphStart'] = Variable<int>(paragraphStart);
+    map['textContent'] = Variable<String>(textContent);
+    if (!nullToAbsent || subtitle != null) {
+      map['subtitle'] = Variable<String>(subtitle);
+    }
     return map;
   }
 
-  VersesCompanion toCompanion(bool nullToAbsent) {
-    return VersesCompanion(
+  VerseSegmentsCompanion toCompanion(bool nullToAbsent) {
+    return VerseSegmentsCompanion(
       id: Value(id),
       bookId: Value(bookId),
-      paragraphId: Value(paragraphId),
       chapterNumber: Value(chapterNumber),
       verseNumber: Value(verseNumber),
-      verseText: Value(verseText),
+      segmentIndex: Value(segmentIndex),
+      paragraphStart: Value(paragraphStart),
+      textContent: Value(textContent),
+      subtitle: subtitle == null && nullToAbsent
+          ? const Value.absent()
+          : Value(subtitle),
     );
   }
 
-  factory Verse.fromJson(Map<String, dynamic> json,
+  factory VerseSegment.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return Verse(
+    return VerseSegment(
       id: serializer.fromJson<int>(json['id']),
       bookId: serializer.fromJson<int>(json['bookId']),
-      paragraphId: serializer.fromJson<int>(json['paragraphId']),
       chapterNumber: serializer.fromJson<int>(json['chapterNumber']),
       verseNumber: serializer.fromJson<int>(json['verseNumber']),
-      verseText: serializer.fromJson<String>(json['verseText']),
+      segmentIndex: serializer.fromJson<int>(json['segmentIndex']),
+      paragraphStart: serializer.fromJson<int>(json['paragraphStart']),
+      textContent: serializer.fromJson<String>(json['textContent']),
+      subtitle: serializer.fromJson<String?>(json['subtitle']),
     );
   }
   @override
@@ -1273,130 +1246,160 @@ class Verse extends DataClass implements Insertable<Verse> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'bookId': serializer.toJson<int>(bookId),
-      'paragraphId': serializer.toJson<int>(paragraphId),
       'chapterNumber': serializer.toJson<int>(chapterNumber),
       'verseNumber': serializer.toJson<int>(verseNumber),
-      'verseText': serializer.toJson<String>(verseText),
+      'segmentIndex': serializer.toJson<int>(segmentIndex),
+      'paragraphStart': serializer.toJson<int>(paragraphStart),
+      'textContent': serializer.toJson<String>(textContent),
+      'subtitle': serializer.toJson<String?>(subtitle),
     };
   }
 
-  Verse copyWith(
+  VerseSegment copyWith(
           {int? id,
           int? bookId,
-          int? paragraphId,
           int? chapterNumber,
           int? verseNumber,
-          String? verseText}) =>
-      Verse(
+          int? segmentIndex,
+          int? paragraphStart,
+          String? textContent,
+          Value<String?> subtitle = const Value.absent()}) =>
+      VerseSegment(
         id: id ?? this.id,
         bookId: bookId ?? this.bookId,
-        paragraphId: paragraphId ?? this.paragraphId,
         chapterNumber: chapterNumber ?? this.chapterNumber,
         verseNumber: verseNumber ?? this.verseNumber,
-        verseText: verseText ?? this.verseText,
+        segmentIndex: segmentIndex ?? this.segmentIndex,
+        paragraphStart: paragraphStart ?? this.paragraphStart,
+        textContent: textContent ?? this.textContent,
+        subtitle: subtitle.present ? subtitle.value : this.subtitle,
       );
-  Verse copyWithCompanion(VersesCompanion data) {
-    return Verse(
+  VerseSegment copyWithCompanion(VerseSegmentsCompanion data) {
+    return VerseSegment(
       id: data.id.present ? data.id.value : this.id,
       bookId: data.bookId.present ? data.bookId.value : this.bookId,
-      paragraphId:
-          data.paragraphId.present ? data.paragraphId.value : this.paragraphId,
       chapterNumber: data.chapterNumber.present
           ? data.chapterNumber.value
           : this.chapterNumber,
       verseNumber:
           data.verseNumber.present ? data.verseNumber.value : this.verseNumber,
-      verseText: data.verseText.present ? data.verseText.value : this.verseText,
+      segmentIndex: data.segmentIndex.present
+          ? data.segmentIndex.value
+          : this.segmentIndex,
+      paragraphStart: data.paragraphStart.present
+          ? data.paragraphStart.value
+          : this.paragraphStart,
+      textContent:
+          data.textContent.present ? data.textContent.value : this.textContent,
+      subtitle: data.subtitle.present ? data.subtitle.value : this.subtitle,
     );
   }
 
   @override
   String toString() {
-    return (StringBuffer('Verse(')
+    return (StringBuffer('VerseSegment(')
           ..write('id: $id, ')
           ..write('bookId: $bookId, ')
-          ..write('paragraphId: $paragraphId, ')
           ..write('chapterNumber: $chapterNumber, ')
           ..write('verseNumber: $verseNumber, ')
-          ..write('verseText: $verseText')
+          ..write('segmentIndex: $segmentIndex, ')
+          ..write('paragraphStart: $paragraphStart, ')
+          ..write('textContent: $textContent, ')
+          ..write('subtitle: $subtitle')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
-      id, bookId, paragraphId, chapterNumber, verseNumber, verseText);
+  int get hashCode => Object.hash(id, bookId, chapterNumber, verseNumber,
+      segmentIndex, paragraphStart, textContent, subtitle);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is Verse &&
+      (other is VerseSegment &&
           other.id == this.id &&
           other.bookId == this.bookId &&
-          other.paragraphId == this.paragraphId &&
           other.chapterNumber == this.chapterNumber &&
           other.verseNumber == this.verseNumber &&
-          other.verseText == this.verseText);
+          other.segmentIndex == this.segmentIndex &&
+          other.paragraphStart == this.paragraphStart &&
+          other.textContent == this.textContent &&
+          other.subtitle == this.subtitle);
 }
 
-class VersesCompanion extends UpdateCompanion<Verse> {
+class VerseSegmentsCompanion extends UpdateCompanion<VerseSegment> {
   final Value<int> id;
   final Value<int> bookId;
-  final Value<int> paragraphId;
   final Value<int> chapterNumber;
   final Value<int> verseNumber;
-  final Value<String> verseText;
-  const VersesCompanion({
+  final Value<int> segmentIndex;
+  final Value<int> paragraphStart;
+  final Value<String> textContent;
+  final Value<String?> subtitle;
+  const VerseSegmentsCompanion({
     this.id = const Value.absent(),
     this.bookId = const Value.absent(),
-    this.paragraphId = const Value.absent(),
     this.chapterNumber = const Value.absent(),
     this.verseNumber = const Value.absent(),
-    this.verseText = const Value.absent(),
+    this.segmentIndex = const Value.absent(),
+    this.paragraphStart = const Value.absent(),
+    this.textContent = const Value.absent(),
+    this.subtitle = const Value.absent(),
   });
-  VersesCompanion.insert({
+  VerseSegmentsCompanion.insert({
     this.id = const Value.absent(),
     required int bookId,
-    required int paragraphId,
     required int chapterNumber,
     required int verseNumber,
-    required String verseText,
+    required int segmentIndex,
+    this.paragraphStart = const Value.absent(),
+    required String textContent,
+    this.subtitle = const Value.absent(),
   })  : bookId = Value(bookId),
-        paragraphId = Value(paragraphId),
         chapterNumber = Value(chapterNumber),
         verseNumber = Value(verseNumber),
-        verseText = Value(verseText);
-  static Insertable<Verse> custom({
+        segmentIndex = Value(segmentIndex),
+        textContent = Value(textContent);
+  static Insertable<VerseSegment> custom({
     Expression<int>? id,
     Expression<int>? bookId,
-    Expression<int>? paragraphId,
     Expression<int>? chapterNumber,
     Expression<int>? verseNumber,
-    Expression<String>? verseText,
+    Expression<int>? segmentIndex,
+    Expression<int>? paragraphStart,
+    Expression<String>? textContent,
+    Expression<String>? subtitle,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (bookId != null) 'bookId': bookId,
-      if (paragraphId != null) 'paragraphId': paragraphId,
       if (chapterNumber != null) 'chapterNumber': chapterNumber,
       if (verseNumber != null) 'verseNumber': verseNumber,
-      if (verseText != null) 'verseText': verseText,
+      if (segmentIndex != null) 'segmentIndex': segmentIndex,
+      if (paragraphStart != null) 'paragraphStart': paragraphStart,
+      if (textContent != null) 'textContent': textContent,
+      if (subtitle != null) 'subtitle': subtitle,
     });
   }
 
-  VersesCompanion copyWith(
+  VerseSegmentsCompanion copyWith(
       {Value<int>? id,
       Value<int>? bookId,
-      Value<int>? paragraphId,
       Value<int>? chapterNumber,
       Value<int>? verseNumber,
-      Value<String>? verseText}) {
-    return VersesCompanion(
+      Value<int>? segmentIndex,
+      Value<int>? paragraphStart,
+      Value<String>? textContent,
+      Value<String?>? subtitle}) {
+    return VerseSegmentsCompanion(
       id: id ?? this.id,
       bookId: bookId ?? this.bookId,
-      paragraphId: paragraphId ?? this.paragraphId,
       chapterNumber: chapterNumber ?? this.chapterNumber,
       verseNumber: verseNumber ?? this.verseNumber,
-      verseText: verseText ?? this.verseText,
+      segmentIndex: segmentIndex ?? this.segmentIndex,
+      paragraphStart: paragraphStart ?? this.paragraphStart,
+      textContent: textContent ?? this.textContent,
+      subtitle: subtitle ?? this.subtitle,
     );
   }
 
@@ -1409,102 +1412,135 @@ class VersesCompanion extends UpdateCompanion<Verse> {
     if (bookId.present) {
       map['bookId'] = Variable<int>(bookId.value);
     }
-    if (paragraphId.present) {
-      map['paragraphId'] = Variable<int>(paragraphId.value);
-    }
     if (chapterNumber.present) {
       map['chapterNumber'] = Variable<int>(chapterNumber.value);
     }
     if (verseNumber.present) {
       map['verseNumber'] = Variable<int>(verseNumber.value);
     }
-    if (verseText.present) {
-      map['verseText'] = Variable<String>(verseText.value);
+    if (segmentIndex.present) {
+      map['segmentIndex'] = Variable<int>(segmentIndex.value);
+    }
+    if (paragraphStart.present) {
+      map['paragraphStart'] = Variable<int>(paragraphStart.value);
+    }
+    if (textContent.present) {
+      map['textContent'] = Variable<String>(textContent.value);
+    }
+    if (subtitle.present) {
+      map['subtitle'] = Variable<String>(subtitle.value);
     }
     return map;
   }
 
   @override
   String toString() {
-    return (StringBuffer('VersesCompanion(')
+    return (StringBuffer('VerseSegmentsCompanion(')
           ..write('id: $id, ')
           ..write('bookId: $bookId, ')
-          ..write('paragraphId: $paragraphId, ')
           ..write('chapterNumber: $chapterNumber, ')
           ..write('verseNumber: $verseNumber, ')
-          ..write('verseText: $verseText')
+          ..write('segmentIndex: $segmentIndex, ')
+          ..write('paragraphStart: $paragraphStart, ')
+          ..write('textContent: $textContent, ')
+          ..write('subtitle: $subtitle')
           ..write(')'))
         .toString();
   }
 }
 
-class VerseStyle extends Table with TableInfo<VerseStyle, VerseStyleData> {
+class SegmentSpans extends Table with TableInfo<SegmentSpans, SegmentSpan> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  VerseStyle(this.attachedDatabase, [this._alias]);
+  SegmentSpans(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
       'id', aliasedName, false,
       hasAutoIncrement: true,
       type: DriftSqlType.int,
       requiredDuringInsert: false,
-      $customConstraints: 'NOT NULL PRIMARY KEY AUTOINCREMENT');
-  static const VerificationMeta _verseIdMeta =
-      const VerificationMeta('verseId');
-  late final GeneratedColumn<int> verseId = GeneratedColumn<int>(
-      'verseId', aliasedName, false,
+      $customConstraints: 'PRIMARY KEY AUTOINCREMENT');
+  static const VerificationMeta _segmentIdMeta =
+      const VerificationMeta('segmentId');
+  late final GeneratedColumn<int> segmentId = GeneratedColumn<int>(
+      'segmentId', aliasedName, false,
       type: DriftSqlType.int,
       requiredDuringInsert: true,
       $customConstraints: 'NOT NULL');
-  static const VerificationMeta _startIndexMeta =
-      const VerificationMeta('startIndex');
-  late final GeneratedColumn<int> startIndex = GeneratedColumn<int>(
-      'startIndex', aliasedName, false,
+  static const VerificationMeta _startOffsetMeta =
+      const VerificationMeta('startOffset');
+  late final GeneratedColumn<int> startOffset = GeneratedColumn<int>(
+      'startOffset', aliasedName, false,
       type: DriftSqlType.int,
       requiredDuringInsert: true,
       $customConstraints: 'NOT NULL');
-  static const VerificationMeta _endIndexMeta =
-      const VerificationMeta('endIndex');
-  late final GeneratedColumn<int> endIndex = GeneratedColumn<int>(
-      'endIndex', aliasedName, false,
+  static const VerificationMeta _endOffsetMeta =
+      const VerificationMeta('endOffset');
+  late final GeneratedColumn<int> endOffset = GeneratedColumn<int>(
+      'endOffset', aliasedName, false,
       type: DriftSqlType.int,
       requiredDuringInsert: true,
       $customConstraints: 'NOT NULL');
+  static const VerificationMeta _spanTypeMeta =
+      const VerificationMeta('spanType');
+  late final GeneratedColumn<String> spanType = GeneratedColumn<String>(
+      'spanType', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _payloadMeta =
+      const VerificationMeta('payload');
+  late final GeneratedColumn<String> payload = GeneratedColumn<String>(
+      'payload', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      $customConstraints: '');
   @override
-  List<GeneratedColumn> get $columns => [id, verseId, startIndex, endIndex];
+  List<GeneratedColumn> get $columns =>
+      [id, segmentId, startOffset, endOffset, spanType, payload];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'verse_style';
+  static const String $name = 'segment_spans';
   @override
-  VerificationContext validateIntegrity(Insertable<VerseStyleData> instance,
+  VerificationContext validateIntegrity(Insertable<SegmentSpan> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
-    if (data.containsKey('verseId')) {
-      context.handle(_verseIdMeta,
-          verseId.isAcceptableOrUnknown(data['verseId']!, _verseIdMeta));
+    if (data.containsKey('segmentId')) {
+      context.handle(_segmentIdMeta,
+          segmentId.isAcceptableOrUnknown(data['segmentId']!, _segmentIdMeta));
     } else if (isInserting) {
-      context.missing(_verseIdMeta);
+      context.missing(_segmentIdMeta);
     }
-    if (data.containsKey('startIndex')) {
+    if (data.containsKey('startOffset')) {
       context.handle(
-          _startIndexMeta,
-          startIndex.isAcceptableOrUnknown(
-              data['startIndex']!, _startIndexMeta));
+          _startOffsetMeta,
+          startOffset.isAcceptableOrUnknown(
+              data['startOffset']!, _startOffsetMeta));
     } else if (isInserting) {
-      context.missing(_startIndexMeta);
+      context.missing(_startOffsetMeta);
     }
-    if (data.containsKey('endIndex')) {
-      context.handle(_endIndexMeta,
-          endIndex.isAcceptableOrUnknown(data['endIndex']!, _endIndexMeta));
+    if (data.containsKey('endOffset')) {
+      context.handle(_endOffsetMeta,
+          endOffset.isAcceptableOrUnknown(data['endOffset']!, _endOffsetMeta));
     } else if (isInserting) {
-      context.missing(_endIndexMeta);
+      context.missing(_endOffsetMeta);
+    }
+    if (data.containsKey('spanType')) {
+      context.handle(_spanTypeMeta,
+          spanType.isAcceptableOrUnknown(data['spanType']!, _spanTypeMeta));
+    } else if (isInserting) {
+      context.missing(_spanTypeMeta);
+    }
+    if (data.containsKey('payload')) {
+      context.handle(_payloadMeta,
+          payload.isAcceptableOrUnknown(data['payload']!, _payloadMeta));
     }
     return context;
   }
@@ -1512,69 +1548,88 @@ class VerseStyle extends Table with TableInfo<VerseStyle, VerseStyleData> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  VerseStyleData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  SegmentSpan map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return VerseStyleData(
+    return SegmentSpan(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      verseId: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}verseId'])!,
-      startIndex: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}startIndex'])!,
-      endIndex: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}endIndex'])!,
+      segmentId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}segmentId'])!,
+      startOffset: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}startOffset'])!,
+      endOffset: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}endOffset'])!,
+      spanType: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}spanType'])!,
+      payload: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}payload']),
     );
   }
 
   @override
-  VerseStyle createAlias(String alias) {
-    return VerseStyle(attachedDatabase, alias);
+  SegmentSpans createAlias(String alias) {
+    return SegmentSpans(attachedDatabase, alias);
   }
 
   @override
-  List<String> get customConstraints =>
-      const ['FOREIGN KEY(verseId)REFERENCES verses(id)'];
+  List<String> get customConstraints => const [
+        'FOREIGN KEY(segmentId)REFERENCES verse_segments(id)ON DELETE CASCADE'
+      ];
   @override
   bool get dontWriteConstraints => true;
 }
 
-class VerseStyleData extends DataClass implements Insertable<VerseStyleData> {
+class SegmentSpan extends DataClass implements Insertable<SegmentSpan> {
   final int id;
-  final int verseId;
-  final int startIndex;
-  final int endIndex;
-  const VerseStyleData(
+  final int segmentId;
+  final int startOffset;
+  final int endOffset;
+  final String spanType;
+  final String? payload;
+  const SegmentSpan(
       {required this.id,
-      required this.verseId,
-      required this.startIndex,
-      required this.endIndex});
+      required this.segmentId,
+      required this.startOffset,
+      required this.endOffset,
+      required this.spanType,
+      this.payload});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['verseId'] = Variable<int>(verseId);
-    map['startIndex'] = Variable<int>(startIndex);
-    map['endIndex'] = Variable<int>(endIndex);
+    map['segmentId'] = Variable<int>(segmentId);
+    map['startOffset'] = Variable<int>(startOffset);
+    map['endOffset'] = Variable<int>(endOffset);
+    map['spanType'] = Variable<String>(spanType);
+    if (!nullToAbsent || payload != null) {
+      map['payload'] = Variable<String>(payload);
+    }
     return map;
   }
 
-  VerseStyleCompanion toCompanion(bool nullToAbsent) {
-    return VerseStyleCompanion(
+  SegmentSpansCompanion toCompanion(bool nullToAbsent) {
+    return SegmentSpansCompanion(
       id: Value(id),
-      verseId: Value(verseId),
-      startIndex: Value(startIndex),
-      endIndex: Value(endIndex),
+      segmentId: Value(segmentId),
+      startOffset: Value(startOffset),
+      endOffset: Value(endOffset),
+      spanType: Value(spanType),
+      payload: payload == null && nullToAbsent
+          ? const Value.absent()
+          : Value(payload),
     );
   }
 
-  factory VerseStyleData.fromJson(Map<String, dynamic> json,
+  factory SegmentSpan.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return VerseStyleData(
+    return SegmentSpan(
       id: serializer.fromJson<int>(json['id']),
-      verseId: serializer.fromJson<int>(json['verseId']),
-      startIndex: serializer.fromJson<int>(json['startIndex']),
-      endIndex: serializer.fromJson<int>(json['endIndex']),
+      segmentId: serializer.fromJson<int>(json['segmentId']),
+      startOffset: serializer.fromJson<int>(json['startOffset']),
+      endOffset: serializer.fromJson<int>(json['endOffset']),
+      spanType: serializer.fromJson<String>(json['spanType']),
+      payload: serializer.fromJson<String?>(json['payload']),
     );
   }
   @override
@@ -1582,96 +1637,127 @@ class VerseStyleData extends DataClass implements Insertable<VerseStyleData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'verseId': serializer.toJson<int>(verseId),
-      'startIndex': serializer.toJson<int>(startIndex),
-      'endIndex': serializer.toJson<int>(endIndex),
+      'segmentId': serializer.toJson<int>(segmentId),
+      'startOffset': serializer.toJson<int>(startOffset),
+      'endOffset': serializer.toJson<int>(endOffset),
+      'spanType': serializer.toJson<String>(spanType),
+      'payload': serializer.toJson<String?>(payload),
     };
   }
 
-  VerseStyleData copyWith(
-          {int? id, int? verseId, int? startIndex, int? endIndex}) =>
-      VerseStyleData(
+  SegmentSpan copyWith(
+          {int? id,
+          int? segmentId,
+          int? startOffset,
+          int? endOffset,
+          String? spanType,
+          Value<String?> payload = const Value.absent()}) =>
+      SegmentSpan(
         id: id ?? this.id,
-        verseId: verseId ?? this.verseId,
-        startIndex: startIndex ?? this.startIndex,
-        endIndex: endIndex ?? this.endIndex,
+        segmentId: segmentId ?? this.segmentId,
+        startOffset: startOffset ?? this.startOffset,
+        endOffset: endOffset ?? this.endOffset,
+        spanType: spanType ?? this.spanType,
+        payload: payload.present ? payload.value : this.payload,
       );
-  VerseStyleData copyWithCompanion(VerseStyleCompanion data) {
-    return VerseStyleData(
+  SegmentSpan copyWithCompanion(SegmentSpansCompanion data) {
+    return SegmentSpan(
       id: data.id.present ? data.id.value : this.id,
-      verseId: data.verseId.present ? data.verseId.value : this.verseId,
-      startIndex:
-          data.startIndex.present ? data.startIndex.value : this.startIndex,
-      endIndex: data.endIndex.present ? data.endIndex.value : this.endIndex,
+      segmentId: data.segmentId.present ? data.segmentId.value : this.segmentId,
+      startOffset:
+          data.startOffset.present ? data.startOffset.value : this.startOffset,
+      endOffset: data.endOffset.present ? data.endOffset.value : this.endOffset,
+      spanType: data.spanType.present ? data.spanType.value : this.spanType,
+      payload: data.payload.present ? data.payload.value : this.payload,
     );
   }
 
   @override
   String toString() {
-    return (StringBuffer('VerseStyleData(')
+    return (StringBuffer('SegmentSpan(')
           ..write('id: $id, ')
-          ..write('verseId: $verseId, ')
-          ..write('startIndex: $startIndex, ')
-          ..write('endIndex: $endIndex')
+          ..write('segmentId: $segmentId, ')
+          ..write('startOffset: $startOffset, ')
+          ..write('endOffset: $endOffset, ')
+          ..write('spanType: $spanType, ')
+          ..write('payload: $payload')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, verseId, startIndex, endIndex);
+  int get hashCode =>
+      Object.hash(id, segmentId, startOffset, endOffset, spanType, payload);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is VerseStyleData &&
+      (other is SegmentSpan &&
           other.id == this.id &&
-          other.verseId == this.verseId &&
-          other.startIndex == this.startIndex &&
-          other.endIndex == this.endIndex);
+          other.segmentId == this.segmentId &&
+          other.startOffset == this.startOffset &&
+          other.endOffset == this.endOffset &&
+          other.spanType == this.spanType &&
+          other.payload == this.payload);
 }
 
-class VerseStyleCompanion extends UpdateCompanion<VerseStyleData> {
+class SegmentSpansCompanion extends UpdateCompanion<SegmentSpan> {
   final Value<int> id;
-  final Value<int> verseId;
-  final Value<int> startIndex;
-  final Value<int> endIndex;
-  const VerseStyleCompanion({
+  final Value<int> segmentId;
+  final Value<int> startOffset;
+  final Value<int> endOffset;
+  final Value<String> spanType;
+  final Value<String?> payload;
+  const SegmentSpansCompanion({
     this.id = const Value.absent(),
-    this.verseId = const Value.absent(),
-    this.startIndex = const Value.absent(),
-    this.endIndex = const Value.absent(),
+    this.segmentId = const Value.absent(),
+    this.startOffset = const Value.absent(),
+    this.endOffset = const Value.absent(),
+    this.spanType = const Value.absent(),
+    this.payload = const Value.absent(),
   });
-  VerseStyleCompanion.insert({
+  SegmentSpansCompanion.insert({
     this.id = const Value.absent(),
-    required int verseId,
-    required int startIndex,
-    required int endIndex,
-  })  : verseId = Value(verseId),
-        startIndex = Value(startIndex),
-        endIndex = Value(endIndex);
-  static Insertable<VerseStyleData> custom({
+    required int segmentId,
+    required int startOffset,
+    required int endOffset,
+    required String spanType,
+    this.payload = const Value.absent(),
+  })  : segmentId = Value(segmentId),
+        startOffset = Value(startOffset),
+        endOffset = Value(endOffset),
+        spanType = Value(spanType);
+  static Insertable<SegmentSpan> custom({
     Expression<int>? id,
-    Expression<int>? verseId,
-    Expression<int>? startIndex,
-    Expression<int>? endIndex,
+    Expression<int>? segmentId,
+    Expression<int>? startOffset,
+    Expression<int>? endOffset,
+    Expression<String>? spanType,
+    Expression<String>? payload,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (verseId != null) 'verseId': verseId,
-      if (startIndex != null) 'startIndex': startIndex,
-      if (endIndex != null) 'endIndex': endIndex,
+      if (segmentId != null) 'segmentId': segmentId,
+      if (startOffset != null) 'startOffset': startOffset,
+      if (endOffset != null) 'endOffset': endOffset,
+      if (spanType != null) 'spanType': spanType,
+      if (payload != null) 'payload': payload,
     });
   }
 
-  VerseStyleCompanion copyWith(
+  SegmentSpansCompanion copyWith(
       {Value<int>? id,
-      Value<int>? verseId,
-      Value<int>? startIndex,
-      Value<int>? endIndex}) {
-    return VerseStyleCompanion(
+      Value<int>? segmentId,
+      Value<int>? startOffset,
+      Value<int>? endOffset,
+      Value<String>? spanType,
+      Value<String?>? payload}) {
+    return SegmentSpansCompanion(
       id: id ?? this.id,
-      verseId: verseId ?? this.verseId,
-      startIndex: startIndex ?? this.startIndex,
-      endIndex: endIndex ?? this.endIndex,
+      segmentId: segmentId ?? this.segmentId,
+      startOffset: startOffset ?? this.startOffset,
+      endOffset: endOffset ?? this.endOffset,
+      spanType: spanType ?? this.spanType,
+      payload: payload ?? this.payload,
     );
   }
 
@@ -1681,25 +1767,33 @@ class VerseStyleCompanion extends UpdateCompanion<VerseStyleData> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
-    if (verseId.present) {
-      map['verseId'] = Variable<int>(verseId.value);
+    if (segmentId.present) {
+      map['segmentId'] = Variable<int>(segmentId.value);
     }
-    if (startIndex.present) {
-      map['startIndex'] = Variable<int>(startIndex.value);
+    if (startOffset.present) {
+      map['startOffset'] = Variable<int>(startOffset.value);
     }
-    if (endIndex.present) {
-      map['endIndex'] = Variable<int>(endIndex.value);
+    if (endOffset.present) {
+      map['endOffset'] = Variable<int>(endOffset.value);
+    }
+    if (spanType.present) {
+      map['spanType'] = Variable<String>(spanType.value);
+    }
+    if (payload.present) {
+      map['payload'] = Variable<String>(payload.value);
     }
     return map;
   }
 
   @override
   String toString() {
-    return (StringBuffer('VerseStyleCompanion(')
+    return (StringBuffer('SegmentSpansCompanion(')
           ..write('id: $id, ')
-          ..write('verseId: $verseId, ')
-          ..write('startIndex: $startIndex, ')
-          ..write('endIndex: $endIndex')
+          ..write('segmentId: $segmentId, ')
+          ..write('startOffset: $startOffset, ')
+          ..write('endOffset: $endOffset, ')
+          ..write('spanType: $spanType, ')
+          ..write('payload: $payload')
           ..write(')'))
         .toString();
   }
@@ -1708,43 +1802,90 @@ class VerseStyleCompanion extends UpdateCompanion<VerseStyleData> {
 abstract class _$AppDb extends GeneratedDatabase {
   _$AppDb(QueryExecutor e) : super(e);
   $AppDbManager get managers => $AppDbManager(this);
+  late final Languages languages = Languages(this);
   late final Bibles bibles = Bibles(this);
   late final Books books = Books(this);
-  late final Paragraphs paragraphs = Paragraphs(this);
-  late final Verses verses = Verses(this);
-  late final VerseStyle verseStyle = VerseStyle(this);
-  Selectable<GetVersesResult> getVerses(int bookNumber, int bibleId,
-      int chapterNumber, int? verseStart, int? verseEnd) {
-    return customSelect(
-        'SELECT v.chapterNumber, v.verseText, v.verseNumber FROM verses AS v WHERE v.bookId = (SELECT id FROM books WHERE bookOrder = ?1 AND bibleId = ?2) AND v.chapterNumber = ?3 AND(verseNumber >= ?4 OR ?4 IS NULL)AND(verseNumber <= ?5 OR ?5 IS NULL)',
-        variables: [
-          Variable<int>(bookNumber),
-          Variable<int>(bibleId),
-          Variable<int>(chapterNumber),
-          Variable<int>(verseStart),
-          Variable<int>(verseEnd)
-        ],
-        readsFrom: {
-          verses,
-          books,
-        }).map((QueryRow row) => GetVersesResult(
-          chapterNumber: row.read<int>('chapterNumber'),
-          verseText: row.read<String>('verseText'),
-          verseNumber: row.read<int>('verseNumber'),
-        ));
-  }
-
+  late final VerseSegments verseSegments = VerseSegments(this);
+  late final SegmentSpans segmentSpans = SegmentSpans(this);
+  late final Index ixSpansSegment = Index('ix_spans_segment',
+      'CREATE INDEX ix_spans_segment ON segment_spans (segmentId, startOffset)');
+  late final Index uxLanguagesIso = Index('ux_languages_iso',
+      'CREATE UNIQUE INDEX ux_languages_iso ON languages (langIsoCode)');
   Selectable<GetBiblesResult> getBibles() {
     return customSelect(
-        'SELECT id, languageId, bibleName, bibleNameAbbreviation FROM bibles',
+        'SELECT b.id, b.extId, b.languageId, b.bibleName, b.bibleNameAbbreviation, b.originSource, l.langEngName, l.langIsoCode, l.langNativeName FROM bibles AS b JOIN languages AS l ON b.languageId = l.id',
         variables: [],
         readsFrom: {
           bibles,
+          languages,
         }).map((QueryRow row) => GetBiblesResult(
           id: row.read<int>('id'),
+          extId: row.read<String>('extId'),
           languageId: row.readNullable<int>('languageId'),
           bibleName: row.read<String>('bibleName'),
           bibleNameAbbreviation: row.read<String>('bibleNameAbbreviation'),
+          originSource: row.readNullable<String>('originSource'),
+          langEngName: row.read<String>('langEngName'),
+          langIsoCode: row.readNullable<String>('langIsoCode'),
+          langNativeName: row.readNullable<String>('langNativeName'),
+        ));
+  }
+
+  Selectable<GetVerseSegmentsForChapterResult> getVerseSegmentsForChapter(
+      int bibleId, String bookOsisId, int chapterNumber) {
+    return customSelect(
+        'SELECT * FROM verse_segments AS s JOIN books AS b ON b.id = s.bookId WHERE b.bibleId = ?1 AND b.osisId = ?2 AND s.chapterNumber = ?3 ORDER BY s.verseNumber, s.segmentIndex',
+        variables: [
+          Variable<int>(bibleId),
+          Variable<String>(bookOsisId),
+          Variable<int>(chapterNumber)
+        ],
+        readsFrom: {
+          verseSegments,
+          books,
+        }).map((QueryRow row) => GetVerseSegmentsForChapterResult(
+          id: row.read<int>('id'),
+          bookId: row.read<int>('bookId'),
+          chapterNumber: row.read<int>('chapterNumber'),
+          verseNumber: row.read<int>('verseNumber'),
+          segmentIndex: row.read<int>('segmentIndex'),
+          paragraphStart: row.read<int>('paragraphStart'),
+          textContent: row.read<String>('textContent'),
+          subtitle: row.readNullable<String>('subtitle'),
+          id1: row.read<int>('id'),
+          bibleId: row.read<int>('bibleId'),
+          osisId: row.read<String>('osisId'),
+          bookOrder: row.readNullable<int>('bookOrder'),
+          longName: row.readNullable<String>('longName'),
+          shortName: row.read<String>('shortName'),
+        ));
+  }
+
+  Selectable<GetChapterSegmentsWithSpansResult> getChapterSegmentsWithSpans(
+      int bookId, int chapterNumber) {
+    return customSelect(
+        'SELECT s.id AS segmentId, s.bookId, s.chapterNumber, s.verseNumber, s.segmentIndex, s.paragraphStart, s.textContent, s.subtitle, sp.id AS spanId, sp.startOffset AS spanStart, sp.endOffset AS spanEnd, sp.spanType AS spanType, sp.payload AS spanPayload FROM verse_segments AS s LEFT JOIN segment_spans AS sp ON sp.segmentId = s.id WHERE s.bookId = ?1 AND s.chapterNumber = ?2 ORDER BY s.verseNumber, s.segmentIndex, sp.startOffset',
+        variables: [
+          Variable<int>(bookId),
+          Variable<int>(chapterNumber)
+        ],
+        readsFrom: {
+          verseSegments,
+          segmentSpans,
+        }).map((QueryRow row) => GetChapterSegmentsWithSpansResult(
+          segmentId: row.read<int>('segmentId'),
+          bookId: row.read<int>('bookId'),
+          chapterNumber: row.read<int>('chapterNumber'),
+          verseNumber: row.read<int>('verseNumber'),
+          segmentIndex: row.read<int>('segmentIndex'),
+          paragraphStart: row.read<int>('paragraphStart'),
+          textContent: row.read<String>('textContent'),
+          subtitle: row.readNullable<String>('subtitle'),
+          spanId: row.readNullable<int>('spanId'),
+          spanStart: row.readNullable<int>('spanStart'),
+          spanEnd: row.readNullable<int>('spanEnd'),
+          spanType: row.readNullable<String>('spanType'),
+          spanPayload: row.readNullable<String>('spanPayload'),
         ));
   }
 
@@ -1752,27 +1893,208 @@ abstract class _$AppDb extends GeneratedDatabase {
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [bibles, books, paragraphs, verses, verseStyle];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+        languages,
+        bibles,
+        books,
+        verseSegments,
+        segmentSpans,
+        ixSpansSegment,
+        uxLanguagesIso
+      ];
+  @override
+  StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules(
+        [
+          WritePropagation(
+            on: TableUpdateQuery.onTableName('languages',
+                limitUpdateKind: UpdateKind.delete),
+            result: [
+              TableUpdate('bibles', kind: UpdateKind.delete),
+            ],
+          ),
+          WritePropagation(
+            on: TableUpdateQuery.onTableName('bibles',
+                limitUpdateKind: UpdateKind.delete),
+            result: [
+              TableUpdate('books', kind: UpdateKind.delete),
+            ],
+          ),
+          WritePropagation(
+            on: TableUpdateQuery.onTableName('books',
+                limitUpdateKind: UpdateKind.delete),
+            result: [
+              TableUpdate('verse_segments', kind: UpdateKind.delete),
+            ],
+          ),
+          WritePropagation(
+            on: TableUpdateQuery.onTableName('verse_segments',
+                limitUpdateKind: UpdateKind.delete),
+            result: [
+              TableUpdate('segment_spans', kind: UpdateKind.delete),
+            ],
+          ),
+        ],
+      );
 }
 
+typedef $LanguagesCreateCompanionBuilder = LanguagesCompanion Function({
+  Value<int> id,
+  required String langEngName,
+  Value<String?> langNativeName,
+  Value<String?> langIsoCode,
+});
+typedef $LanguagesUpdateCompanionBuilder = LanguagesCompanion Function({
+  Value<int> id,
+  Value<String> langEngName,
+  Value<String?> langNativeName,
+  Value<String?> langIsoCode,
+});
+
+class $LanguagesFilterComposer extends Composer<_$AppDb, Languages> {
+  $LanguagesFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get langEngName => $composableBuilder(
+      column: $table.langEngName, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get langNativeName => $composableBuilder(
+      column: $table.langNativeName,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get langIsoCode => $composableBuilder(
+      column: $table.langIsoCode, builder: (column) => ColumnFilters(column));
+}
+
+class $LanguagesOrderingComposer extends Composer<_$AppDb, Languages> {
+  $LanguagesOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get langEngName => $composableBuilder(
+      column: $table.langEngName, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get langNativeName => $composableBuilder(
+      column: $table.langNativeName,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get langIsoCode => $composableBuilder(
+      column: $table.langIsoCode, builder: (column) => ColumnOrderings(column));
+}
+
+class $LanguagesAnnotationComposer extends Composer<_$AppDb, Languages> {
+  $LanguagesAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get langEngName => $composableBuilder(
+      column: $table.langEngName, builder: (column) => column);
+
+  GeneratedColumn<String> get langNativeName => $composableBuilder(
+      column: $table.langNativeName, builder: (column) => column);
+
+  GeneratedColumn<String> get langIsoCode => $composableBuilder(
+      column: $table.langIsoCode, builder: (column) => column);
+}
+
+class $LanguagesTableManager extends RootTableManager<
+    _$AppDb,
+    Languages,
+    Language,
+    $LanguagesFilterComposer,
+    $LanguagesOrderingComposer,
+    $LanguagesAnnotationComposer,
+    $LanguagesCreateCompanionBuilder,
+    $LanguagesUpdateCompanionBuilder,
+    (Language, BaseReferences<_$AppDb, Languages, Language>),
+    Language,
+    PrefetchHooks Function()> {
+  $LanguagesTableManager(_$AppDb db, Languages table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $LanguagesFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $LanguagesOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $LanguagesAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> langEngName = const Value.absent(),
+            Value<String?> langNativeName = const Value.absent(),
+            Value<String?> langIsoCode = const Value.absent(),
+          }) =>
+              LanguagesCompanion(
+            id: id,
+            langEngName: langEngName,
+            langNativeName: langNativeName,
+            langIsoCode: langIsoCode,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String langEngName,
+            Value<String?> langNativeName = const Value.absent(),
+            Value<String?> langIsoCode = const Value.absent(),
+          }) =>
+              LanguagesCompanion.insert(
+            id: id,
+            langEngName: langEngName,
+            langNativeName: langNativeName,
+            langIsoCode: langIsoCode,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $LanguagesProcessedTableManager = ProcessedTableManager<
+    _$AppDb,
+    Languages,
+    Language,
+    $LanguagesFilterComposer,
+    $LanguagesOrderingComposer,
+    $LanguagesAnnotationComposer,
+    $LanguagesCreateCompanionBuilder,
+    $LanguagesUpdateCompanionBuilder,
+    (Language, BaseReferences<_$AppDb, Languages, Language>),
+    Language,
+    PrefetchHooks Function()>;
 typedef $BiblesCreateCompanionBuilder = BiblesCompanion Function({
   Value<int> id,
+  required String extId,
   Value<int?> languageId,
   required String bibleName,
   required String bibleNameAbbreviation,
-  required String langEngName,
-  Value<String?> langNativeName,
-  Value<String?> langAbbreviation,
+  Value<String?> originSource,
 });
 typedef $BiblesUpdateCompanionBuilder = BiblesCompanion Function({
   Value<int> id,
+  Value<String> extId,
   Value<int?> languageId,
   Value<String> bibleName,
   Value<String> bibleNameAbbreviation,
-  Value<String> langEngName,
-  Value<String?> langNativeName,
-  Value<String?> langAbbreviation,
+  Value<String?> originSource,
 });
 
 class $BiblesFilterComposer extends Composer<_$AppDb, Bibles> {
@@ -1786,6 +2108,9 @@ class $BiblesFilterComposer extends Composer<_$AppDb, Bibles> {
   ColumnFilters<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnFilters(column));
 
+  ColumnFilters<String> get extId => $composableBuilder(
+      column: $table.extId, builder: (column) => ColumnFilters(column));
+
   ColumnFilters<int> get languageId => $composableBuilder(
       column: $table.languageId, builder: (column) => ColumnFilters(column));
 
@@ -1796,16 +2121,8 @@ class $BiblesFilterComposer extends Composer<_$AppDb, Bibles> {
       column: $table.bibleNameAbbreviation,
       builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get langEngName => $composableBuilder(
-      column: $table.langEngName, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<String> get langNativeName => $composableBuilder(
-      column: $table.langNativeName,
-      builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<String> get langAbbreviation => $composableBuilder(
-      column: $table.langAbbreviation,
-      builder: (column) => ColumnFilters(column));
+  ColumnFilters<String> get originSource => $composableBuilder(
+      column: $table.originSource, builder: (column) => ColumnFilters(column));
 }
 
 class $BiblesOrderingComposer extends Composer<_$AppDb, Bibles> {
@@ -1819,6 +2136,9 @@ class $BiblesOrderingComposer extends Composer<_$AppDb, Bibles> {
   ColumnOrderings<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get extId => $composableBuilder(
+      column: $table.extId, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<int> get languageId => $composableBuilder(
       column: $table.languageId, builder: (column) => ColumnOrderings(column));
 
@@ -1829,15 +2149,8 @@ class $BiblesOrderingComposer extends Composer<_$AppDb, Bibles> {
       column: $table.bibleNameAbbreviation,
       builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get langEngName => $composableBuilder(
-      column: $table.langEngName, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<String> get langNativeName => $composableBuilder(
-      column: $table.langNativeName,
-      builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<String> get langAbbreviation => $composableBuilder(
-      column: $table.langAbbreviation,
+  ColumnOrderings<String> get originSource => $composableBuilder(
+      column: $table.originSource,
       builder: (column) => ColumnOrderings(column));
 }
 
@@ -1852,6 +2165,9 @@ class $BiblesAnnotationComposer extends Composer<_$AppDb, Bibles> {
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
+  GeneratedColumn<String> get extId =>
+      $composableBuilder(column: $table.extId, builder: (column) => column);
+
   GeneratedColumn<int> get languageId => $composableBuilder(
       column: $table.languageId, builder: (column) => column);
 
@@ -1861,14 +2177,8 @@ class $BiblesAnnotationComposer extends Composer<_$AppDb, Bibles> {
   GeneratedColumn<String> get bibleNameAbbreviation => $composableBuilder(
       column: $table.bibleNameAbbreviation, builder: (column) => column);
 
-  GeneratedColumn<String> get langEngName => $composableBuilder(
-      column: $table.langEngName, builder: (column) => column);
-
-  GeneratedColumn<String> get langNativeName => $composableBuilder(
-      column: $table.langNativeName, builder: (column) => column);
-
-  GeneratedColumn<String> get langAbbreviation => $composableBuilder(
-      column: $table.langAbbreviation, builder: (column) => column);
+  GeneratedColumn<String> get originSource => $composableBuilder(
+      column: $table.originSource, builder: (column) => column);
 }
 
 class $BiblesTableManager extends RootTableManager<
@@ -1895,39 +2205,35 @@ class $BiblesTableManager extends RootTableManager<
               $BiblesAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
+            Value<String> extId = const Value.absent(),
             Value<int?> languageId = const Value.absent(),
             Value<String> bibleName = const Value.absent(),
             Value<String> bibleNameAbbreviation = const Value.absent(),
-            Value<String> langEngName = const Value.absent(),
-            Value<String?> langNativeName = const Value.absent(),
-            Value<String?> langAbbreviation = const Value.absent(),
+            Value<String?> originSource = const Value.absent(),
           }) =>
               BiblesCompanion(
             id: id,
+            extId: extId,
             languageId: languageId,
             bibleName: bibleName,
             bibleNameAbbreviation: bibleNameAbbreviation,
-            langEngName: langEngName,
-            langNativeName: langNativeName,
-            langAbbreviation: langAbbreviation,
+            originSource: originSource,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
+            required String extId,
             Value<int?> languageId = const Value.absent(),
             required String bibleName,
             required String bibleNameAbbreviation,
-            required String langEngName,
-            Value<String?> langNativeName = const Value.absent(),
-            Value<String?> langAbbreviation = const Value.absent(),
+            Value<String?> originSource = const Value.absent(),
           }) =>
               BiblesCompanion.insert(
             id: id,
+            extId: extId,
             languageId: languageId,
             bibleName: bibleName,
             bibleNameAbbreviation: bibleNameAbbreviation,
-            langEngName: langEngName,
-            langNativeName: langNativeName,
-            langAbbreviation: langAbbreviation,
+            originSource: originSource,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
@@ -1951,6 +2257,7 @@ typedef $BiblesProcessedTableManager = ProcessedTableManager<
 typedef $BooksCreateCompanionBuilder = BooksCompanion Function({
   Value<int> id,
   required int bibleId,
+  required String osisId,
   Value<int?> bookOrder,
   Value<String?> longName,
   required String shortName,
@@ -1958,6 +2265,7 @@ typedef $BooksCreateCompanionBuilder = BooksCompanion Function({
 typedef $BooksUpdateCompanionBuilder = BooksCompanion Function({
   Value<int> id,
   Value<int> bibleId,
+  Value<String> osisId,
   Value<int?> bookOrder,
   Value<String?> longName,
   Value<String> shortName,
@@ -1976,6 +2284,9 @@ class $BooksFilterComposer extends Composer<_$AppDb, Books> {
 
   ColumnFilters<int> get bibleId => $composableBuilder(
       column: $table.bibleId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get osisId => $composableBuilder(
+      column: $table.osisId, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<int> get bookOrder => $composableBuilder(
       column: $table.bookOrder, builder: (column) => ColumnFilters(column));
@@ -2001,6 +2312,9 @@ class $BooksOrderingComposer extends Composer<_$AppDb, Books> {
   ColumnOrderings<int> get bibleId => $composableBuilder(
       column: $table.bibleId, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get osisId => $composableBuilder(
+      column: $table.osisId, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<int> get bookOrder => $composableBuilder(
       column: $table.bookOrder, builder: (column) => ColumnOrderings(column));
 
@@ -2024,6 +2338,9 @@ class $BooksAnnotationComposer extends Composer<_$AppDb, Books> {
 
   GeneratedColumn<int> get bibleId =>
       $composableBuilder(column: $table.bibleId, builder: (column) => column);
+
+  GeneratedColumn<String> get osisId =>
+      $composableBuilder(column: $table.osisId, builder: (column) => column);
 
   GeneratedColumn<int> get bookOrder =>
       $composableBuilder(column: $table.bookOrder, builder: (column) => column);
@@ -2060,6 +2377,7 @@ class $BooksTableManager extends RootTableManager<
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<int> bibleId = const Value.absent(),
+            Value<String> osisId = const Value.absent(),
             Value<int?> bookOrder = const Value.absent(),
             Value<String?> longName = const Value.absent(),
             Value<String> shortName = const Value.absent(),
@@ -2067,6 +2385,7 @@ class $BooksTableManager extends RootTableManager<
               BooksCompanion(
             id: id,
             bibleId: bibleId,
+            osisId: osisId,
             bookOrder: bookOrder,
             longName: longName,
             shortName: shortName,
@@ -2074,6 +2393,7 @@ class $BooksTableManager extends RootTableManager<
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             required int bibleId,
+            required String osisId,
             Value<int?> bookOrder = const Value.absent(),
             Value<String?> longName = const Value.absent(),
             required String shortName,
@@ -2081,6 +2401,7 @@ class $BooksTableManager extends RootTableManager<
               BooksCompanion.insert(
             id: id,
             bibleId: bibleId,
+            osisId: osisId,
             bookOrder: bookOrder,
             longName: longName,
             shortName: shortName,
@@ -2104,197 +2425,29 @@ typedef $BooksProcessedTableManager = ProcessedTableManager<
     (Book, BaseReferences<_$AppDb, Books, Book>),
     Book,
     PrefetchHooks Function()>;
-typedef $ParagraphsCreateCompanionBuilder = ParagraphsCompanion Function({
+typedef $VerseSegmentsCreateCompanionBuilder = VerseSegmentsCompanion Function({
   Value<int> id,
   required int bookId,
-  Value<String?> subtitle,
-  required int chapterNumber,
-  required int startVerse,
-  required int endVerse,
-});
-typedef $ParagraphsUpdateCompanionBuilder = ParagraphsCompanion Function({
-  Value<int> id,
-  Value<int> bookId,
-  Value<String?> subtitle,
-  Value<int> chapterNumber,
-  Value<int> startVerse,
-  Value<int> endVerse,
-});
-
-class $ParagraphsFilterComposer extends Composer<_$AppDb, Paragraphs> {
-  $ParagraphsFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<int> get bookId => $composableBuilder(
-      column: $table.bookId, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<String> get subtitle => $composableBuilder(
-      column: $table.subtitle, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<int> get chapterNumber => $composableBuilder(
-      column: $table.chapterNumber, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<int> get startVerse => $composableBuilder(
-      column: $table.startVerse, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<int> get endVerse => $composableBuilder(
-      column: $table.endVerse, builder: (column) => ColumnFilters(column));
-}
-
-class $ParagraphsOrderingComposer extends Composer<_$AppDb, Paragraphs> {
-  $ParagraphsOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<int> get bookId => $composableBuilder(
-      column: $table.bookId, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<String> get subtitle => $composableBuilder(
-      column: $table.subtitle, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<int> get chapterNumber => $composableBuilder(
-      column: $table.chapterNumber,
-      builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<int> get startVerse => $composableBuilder(
-      column: $table.startVerse, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<int> get endVerse => $composableBuilder(
-      column: $table.endVerse, builder: (column) => ColumnOrderings(column));
-}
-
-class $ParagraphsAnnotationComposer extends Composer<_$AppDb, Paragraphs> {
-  $ParagraphsAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<int> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<int> get bookId =>
-      $composableBuilder(column: $table.bookId, builder: (column) => column);
-
-  GeneratedColumn<String> get subtitle =>
-      $composableBuilder(column: $table.subtitle, builder: (column) => column);
-
-  GeneratedColumn<int> get chapterNumber => $composableBuilder(
-      column: $table.chapterNumber, builder: (column) => column);
-
-  GeneratedColumn<int> get startVerse => $composableBuilder(
-      column: $table.startVerse, builder: (column) => column);
-
-  GeneratedColumn<int> get endVerse =>
-      $composableBuilder(column: $table.endVerse, builder: (column) => column);
-}
-
-class $ParagraphsTableManager extends RootTableManager<
-    _$AppDb,
-    Paragraphs,
-    Paragraph,
-    $ParagraphsFilterComposer,
-    $ParagraphsOrderingComposer,
-    $ParagraphsAnnotationComposer,
-    $ParagraphsCreateCompanionBuilder,
-    $ParagraphsUpdateCompanionBuilder,
-    (Paragraph, BaseReferences<_$AppDb, Paragraphs, Paragraph>),
-    Paragraph,
-    PrefetchHooks Function()> {
-  $ParagraphsTableManager(_$AppDb db, Paragraphs table)
-      : super(TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $ParagraphsFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $ParagraphsOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $ParagraphsAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            Value<int> bookId = const Value.absent(),
-            Value<String?> subtitle = const Value.absent(),
-            Value<int> chapterNumber = const Value.absent(),
-            Value<int> startVerse = const Value.absent(),
-            Value<int> endVerse = const Value.absent(),
-          }) =>
-              ParagraphsCompanion(
-            id: id,
-            bookId: bookId,
-            subtitle: subtitle,
-            chapterNumber: chapterNumber,
-            startVerse: startVerse,
-            endVerse: endVerse,
-          ),
-          createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            required int bookId,
-            Value<String?> subtitle = const Value.absent(),
-            required int chapterNumber,
-            required int startVerse,
-            required int endVerse,
-          }) =>
-              ParagraphsCompanion.insert(
-            id: id,
-            bookId: bookId,
-            subtitle: subtitle,
-            chapterNumber: chapterNumber,
-            startVerse: startVerse,
-            endVerse: endVerse,
-          ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
-              .toList(),
-          prefetchHooksCallback: null,
-        ));
-}
-
-typedef $ParagraphsProcessedTableManager = ProcessedTableManager<
-    _$AppDb,
-    Paragraphs,
-    Paragraph,
-    $ParagraphsFilterComposer,
-    $ParagraphsOrderingComposer,
-    $ParagraphsAnnotationComposer,
-    $ParagraphsCreateCompanionBuilder,
-    $ParagraphsUpdateCompanionBuilder,
-    (Paragraph, BaseReferences<_$AppDb, Paragraphs, Paragraph>),
-    Paragraph,
-    PrefetchHooks Function()>;
-typedef $VersesCreateCompanionBuilder = VersesCompanion Function({
-  Value<int> id,
-  required int bookId,
-  required int paragraphId,
   required int chapterNumber,
   required int verseNumber,
-  required String verseText,
+  required int segmentIndex,
+  Value<int> paragraphStart,
+  required String textContent,
+  Value<String?> subtitle,
 });
-typedef $VersesUpdateCompanionBuilder = VersesCompanion Function({
+typedef $VerseSegmentsUpdateCompanionBuilder = VerseSegmentsCompanion Function({
   Value<int> id,
   Value<int> bookId,
-  Value<int> paragraphId,
   Value<int> chapterNumber,
   Value<int> verseNumber,
-  Value<String> verseText,
+  Value<int> segmentIndex,
+  Value<int> paragraphStart,
+  Value<String> textContent,
+  Value<String?> subtitle,
 });
 
-class $VersesFilterComposer extends Composer<_$AppDb, Verses> {
-  $VersesFilterComposer({
+class $VerseSegmentsFilterComposer extends Composer<_$AppDb, VerseSegments> {
+  $VerseSegmentsFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -2306,9 +2459,6 @@ class $VersesFilterComposer extends Composer<_$AppDb, Verses> {
 
   ColumnFilters<int> get bookId => $composableBuilder(
       column: $table.bookId, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<int> get paragraphId => $composableBuilder(
-      column: $table.paragraphId, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<int> get chapterNumber => $composableBuilder(
       column: $table.chapterNumber, builder: (column) => ColumnFilters(column));
@@ -2316,12 +2466,22 @@ class $VersesFilterComposer extends Composer<_$AppDb, Verses> {
   ColumnFilters<int> get verseNumber => $composableBuilder(
       column: $table.verseNumber, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get verseText => $composableBuilder(
-      column: $table.verseText, builder: (column) => ColumnFilters(column));
+  ColumnFilters<int> get segmentIndex => $composableBuilder(
+      column: $table.segmentIndex, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get paragraphStart => $composableBuilder(
+      column: $table.paragraphStart,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get textContent => $composableBuilder(
+      column: $table.textContent, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get subtitle => $composableBuilder(
+      column: $table.subtitle, builder: (column) => ColumnFilters(column));
 }
 
-class $VersesOrderingComposer extends Composer<_$AppDb, Verses> {
-  $VersesOrderingComposer({
+class $VerseSegmentsOrderingComposer extends Composer<_$AppDb, VerseSegments> {
+  $VerseSegmentsOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -2333,9 +2493,6 @@ class $VersesOrderingComposer extends Composer<_$AppDb, Verses> {
 
   ColumnOrderings<int> get bookId => $composableBuilder(
       column: $table.bookId, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<int> get paragraphId => $composableBuilder(
-      column: $table.paragraphId, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<int> get chapterNumber => $composableBuilder(
       column: $table.chapterNumber,
@@ -2344,12 +2501,24 @@ class $VersesOrderingComposer extends Composer<_$AppDb, Verses> {
   ColumnOrderings<int> get verseNumber => $composableBuilder(
       column: $table.verseNumber, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get verseText => $composableBuilder(
-      column: $table.verseText, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<int> get segmentIndex => $composableBuilder(
+      column: $table.segmentIndex,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get paragraphStart => $composableBuilder(
+      column: $table.paragraphStart,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get textContent => $composableBuilder(
+      column: $table.textContent, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get subtitle => $composableBuilder(
+      column: $table.subtitle, builder: (column) => ColumnOrderings(column));
 }
 
-class $VersesAnnotationComposer extends Composer<_$AppDb, Verses> {
-  $VersesAnnotationComposer({
+class $VerseSegmentsAnnotationComposer
+    extends Composer<_$AppDb, VerseSegments> {
+  $VerseSegmentsAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -2362,72 +2531,86 @@ class $VersesAnnotationComposer extends Composer<_$AppDb, Verses> {
   GeneratedColumn<int> get bookId =>
       $composableBuilder(column: $table.bookId, builder: (column) => column);
 
-  GeneratedColumn<int> get paragraphId => $composableBuilder(
-      column: $table.paragraphId, builder: (column) => column);
-
   GeneratedColumn<int> get chapterNumber => $composableBuilder(
       column: $table.chapterNumber, builder: (column) => column);
 
   GeneratedColumn<int> get verseNumber => $composableBuilder(
       column: $table.verseNumber, builder: (column) => column);
 
-  GeneratedColumn<String> get verseText =>
-      $composableBuilder(column: $table.verseText, builder: (column) => column);
+  GeneratedColumn<int> get segmentIndex => $composableBuilder(
+      column: $table.segmentIndex, builder: (column) => column);
+
+  GeneratedColumn<int> get paragraphStart => $composableBuilder(
+      column: $table.paragraphStart, builder: (column) => column);
+
+  GeneratedColumn<String> get textContent => $composableBuilder(
+      column: $table.textContent, builder: (column) => column);
+
+  GeneratedColumn<String> get subtitle =>
+      $composableBuilder(column: $table.subtitle, builder: (column) => column);
 }
 
-class $VersesTableManager extends RootTableManager<
+class $VerseSegmentsTableManager extends RootTableManager<
     _$AppDb,
-    Verses,
-    Verse,
-    $VersesFilterComposer,
-    $VersesOrderingComposer,
-    $VersesAnnotationComposer,
-    $VersesCreateCompanionBuilder,
-    $VersesUpdateCompanionBuilder,
-    (Verse, BaseReferences<_$AppDb, Verses, Verse>),
-    Verse,
+    VerseSegments,
+    VerseSegment,
+    $VerseSegmentsFilterComposer,
+    $VerseSegmentsOrderingComposer,
+    $VerseSegmentsAnnotationComposer,
+    $VerseSegmentsCreateCompanionBuilder,
+    $VerseSegmentsUpdateCompanionBuilder,
+    (VerseSegment, BaseReferences<_$AppDb, VerseSegments, VerseSegment>),
+    VerseSegment,
     PrefetchHooks Function()> {
-  $VersesTableManager(_$AppDb db, Verses table)
+  $VerseSegmentsTableManager(_$AppDb db, VerseSegments table)
       : super(TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $VersesFilterComposer($db: db, $table: table),
+              $VerseSegmentsFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $VersesOrderingComposer($db: db, $table: table),
+              $VerseSegmentsOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $VersesAnnotationComposer($db: db, $table: table),
+              $VerseSegmentsAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<int> bookId = const Value.absent(),
-            Value<int> paragraphId = const Value.absent(),
             Value<int> chapterNumber = const Value.absent(),
             Value<int> verseNumber = const Value.absent(),
-            Value<String> verseText = const Value.absent(),
+            Value<int> segmentIndex = const Value.absent(),
+            Value<int> paragraphStart = const Value.absent(),
+            Value<String> textContent = const Value.absent(),
+            Value<String?> subtitle = const Value.absent(),
           }) =>
-              VersesCompanion(
+              VerseSegmentsCompanion(
             id: id,
             bookId: bookId,
-            paragraphId: paragraphId,
             chapterNumber: chapterNumber,
             verseNumber: verseNumber,
-            verseText: verseText,
+            segmentIndex: segmentIndex,
+            paragraphStart: paragraphStart,
+            textContent: textContent,
+            subtitle: subtitle,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             required int bookId,
-            required int paragraphId,
             required int chapterNumber,
             required int verseNumber,
-            required String verseText,
+            required int segmentIndex,
+            Value<int> paragraphStart = const Value.absent(),
+            required String textContent,
+            Value<String?> subtitle = const Value.absent(),
           }) =>
-              VersesCompanion.insert(
+              VerseSegmentsCompanion.insert(
             id: id,
             bookId: bookId,
-            paragraphId: paragraphId,
             chapterNumber: chapterNumber,
             verseNumber: verseNumber,
-            verseText: verseText,
+            segmentIndex: segmentIndex,
+            paragraphStart: paragraphStart,
+            textContent: textContent,
+            subtitle: subtitle,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
@@ -2436,33 +2619,37 @@ class $VersesTableManager extends RootTableManager<
         ));
 }
 
-typedef $VersesProcessedTableManager = ProcessedTableManager<
+typedef $VerseSegmentsProcessedTableManager = ProcessedTableManager<
     _$AppDb,
-    Verses,
-    Verse,
-    $VersesFilterComposer,
-    $VersesOrderingComposer,
-    $VersesAnnotationComposer,
-    $VersesCreateCompanionBuilder,
-    $VersesUpdateCompanionBuilder,
-    (Verse, BaseReferences<_$AppDb, Verses, Verse>),
-    Verse,
+    VerseSegments,
+    VerseSegment,
+    $VerseSegmentsFilterComposer,
+    $VerseSegmentsOrderingComposer,
+    $VerseSegmentsAnnotationComposer,
+    $VerseSegmentsCreateCompanionBuilder,
+    $VerseSegmentsUpdateCompanionBuilder,
+    (VerseSegment, BaseReferences<_$AppDb, VerseSegments, VerseSegment>),
+    VerseSegment,
     PrefetchHooks Function()>;
-typedef $VerseStyleCreateCompanionBuilder = VerseStyleCompanion Function({
+typedef $SegmentSpansCreateCompanionBuilder = SegmentSpansCompanion Function({
   Value<int> id,
-  required int verseId,
-  required int startIndex,
-  required int endIndex,
+  required int segmentId,
+  required int startOffset,
+  required int endOffset,
+  required String spanType,
+  Value<String?> payload,
 });
-typedef $VerseStyleUpdateCompanionBuilder = VerseStyleCompanion Function({
+typedef $SegmentSpansUpdateCompanionBuilder = SegmentSpansCompanion Function({
   Value<int> id,
-  Value<int> verseId,
-  Value<int> startIndex,
-  Value<int> endIndex,
+  Value<int> segmentId,
+  Value<int> startOffset,
+  Value<int> endOffset,
+  Value<String> spanType,
+  Value<String?> payload,
 });
 
-class $VerseStyleFilterComposer extends Composer<_$AppDb, VerseStyle> {
-  $VerseStyleFilterComposer({
+class $SegmentSpansFilterComposer extends Composer<_$AppDb, SegmentSpans> {
+  $SegmentSpansFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -2472,18 +2659,24 @@ class $VerseStyleFilterComposer extends Composer<_$AppDb, VerseStyle> {
   ColumnFilters<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get verseId => $composableBuilder(
-      column: $table.verseId, builder: (column) => ColumnFilters(column));
+  ColumnFilters<int> get segmentId => $composableBuilder(
+      column: $table.segmentId, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get startIndex => $composableBuilder(
-      column: $table.startIndex, builder: (column) => ColumnFilters(column));
+  ColumnFilters<int> get startOffset => $composableBuilder(
+      column: $table.startOffset, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get endIndex => $composableBuilder(
-      column: $table.endIndex, builder: (column) => ColumnFilters(column));
+  ColumnFilters<int> get endOffset => $composableBuilder(
+      column: $table.endOffset, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get spanType => $composableBuilder(
+      column: $table.spanType, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get payload => $composableBuilder(
+      column: $table.payload, builder: (column) => ColumnFilters(column));
 }
 
-class $VerseStyleOrderingComposer extends Composer<_$AppDb, VerseStyle> {
-  $VerseStyleOrderingComposer({
+class $SegmentSpansOrderingComposer extends Composer<_$AppDb, SegmentSpans> {
+  $SegmentSpansOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -2493,18 +2686,24 @@ class $VerseStyleOrderingComposer extends Composer<_$AppDb, VerseStyle> {
   ColumnOrderings<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get verseId => $composableBuilder(
-      column: $table.verseId, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<int> get segmentId => $composableBuilder(
+      column: $table.segmentId, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get startIndex => $composableBuilder(
-      column: $table.startIndex, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<int> get startOffset => $composableBuilder(
+      column: $table.startOffset, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get endIndex => $composableBuilder(
-      column: $table.endIndex, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<int> get endOffset => $composableBuilder(
+      column: $table.endOffset, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get spanType => $composableBuilder(
+      column: $table.spanType, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get payload => $composableBuilder(
+      column: $table.payload, builder: (column) => ColumnOrderings(column));
 }
 
-class $VerseStyleAnnotationComposer extends Composer<_$AppDb, VerseStyle> {
-  $VerseStyleAnnotationComposer({
+class $SegmentSpansAnnotationComposer extends Composer<_$AppDb, SegmentSpans> {
+  $SegmentSpansAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -2514,61 +2713,75 @@ class $VerseStyleAnnotationComposer extends Composer<_$AppDb, VerseStyle> {
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<int> get verseId =>
-      $composableBuilder(column: $table.verseId, builder: (column) => column);
+  GeneratedColumn<int> get segmentId =>
+      $composableBuilder(column: $table.segmentId, builder: (column) => column);
 
-  GeneratedColumn<int> get startIndex => $composableBuilder(
-      column: $table.startIndex, builder: (column) => column);
+  GeneratedColumn<int> get startOffset => $composableBuilder(
+      column: $table.startOffset, builder: (column) => column);
 
-  GeneratedColumn<int> get endIndex =>
-      $composableBuilder(column: $table.endIndex, builder: (column) => column);
+  GeneratedColumn<int> get endOffset =>
+      $composableBuilder(column: $table.endOffset, builder: (column) => column);
+
+  GeneratedColumn<String> get spanType =>
+      $composableBuilder(column: $table.spanType, builder: (column) => column);
+
+  GeneratedColumn<String> get payload =>
+      $composableBuilder(column: $table.payload, builder: (column) => column);
 }
 
-class $VerseStyleTableManager extends RootTableManager<
+class $SegmentSpansTableManager extends RootTableManager<
     _$AppDb,
-    VerseStyle,
-    VerseStyleData,
-    $VerseStyleFilterComposer,
-    $VerseStyleOrderingComposer,
-    $VerseStyleAnnotationComposer,
-    $VerseStyleCreateCompanionBuilder,
-    $VerseStyleUpdateCompanionBuilder,
-    (VerseStyleData, BaseReferences<_$AppDb, VerseStyle, VerseStyleData>),
-    VerseStyleData,
+    SegmentSpans,
+    SegmentSpan,
+    $SegmentSpansFilterComposer,
+    $SegmentSpansOrderingComposer,
+    $SegmentSpansAnnotationComposer,
+    $SegmentSpansCreateCompanionBuilder,
+    $SegmentSpansUpdateCompanionBuilder,
+    (SegmentSpan, BaseReferences<_$AppDb, SegmentSpans, SegmentSpan>),
+    SegmentSpan,
     PrefetchHooks Function()> {
-  $VerseStyleTableManager(_$AppDb db, VerseStyle table)
+  $SegmentSpansTableManager(_$AppDb db, SegmentSpans table)
       : super(TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $VerseStyleFilterComposer($db: db, $table: table),
+              $SegmentSpansFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $VerseStyleOrderingComposer($db: db, $table: table),
+              $SegmentSpansOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $VerseStyleAnnotationComposer($db: db, $table: table),
+              $SegmentSpansAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
-            Value<int> verseId = const Value.absent(),
-            Value<int> startIndex = const Value.absent(),
-            Value<int> endIndex = const Value.absent(),
+            Value<int> segmentId = const Value.absent(),
+            Value<int> startOffset = const Value.absent(),
+            Value<int> endOffset = const Value.absent(),
+            Value<String> spanType = const Value.absent(),
+            Value<String?> payload = const Value.absent(),
           }) =>
-              VerseStyleCompanion(
+              SegmentSpansCompanion(
             id: id,
-            verseId: verseId,
-            startIndex: startIndex,
-            endIndex: endIndex,
+            segmentId: segmentId,
+            startOffset: startOffset,
+            endOffset: endOffset,
+            spanType: spanType,
+            payload: payload,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
-            required int verseId,
-            required int startIndex,
-            required int endIndex,
+            required int segmentId,
+            required int startOffset,
+            required int endOffset,
+            required String spanType,
+            Value<String?> payload = const Value.absent(),
           }) =>
-              VerseStyleCompanion.insert(
+              SegmentSpansCompanion.insert(
             id: id,
-            verseId: verseId,
-            startIndex: startIndex,
-            endIndex: endIndex,
+            segmentId: segmentId,
+            startOffset: startOffset,
+            endOffset: endOffset,
+            spanType: spanType,
+            payload: payload,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
@@ -2577,51 +2790,115 @@ class $VerseStyleTableManager extends RootTableManager<
         ));
 }
 
-typedef $VerseStyleProcessedTableManager = ProcessedTableManager<
+typedef $SegmentSpansProcessedTableManager = ProcessedTableManager<
     _$AppDb,
-    VerseStyle,
-    VerseStyleData,
-    $VerseStyleFilterComposer,
-    $VerseStyleOrderingComposer,
-    $VerseStyleAnnotationComposer,
-    $VerseStyleCreateCompanionBuilder,
-    $VerseStyleUpdateCompanionBuilder,
-    (VerseStyleData, BaseReferences<_$AppDb, VerseStyle, VerseStyleData>),
-    VerseStyleData,
+    SegmentSpans,
+    SegmentSpan,
+    $SegmentSpansFilterComposer,
+    $SegmentSpansOrderingComposer,
+    $SegmentSpansAnnotationComposer,
+    $SegmentSpansCreateCompanionBuilder,
+    $SegmentSpansUpdateCompanionBuilder,
+    (SegmentSpan, BaseReferences<_$AppDb, SegmentSpans, SegmentSpan>),
+    SegmentSpan,
     PrefetchHooks Function()>;
 
 class $AppDbManager {
   final _$AppDb _db;
   $AppDbManager(this._db);
+  $LanguagesTableManager get languages =>
+      $LanguagesTableManager(_db, _db.languages);
   $BiblesTableManager get bibles => $BiblesTableManager(_db, _db.bibles);
   $BooksTableManager get books => $BooksTableManager(_db, _db.books);
-  $ParagraphsTableManager get paragraphs =>
-      $ParagraphsTableManager(_db, _db.paragraphs);
-  $VersesTableManager get verses => $VersesTableManager(_db, _db.verses);
-  $VerseStyleTableManager get verseStyle =>
-      $VerseStyleTableManager(_db, _db.verseStyle);
-}
-
-class GetVersesResult {
-  final int chapterNumber;
-  final String verseText;
-  final int verseNumber;
-  GetVersesResult({
-    required this.chapterNumber,
-    required this.verseText,
-    required this.verseNumber,
-  });
+  $VerseSegmentsTableManager get verseSegments =>
+      $VerseSegmentsTableManager(_db, _db.verseSegments);
+  $SegmentSpansTableManager get segmentSpans =>
+      $SegmentSpansTableManager(_db, _db.segmentSpans);
 }
 
 class GetBiblesResult {
   final int id;
+  final String extId;
   final int? languageId;
   final String bibleName;
   final String bibleNameAbbreviation;
+  final String? originSource;
+  final String langEngName;
+  final String? langIsoCode;
+  final String? langNativeName;
   GetBiblesResult({
     required this.id,
+    required this.extId,
     this.languageId,
     required this.bibleName,
     required this.bibleNameAbbreviation,
+    this.originSource,
+    required this.langEngName,
+    this.langIsoCode,
+    this.langNativeName,
+  });
+}
+
+class GetVerseSegmentsForChapterResult {
+  final int id;
+  final int bookId;
+  final int chapterNumber;
+  final int verseNumber;
+  final int segmentIndex;
+  final int paragraphStart;
+  final String textContent;
+  final String? subtitle;
+  final int id1;
+  final int bibleId;
+  final String osisId;
+  final int? bookOrder;
+  final String? longName;
+  final String shortName;
+  GetVerseSegmentsForChapterResult({
+    required this.id,
+    required this.bookId,
+    required this.chapterNumber,
+    required this.verseNumber,
+    required this.segmentIndex,
+    required this.paragraphStart,
+    required this.textContent,
+    this.subtitle,
+    required this.id1,
+    required this.bibleId,
+    required this.osisId,
+    this.bookOrder,
+    this.longName,
+    required this.shortName,
+  });
+}
+
+class GetChapterSegmentsWithSpansResult {
+  final int segmentId;
+  final int bookId;
+  final int chapterNumber;
+  final int verseNumber;
+  final int segmentIndex;
+  final int paragraphStart;
+  final String textContent;
+  final String? subtitle;
+  final int? spanId;
+  final int? spanStart;
+  final int? spanEnd;
+  final String? spanType;
+  final String? spanPayload;
+  GetChapterSegmentsWithSpansResult({
+    required this.segmentId,
+    required this.bookId,
+    required this.chapterNumber,
+    required this.verseNumber,
+    required this.segmentIndex,
+    required this.paragraphStart,
+    required this.textContent,
+    this.subtitle,
+    this.spanId,
+    this.spanStart,
+    this.spanEnd,
+    this.spanType,
+    this.spanPayload,
   });
 }

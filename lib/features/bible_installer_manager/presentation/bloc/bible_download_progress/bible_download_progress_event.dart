@@ -29,7 +29,7 @@ class BibleDownloadProgressResume extends TranslationDownloadProgressEvent {
 class BibleDownloadProgressCancel extends TranslationDownloadProgressEvent {}
 
 class BibleDownloadProgressPressed extends TranslationDownloadProgressEvent {
-  final EBible bible;
+  final BibleMeta bible;
 
   BibleDownloadProgressPressed(this.bible);
 

@@ -1,6 +1,6 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:the_smyrna_bible_v2/features/b_searchbar/domain/entities/bible_reference.dart';
 
+import '../domain/entities/bible_ref.dart';
 import '../error/failure.dart';
 
 class BibleReferenceParser {
@@ -142,7 +142,7 @@ class BibleReferenceParser {
     'Rev',
   ];
 
-  Future<Either<Failure, BibleReference>> analyze(String text) async {
+  Future<Either<Failure, BibleRef>> analyze(String text) async {
     try {
       //
       // Extract book and chapter+verse information
@@ -187,8 +187,8 @@ class BibleReferenceParser {
       //
       // result
       //
-      final BibleReference reference = BibleReference(
-        book: book.toUpperCase(),
+      final BibleRef reference = BibleRef(
+        bookId: book.toUpperCase(),
         chapter: chapter - 1, // corrections for zero based counting
         verseStart: verse - 1,
         verseEnd: null,

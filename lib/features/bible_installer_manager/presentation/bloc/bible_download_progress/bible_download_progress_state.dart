@@ -7,13 +7,13 @@ class BibleDownloadProgressState extends Equatable {
     this.errorMessage,
   });
 
-  final EBible? bible;
-  final DownloadProgess? progress;
+  final BibleMeta? bible;
+  final InstallProgress? progress;
   final String? errorMessage;
 
   BibleDownloadProgressState copyWith({
-    DownloadProgess Function()? progress,
-    EBible Function()? bible,
+    InstallProgress Function()? progress,
+    BibleMeta Function()? bible,
     String Function()? errorMessage,
   }) {
     return BibleDownloadProgressState(

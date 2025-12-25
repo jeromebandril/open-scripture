@@ -1,9 +1,7 @@
 import 'package:xml/xml.dart';
 import 'package:xml/xpath.dart';
 
-import '../data/models/bible_model.dart';
-import '../data/models/book_model.dart';
-import '../data/models/verse_model.dart';
+import '../domain/entities/bible_meta.dart';
 
 class UsfxParser {
   late final XmlDocument _bibleXml;
@@ -12,16 +10,26 @@ class UsfxParser {
   UsfxParser(String bibleContent, String metadataContent) {
     _bibleXml = XmlDocument.parse(bibleContent);
     _metadataXml = XmlDocument.parse(metadataContent);
-  };
+  }
 
-  BibleModel getBible() {
-    final bibleName = _metadataXml.xpath('//identification/name').first.innerText;
-    final abbreviation = _metadataXml.xpath('//identification/abbreviation').first.innerText;
-    final langEngName = _metadataXml.xpath('//language/name').first.innerText;
-    final langNativeName = _metadataXml.xpath('//language/nameLocal').first.innerText; 
-    final langAbbreviation = _metadataXml.xpath('//language/iso').first.innerText; 
+  BibleMeta getBible() {
+    String _text(String path) => _metadataXml.xpath(path).first.innerText;
 
-    return BibleModel(id: -1, bibleName: bibleName, abbreviation: abbreviation, langEngName: langEngName, langNativeName: langNativeName, langAbbreviation: langAbbreviation,);
+    final bibleName = _text('//identification/name');
+    final abbreviation = _text('//identification/abbreviation');
+    final langEngName = _text('//language/name');
+    final langNativeName = _text('//language/nameLocal');
+    final langAbbreviation = _text(('//language/iso'));
+
+    return BibleMeta(
+      id: -1,
+      extId: abbreviation,
+      bibleName: bibleName,
+      abbreviation: abbreviation,
+      langEngName: langEngName,
+      langNativeName: langNativeName,
+      langIsoCode: langAbbreviation,
+    );
   }
 
   //List<BookModel> getBooks() {}

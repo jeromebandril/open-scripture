@@ -13,11 +13,11 @@ class BSearchbarState extends Equatable {
   });
 
   final BSearchbarStatus status;
-  final BibleReference? referenceResult;
+  final BibleRef? referenceResult;
 
   BSearchbarState copyWith({
     BSearchbarStatus Function()? status,
-    BibleReference Function()? referenceResult,
+    BibleRef Function()? referenceResult,
   }) {
     return BSearchbarState(
       status: status != null ? status() : this.status,

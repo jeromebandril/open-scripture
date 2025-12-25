@@ -1,64 +1,95 @@
 CREATE TABLE languages (
-  id INT NOT NULL PRIMARY KEY AUTOINCREMENT,
+  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   langEngName NVARCHAR(64) NOT NULL,
   langNativeName NVARCHAR(64),
-  langAbbreviation NVARCHAR(3)   -- uses ISO 639 language codes
-)
+  langIsoCode NVARCHAR(3)   -- uses ISO 639 language codes
+);
 
 CREATE TABLE bibles (
-  id INT NOT NULL PRIMARY KEY AUTOINCREMENT,
-  languageId INT,
+  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  extId NVARCHAR(80) NOT NULL UNIQUE,
+  languageId INTEGER,
   bibleName NVARCHAR(64) NOT NULL,
   bibleNameAbbreviation NVARCHAR(32) NOT NULL,
+  originSource NVARCHAR(128),
+
+  FOREIGN KEY (languageId) REFERENCES languages(id) ON DELETE CASCADE
 );
 
 CREATE TABLE books(
-  id INT NOT NULL PRIMARY KEY AUTOINCREMENT,
-  bibleId INT NOT NULL,
+  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  bibleId INTEGER NOT NULL,
+  osisId NVARCHAR(10) NOT NULL,
   bookOrder INT,
   longName NVARCHAR(256),
   shortName NVARCHAR(64) NOT NULL,
 
-  FOREIGN KEY (bibleId) REFERENCES bibles(id)
+  FOREIGN KEY (bibleId) REFERENCES bibles(id) ON DELETE CASCADE,
+  UNIQUE (bibleId, osisId)
+
 );
 
-CREATE TABLE verses (
-  id INT NOT NULL PRIMARY KEY AUTOINCREMENT,
-  bookId INT NOT NULL,
-  paragraphId INT NOT NULL,
+CREATE TABLE verse_segments (
+  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  bookId INTEGER NOT NULL,
   chapterNumber INT NOT NULL,
   verseNumber SMALLINT NOT NULL,
-  verseText NVARCHAR(1000) NOT NULL,
+  segmentIndex INT NOT NULL,
+  paragraphStart INT NOT NULL DEFAULT 0,
+  textContent NVARCHAR(1000) NOT NULL,
+  subtitle NVARCHAR(128),
   
-  FOREIGN KEY (paragraphId) REFERENCES paragraphs(id),
-  FOREIGN KEY (bookId) REFERENCES books(id)
+  FOREIGN KEY (bookId) REFERENCES books(id) ON DELETE CASCADE,
+  UNIQUE (bookId, chapterNumber, verseNumber, segmentIndex)
 ); 
 
-CREATE TABLE paragraphs (
-  id INT NOT NULL PRIMARY KEY AUTOINCREMENT,
-  bookId INT NOT NULL,
-  subtitle NVARCHAR(128),
-  chapterNumber INT NOT NULL,
-  startVerse INT NOT NULl,
-  endVerse INT NOT NULL,
+CREATE TABLE segment_spans (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  segmentId INTEGER NOT NULL,
+  startOffset INT NOT NULL,
+  endOffset INT NOT NULL,
+  spanType NVARCHAR(32) NOT NULL,
+  payload NVARCHAR(128),
 
-  FOREIGN KEY (bookId) REFERENCES books(id)
+  FOREIGN KEY (segmentId) REFERENCES verse_segments(id) ON DELETE CASCADE
 );
 
-CREATE TABLE verse_style (
-  id INT NOT NULL PRIMARY KEY AUTOINCREMENT,
-  verseId INT NOT NULL,
-  startIndex INT NOT NULL,
-  endIndex INT NOT NULL,
-  
-  FOREIGN KEY (verseId) REFERENCES verses(id)
-);
+CREATE INDEX ix_spans_segment ON segment_spans(segmentId, startOffset);
+CREATE UNIQUE INDEX ux_languages_iso ON languages(langIsoCode);
 
-getVerses(:bibleId AS INT, :bookNumber AS INT, :chapterNumber AS INT, :verseStart AS INT OR NULL, :verseEnd AS INT OR NULL): 
-SELECT v.chapterNumber, v.verseText, v.verseNumber FROM verses AS v
-WHERE v.bookId = (SELECT id FROM books WHERE bookOrder = :bookNumber AND bibleId = :bibleId) 
-  AND v.chapterNumber = :chapterNumber 
-  AND (verseNumber >= :verseStart OR :verseStart IS NULL)  
-  AND (verseNumber <= :verseEnd OR :verseEnd IS NULL);
+getBibles: 
+SELECT 
+  b.id, b.extId, b.languageId, b.bibleName, b.bibleNameAbbreviation, b.originSource, 
+  l.langEngName, l.langIsoCode, l.langNativeName
+FROM bibles AS b
+JOIN languages AS l on b.languageId = l.id;
 
-getBibles: SELECT id, languageId, bibleName, bibleNameAbbreviation FROM bibles;
+getVerseSegmentsForChapter:
+SELECT *
+FROM verse_segments AS s
+JOIN books AS b ON b.id = s.bookId
+WHERE b.bibleId = :bibleId
+  AND b.osisId = :bookOsisId
+  AND s.chapterNumber = :chapterNumber
+ORDER BY s.verseNumber, s.segmentIndex;
+
+getChapterSegmentsWithSpans:
+SELECT
+  s.id AS segmentId,
+  s.bookId,
+  s.chapterNumber,
+  s.verseNumber,
+  s.segmentIndex,
+  s.paragraphStart,
+  s.textContent,
+  s.subtitle,
+  sp.id AS spanId,
+  sp.startOffset AS spanStart,
+  sp.endOffset AS spanEnd,
+  sp.spanType AS spanType,
+  sp.payload AS spanPayload
+FROM verse_segments s
+LEFT JOIN segment_spans sp ON sp.segmentId = s.id
+WHERE s.bookId = :bookId
+  AND s.chapterNumber = :chapterNumber
+ORDER BY s.verseNumber, s.segmentIndex, sp.startOffset;

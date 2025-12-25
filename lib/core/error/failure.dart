@@ -25,8 +25,8 @@ class NotFoundFailure extends Failure {
   List<Object?> get props => [];
 }
 
-class InstallFailure extends Failure {
-  const InstallFailure();
+class InstallManagerFailure extends Failure {
+  const InstallManagerFailure();
 
   @override
   List<Object?> get props => [];

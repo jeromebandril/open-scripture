@@ -53,6 +53,7 @@ dependencies:
   gap: ^3.0.1
   drift: ^2.21.0
   drift_flutter: ^0.2.1
+  path: ^1.9.1
 
 dev_dependencies:
   flutter_test:

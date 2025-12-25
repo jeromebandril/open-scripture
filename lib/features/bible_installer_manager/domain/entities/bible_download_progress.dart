@@ -1,43 +1,48 @@
 import 'package:equatable/equatable.dart';
 
-enum DownloadStatus {
-  notDownloaded,
-  paused,
-  canceled,
-  inProgress,
-  downloaded,
+enum InstallStage {
+  idle,
+  downloading,
+  downloadingDone,
   installing,
-  installed,
+  done,
+  failed,
+  canceled,
+  paused
 }
 
-class DownloadProgess extends Equatable {
-  final int total;
+class InstallProgress extends Equatable {
+  final InstallStage stage;
   final int received;
-  final DownloadStatus downloadStatus;
+  final int total;
+  final String? message;
 
-  const DownloadProgess({
+  const InstallProgress({
+    required this.stage,
     this.total = 0,
     this.received = 0,
-    this.downloadStatus = DownloadStatus.notDownloaded,
+    this.message,
   });
+
+  double get fraction => total <= 0 ? 0.0 : received / total;
+
+  InstallProgress copyWith({
+    int Function()? total,
+    int Function()? received,
+    InstallStage Function()? stage,
+  }) {
+    return InstallProgress(
+      total: total != null ? total() : this.total,
+      received: received != null ? received() : this.received,
+      stage: stage != null ? stage() : this.stage,
+    );
+  }
 
   @override
   List<Object?> get props => [
-        downloadStatus,
+        stage,
         total,
         received,
+        message,
       ];
-
-  DownloadProgess copyWith({
-    int Function()? total,
-    int Function()? received,
-    DownloadStatus Function()? downloadStatus,
-  }) {
-    return DownloadProgess(
-      total: total != null ? total() : this.total,
-      received: received != null ? received() : this.received,
-      downloadStatus:
-          downloadStatus != null ? downloadStatus() : this.downloadStatus,
-    );
-  }
 }

@@ -17,3 +17,7 @@ class NoLoadedDataExcepetion implements Exception {
 class NoDbConnectionExcepetion implements Exception {
   NoDbConnectionExcepetion();
 }
+
+class UninstallationException implements Exception {
+  UninstallationException();
+}
