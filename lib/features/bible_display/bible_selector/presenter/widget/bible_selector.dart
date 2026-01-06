@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:the_smyrna_bible_v2/features/bible_installer_manager/presentation/bloc/installed_bibles/installed_bibles_bloc.dart';
 
 import '../../../../../injection_container.dart';
 import '../bloc/bloc/bible_selector_bloc.dart';
@@ -29,16 +30,20 @@ class _BibleSelectorBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BibleSelectorBloc, BibleSelectorState>(
+    final selectedId = context.select(
+      (BibleSelectorBloc b) => b.state.selectedBibleId,
+    );
+
+    return BlocBuilder<InstalledBiblesBloc, InstalledBiblesState>(
       builder: (context, state) {
         Widget body;
 
         switch (state.status) {
-          case BibleSelectorStatus.inital:
+          case InstalledBiblesStatus.loading || InstalledBiblesStatus.initial:
             body = const Center(child: CircularProgressIndicator());
             break;
 
-          case BibleSelectorStatus.error:
+          case InstalledBiblesStatus.error:
             body = Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -55,16 +60,16 @@ class _BibleSelectorBody extends StatelessWidget {
             );
             break;
 
-          case BibleSelectorStatus.ready:
+          case InstalledBiblesStatus.loaded:
             body = Column(
               children: [
                 Expanded(
                   child: ListView.separated(
-                    itemCount: state.bibles.length,
+                    itemCount: state.installedBibles.length,
                     separatorBuilder: (_, __) => const Divider(height: 1),
                     itemBuilder: (context, index) {
-                      final bible = state.bibles[index];
-                      final selected = bible.id == state.selectedBibleId;
+                      final bible = state.installedBibles[index];
+                      final selected = bible.id == selectedId;
 
                       return ListTile(
                         selected: selected,
@@ -73,7 +78,7 @@ class _BibleSelectorBody extends StatelessWidget {
                         trailing: selected ? const Icon(Icons.check) : null,
                         onTap: () => context
                             .read<BibleSelectorBloc>()
-                            .add(BibleSelectorSelect(bible.id)),
+                            .add(BibleSelectorSelect(bible.id!)),
                       );
                     },
                   ),
@@ -83,9 +88,9 @@ class _BibleSelectorBody extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     ElevatedButton(
-                      onPressed: state.selectedBibleId == null
+                      onPressed: selectedId == null
                           ? null
-                          : () => onConfirm(state.selectedBibleId!),
+                          : () => onConfirm(selectedId),
                       child: const Text('Confirm'),
                     ),
                   ],

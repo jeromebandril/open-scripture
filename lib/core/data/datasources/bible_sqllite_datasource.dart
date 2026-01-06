@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:archive/archive_io.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:the_smyrna_bible_v2/core/data/models/book_model.dart';
+import 'package:the_smyrna_bible_v2/core/domain/entities/book.dart';
 import 'package:the_smyrna_bible_v2/core/database/installation_queries.dart';
 import 'package:the_smyrna_bible_v2/core/domain/entities/bible_ref.dart';
 import 'package:the_smyrna_bible_v2/core/utils/usfx_parser.dart';
@@ -62,7 +62,7 @@ abstract class BibleLocalDataSource {
   /// Get a list of books
   ///
   /// Throws a [NoDbConnectionException] if the verse does not exist
-  Future<List<BookModel>> getBooks(String version);
+  Future<List<Book>> getBooks(String version);
 }
 
 class BibleLocalDatasourceImpl implements BibleLocalDataSource {
@@ -162,6 +162,8 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
 
       final usfxParser = UsfxParser(bibleContent, metadataContent);
       final bible = usfxParser.getBible();
+      final books = usfxParser.getBooks();
+      final verseSegments = usfxParser.getVerses();
 
       // final books = usfxParser.getBooks();
       // final verses = usfxParser.getVerses();
@@ -176,7 +178,7 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
 
       // TODO: transaction insert:
       // await db.transaction(() async { ... });
-      await db.insertBibleMetadataOnly(bible);
+      await db.insertBible(bible, books, verseSegments);
 
       // 5) Cleanup
       yield const InstallProgress(
@@ -196,6 +198,7 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
         message: 'Installed',
       );
     } catch (e) {
+      print(e);
       yield InstallProgress(
         stage: InstallStage.failed,
         received: 0,
@@ -247,7 +250,7 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
   }
 
   @override
-  Future<List<BookModel>> getBooks(String version) {
+  Future<List<Book>> getBooks(String version) {
     // TODO: implement getBooks
     throw UnimplementedError();
   }
@@ -260,8 +263,9 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
 
     return rows
         .map((r) => VerseSegment(
+              bibleId: bibleId,
               ref: BibleRef(
-                bookId: r.osisId,
+                bookOsisId: bookId,
                 chapter: r.chapterNumber,
                 verseStart: r.verseNumber,
               ),

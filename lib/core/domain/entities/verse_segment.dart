@@ -4,6 +4,7 @@ import 'bible_ref.dart';
 import 'verse_span.dart';
 
 class VerseSegment extends Equatable {
+  final int? bibleId;
   final BibleRef ref;
   final int segmentIndex;
   final bool paragraphStart;
@@ -12,6 +13,7 @@ class VerseSegment extends Equatable {
   final List<VerseSpan> spans;
 
   const VerseSegment({
+    this.bibleId,
     required this.ref,
     required this.segmentIndex,
     required this.paragraphStart,
@@ -41,6 +43,7 @@ class VerseSegment extends Equatable {
 
   @override
   List<Object?> get props => [
+        bibleId,
         ref,
         segmentIndex,
         paragraphStart,
