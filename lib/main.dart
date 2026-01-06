@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:the_smyrna_bible_v2/core/presentation/cubit/active_pane_cubit.dart';
+import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/widgets/bible_searchbar.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/widgets/bible_pane_widget.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/widgets/split_view_container.dart';
 import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/settings_window.dart';
 import 'package:the_smyrna_bible_v2/features/toolbar/presentation/widgets/toolbar.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/bloc/split_screen_bloc.dart';
@@ -39,6 +40,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: MultiBlocProvider(
         providers: [
+          BlocProvider(
+              create: (_) => ActivePaneCubit(
+                  initialPaneId: 0)), // for one pane only for now
           BlocProvider(create: (_) => di.sl<WindowStackManagerBloc>()),
           BlocProvider(
               create: (_) =>
@@ -129,7 +133,24 @@ class _HomeState extends State<Home> {
           //       .map((e) => e.language)
           //       .toList(),
           // ),
-          child: BiblePane(uniqueId: 0, bloc: paneBloc),
+          child: Column(
+            children: [
+              BSearchbar(),
+              BlocListener<BSearchbarBloc, BSearchbarState>(
+                listenWhen: (prev, curr) =>
+                    prev.referenceResult != curr.referenceResult,
+                listener: (context, state) {
+                  final ref = state.referenceResult;
+                  if (ref == null) return;
+
+                  paneBloc.add(BiblePaneDisplayChapter(ref));
+                  print('intent passato');
+                  print('paneBloc isClosed: ${paneBloc.isClosed}');
+                },
+                child: Expanded(child: BiblePane(uniqueId: 0, bloc: paneBloc)),
+              ),
+            ],
+          ),
         ),
       ),
     );

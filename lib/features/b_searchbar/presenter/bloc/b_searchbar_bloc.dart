@@ -22,7 +22,7 @@ class BSearchbarBloc extends Bloc<BSearchbarEvent, BSearchbarState> {
   ) async {
     final eitherFailureOrReference = await repo.getParseIntent(event.query);
 
-    eitherFailureOrReference.fold(
+    return eitherFailureOrReference.fold(
       (_) => print("> BSearchbar: not a valid prompt"),
       (ref) => emit(state.copyWith(
         status: () => BSearchbarStatus.success,

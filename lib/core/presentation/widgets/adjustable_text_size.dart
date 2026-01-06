@@ -37,6 +37,7 @@ class _AdjustableTextSizeState extends State<AdjustableTextSize> {
   bool isControlPressed = false;
   bool isChildListScrolling = false;
   double scrollOffset = 0;
+  late final FocusNode _focusNode;
 
   @override
   void initState() {
@@ -44,17 +45,29 @@ class _AdjustableTextSizeState extends State<AdjustableTextSize> {
 
     textSize = widget.initialiSize;
     scrollController = widget.scrollController;
+    _focusNode = FocusNode(debugLabel: 'ZoomTextWrapper');
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Listener(
       onPointerSignal: _onPointerSignal,
-      child: KeyboardListener(
-        focusNode: FocusNode(),
-        onKeyEvent: _onKeyEvent,
-        child: GestureDetector(
-          onScaleUpdate: _onScaleUpdate,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          print('focus requested');
+          _focusNode.requestFocus();
+        },
+        onScaleUpdate: _onScaleUpdate,
+        child: Focus(
+          focusNode: _focusNode,
+          onKeyEvent: _onKeyEvent,
           child: DefaultTextStyle.merge(
             style: TextStyle(fontSize: textSize * textScaleFactor),
             child: widget.child,
@@ -70,10 +83,12 @@ class _AdjustableTextSizeState extends State<AdjustableTextSize> {
     details.scale > 1 ? _zoom(1) : _zoom(-1);
   }
 
-  void _onKeyEvent(event) {
+  KeyEventResult _onKeyEvent(_, event) {
     // handle zoom activation only if ctrl is pressed
     if (event.logicalKey != LogicalKeyboardKey.controlLeft &&
-        event.logicalKey != LogicalKeyboardKey.controlRight) return;
+        event.logicalKey != LogicalKeyboardKey.controlRight) {
+      return KeyEventResult.ignored;
+    }
     if (event is KeyDownEvent) isControlPressed = true;
     if (event is KeyUpEvent) isControlPressed = false;
 
@@ -82,6 +97,7 @@ class _AdjustableTextSizeState extends State<AdjustableTextSize> {
     if (scrollController != null && isControlPressed) {
       scrollOffset = scrollController!.offset;
     }
+    return KeyEventResult.handled;
   }
 
   /// To handle zooming with scroll wheel

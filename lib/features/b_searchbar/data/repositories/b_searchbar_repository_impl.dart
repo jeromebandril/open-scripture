@@ -12,6 +12,10 @@ class BSearchbarRepositoryImpl implements BSearchbarRepository {
 
   @override
   Future<Either<Failure, BibleRef>> getParseIntent(String query) async {
-    return await parser.analyze(query);
+    try {
+      return Right(await parser.analyze(query));
+    } catch (e) {
+      return Left(InvalidInputFailure());
+    }
   }
 }

@@ -36,7 +36,6 @@ class BibleRepositoryImpl implements BibleRepository {
     try {
       final List<VerseSegment> verses = await localDatasource.getChapter(
           bibleId, reference.bookOsisId, reference.chapter);
-
       return Right(verses);
     } catch (e) {
       return Left(NotFoundFailure());

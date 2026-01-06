@@ -32,13 +32,13 @@ abstract class BibleLocalDataSource {
   /// Get a list of installed translations info
   /// as [TranslationInfoModel] object
   ///
-  /// Throws a [NoLocalDataException] if it fails
+  /// Throws a [LocalDataException] if it fails
   Future<List<BibleMeta>> getInstalledBibles();
 
   /// Get a list of installed translations info
   /// as [TranslationInfoModel] object
   ///
-  /// Throws a [NoLocalDataException] if it fails
+  /// Throws a [LocalDataException] if it fails
   Stream<List<BibleMeta>> watchInstalledBibles();
 
   /// Get one verse
@@ -258,24 +258,30 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
   @override
   Future<List<VerseSegment>> getChapter(
       int bibleId, String bookId, int chapter) async {
-    final rows =
-        await db.getVerseSegmentsForChapter(bibleId, bookId, chapter).get();
+    try {
+      final rows =
+          await db.getVerseSegmentsForChapter(bibleId, bookId, chapter).get();
 
-    return rows
-        .map((r) => VerseSegment(
-              bibleId: bibleId,
-              ref: BibleRef(
-                bookOsisId: bookId,
-                chapter: r.chapterNumber,
-                verseStart: r.verseNumber,
-              ),
-              segmentIndex: r.segmentIndex,
-              paragraphStart: r.paragraphStart == 1,
-              textContent: r.textContent,
-              subtitle: r.subtitle,
-              spans: const [],
-            ))
-        .toList();
+      if (rows.isEmpty) throw NotFoundException();
+
+      return rows
+          .map((r) => VerseSegment(
+                bibleId: bibleId,
+                ref: BibleRef(
+                  bookOsisId: bookId,
+                  chapter: r.chapterNumber,
+                  verseStart: r.verseNumber,
+                ),
+                segmentIndex: r.segmentIndex,
+                paragraphStart: r.paragraphStart == 1,
+                textContent: r.textContent,
+                subtitle: r.subtitle,
+                spans: const [],
+              ))
+          .toList();
+    } catch (e) {
+      throw LocalDataException();
+    }
   }
 
   @override

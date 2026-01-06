@@ -142,7 +142,7 @@ class BibleReferenceParser {
     'Rev',
   ];
 
-  Future<Either<Failure, BibleRef>> analyze(String text) async {
+  Future<BibleRef> analyze(String text) async {
     try {
       //
       // Extract book and chapter+verse information
@@ -193,9 +193,9 @@ class BibleReferenceParser {
         verseStart: verse - 1,
         verseEnd: null,
       );
-      return Future.value(Right(reference));
+      return Future.value(reference);
     } on Exception {
-      return Future.value(Left(InvalidInputFailure()));
+      throw Error();
     }
   }
 }

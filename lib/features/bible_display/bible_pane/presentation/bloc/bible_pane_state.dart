@@ -30,6 +30,7 @@ class BiblePaneState extends Equatable {
     BiblePaneStatus Function()? status,
     BibleRef Function()? reference,
     List<VerseSegment> Function()? verses,
+    String? Function()? errorMessage,
   }) {
     return BiblePaneState(
       bibleId: bibleId != null ? bibleId() : this.bibleId,
@@ -37,6 +38,7 @@ class BiblePaneState extends Equatable {
       reference: reference != null ? reference() : this.reference,
       verses: verses != null ? verses() : this.verses,
       paneId: paneId != null ? paneId() : this.paneId,
+      errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
     );
   }
 

@@ -2,8 +2,8 @@ class ServerException implements Exception {
   ServerException();
 }
 
-class NoLocalDataException implements Exception {
-  NoLocalDataException();
+class LocalDataException implements Exception {
+  LocalDataException();
 }
 
 class InstallationException implements Exception {
@@ -20,4 +20,8 @@ class NoDbConnectionExcepetion implements Exception {
 
 class UninstallationException implements Exception {
   UninstallationException();
+}
+
+class NotFoundException implements Exception {
+  NotFoundException();
 }

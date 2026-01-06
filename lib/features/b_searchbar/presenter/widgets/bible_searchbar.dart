@@ -4,9 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/b_searchbar_bloc.dart';
 
 class BSearchbar extends StatelessWidget {
-  final List<String> items;
-
-  const BSearchbar({required this.items, super.key});
+  const BSearchbar({super.key});
 
   @override
   Widget build(BuildContext context) {

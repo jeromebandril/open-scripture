@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:the_smyrna_bible_v2/core/domain/entities/verse_segment.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/domain/repositories/bible_repository.dart';
 
@@ -24,7 +25,10 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     Emitter<BiblePaneState> emit,
   ) async {
     emit(state.copyWith(status: () => BiblePaneStatus.loading));
-    emit(state.copyWith(status: () => BiblePaneStatus.ready));
+    emit(state.copyWith(
+      status: () => BiblePaneStatus.ready,
+      bibleId: () => event.bibleId,
+    ));
 
     // final eitherFailureOrTranslation =
     //     await repo.openTranslation(event.bibleId);
@@ -54,7 +58,12 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     );
 
     return eitherFailureOrChapter.fold(
-      (_) => print('> BReader: error chapter not read'),
+      (f) => emit(
+        state.copyWith(
+          status: () => BiblePaneStatus.error,
+          reference: () => event.ref,
+        ),
+      ),
       (verses) => emit(
         state.copyWith(
           status: () => BiblePaneStatus.ready,

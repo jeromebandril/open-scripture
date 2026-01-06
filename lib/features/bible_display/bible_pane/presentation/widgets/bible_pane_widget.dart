@@ -11,11 +11,13 @@ class BiblePane extends StatelessWidget {
   final int uniqueId;
   final BiblePaneBloc bloc;
 
-  const BiblePane({
+  BiblePane({
     required this.uniqueId,
     required this.bloc,
     super.key,
   });
+
+  final ScrollController controller = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -42,12 +44,26 @@ class BiblePane extends StatelessWidget {
                 ],
               );
             case BiblePaneStatus.error:
-              return const Text('ERROR');
+              return Text(state.errorMessage ?? 'An error occurred');
             case BiblePaneStatus.ready:
-              return Padding(
-                padding: const EdgeInsets.fromLTRB(12, 24, 0, 0),
-                child: Text("Pronto al tuo servizio padrone"),
-              );
+              print('reference here ${state.reference}');
+              print(state.verses.length);
+
+              return state.verses.isNotEmpty
+                  ? AdjustableTextSize(
+                      scrollController: controller,
+                      initialiSize: 10,
+                      child: ListView.builder(
+                          controller: controller,
+                          itemCount: state.verses.length,
+                          itemBuilder: (_, i) {
+                            return Text(state.verses[i].textContent);
+                          }),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.fromLTRB(12, 24, 0, 0),
+                      child: Text("Pronto al tuo servizio padrone"),
+                    );
             // success case
             // return BlocListener<BSearchbarBloc, BSearchbarState>(
             //   listener: (context, state) {
