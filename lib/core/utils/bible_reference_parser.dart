@@ -189,8 +189,8 @@ class BibleReferenceParser {
       //
       final BibleRef reference = BibleRef(
         bookOsisId: book.toUpperCase(),
-        chapter: chapter - 1, // corrections for zero based counting
-        verseStart: verse - 1,
+        chapter: chapter, // corrections for zero based counting
+        verseStart: verse,
         verseEnd: null,
       );
       return Future.value(reference);
