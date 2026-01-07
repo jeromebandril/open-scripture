@@ -64,6 +64,14 @@ SELECT
 FROM bibles AS b
 JOIN languages AS l on b.languageId = l.id;
 
+getBible: 
+SELECT 
+  b.id, b.extId, b.languageId, b.bibleName, b.bibleNameAbbreviation, b.originSource, 
+  l.langEngName, l.langIsoCode, l.langNativeName
+FROM bibles AS b
+JOIN languages AS l on b.languageId = l.id
+WHERE b.id = :bibleId;
+
 getVerseSegmentsForChapter:
 SELECT *
 FROM verse_segments AS s

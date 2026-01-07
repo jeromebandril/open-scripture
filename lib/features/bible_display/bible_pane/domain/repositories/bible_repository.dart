@@ -1,10 +1,15 @@
 import 'package:fpdart/fpdart.dart';
 
+import '../../../../../core/domain/entities/bible_meta.dart';
 import '../../../../../core/domain/entities/bible_ref.dart';
 import '../../../../../core/domain/entities/verse_segment.dart';
 import '../../../../../core/error/failure.dart';
 
 abstract class BibleRepository {
+  Future<Either<Failure, BibleMeta>> getBibleMetadata({
+    required int bibleId,
+  });
+
   Future<Either<Failure, List<VerseSegment>>> getChapterSegments({
     required int bibleId,
     required BibleRef reference,

@@ -1831,6 +1831,28 @@ abstract class _$AppDb extends GeneratedDatabase {
         ));
   }
 
+  Selectable<GetBibleResult> getBible(int bibleId) {
+    return customSelect(
+        'SELECT b.id, b.extId, b.languageId, b.bibleName, b.bibleNameAbbreviation, b.originSource, l.langEngName, l.langIsoCode, l.langNativeName FROM bibles AS b JOIN languages AS l ON b.languageId = l.id WHERE b.id = ?1',
+        variables: [
+          Variable<int>(bibleId)
+        ],
+        readsFrom: {
+          bibles,
+          languages,
+        }).map((QueryRow row) => GetBibleResult(
+          id: row.read<int>('id'),
+          extId: row.read<String>('extId'),
+          languageId: row.readNullable<int>('languageId'),
+          bibleName: row.read<String>('bibleName'),
+          bibleNameAbbreviation: row.read<String>('bibleNameAbbreviation'),
+          originSource: row.readNullable<String>('originSource'),
+          langEngName: row.read<String>('langEngName'),
+          langIsoCode: row.readNullable<String>('langIsoCode'),
+          langNativeName: row.readNullable<String>('langNativeName'),
+        ));
+  }
+
   Selectable<GetVerseSegmentsForChapterResult> getVerseSegmentsForChapter(
       int bibleId, String bookOsisId, int chapterNumber) {
     return customSelect(
@@ -2845,6 +2867,29 @@ class GetBiblesResult {
   final String? langIsoCode;
   final String? langNativeName;
   GetBiblesResult({
+    required this.id,
+    required this.extId,
+    this.languageId,
+    required this.bibleName,
+    required this.bibleNameAbbreviation,
+    this.originSource,
+    required this.langEngName,
+    this.langIsoCode,
+    this.langNativeName,
+  });
+}
+
+class GetBibleResult {
+  final int id;
+  final String extId;
+  final int? languageId;
+  final String bibleName;
+  final String bibleNameAbbreviation;
+  final String? originSource;
+  final String langEngName;
+  final String? langIsoCode;
+  final String? langNativeName;
+  GetBibleResult({
     required this.id,
     required this.extId,
     this.languageId,

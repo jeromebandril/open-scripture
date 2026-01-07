@@ -12,6 +12,7 @@ class BiblePaneState extends Equatable {
     required this.paneId,
     this.status = BiblePaneStatus.initial,
     this.bibleId,
+    this.bibleMeta,
     this.reference,
     this.segments = const [],
     this.errorMessage,
@@ -20,6 +21,7 @@ class BiblePaneState extends Equatable {
   final int paneId;
   final BiblePaneStatus status;
   final int? bibleId;
+  final BibleMeta? bibleMeta;
   final BibleRef? reference;
   final List<VerseSegment> segments;
   final String? errorMessage;
@@ -27,6 +29,7 @@ class BiblePaneState extends Equatable {
   BiblePaneState copyWith({
     int Function()? paneId,
     int Function()? bibleId,
+    BibleMeta Function()? bibleMeta,
     BiblePaneStatus Function()? status,
     BibleRef Function()? reference,
     List<VerseSegment> Function()? verseSegments,
@@ -34,6 +37,7 @@ class BiblePaneState extends Equatable {
   }) {
     return BiblePaneState(
       bibleId: bibleId != null ? bibleId() : this.bibleId,
+      bibleMeta: bibleMeta != null ? bibleMeta() : this.bibleMeta,
       status: status != null ? status() : this.status,
       reference: reference != null ? reference() : this.reference,
       segments: verseSegments != null ? verseSegments() : this.segments,
@@ -47,6 +51,7 @@ class BiblePaneState extends Equatable {
         paneId,
         status,
         bibleId,
+        bibleMeta,
         reference,
         segments,
         errorMessage,

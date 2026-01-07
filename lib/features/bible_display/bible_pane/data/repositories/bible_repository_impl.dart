@@ -1,6 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 
 import '../../../../../core/data/datasources/bible_sqllite_datasource.dart';
+import '../../../../../core/domain/entities/bible_meta.dart';
 import '../../../../../core/domain/entities/bible_ref.dart';
 import '../../../../../core/domain/entities/verse_segment.dart';
 import '../../../../../core/error/failure.dart';
@@ -45,6 +46,16 @@ class BibleRepositoryImpl implements BibleRepository {
       return Right(verses);
     } catch (e) {
       return Left(NotFoundFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, BibleMeta>> getBibleMetadata(
+      {required int bibleId}) async {
+    try {
+      return Right(await localDatasource.getBible(bibleId));
+    } catch (e) {
+      return Left(NoLocalDataFailure());
     }
   }
 }

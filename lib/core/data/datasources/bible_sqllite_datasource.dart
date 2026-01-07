@@ -40,6 +40,12 @@ abstract class BibleLocalDataSource {
   /// as [TranslationInfoModel] object
   ///
   /// Throws a [LocalDataException] if it fails
+  Future<BibleMeta> getBible(int bibleId);
+
+  /// Get a list of installed translations info
+  /// as [TranslationInfoModel] object
+  ///
+  /// Throws a [LocalDataException] if it fails
   Stream<List<BibleMeta>> watchInstalledBibles();
 
   /// Get one verse
@@ -315,5 +321,27 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
       int bibleId, String bookId, int chapter, int verse) {
     // TODO: implement getVerse
     throw UnimplementedError();
+  }
+
+  @override
+  Future<BibleMeta> getBible(int bibleId) async {
+    try {
+      final rows = await db.getBible(bibleId).get();
+      final r = rows.first;
+
+      return BibleMeta(
+        id: r.id,
+        extId: r.extId,
+        bibleName: r.bibleName,
+        abbreviation: r.bibleNameAbbreviation,
+        originSource: r.originSource,
+        // language
+        langEngName: r.langEngName,
+        langIsoCode: r.langIsoCode,
+        langNativeName: r.langNativeName,
+      );
+    } catch (e) {
+      throw NotFoundException();
+    }
   }
 }

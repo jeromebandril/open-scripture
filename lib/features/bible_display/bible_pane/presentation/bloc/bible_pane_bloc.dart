@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:the_smyrna_bible_v2/core/domain/entities/verse_segment.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/domain/repositories/bible_repository.dart';
 
+import '../../../../../core/domain/entities/bible_meta.dart';
 import '../../../../../core/domain/entities/bible_ref.dart';
 
 part 'bible_pane_event.dart';
@@ -23,12 +24,17 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     BiblePaneOpen event,
     Emitter<BiblePaneState> emit,
   ) async {
-    // TODO: check bible availability first
     emit(state.copyWith(status: () => BiblePaneStatus.loading));
-    emit(state.copyWith(
-      status: () => BiblePaneStatus.ready,
-      bibleId: () => event.bibleId,
-    ));
+
+    final result = await repo.getBibleMetadata(bibleId: event.bibleId);
+
+    result.fold(
+      (l) => emit(state.copyWith(status: () => BiblePaneStatus.error)),
+      (bm) => emit(state.copyWith(
+          status: () => BiblePaneStatus.ready,
+          bibleId: () => event.bibleId,
+          bibleMeta: () => bm)),
+    );
   }
 
   Future<void> _onBiblePaneDisplayChapter(
