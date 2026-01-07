@@ -23,18 +23,18 @@ class BiblePane extends StatefulWidget {
 }
 
 class _BiblePaneState extends State<BiblePane> {
-  late ScrollController scrollController;
+  late ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
-    scrollController = ScrollController();
+    _scrollController = ScrollController();
   }
 
   @override
   void dispose() {
     super.dispose();
-    scrollController.dispose();
+    _scrollController.dispose();
   }
 
   @override
@@ -48,6 +48,9 @@ class _BiblePaneState extends State<BiblePane> {
       child: BlocBuilder<BiblePaneBloc, BiblePaneState>(
         builder: (context, state) {
           switch (state.status) {
+            //
+            // INITIAL
+            //
             case BiblePaneStatus.initial:
               if (state.bibleId == null) {
                 return BibleSelector(onConfirm: (bibleId) {
@@ -55,6 +58,9 @@ class _BiblePaneState extends State<BiblePane> {
                 });
               }
               return SizedBox();
+            //
+            // LOADING SCREEN
+            //
             case BiblePaneStatus.loading:
               return const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -64,38 +70,58 @@ class _BiblePaneState extends State<BiblePane> {
                   Text('Opening the bible...')
                 ],
               );
+            //
+            // ERROR SCREEN
+            //
             case BiblePaneStatus.error:
               return Text(state.errorMessage ?? 'An error occurred');
-
+            //
+            // READY SCREEN
+            //
             case BiblePaneStatus.ready:
               return Container(
                 padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
                 child: Stack(
                   children: [
-                    state.segments.isNotEmpty
-                        ? AdjustableTextSize(
-                            scrollController: scrollController,
+                    //
+                    // MAIN VIEW
+                    //
+                    state.segments.isEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.fromLTRB(12, 24, 0, 0),
+                            child: Text("Pronto al tuo servizio padrone"),
+                          )
+                        : AdjustableTextSize(
+                            scrollController: _scrollController,
                             initialiSize: 10,
                             child: ListView.builder(
-                                controller: scrollController,
+                                controller: _scrollController,
                                 itemCount: state.segments.length,
                                 itemBuilder: (_, i) {
+                                  final vn = i + 1;
                                   final segments = state.segments
                                       .where((v) => v.ref.verseStart == i + 1)
                                       .toList();
                                   final spans =
                                       segments.expand((s) => s.spans).toList();
+                                  final vStart = state.reference?.verseStart;
+                                  final vEnd = state.reference?.verseEnd;
+
                                   return VerseWidget(
-                                    verseNumber: i + 1,
-                                    segments: segments,
-                                    spans: spans,
-                                  );
+                                      verseNumber: vn,
+                                      segments: segments,
+                                      spans: spans,
+                                      isHighlighted:
+                                          (vEnd == null && vn == vStart) ||
+                                              (vEnd != null &&
+                                                  vStart != null &&
+                                                  vn >= vStart &&
+                                                  vn <= vEnd));
                                 }),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.fromLTRB(12, 24, 0, 0),
-                            child: Text("Pronto al tuo servizio padrone"),
                           ),
+                    //
+                    // PANE STATUS INFO
+                    //
                     Positioned(
                       bottom: 0,
                       right: 0,

@@ -10,11 +10,13 @@ class VerseWidget extends StatelessWidget {
   final int verseNumber;
   final List<VerseSegment> segments;
   final List<VerseSpan>? spans;
+  final bool isHighlighted;
 
   const VerseWidget({
     required this.verseNumber,
     required this.segments,
     this.spans,
+    this.isHighlighted = false,
     super.key,
   });
 
@@ -28,10 +30,13 @@ class VerseWidget extends StatelessWidget {
             ? Text(content)
             : SelectableText.rich(TextSpan(children: [
                 TextSpan(
-                    text: '$verseNumber  ',
-                    style: TextStyle(
+                  text: '$verseNumber  ',
+                  style: TextStyle(
                       fontWeight: FontWeight.bold,
-                    )),
+                      color: isHighlighted
+                          ? Colors.cyan
+                          : Theme.of(context).colorScheme.onSurface),
+                ),
                 VerseSpanBuilder.build(
                   text: content,
                   spans: spans!,
