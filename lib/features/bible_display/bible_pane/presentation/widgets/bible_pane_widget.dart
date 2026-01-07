@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
+import 'package:the_smyrna_bible_v2/core/domain/entities/verse_segment.dart';
 import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_selector/presenter/widget/bible_selector.dart';
 
@@ -57,7 +59,11 @@ class BiblePane extends StatelessWidget {
                           controller: controller,
                           itemCount: state.verses.length,
                           itemBuilder: (_, i) {
-                            return Text(state.verses[i].textContent);
+                            final verse = state.verses
+                                .where((v) => v.ref.verseStart == i + 1)
+                                .toList();
+                            return VerseWidget(
+                                verseNumber: i + 1, verseSegments: verse);
                           }),
                     )
                   : Padding(
@@ -75,6 +81,35 @@ class BiblePane extends StatelessWidget {
           }
         },
       ),
+    );
+  }
+}
+
+class VerseWidget extends StatelessWidget {
+  final int verseNumber;
+  final List<VerseSegment> verseSegments;
+
+  const VerseWidget({
+    required this.verseNumber,
+    required this.verseSegments,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final String content = verseSegments.map((e) => e.textContent).join();
+
+    return Row(
+      children: [
+        SizedBox(
+          child: Text(textAlign: TextAlign.end, verseNumber.toString()),
+        ),
+        Gap(24),
+        Text(
+          content,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
     );
   }
 }

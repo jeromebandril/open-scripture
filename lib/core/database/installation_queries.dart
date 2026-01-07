@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
+import 'package:the_smyrna_bible_v2/core/data/models/segment_key.dart';
+import 'package:the_smyrna_bible_v2/core/data/models/verse_span_model.dart';
 import 'package:the_smyrna_bible_v2/core/domain/entities/verse_segment.dart';
-import 'package:the_smyrna_bible_v2/core/domain/entities/verse_span.dart';
 
 import '../domain/entities/bible_meta.dart';
 import '../domain/entities/book.dart';
@@ -35,7 +36,12 @@ extension BibleInstallQueries on db.AppDb {
     }
   }
 
-  Future<int> insertBible(meta, bookList, verseSegments) async {
+  Future<int> insertBible(
+    BibleMeta meta,
+    List<Book> bookList,
+    List<VerseSegment> verseSegments,
+    List<VerseSpanModel> verseSpans,
+  ) async {
     return transaction(() async {
       // 1) Insert language + bible metadata, get bibleId
       final bibleId = await insertBibleMetadataOnly(meta);
@@ -44,8 +50,9 @@ extension BibleInstallQueries on db.AppDb {
       await insertBooksOnly(bibleId, bookList);
       final bookMap = await _getBookIdMap(bibleId);
 
-      // 3) Insert verses segments/spans
-      await insertVerseSegmentsOnly(verseSegments, bookMap);
+      // 3) Insert verse segments with spans
+      await insertVerseSegmentsWithSpans(
+          verseSegments, verseSpans, bookMap, bibleId);
 
       return bibleId;
     });
@@ -130,6 +137,75 @@ extension BibleInstallQueries on db.AppDb {
         ],
         mode: InsertMode.insertOrReplace,
       );
+    });
+  }
+
+  Future<void> insertVerseSegmentsWithSpans(
+    List<VerseSegment> segments,
+    List<VerseSpanModel> spans,
+    Map<String, int> bookMap,
+    int bibleId,
+  ) async {
+    await transaction(() async {
+      await insertVerseSegmentsOnly(segments, bookMap);
+
+      // Insert verse segments
+      final rows = await getSegmentsByBibleId(bibleId).get();
+
+      // Build a map of segments id
+      final Map<SegmentKey, int> segmentIdByKey = {};
+      for (final row in rows) {
+        final key = SegmentKey(
+          bookOsisId: row.bookOsisId,
+          chapter: row.chapterNumber,
+          verse: row.verseNumber,
+          segmentIndex: row.segmentIndex,
+        );
+
+        final segmentId = row.id;
+
+        segmentIdByKey[key] = segmentId;
+      }
+      if (segmentIdByKey.length != rows.length) {
+        throw StateError('Duplicate SegmentKey detected');
+      }
+
+      // Build spans companions
+      final spansCompanions = <db.SegmentSpansCompanion>[];
+      for (final s in spans) {
+        final key = SegmentKey(
+          bookOsisId: s.key.bookOsisId,
+          chapter: s.key.chapter,
+          verse: s.key.verse,
+          segmentIndex: s.key.segmentIndex,
+        );
+
+        final segmentId = segmentIdByKey[key];
+        if (segmentId == null) {
+          throw StateError('Missing segmentId for $key (span $s)');
+        }
+
+        spansCompanions.add(
+          db.SegmentSpansCompanion.insert(
+            segmentId: segmentId,
+            startOffset: s.startOffset,
+            endOffset: s.endOffset,
+            spanType: s.type.index,
+            payload: Value(s.payload),
+          ),
+        );
+      }
+
+      // Insert spans in chunks
+      const chunkSize = 10000;
+      for (var i = 0; i < spans.length; i += chunkSize) {
+        final chunk = spansCompanions.sublist(
+            i, (i + chunkSize).clamp(0, spansCompanions.length));
+
+        await batch((b) {
+          b.insertAll(segmentSpans, chunk);
+        });
+      }
     });
   }
 }

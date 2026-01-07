@@ -48,7 +48,7 @@ CREATE TABLE segment_spans (
   segmentId INTEGER NOT NULL,
   startOffset INT NOT NULL,
   endOffset INT NOT NULL,
-  spanType NVARCHAR(32) NOT NULL,
+  spanType INTEGER NOT NULL,
   payload NVARCHAR(128),
 
   FOREIGN KEY (segmentId) REFERENCES verse_segments(id) ON DELETE CASCADE
@@ -93,3 +93,9 @@ LEFT JOIN segment_spans sp ON sp.segmentId = s.id
 WHERE s.bookId = :bookId
   AND s.chapterNumber = :chapterNumber
 ORDER BY s.verseNumber, s.segmentIndex, sp.startOffset;
+
+getSegmentsByBibleId: 
+SELECT vs.id, bookId, b.osisId as bookOsisId, chapterNumber, verseNumber, segmentIndex
+FROM verse_segments AS vs
+JOIN books AS b ON b.id = vs.bookId
+WHERE b.bibleId = :bibleId;

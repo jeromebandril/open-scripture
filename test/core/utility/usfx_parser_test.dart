@@ -71,12 +71,12 @@ void main() {
     const metadataXml = '<DBLMetadata></DBLMetadata>';
 
     final parser = UsfxParser(bibleXml, metadataXml);
-    final segments = parser.getVerses();
+    final segments = parser.getVersesWithSpans();
 
-    expect(segments.length, 1);
-    expect(segments.first.ref.bookOsisId, 'GEN');
-    expect(segments.first.ref.chapter, 1);
-    expect(segments.first.ref.verseStart, 6);
-    expect(segments.first.textContent, contains('And God said'));
+    expect(segments.$1.length, 1);
+    expect(segments.$1.first.ref.bookOsisId, 'GEN');
+    expect(segments.$1.first.ref.chapter, 1);
+    expect(segments.$1.first.ref.verseStart, 6);
+    expect(segments.$1.first.textContent, contains('And God said'));
   });
 }

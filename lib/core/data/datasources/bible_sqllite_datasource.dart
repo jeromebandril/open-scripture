@@ -163,7 +163,7 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
       final usfxParser = UsfxParser(bibleContent, metadataContent);
       final bible = usfxParser.getBible();
       final books = usfxParser.getBooks();
-      final verseSegments = usfxParser.getVerses();
+      final verseWithSpans = usfxParser.getVersesWithSpans();
 
       // final books = usfxParser.getBooks();
       // final verses = usfxParser.getVerses();
@@ -178,7 +178,7 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
 
       // TODO: transaction insert:
       // await db.transaction(() async { ... });
-      await db.insertBible(bible, books, verseSegments);
+      await db.insertBible(bible, books, verseWithSpans.$1, verseWithSpans.$2);
 
       // 5) Cleanup
       yield const InstallProgress(

@@ -1,11 +1,23 @@
 import 'package:equatable/equatable.dart';
 
-import 'bible_ref.dart';
+enum SpanType {
+  bold,
+  italic,
+  underline,
+  smallCaps,
+  superscript,
+  crossReference,
+  footnote,
+  redLetter,
+  poetry,
+  wordOfJesus,
+  reference,
+}
 
 class VerseSpan extends Equatable {
   final int startOffset;
   final int endOffset;
-  final String type;
+  final SpanType type;
   final String? payload; // could later become structured
 
   const VerseSpan({

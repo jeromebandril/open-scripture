@@ -1484,9 +1484,9 @@ class SegmentSpans extends Table with TableInfo<SegmentSpans, SegmentSpan> {
       $customConstraints: 'NOT NULL');
   static const VerificationMeta _spanTypeMeta =
       const VerificationMeta('spanType');
-  late final GeneratedColumn<String> spanType = GeneratedColumn<String>(
+  late final GeneratedColumn<int> spanType = GeneratedColumn<int>(
       'spanType', aliasedName, false,
-      type: DriftSqlType.string,
+      type: DriftSqlType.int,
       requiredDuringInsert: true,
       $customConstraints: 'NOT NULL');
   static const VerificationMeta _payloadMeta =
@@ -1560,7 +1560,7 @@ class SegmentSpans extends Table with TableInfo<SegmentSpans, SegmentSpan> {
       endOffset: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}endOffset'])!,
       spanType: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}spanType'])!,
+          .read(DriftSqlType.int, data['${effectivePrefix}spanType'])!,
       payload: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}payload']),
     );
@@ -1584,7 +1584,7 @@ class SegmentSpan extends DataClass implements Insertable<SegmentSpan> {
   final int segmentId;
   final int startOffset;
   final int endOffset;
-  final String spanType;
+  final int spanType;
   final String? payload;
   const SegmentSpan(
       {required this.id,
@@ -1600,7 +1600,7 @@ class SegmentSpan extends DataClass implements Insertable<SegmentSpan> {
     map['segmentId'] = Variable<int>(segmentId);
     map['startOffset'] = Variable<int>(startOffset);
     map['endOffset'] = Variable<int>(endOffset);
-    map['spanType'] = Variable<String>(spanType);
+    map['spanType'] = Variable<int>(spanType);
     if (!nullToAbsent || payload != null) {
       map['payload'] = Variable<String>(payload);
     }
@@ -1628,7 +1628,7 @@ class SegmentSpan extends DataClass implements Insertable<SegmentSpan> {
       segmentId: serializer.fromJson<int>(json['segmentId']),
       startOffset: serializer.fromJson<int>(json['startOffset']),
       endOffset: serializer.fromJson<int>(json['endOffset']),
-      spanType: serializer.fromJson<String>(json['spanType']),
+      spanType: serializer.fromJson<int>(json['spanType']),
       payload: serializer.fromJson<String?>(json['payload']),
     );
   }
@@ -1640,7 +1640,7 @@ class SegmentSpan extends DataClass implements Insertable<SegmentSpan> {
       'segmentId': serializer.toJson<int>(segmentId),
       'startOffset': serializer.toJson<int>(startOffset),
       'endOffset': serializer.toJson<int>(endOffset),
-      'spanType': serializer.toJson<String>(spanType),
+      'spanType': serializer.toJson<int>(spanType),
       'payload': serializer.toJson<String?>(payload),
     };
   }
@@ -1650,7 +1650,7 @@ class SegmentSpan extends DataClass implements Insertable<SegmentSpan> {
           int? segmentId,
           int? startOffset,
           int? endOffset,
-          String? spanType,
+          int? spanType,
           Value<String?> payload = const Value.absent()}) =>
       SegmentSpan(
         id: id ?? this.id,
@@ -1705,7 +1705,7 @@ class SegmentSpansCompanion extends UpdateCompanion<SegmentSpan> {
   final Value<int> segmentId;
   final Value<int> startOffset;
   final Value<int> endOffset;
-  final Value<String> spanType;
+  final Value<int> spanType;
   final Value<String?> payload;
   const SegmentSpansCompanion({
     this.id = const Value.absent(),
@@ -1720,7 +1720,7 @@ class SegmentSpansCompanion extends UpdateCompanion<SegmentSpan> {
     required int segmentId,
     required int startOffset,
     required int endOffset,
-    required String spanType,
+    required int spanType,
     this.payload = const Value.absent(),
   })  : segmentId = Value(segmentId),
         startOffset = Value(startOffset),
@@ -1731,7 +1731,7 @@ class SegmentSpansCompanion extends UpdateCompanion<SegmentSpan> {
     Expression<int>? segmentId,
     Expression<int>? startOffset,
     Expression<int>? endOffset,
-    Expression<String>? spanType,
+    Expression<int>? spanType,
     Expression<String>? payload,
   }) {
     return RawValuesInsertable({
@@ -1749,7 +1749,7 @@ class SegmentSpansCompanion extends UpdateCompanion<SegmentSpan> {
       Value<int>? segmentId,
       Value<int>? startOffset,
       Value<int>? endOffset,
-      Value<String>? spanType,
+      Value<int>? spanType,
       Value<String?>? payload}) {
     return SegmentSpansCompanion(
       id: id ?? this.id,
@@ -1777,7 +1777,7 @@ class SegmentSpansCompanion extends UpdateCompanion<SegmentSpan> {
       map['endOffset'] = Variable<int>(endOffset.value);
     }
     if (spanType.present) {
-      map['spanType'] = Variable<String>(spanType.value);
+      map['spanType'] = Variable<int>(spanType.value);
     }
     if (payload.present) {
       map['payload'] = Variable<String>(payload.value);
@@ -1884,8 +1884,27 @@ abstract class _$AppDb extends GeneratedDatabase {
           spanId: row.readNullable<int>('spanId'),
           spanStart: row.readNullable<int>('spanStart'),
           spanEnd: row.readNullable<int>('spanEnd'),
-          spanType: row.readNullable<String>('spanType'),
+          spanType: row.readNullable<int>('spanType'),
           spanPayload: row.readNullable<String>('spanPayload'),
+        ));
+  }
+
+  Selectable<GetSegmentsByBibleIdResult> getSegmentsByBibleId(int bibleId) {
+    return customSelect(
+        'SELECT vs.id, bookId, b.osisId AS bookOsisId, chapterNumber, verseNumber, segmentIndex FROM verse_segments AS vs JOIN books AS b ON b.id = vs.bookId WHERE b.bibleId = ?1',
+        variables: [
+          Variable<int>(bibleId)
+        ],
+        readsFrom: {
+          verseSegments,
+          books,
+        }).map((QueryRow row) => GetSegmentsByBibleIdResult(
+          id: row.read<int>('id'),
+          bookId: row.read<int>('bookId'),
+          bookOsisId: row.read<String>('bookOsisId'),
+          chapterNumber: row.read<int>('chapterNumber'),
+          verseNumber: row.read<int>('verseNumber'),
+          segmentIndex: row.read<int>('segmentIndex'),
         ));
   }
 
@@ -2636,7 +2655,7 @@ typedef $SegmentSpansCreateCompanionBuilder = SegmentSpansCompanion Function({
   required int segmentId,
   required int startOffset,
   required int endOffset,
-  required String spanType,
+  required int spanType,
   Value<String?> payload,
 });
 typedef $SegmentSpansUpdateCompanionBuilder = SegmentSpansCompanion Function({
@@ -2644,7 +2663,7 @@ typedef $SegmentSpansUpdateCompanionBuilder = SegmentSpansCompanion Function({
   Value<int> segmentId,
   Value<int> startOffset,
   Value<int> endOffset,
-  Value<String> spanType,
+  Value<int> spanType,
   Value<String?> payload,
 });
 
@@ -2668,7 +2687,7 @@ class $SegmentSpansFilterComposer extends Composer<_$AppDb, SegmentSpans> {
   ColumnFilters<int> get endOffset => $composableBuilder(
       column: $table.endOffset, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get spanType => $composableBuilder(
+  ColumnFilters<int> get spanType => $composableBuilder(
       column: $table.spanType, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get payload => $composableBuilder(
@@ -2695,7 +2714,7 @@ class $SegmentSpansOrderingComposer extends Composer<_$AppDb, SegmentSpans> {
   ColumnOrderings<int> get endOffset => $composableBuilder(
       column: $table.endOffset, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get spanType => $composableBuilder(
+  ColumnOrderings<int> get spanType => $composableBuilder(
       column: $table.spanType, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get payload => $composableBuilder(
@@ -2722,7 +2741,7 @@ class $SegmentSpansAnnotationComposer extends Composer<_$AppDb, SegmentSpans> {
   GeneratedColumn<int> get endOffset =>
       $composableBuilder(column: $table.endOffset, builder: (column) => column);
 
-  GeneratedColumn<String> get spanType =>
+  GeneratedColumn<int> get spanType =>
       $composableBuilder(column: $table.spanType, builder: (column) => column);
 
   GeneratedColumn<String> get payload =>
@@ -2756,7 +2775,7 @@ class $SegmentSpansTableManager extends RootTableManager<
             Value<int> segmentId = const Value.absent(),
             Value<int> startOffset = const Value.absent(),
             Value<int> endOffset = const Value.absent(),
-            Value<String> spanType = const Value.absent(),
+            Value<int> spanType = const Value.absent(),
             Value<String?> payload = const Value.absent(),
           }) =>
               SegmentSpansCompanion(
@@ -2772,7 +2791,7 @@ class $SegmentSpansTableManager extends RootTableManager<
             required int segmentId,
             required int startOffset,
             required int endOffset,
-            required String spanType,
+            required int spanType,
             Value<String?> payload = const Value.absent(),
           }) =>
               SegmentSpansCompanion.insert(
@@ -2884,7 +2903,7 @@ class GetChapterSegmentsWithSpansResult {
   final int? spanId;
   final int? spanStart;
   final int? spanEnd;
-  final String? spanType;
+  final int? spanType;
   final String? spanPayload;
   GetChapterSegmentsWithSpansResult({
     required this.segmentId,
@@ -2900,5 +2919,22 @@ class GetChapterSegmentsWithSpansResult {
     this.spanEnd,
     this.spanType,
     this.spanPayload,
+  });
+}
+
+class GetSegmentsByBibleIdResult {
+  final int id;
+  final int bookId;
+  final String bookOsisId;
+  final int chapterNumber;
+  final int verseNumber;
+  final int segmentIndex;
+  GetSegmentsByBibleIdResult({
+    required this.id,
+    required this.bookId,
+    required this.bookOsisId,
+    required this.chapterNumber,
+    required this.verseNumber,
+    required this.segmentIndex,
   });
 }
