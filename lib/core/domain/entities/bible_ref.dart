@@ -13,6 +13,20 @@ class BibleRef extends Equatable {
     this.verseEnd,
   });
 
+  BibleRef copyWith({
+    String? bookOsisId,
+    int? chapter,
+    int? verseStart,
+    int? verseEnd,
+  }) {
+    return BibleRef(
+      bookOsisId: bookOsisId ?? this.bookOsisId,
+      chapter: chapter ?? this.chapter,
+      verseStart: verseStart ?? this.verseStart,
+      verseEnd: verseEnd ?? this.verseEnd,
+    );
+  }
+
   @override
   List<Object?> get props => [bookOsisId, chapter, verseStart, verseEnd];
 }

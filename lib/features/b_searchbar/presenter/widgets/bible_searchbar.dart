@@ -39,7 +39,6 @@ class BSearchbar extends StatelessWidget {
   }
 
   void _onSubmitted(String input, context) {
-    print("> BSearchbar: analyzing prompt...");
     BlocProvider.of<BSearchbarBloc>(context).add(BSearchbarParseIntent(input));
   }
 }

@@ -31,7 +31,7 @@ class BiblePaneDisplayChapter extends BiblePaneEvent {
 
   const BiblePaneDisplayChapter({
     required this.ref,
-    required this.withSpans,
+    this.withSpans = true,
   });
 
   @override
