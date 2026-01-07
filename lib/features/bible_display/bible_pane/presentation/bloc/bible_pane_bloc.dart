@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:the_smyrna_bible_v2/core/domain/entities/verse_segment.dart';
+import 'package:the_smyrna_bible_v2/core/domain/entities/verse_span.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/domain/repositories/bible_repository.dart';
 
 import '../../../../../core/domain/entities/bible_ref.dart';
@@ -68,7 +69,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
         state.copyWith(
           status: () => BiblePaneStatus.ready,
           reference: () => event.ref,
-          verses: () => verses,
+          verseSegments: () => verses,
         ),
       ),
     );

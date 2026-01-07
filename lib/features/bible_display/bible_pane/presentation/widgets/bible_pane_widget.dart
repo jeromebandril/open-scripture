@@ -27,7 +27,6 @@ class BiblePane extends StatelessWidget {
       value: bloc,
       child: BlocBuilder<BiblePaneBloc, BiblePaneState>(
         builder: (context, state) {
-          print(state.status.toString());
           switch (state.status) {
             case BiblePaneStatus.initial:
               if (state.bibleId == null) {
@@ -48,18 +47,15 @@ class BiblePane extends StatelessWidget {
             case BiblePaneStatus.error:
               return Text(state.errorMessage ?? 'An error occurred');
             case BiblePaneStatus.ready:
-              print('reference here ${state.reference}');
-              print(state.verses.length);
-
-              return state.verses.isNotEmpty
+              return state.segments.isNotEmpty
                   ? AdjustableTextSize(
                       scrollController: controller,
                       initialiSize: 10,
                       child: ListView.builder(
                           controller: controller,
-                          itemCount: state.verses.length,
+                          itemCount: state.segments.length,
                           itemBuilder: (_, i) {
-                            final verse = state.verses
+                            final verse = state.segments
                                 .where((v) => v.ref.verseStart == i + 1)
                                 .toList();
                             return VerseWidget(
