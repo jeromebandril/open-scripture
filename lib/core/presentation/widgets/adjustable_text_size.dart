@@ -19,12 +19,14 @@ class AdjustableTextSize extends StatefulWidget {
     required this.child,
     required this.initialiSize,
     this.scrollController,
+    this.onZoom,
     super.key,
   });
 
   final Widget child;
   final double initialiSize;
   final ScrollController? scrollController;
+  final Function(double scaleFactor)? onZoom;
 
   @override
   State<AdjustableTextSize> createState() => _AdjustableTextSizeState();
@@ -116,6 +118,7 @@ class _AdjustableTextSizeState extends State<AdjustableTextSize> {
         lowerLimit,
         highestLimit,
       );
+      if (widget.onZoom != null) widget.onZoom!(textScaleFactor);
     });
   }
 
