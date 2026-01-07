@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:gap/gap.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/widgets/hoverable_container.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/cubit/selected_word_cubit.dart';
@@ -14,6 +14,7 @@ class PaneInfo extends StatefulWidget {
 
 class _PaneInfoState extends State<PaneInfo> {
   bool isExpanded = false;
+  final _tooltipKey = GlobalKey<TooltipState>();
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +39,25 @@ class _PaneInfoState extends State<PaneInfo> {
                     ? SizedBox()
                     : HoverableContainer(
                         hoveredColor: Theme.of(context).colorScheme.surfaceDim,
-                        child: GestureDetector(
-                          onTap: () => print(wordInfo.span.payload),
-                          child: Text(
-                              '${wordInfo.text} ~ ${wordInfo.span.payload}'),
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        child: Tooltip(
+                          waitDuration: const Duration(days: 1),
+                          key: _tooltipKey,
+                          message: 'copied to clipboard !',
+                          triggerMode: TooltipTriggerMode.manual,
+                          showDuration: const Duration(seconds: 2),
+                          exitDuration: const Duration(seconds: 2),
+                          ignorePointer: true,
+                          enableTapToDismiss: false,
+                          child: InkWell(
+                            onTap: () {
+                              Clipboard.setData(ClipboardData(
+                                  text: wordInfo.span.payload ?? ''));
+                              _tooltipKey.currentState?.ensureTooltipVisible();
+                            },
+                            child: Text(
+                                '${wordInfo.text} ~ ${wordInfo.span.payload}'),
+                          ),
                         ),
                       );
               },
