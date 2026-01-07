@@ -73,7 +73,7 @@ WHERE b.bibleId = :bibleId
   AND s.chapterNumber = :chapterNumber
 ORDER BY s.verseNumber, s.segmentIndex;
 
-getChapterSegmentsWithSpans:
+getSegmentsForChapterWithSpans:
 SELECT
   s.id AS segmentId,
   s.bookId,
@@ -83,15 +83,44 @@ SELECT
   s.paragraphStart,
   s.textContent,
   s.subtitle,
-  sp.id AS spanId,
-  sp.startOffset AS spanStart,
-  sp.endOffset AS spanEnd,
-  sp.spanType AS spanType,
-  sp.payload AS spanPayload
-FROM verse_segments s
-LEFT JOIN segment_spans sp ON sp.segmentId = s.id
-WHERE s.bookId = :bookId
+  -- COALESCE(
+  --   json_group_array(
+  --     json_object(
+  --       'segmentId', s.id,
+  --       'id', sp.id,
+  --       'startOffset', sp.startOffset,
+  --       'endOffset', sp.endOffset,
+  --       'spanType', sp.spanType,
+  --       'payload', sp.payload
+  --     )
+  --   ),
+  --   json('[]')
+  -- ) AS spansJson
+  COALESCE(
+    (
+      SELECT json_group_array(
+        json_object(
+          'segmentId', sp.segmentId,
+          'id', sp.id,
+          'startOffset', sp.startOffset,
+          'endOffset', sp.endOffset,
+          'spanType', sp.spanType,
+          'payload', sp.payload
+        )
+      )
+      FROM segment_spans sp
+      WHERE sp.segmentId = s.id
+      ORDER BY sp.startOffset
+    ),
+    json('[]')
+  ) AS spansJson
+FROM verse_segments AS s
+LEFT JOIN segment_spans AS sp ON sp.segmentId = s.id
+JOIN books AS b ON b.id = s.bookId
+WHERE b.bibleId = :bibleId
+  AND b.osisId = :bookOsisId
   AND s.chapterNumber = :chapterNumber
+GROUP BY s.id
 ORDER BY s.verseNumber, s.segmentIndex, sp.startOffset;
 
 getSegmentsByBibleId: 
@@ -99,3 +128,5 @@ SELECT vs.id, bookId, b.osisId as bookOsisId, chapterNumber, verseNumber, segmen
 FROM verse_segments AS vs
 JOIN books AS b ON b.id = vs.bookId
 WHERE b.bibleId = :bibleId;
+
+

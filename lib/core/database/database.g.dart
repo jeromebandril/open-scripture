@@ -1861,18 +1861,21 @@ abstract class _$AppDb extends GeneratedDatabase {
         ));
   }
 
-  Selectable<GetChapterSegmentsWithSpansResult> getChapterSegmentsWithSpans(
-      int bookId, int chapterNumber) {
+  Selectable<GetSegmentsForChapterWithSpansResult>
+      getSegmentsForChapterWithSpans(
+          int bibleId, String bookOsisId, int chapterNumber) {
     return customSelect(
-        'SELECT s.id AS segmentId, s.bookId, s.chapterNumber, s.verseNumber, s.segmentIndex, s.paragraphStart, s.textContent, s.subtitle, sp.id AS spanId, sp.startOffset AS spanStart, sp.endOffset AS spanEnd, sp.spanType AS spanType, sp.payload AS spanPayload FROM verse_segments AS s LEFT JOIN segment_spans AS sp ON sp.segmentId = s.id WHERE s.bookId = ?1 AND s.chapterNumber = ?2 ORDER BY s.verseNumber, s.segmentIndex, sp.startOffset',
+        'SELECT s.id AS segmentId, s.bookId, s.chapterNumber, s.verseNumber, s.segmentIndex, s.paragraphStart, s.textContent, s.subtitle, COALESCE((SELECT json_group_array(json_object(\'segmentId\', sp.segmentId, \'id\', sp.id, \'startOffset\', sp.startOffset, \'endOffset\', sp.endOffset, \'spanType\', sp.spanType, \'payload\', sp.payload)) FROM segment_spans AS sp WHERE sp.segmentId = s.id ORDER BY sp.startOffset), json(\'[]\')) AS spansJson FROM verse_segments AS s LEFT JOIN segment_spans AS sp ON sp.segmentId = s.id JOIN books AS b ON b.id = s.bookId WHERE b.bibleId = ?1 AND b.osisId = ?2 AND s.chapterNumber = ?3 GROUP BY s.id ORDER BY s.verseNumber, s.segmentIndex, sp.startOffset',
         variables: [
-          Variable<int>(bookId),
+          Variable<int>(bibleId),
+          Variable<String>(bookOsisId),
           Variable<int>(chapterNumber)
         ],
         readsFrom: {
           verseSegments,
           segmentSpans,
-        }).map((QueryRow row) => GetChapterSegmentsWithSpansResult(
+          books,
+        }).map((QueryRow row) => GetSegmentsForChapterWithSpansResult(
           segmentId: row.read<int>('segmentId'),
           bookId: row.read<int>('bookId'),
           chapterNumber: row.read<int>('chapterNumber'),
@@ -1881,11 +1884,7 @@ abstract class _$AppDb extends GeneratedDatabase {
           paragraphStart: row.read<int>('paragraphStart'),
           textContent: row.read<String>('textContent'),
           subtitle: row.readNullable<String>('subtitle'),
-          spanId: row.readNullable<int>('spanId'),
-          spanStart: row.readNullable<int>('spanStart'),
-          spanEnd: row.readNullable<int>('spanEnd'),
-          spanType: row.readNullable<int>('spanType'),
-          spanPayload: row.readNullable<String>('spanPayload'),
+          spansJson: row.read<String>('spansJson'),
         ));
   }
 
@@ -2891,7 +2890,7 @@ class GetVerseSegmentsForChapterResult {
   });
 }
 
-class GetChapterSegmentsWithSpansResult {
+class GetSegmentsForChapterWithSpansResult {
   final int segmentId;
   final int bookId;
   final int chapterNumber;
@@ -2900,12 +2899,8 @@ class GetChapterSegmentsWithSpansResult {
   final int paragraphStart;
   final String textContent;
   final String? subtitle;
-  final int? spanId;
-  final int? spanStart;
-  final int? spanEnd;
-  final int? spanType;
-  final String? spanPayload;
-  GetChapterSegmentsWithSpansResult({
+  final String spansJson;
+  GetSegmentsForChapterWithSpansResult({
     required this.segmentId,
     required this.bookId,
     required this.chapterNumber,
@@ -2914,11 +2909,7 @@ class GetChapterSegmentsWithSpansResult {
     required this.paragraphStart,
     required this.textContent,
     this.subtitle,
-    this.spanId,
-    this.spanStart,
-    this.spanEnd,
-    this.spanType,
-    this.spanPayload,
+    required this.spansJson,
   });
 }
 

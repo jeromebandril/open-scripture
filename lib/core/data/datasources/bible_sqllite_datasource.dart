@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:archive/archive_io.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:the_smyrna_bible_v2/core/data/models/verse_span_model.dart';
 import 'package:the_smyrna_bible_v2/core/domain/entities/book.dart';
 import 'package:the_smyrna_bible_v2/core/database/installation_queries.dart';
 import 'package:the_smyrna_bible_v2/core/domain/entities/bible_ref.dart';
@@ -12,6 +13,7 @@ import 'package:the_smyrna_bible_v2/features/bible_installer_manager/domain/enti
 
 import '../../domain/entities/bible_meta.dart';
 import '../../database/database.dart' as driftdb;
+import '../../domain/entities/verse_span.dart';
 import '../../error/exception.dart';
 import '../../domain/entities/verse_segment.dart';
 
@@ -57,6 +59,12 @@ abstract class BibleLocalDataSource {
   ///
   /// Throws a [NoDbConnectionException] if the verse does not exist
   Future<List<VerseSegment>> getChapter(
+      int bibleId, String bookId, int chapter);
+
+  /// Get the whole chapter, including the verses
+  ///
+  /// Throws a [NoDbConnectionException] if the verse does not exist
+  Future<List<VerseSegment>> getChapterWithSpans(
       int bibleId, String bookId, int chapter);
 
   /// Get a list of books
@@ -301,6 +309,46 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
   @override
   Stream<List<BibleMeta>> watchInstalledBibles() {
     throw UnimplementedError();
+  }
+
+  @override
+  Future<List<VerseSegment>> getChapterWithSpans(
+      int bibleId, String bookId, int chapter) async {
+    try {
+      final rows = await db
+          .getSegmentsForChapterWithSpans(bibleId, bookId, chapter)
+          .get();
+
+      if (rows.isEmpty) throw NotFoundException();
+
+      final List<VerseSegment> segments = [];
+      for (final r in rows) {
+        final List<dynamic> raw = jsonDecode(r.spansJson) as List<dynamic>;
+
+        final spans = raw
+            .cast<Map<String, dynamic>>()
+            .map(VerseSpanModel.fromJson)
+            .toList();
+
+        segments.add(VerseSegment(
+          bibleId: bibleId,
+          ref: BibleRef(
+            bookOsisId: bookId,
+            chapter: r.chapterNumber,
+            verseStart: r.verseNumber,
+          ),
+          segmentIndex: r.segmentIndex,
+          paragraphStart: r.paragraphStart == 1,
+          textContent: r.textContent,
+          subtitle: r.subtitle,
+          spans: spans,
+        ));
+      }
+
+      return segments;
+    } catch (e) {
+      throw LocalDataException();
+    }
   }
 
   // ************************************************************************

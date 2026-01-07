@@ -25,7 +25,7 @@ const Map<String, SpanType> usfxTagToSpanType = {
   // Notes & references
   'f': SpanType.footnote,
   'x': SpanType.crossReference,
-  'w': SpanType.crossReference,
+  'w': SpanType.strongWords,
   'ref': SpanType.reference,
 
   // Poetry / structure
@@ -173,7 +173,6 @@ class UsfxParser {
 
       if (chapter == null || verse == null) return;
       if (text.isEmpty) return;
-
       segments.add(VerseSegment(
         segmentIndex: segmentIndex++,
         paragraphStart: false,
@@ -188,15 +187,19 @@ class UsfxParser {
       ));
     }
 
-    // helper function for the tags to ignore
+    // helper functions for the tags to ignore
     bool isFootnoteTag(String name) =>
         name == 'f' || name == 'fr' || name == 'ft';
+
+    bool isCrossReferenceTag(String name) =>
+        name == 'x' || name == 'xo' || name == 'xt';
 
     bool isSpanTag(String tag) => tag == 'w' || tag == 'add' || tag == 'wj';
 
     String? spanPayload(XmlElement el) {
       // strong's number like <w s="H0430">
       if (el.name.local == 'w') return el.getAttribute('s');
+      return null;
     }
 
     // recursive walk trought the nodes
@@ -206,6 +209,7 @@ class UsfxParser {
 
         // skip footnotes entirely
         if (isFootnoteTag(tag)) return;
+        if (isCrossReferenceTag(tag)) return;
 
         if (tag == 'c') {
           final id = node.getAttribute('id');
@@ -248,7 +252,7 @@ class UsfxParser {
                 chapter == null ||
                 usfxTagToSpanType[tag] == null) {
               throw Exception(
-                  'ah null: ${verse} ${chapter} ${usfxTagToSpanType[tag]}');
+                  'ah null: $verse $chapter ${usfxTagToSpanType[tag]}');
             }
             spans.add(VerseSpanModel(
               key: SegmentKey(

@@ -25,26 +25,12 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     BiblePaneOpen event,
     Emitter<BiblePaneState> emit,
   ) async {
+    // TODO: check bible availability first
     emit(state.copyWith(status: () => BiblePaneStatus.loading));
     emit(state.copyWith(
       status: () => BiblePaneStatus.ready,
       bibleId: () => event.bibleId,
     ));
-
-    // final eitherFailureOrTranslation =
-    //     await repo.openTranslation(event.bibleId);
-    // eitherFailureOrTranslation.fold(
-    //   (failure) => print(
-    //     "> BReader: error while loading translation",
-    //   ), //emit(state.copyWith(status: () => ReaderStatus.error)),
-    //   (translation) {
-    //     return emit(
-    //       state.copyWith(
-    //         status: () => BiblePaneStatus.ready,
-    //       ),
-    //     );
-    //   },
-    // );
   }
 
   Future<void> _onBiblePaneDisplayChapter(
@@ -53,10 +39,15 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
   ) async {
     if (state.bibleId == null) return;
 
-    final eitherFailureOrChapter = await repo.getChapterSegments(
-      bibleId: state.bibleId!,
-      reference: event.ref,
-    );
+    final eitherFailureOrChapter = event.withSpans
+        ? await repo.getChapterWithSpans(
+            bibleId: state.bibleId!,
+            reference: event.ref,
+          )
+        : await repo.getChapterSegments(
+            bibleId: state.bibleId!,
+            reference: event.ref,
+          );
 
     return eitherFailureOrChapter.fold(
       (f) => emit(

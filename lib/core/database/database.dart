@@ -34,6 +34,7 @@ class AppDb extends _$AppDb {
           }
         },
         beforeOpen: (details) async {
+          await customStatement('PRAGMA foreign_keys = ON;');
           // runs after create/upgrade, before DB is used
           // good place for PRAGMAs, sanity checks, seed data, etc.
         },

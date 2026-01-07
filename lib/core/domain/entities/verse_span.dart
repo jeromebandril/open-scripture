@@ -6,21 +6,24 @@ enum SpanType {
   underline,
   smallCaps,
   superscript,
-  crossReference,
+  strongWords,
   footnote,
   redLetter,
   poetry,
   wordOfJesus,
   reference,
+  crossReference
 }
 
 class VerseSpan extends Equatable {
+  final int? verseSegmentId;
   final int startOffset;
   final int endOffset;
   final SpanType type;
   final String? payload; // could later become structured
 
   const VerseSpan({
+    this.verseSegmentId,
     required this.startOffset,
     required this.endOffset,
     required this.type,
@@ -28,5 +31,11 @@ class VerseSpan extends Equatable {
   });
 
   @override
-  List<Object?> get props => [startOffset, endOffset, type, payload];
+  List<Object?> get props => [
+        verseSegmentId,
+        startOffset,
+        endOffset,
+        type,
+        payload,
+      ];
 }

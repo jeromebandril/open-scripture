@@ -2,36 +2,53 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:the_smyrna_bible_v2/core/domain/entities/verse_segment.dart';
-import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
+import 'package:the_smyrna_bible_v2/core/domain/entities/verse_span.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/rendering/verse_richtext_builder.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_selector/presenter/widget/bible_selector.dart';
 
 import '../../../../../core/presentation/widgets/adjustable_text_size.dart';
-import '../../../../../injection_container.dart';
 import '../bloc/bible_pane_bloc.dart';
 
-class BiblePane extends StatelessWidget {
+class BiblePane extends StatefulWidget {
   final int uniqueId;
   final BiblePaneBloc bloc;
 
-  BiblePane({
+  const BiblePane({
     required this.uniqueId,
     required this.bloc,
     super.key,
   });
 
-  final ScrollController controller = ScrollController();
+  @override
+  State<BiblePane> createState() => _BiblePaneState();
+}
+
+class _BiblePaneState extends State<BiblePane> {
+  late ScrollController scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    scrollController = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    scrollController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-      value: bloc,
+      value: widget.bloc,
       child: BlocBuilder<BiblePaneBloc, BiblePaneState>(
         builder: (context, state) {
           switch (state.status) {
             case BiblePaneStatus.initial:
               if (state.bibleId == null) {
                 return BibleSelector(onConfirm: (bibleId) {
-                  bloc.add(BiblePaneOpen(bibleId));
+                  widget.bloc.add(BiblePaneOpen(bibleId));
                 });
               }
               return SizedBox();
@@ -46,20 +63,26 @@ class BiblePane extends StatelessWidget {
               );
             case BiblePaneStatus.error:
               return Text(state.errorMessage ?? 'An error occurred');
+
             case BiblePaneStatus.ready:
               return state.segments.isNotEmpty
                   ? AdjustableTextSize(
-                      scrollController: controller,
+                      scrollController: scrollController,
                       initialiSize: 10,
                       child: ListView.builder(
-                          controller: controller,
+                          controller: scrollController,
                           itemCount: state.segments.length,
                           itemBuilder: (_, i) {
-                            final verse = state.segments
+                            final segments = state.segments
                                 .where((v) => v.ref.verseStart == i + 1)
                                 .toList();
+                            final spans =
+                                segments.expand((s) => s.spans).toList();
                             return VerseWidget(
-                                verseNumber: i + 1, verseSegments: verse);
+                              verseNumber: i + 1,
+                              segments: segments,
+                              spans: spans,
+                            );
                           }),
                     )
                   : Padding(
@@ -83,17 +106,19 @@ class BiblePane extends StatelessWidget {
 
 class VerseWidget extends StatelessWidget {
   final int verseNumber;
-  final List<VerseSegment> verseSegments;
+  final List<VerseSegment> segments;
+  final List<VerseSpan>? spans;
 
   const VerseWidget({
     required this.verseNumber,
-    required this.verseSegments,
+    required this.segments,
+    this.spans,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    final String content = verseSegments.map((e) => e.textContent).join();
+    final String content = segments.map((e) => e.textContent).join();
 
     return Row(
       children: [
@@ -101,146 +126,23 @@ class VerseWidget extends StatelessWidget {
           child: Text(textAlign: TextAlign.end, verseNumber.toString()),
         ),
         Gap(24),
-        Text(
-          content,
-          overflow: TextOverflow.ellipsis,
-        ),
+        Flexible(
+            child: spans == null
+                ? Text(content)
+                : SelectableText.rich(
+                    VerseSpanBuilder.build(
+                      text: content,
+                      spans: spans!,
+                      onWordTap: (VerseSpan span, String slice) {},
+                      // onSpanTap: (span, txt) {
+                      //   if (span.type == 'w') {
+                      //     // span.payload might be "H0430" etc.
+                      //     // open dictionary popup, etc.
+                      //   }
+                      // },
+                    ),
+                  ))
       ],
     );
   }
 }
-
-/*
-class VerseList extends StatefulWidget {
-  final PageContent content;
-
-  const VerseList({
-    super.key,
-    required this.content,
-  });
-
-  @override
-  State<VerseList> createState() => _VerseListState();
-}
-
-class _VerseListState extends State<VerseList> {
-  late ScrollController scrollController;
-
-  @override
-  void initState() {
-    super.initState();
-    scrollController = ScrollController();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    scrollController.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AdjustableTextSize(
-      scrollController: scrollController,
-      initialiSize: 18,
-      child: Builder(
-        builder: (context) {
-          final list = styleFrontend(context);
-
-          return SelectionArea(
-            child: ListView.builder(
-              controller: scrollController,
-              itemCount: list.length,
-              itemBuilder: (_, index) {
-                return list[index];
-              },
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  TextStyle styleVerse(Snippet w) {
-    // given the word properties
-    // style accordinly
-    return TextStyle(
-      fontWeight: w.bold
-          ? FontWeight.bold
-          : w.italics
-              ? FontWeight.w500
-              : FontWeight.normal,
-      fontStyle: w.italics ? FontStyle.italic : FontStyle.normal,
-      color: w.wordOfJesus
-          ? w.italics
-              ? Colors.red.withOpacity(0.4)
-              : Colors.red
-          : w.italics
-              ? Colors.black.withOpacity(0.4)
-              : null,
-    );
-  }
-
-  List<Widget> styleFrontend(context) {
-    final List<Widget> colVerses = [];
-    final String booknameAbbreviation = widget.content.booknameAbbreviation!;
-    final String booknameFull = widget.content.booknameFull!;
-    final int chapterNumber = widget.content.chapterNumber!;
-    final bool isHeterogeneous = widget.content.isHeterogeneous;
-    //
-    // If it is the first chapter of the book,
-    // then add at the start the full name of the book
-    //
-    if (chapterNumber == 1 && !isHeterogeneous) {
-      colVerses.add(
-        Align(
-          alignment: Alignment.center,
-          child: Text(
-            booknameFull,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: DefaultTextStyle.of(context).style.fontSize! * 1.2,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      );
-      colVerses.add(const Gap(25));
-    }
-    //
-    // Add each verse
-    //
-    widget.content.content.toList().forEach((paragraph) {
-      paragraph.verses.toList().forEach((verse) {
-        late Text verseWidget;
-        final List<InlineSpan> content = [];
-        //
-        // Add numbering reference before a verse
-        //
-        content.add(
-          TextSpan(
-            text: '$booknameAbbreviation $chapterNumber:${verse.number}  ',
-            style: TextStyle(
-              color: Colors.blue[700],
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        );
-        //
-        // Add verse words with its own styling
-        //
-        for (var w in verse.words) {
-          content.add(TextSpan(text: '${w.text} ', style: styleVerse(w)));
-        }
-        verseWidget = Text.rich(TextSpan(children: content));
-        colVerses.add(verseWidget);
-      });
-      //
-      // add spacing between each paragrah
-      //
-      colVerses.add(const Gap(50));
-    });
-    return colVerses;
-  }
-}
-*/

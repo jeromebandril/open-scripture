@@ -143,9 +143,10 @@ class _HomeState extends State<Home> {
                   final ref = state.referenceResult;
                   if (ref == null) return;
 
-                  paneBloc.add(BiblePaneDisplayChapter(ref));
-                  print('intent passato');
-                  print('paneBloc isClosed: ${paneBloc.isClosed}');
+                  paneBloc.add(BiblePaneDisplayChapter(
+                    ref: ref,
+                    withSpans: true,
+                  ));
                 },
                 child: Expanded(child: BiblePane(uniqueId: 0, bloc: paneBloc)),
               ),

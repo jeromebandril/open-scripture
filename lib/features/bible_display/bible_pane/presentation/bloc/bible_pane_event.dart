@@ -27,9 +27,13 @@ class BiblePaneDisplayVerses extends BiblePaneEvent {
 
 class BiblePaneDisplayChapter extends BiblePaneEvent {
   final BibleRef ref;
+  final bool withSpans;
 
-  const BiblePaneDisplayChapter(this.ref);
+  const BiblePaneDisplayChapter({
+    required this.ref,
+    required this.withSpans,
+  });
 
   @override
-  List<Object> get props => [ref];
+  List<Object> get props => [ref, withSpans];
 }
