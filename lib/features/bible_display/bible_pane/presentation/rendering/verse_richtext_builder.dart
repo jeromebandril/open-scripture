@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../core/domain/entities/verse_span.dart';
@@ -9,7 +10,7 @@ class VerseSpanBuilder {
     required String text,
     required List<VerseSpan> spans,
     TextStyle? baseStyle,
-    required void Function(VerseSpan span, String slice) onWordTap,
+    required void Function(VerseSpan span, String slice)? onWordTap,
   }) {
     baseStyle ??= const TextStyle();
 
@@ -33,6 +34,7 @@ class VerseSpanBuilder {
           .toList();
     }
 
+    // EDIT HERE TO APPLY STYLES
     TextStyle applyStyles(TextStyle base, List<VerseSpan> active) {
       var style = base;
 
@@ -53,9 +55,10 @@ class VerseSpanBuilder {
             break;
 
           case SpanType.strongWords:
-            if (s.payload == strongWordBold) {
-              style = style.merge(const TextStyle(fontWeight: FontWeight.w600));
-            }
+            style = style.merge(const TextStyle(
+                decoration: TextDecoration.underline,
+                decorationStyle: TextDecorationStyle.dotted,
+                decorationColor: Colors.black12));
             break;
           default:
             break;
@@ -80,18 +83,19 @@ class VerseSpanBuilder {
       final style = applyStyles(baseStyle, active);
 
       // Optional: attach a recognizer for specific span types (e.g. "w")
-      // TapGestureRecognizer? recognizer;
-      // final tappable = active.where((s) => s.type == 'w').toList();
-      // if (tappable.isNotEmpty && onSpanTap != null) {
-      //   final first = tappable.first;
-      //   recognizer = TapGestureRecognizer()
-      //     ..onTap = () => onSpanTap(first, slice);
-      // }
+      TapGestureRecognizer? recognizer;
+      final tappable =
+          active.where((s) => s.type == SpanType.strongWords).toList();
+      if (tappable.isNotEmpty && onWordTap != null) {
+        final first = tappable.first;
+        recognizer = TapGestureRecognizer()
+          ..onTap = () => onWordTap(first, slice);
+      }
 
       children.add(TextSpan(
         text: slice,
         style: style,
-        // recognizer: recognizer,
+        recognizer: recognizer,
       ));
     }
 
