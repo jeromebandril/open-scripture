@@ -3,10 +3,7 @@ part of 'installed_bibles_section.dart';
 class _InstalledBiblesRow extends StatelessWidget {
   final BibleMeta bibleMeta;
 
-  const _InstalledBiblesRow({
-    super.key,
-    required this.bibleMeta,
-  });
+  const _InstalledBiblesRow({required this.bibleMeta});
 
   @override
   Widget build(BuildContext context) {

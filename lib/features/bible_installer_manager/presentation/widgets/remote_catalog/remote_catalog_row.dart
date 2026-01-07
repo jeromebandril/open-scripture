@@ -99,7 +99,7 @@ class _DownloadButtonState extends State<_DownloadButton> {
 
 class _DownloadingProgressBar extends StatefulWidget {
   final BibleMeta bible;
-  const _DownloadingProgressBar({super.key, required this.bible});
+  const _DownloadingProgressBar({required this.bible});
 
   @override
   State<_DownloadingProgressBar> createState() =>

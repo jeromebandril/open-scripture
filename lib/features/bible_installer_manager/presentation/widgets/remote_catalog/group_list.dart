@@ -7,7 +7,6 @@ class _GroupList extends StatefulWidget {
   const _GroupList({
     required this.title,
     required this.bibles,
-    super.key,
   });
 
   @override

@@ -33,7 +33,7 @@ class BibleManagerWidget extends StatelessWidget {
 }
 
 class _BibleManager extends StatelessWidget {
-  const _BibleManager({super.key});
+  const _BibleManager();
 
   @override
   Widget build(BuildContext context) {

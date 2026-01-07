@@ -17,7 +17,6 @@ import 'package:the_smyrna_bible_v2/core/data/datasources/bible_sqllite_datasour
 import 'package:the_smyrna_bible_v2/features/bible_installer_manager/data/repositories/bible_manager_repository_impl.dart';
 import 'package:the_smyrna_bible_v2/features/bible_installer_manager/domain/repositories/bible_manager_repository.dart';
 import 'package:the_smyrna_bible_v2/features/bible_installer_manager/presentation/bloc/installed_bibles/installed_bibles_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/bible_installer_manager/presentation/bloc/bible_download_progress/bible_download_progress_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
 import 'features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
 import 'features/bible_display/bible_selector/domain/repositories/bible_selector_repository.dart';
@@ -66,9 +65,6 @@ void initBibleManagerFeature() {
   );
   sl.registerFactory(
     () => InstalledBiblesBloc(repository: sl(), notifier: sl()),
-  );
-  sl.registerFactory(
-    () => BibleDownloadProgressBloc(repository: sl()),
   );
   sl.registerFactory(
     () => SettingsBloc(),

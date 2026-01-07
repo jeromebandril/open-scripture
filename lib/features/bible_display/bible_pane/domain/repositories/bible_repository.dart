@@ -1,5 +1,4 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:the_smyrna_bible_v2/core/domain/entities/verse_span.dart';
 
 import '../../../../../core/domain/entities/bible_ref.dart';
 import '../../../../../core/domain/entities/verse_segment.dart';

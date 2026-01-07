@@ -38,7 +38,6 @@ class _ToolbarApp extends StatelessWidget {
   const _ToolbarApp({
     required this.options,
     required this.child,
-    super.key,
   });
 
   @override

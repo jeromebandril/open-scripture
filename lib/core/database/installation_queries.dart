@@ -173,11 +173,16 @@ extension BibleInstallQueries on db.AppDb {
       // Build spans companions
       final spansCompanions = <db.SegmentSpansCompanion>[];
       for (final s in spans) {
+        // at this point the segment key should be not null
+        if (s.key == null) {
+          throw StateError('Span has no segment_key during import');
+        }
+
         final key = SegmentKey(
-          bookOsisId: s.key.bookOsisId,
-          chapter: s.key.chapter,
-          verse: s.key.verse,
-          segmentIndex: s.key.segmentIndex,
+          bookOsisId: s.key!.bookOsisId,
+          chapter: s.key!.chapter,
+          verse: s.key!.verse,
+          segmentIndex: s.key!.segmentIndex,
         );
 
         final segmentId = segmentIdByKey[key];

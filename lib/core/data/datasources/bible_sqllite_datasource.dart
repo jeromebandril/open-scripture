@@ -13,7 +13,6 @@ import 'package:the_smyrna_bible_v2/features/bible_installer_manager/domain/enti
 
 import '../../domain/entities/bible_meta.dart';
 import '../../database/database.dart' as driftdb;
-import '../../domain/entities/verse_span.dart';
 import '../../error/exception.dart';
 import '../../domain/entities/verse_segment.dart';
 
@@ -96,6 +95,11 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
               langNativeName: r.langNativeName,
             ))
         .toList();
+  }
+
+  @override
+  Stream<List<BibleMeta>> watchInstalledBibles() {
+    throw UnimplementedError();
   }
 
   @override
@@ -197,7 +201,7 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
       );
 
       // Use async delete (don’t use deleteSync in async code)
-      await zipFile.delete().catchError((_) {});
+      await zipFile.delete();
 
       yield const InstallProgress(
         stage: InstallStage.done,
@@ -206,7 +210,6 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
         message: 'Installed',
       );
     } catch (e) {
-      print(e);
       yield InstallProgress(
         stage: InstallStage.failed,
         received: 0,
@@ -214,38 +217,6 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
         message: 'Installation failed',
       );
     }
-
-    // try {
-    //   final appSupDir = await getApplicationSupportDirectory();
-    //   final File rawFile = File("${appSupDir.path}/$bibleId/temp.txt");
-    //   final bytes = await rawFile.readAsBytes();
-
-    //   // convert raw file into usfx.xml file format
-    //   // should find both metadata.xml and translation_usfx.xml
-    //   var bibleContent = '';
-    //   var metadataContent = '';
-    //   final Archive archive = ZipDecoder().decodeBytes(bytes);
-
-    //   for (final ArchiveFile file in archive) {
-    //     if (file.name == '${bibleId}_usfx.xml') {
-    //       bibleContent = file.content;
-    //     }
-    //     if (file.name == '${bibleId}metadata.xml') {
-    //       metadataContent = file.content;
-    //     }
-    //   }
-
-    //   // insert into db, start transaction
-    //   final usfxParser = UsfxParser(bibleContent, metadataContent);
-    //   final bible = usfxParser.getBible();
-    //   //final books = usfxParser.getBooks();
-    //   //final verses = usfxParser.getVerses();
-
-    //   // delete the temp file
-    //   rawFile.deleteSync();
-    // } catch (e) {
-    //   throw InstallationException();
-    // }
   }
 
   @override
@@ -293,25 +264,6 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
   }
 
   @override
-  Future<VerseSegment> getVerse(
-      int bibleId, String book, int chapter, int verse) {
-    // TODO: implement getVerse
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<List<VerseSegment>> getVerseFromRange(
-      int bibleId, String bookId, int chapter, int verse) {
-    // TODO: implement getVerse
-    throw UnimplementedError();
-  }
-
-  @override
-  Stream<List<BibleMeta>> watchInstalledBibles() {
-    throw UnimplementedError();
-  }
-
-  @override
   Future<List<VerseSegment>> getChapterWithSpans(
       int bibleId, String bookId, int chapter) async {
     try {
@@ -351,75 +303,17 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
     }
   }
 
-  // ************************************************************************
-  // Old implementation with direct read/write from the filesystem and managing
-  // manually the files
-  //************************************************************************* */
-  /*
   @override
-  Future<void> installTranslation(String id) async {
-    try {
-      final path = await ApplicationConstants.getApplicationPath();
-      File rawFile = File("$path/$id/temp.txt");
-      final bytes = await rawFile.readAsBytes();
-
-      // convert raw file into usfx.xml file format
-      // should find both metadata.xml and translation_usfx.xml
-      File goodFile = File('$path/$id/${id}_usfx.xml');
-      File metadataFile = File('$path/$id/${id}metadata.xml');
-      final Archive archive = ZipDecoder().decodeBytes(bytes);
-
-      for (final ArchiveFile file in archive) {
-        if (file.name == '${id}_usfx.xml') {
-          goodFile.writeAsBytesSync(file.content);
-        }
-        if (file.name == '${id}metadata.xml') {
-          metadataFile.writeAsBytesSync(file.content);
-        }
-      }
-
-      // delete the temp file
-      rawFile.deleteSync();
-    } catch (e) {
-      throw InstallationException();
-    }
+  Future<VerseSegment> getVerse(
+      int bibleId, String book, int chapter, int verse) {
+    // TODO: implement getVerse
+    throw UnimplementedError();
   }
 
   @override
-  Future<void> uninstallTranslation(String id) async {
-    try {
-      final path = await ApplicationConstants.getApplicationPath();
-      Directory directory = Directory("$path/$id");
-      directory.delete(recursive: true);
-    } catch (e) {
-      throw Exception();
-    }
+  Future<List<VerseSegment>> getVerseFromRange(
+      int bibleId, String bookId, int chapter, int verse) {
+    // TODO: implement getVerse
+    throw UnimplementedError();
   }
-
-  @override
-  Future<List<TranslationInfoModel>> getInstalledTransationInfos() async {
-    try {
-      final appDir = Directory(
-        await ApplicationConstants.getApplicationPath(),
-      );
-      final subDirs = await appDir.list().toList();
-      final List<TranslationInfoModel> infos = [];
-
-      for (var sd in subDirs) {
-        String ok = sd.path;
-        infos.add(
-          TranslationInfoModel(
-            id: ok,
-            name: ok,
-            language: ok,
-          ),
-        );
-      }
-
-      return infos;
-    } catch (e) {
-      throw NoLocalDataException();
-    }
-  }
-  */
 }

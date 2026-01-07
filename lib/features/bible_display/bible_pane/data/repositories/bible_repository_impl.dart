@@ -1,5 +1,4 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:the_smyrna_bible_v2/core/domain/entities/verse_span.dart';
 
 import '../../../../../core/data/datasources/bible_sqllite_datasource.dart';
 import '../../../../../core/domain/entities/bible_ref.dart';
@@ -19,14 +18,6 @@ class BibleRepositoryImpl implements BibleRepository {
   }) async {
     // TODO: implement getVerse
     throw UnimplementedError();
-    // try {
-    //   final List<VerseSegment> verses =
-    //       await localDatasource.getVerseFromRange('', '', 1, 1);
-
-    //   return Right(verses);
-    // } catch (e) {
-    //   return Left(NotFoundFailure());
-    // }
   }
 
   @override

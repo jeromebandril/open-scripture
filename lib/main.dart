@@ -71,10 +71,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    paneBloc = BiblePaneBloc(
-      paneId: 0,
-      repo: sl<BibleRepository>(), // or BibleRepository
-    );
+    paneBloc = BiblePaneBloc(paneId: 0, repo: sl<BibleRepository>());
     // ..add(BiblePaneOpen(1)); // pick initial bibleId here
   }
 
@@ -126,13 +123,6 @@ class _HomeState extends State<Home> {
           //
           // Main screen
           //
-          // child: BibleView(
-          //   items: BlocProvider.of<InstalledTranslationsBloc>(context)
-          //       .state
-          //       .installedTranslations
-          //       .map((e) => e.language)
-          //       .toList(),
-          // ),
           child: Column(
             children: [
               BSearchbar(),

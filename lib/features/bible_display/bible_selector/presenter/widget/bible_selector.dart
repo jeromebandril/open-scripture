@@ -26,7 +26,7 @@ class BibleSelector extends StatelessWidget {
 class _BibleSelectorBody extends StatelessWidget {
   final void Function(int selectedBibleId) onConfirm;
 
-  const _BibleSelectorBody({required this.onConfirm, super.key});
+  const _BibleSelectorBody({required this.onConfirm});
 
   @override
   Widget build(BuildContext context) {

@@ -86,7 +86,6 @@ class _SidebarNavigator extends StatelessWidget {
     required this.pages,
     required this.width,
     required this.activePage,
-    super.key,
   });
 
   @override
@@ -131,7 +130,6 @@ class _NavigationButton extends StatelessWidget {
     this.text,
     this.mappedWidget, {
     this.isActive = false,
-    super.key,
   });
 
   @override
@@ -169,7 +167,6 @@ class _MainSettingContent extends StatelessWidget {
     required this.pages,
     required this.pageContent,
     this.onClose,
-    super.key,
   });
 
   @override
@@ -201,7 +198,6 @@ class _HeaderSettings extends StatelessWidget {
     this.title,
     required this.height,
     this.onClose,
-    super.key,
   });
 
   @override

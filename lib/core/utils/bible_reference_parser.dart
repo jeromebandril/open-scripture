@@ -1,5 +1,3 @@
-import 'package:fpdart/fpdart.dart';
-
 import '../domain/entities/bible_ref.dart';
 import '../error/failure.dart';
 
