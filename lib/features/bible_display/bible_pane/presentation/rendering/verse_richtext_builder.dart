@@ -58,7 +58,7 @@ class VerseSpanBuilder {
             style = style.merge(const TextStyle(
                 decoration: TextDecoration.underline,
                 decorationStyle: TextDecorationStyle.dotted,
-                decorationColor: Colors.black12));
+                decorationColor: Colors.black26));
             break;
           default:
             break;

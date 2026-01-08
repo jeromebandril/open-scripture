@@ -93,7 +93,7 @@ class _BiblePaneState extends State<BiblePane> {
                           )
                         : AdjustableTextSize(
                             scrollController: _scrollController,
-                            initialiSize: 10,
+                            initialiSize: 24,
                             child: ListView.builder(
                                 controller: _scrollController,
                                 itemCount: state.segments.length,

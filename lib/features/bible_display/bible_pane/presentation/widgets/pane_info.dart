@@ -30,7 +30,6 @@ class _PaneInfoState extends State<PaneInfo> {
         height: 25,
         color: Theme.of(context).colorScheme.surface,
         child: Row(
-          spacing: 28,
           children: [
             // SELECTED WORD
             BlocBuilder<SelectedWordCubit, WordInfo?>(
