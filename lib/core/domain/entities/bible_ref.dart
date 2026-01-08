@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 
 class BibleRef extends Equatable {
+  static const _unset = Object();
+
   final String bookOsisId;
   final int chapter;
   final int? verseStart;
@@ -16,14 +18,16 @@ class BibleRef extends Equatable {
   BibleRef copyWith({
     String? bookOsisId,
     int? chapter,
-    int? verseStart,
-    int? verseEnd,
+    Object? verseStart = _unset,
+    Object? verseEnd = _unset,
   }) {
     return BibleRef(
       bookOsisId: bookOsisId ?? this.bookOsisId,
       chapter: chapter ?? this.chapter,
-      verseStart: verseStart ?? this.verseStart,
-      verseEnd: verseEnd ?? this.verseEnd,
+      verseStart:
+          identical(verseStart, _unset) ? this.verseStart : verseStart as int?,
+      verseEnd:
+          identical(verseEnd, _unset) ? this.verseStart : verseEnd as int?,
     );
   }
 

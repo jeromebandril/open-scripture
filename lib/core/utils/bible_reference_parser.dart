@@ -2,7 +2,10 @@ import '../domain/entities/bible_ref.dart';
 import '../error/failure.dart';
 
 class BibleReferenceParser {
-  static const searchPromptRegex = r"(\d*\s*[a-zA-Z\s]+)(\d*)\D*(\d*)";
+  static const searchPromptRegex =
+      // r"(\d*\s*[a-zA-Z\s]+)(\d*)\D*(\d*)"; // version 1 (no verse end)
+      r'^(.+?)\s+(\d+)(?::(\d+)(?:-(\d+))?)?$'; // version 2
+
   static const List<String> kjvBooks = [
     "Genesis",
     "Exodus",
@@ -156,7 +159,8 @@ class BibleReferenceParser {
       //
       final rawBook = match.group(1)?.trim();
       final chapterStr = match.group(2)?.trim();
-      final verseStr = match.group(3)?.trim();
+      final verseStartStr = match.group(3)?.trim();
+      final verseEndStr = match.group(4)?.trim();
       //
       // normalize book name by clearing from special characters
       //
@@ -171,8 +175,12 @@ class BibleReferenceParser {
       //
       // Parse chapter and verse, default to 1 if not specified
       //
-      final chapter = chapterStr!.isEmpty ? 1 : int.parse(chapterStr);
-      final verse = verseStr!.isEmpty ? 1 : int.parse(verseStr);
+      final chapter =
+          chapterStr == null || chapterStr.isEmpty ? 1 : int.parse(chapterStr);
+      final verseStart = verseStartStr == null || verseStartStr.isEmpty
+          ? 1
+          : int.parse(verseStartStr);
+      final verseEnd = verseEndStr != null ? int.parse(verseEndStr) : null;
       //
       // check book validity
       //
@@ -188,11 +196,11 @@ class BibleReferenceParser {
       final BibleRef reference = BibleRef(
         bookOsisId: book.toUpperCase(),
         chapter: chapter, // corrections for zero based counting
-        verseStart: verse,
-        verseEnd: null,
+        verseStart: verseStart,
+        verseEnd: verseEnd,
       );
       return Future.value(reference);
-    } on Exception {
+    } catch (e) {
       throw Error();
     }
   }
