@@ -4,7 +4,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/b_searchbar_bloc.dart';
 
 class BSearchbar extends StatelessWidget {
-  const BSearchbar({super.key});
+  final FocusNode? focusNode;
+  final Function()? onSubmitted;
+  final Function()? onEditComplete;
+
+  const BSearchbar({
+    this.focusNode,
+    this.onSubmitted,
+    this.onEditComplete,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +24,16 @@ class BSearchbar extends StatelessWidget {
           child: SizedBox(
             width: 400,
             child: TextField(
-              onSubmitted: (input) => _onSubmitted(input, context),
+              focusNode: focusNode,
+              onEditingComplete: () {
+                if (onEditComplete != null) onEditComplete!();
+              },
+              onSubmitted: (input) {
+                BlocProvider.of<BSearchbarBloc>(context)
+                    .add(BSearchbarParseIntent(input));
+
+                if (onSubmitted != null) onSubmitted!();
+              },
               decoration: const InputDecoration(
                 prefixIcon: Icon(Icons.search, size: 20),
                 contentPadding: EdgeInsets.only(right: 8),
@@ -36,9 +54,5 @@ class BSearchbar extends StatelessWidget {
         ),
       ],
     );
-  }
-
-  void _onSubmitted(String input, context) {
-    BlocProvider.of<BSearchbarBloc>(context).add(BSearchbarParseIntent(input));
   }
 }

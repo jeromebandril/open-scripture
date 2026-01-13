@@ -84,7 +84,7 @@ extension BibleInstallQueries on db.AppDb {
           bibleNameAbbreviation: meta.abbreviation,
           originSource: Value(meta.originSource),
         ),
-        mode: InsertMode.insertOrIgnore, // ✅ idempotent install
+        mode: InsertMode.insertOrIgnore,
       );
     });
   }

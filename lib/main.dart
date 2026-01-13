@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/active_pane_cubit.dart';
 import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/widgets/bible_searchbar.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/widgets/bible_pane_widget.dart';
+import 'package:the_smyrna_bible_v2/features/keybindings/presentation/widget/keybindings_host.dart';
 import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/settings_window.dart';
 import 'package:the_smyrna_bible_v2/features/toolbar/presentation/widgets/toolbar.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/bloc/split_screen_bloc.dart';
@@ -66,81 +67,97 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  late final BiblePaneBloc paneBloc;
+  late final BiblePaneBloc _paneBloc;
+  late final FocusNode _searchbarFocusNode;
+  late final FocusNode _rootFocusNode;
 
   @override
   void initState() {
     super.initState();
-    paneBloc = BiblePaneBloc(paneId: 0, repo: sl<BibleRepository>());
+    _paneBloc = BiblePaneBloc(paneId: 0, repo: sl<BibleRepository>());
+    _searchbarFocusNode = FocusNode(debugLabel: 'searchbar');
+    _rootFocusNode = FocusNode(debugLabel: 'root');
     // ..add(BiblePaneOpen(1)); // pick initial bibleId here
   }
 
   @override
   void dispose() {
-    paneBloc.close();
+    _paneBloc.close();
+    _searchbarFocusNode.dispose();
+    _rootFocusNode.dispose();
     super.dispose();
+  }
+
+  // Return focus to root after search finishes
+  void _returnFocusToRoot() {
+    // This ensures there is always a focused node to receive shortcuts.
+    _rootFocusNode.requestFocus();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      //
-      // Manages the stacks of windosw that may occur when opening
-      // popups or secondary pages in the form of a window (e.g. settings menu)
-      //
-      body: WindowStackManagerWrapper(
+    // ShortcusHost must be at the very root after the MaterialApp
+    return ShortcutHost(
+      rootFocusNode: _rootFocusNode,
+      searchFocusNode: _searchbarFocusNode,
+      child: Scaffold(
         //
-        // Desktop look of a top toolbar
+        // Manages the stacks of windosw that may occur when opening
+        // popups or secondary pages in the form of a window (e.g. settings menu)
         //
-        child: Toolbar(
-          options: [
-            ToolbarOption(
-              'Bible',
-              onTap: () {
-                BlocProvider.of<WindowStackManagerBloc>(context).add(
-                  WindowStackManagerOpen(
-                    SettingsFactory.createSettingsWidget(
-                      context,
-                      'Bibles Manager',
+        body: WindowStackManagerWrapper(
+          child: Toolbar(
+            options: [
+              ToolbarOption(
+                'Bible',
+                onTap: () {
+                  BlocProvider.of<WindowStackManagerBloc>(context).add(
+                    WindowStackManagerOpen(
+                      SettingsFactory.createSettingsWidget(
+                        context,
+                        'Bibles Manager',
+                      ),
                     ),
-                  ),
-                );
-              },
-            ),
-            const ToolbarOption('Options'),
-            const ToolbarOption('Tools'),
-            ToolbarOption(
-              'Help',
-              onTap: () {
-                BlocProvider.of<WindowStackManagerBloc>(context).add(
-                  WindowStackManagerOpen(
-                    SettingsFactory.createSettingsWidget(context, 'About'),
-                  ),
-                );
-              },
-            ),
-          ],
-          //
-          // Main screen
-          //
-          child: Column(
-            children: [
-              BSearchbar(),
-              BlocListener<BSearchbarBloc, BSearchbarState>(
-                listenWhen: (prev, curr) =>
-                    prev.referenceResult != curr.referenceResult,
-                listener: (context, state) {
-                  final ref = state.referenceResult;
-                  if (ref == null) return;
-
-                  paneBloc.add(BiblePaneDisplayChapter(
-                    ref: ref,
-                    withSpans: true,
-                  ));
+                  );
                 },
-                child: Expanded(child: BiblePane(uniqueId: 0, bloc: paneBloc)),
+              ),
+              const ToolbarOption('Options'),
+              const ToolbarOption('Tools'),
+              ToolbarOption(
+                'Help',
+                onTap: () {
+                  BlocProvider.of<WindowStackManagerBloc>(context).add(
+                    WindowStackManagerOpen(
+                      SettingsFactory.createSettingsWidget(context, 'About'),
+                    ),
+                  );
+                },
               ),
             ],
+            child: Column(
+              children: [
+                BSearchbar(
+                  focusNode: _searchbarFocusNode,
+                  onSubmitted: () => _returnFocusToRoot(),
+                  //onEditComplete: () => _returnFocusToRoot(),
+                ),
+                BlocListener<BSearchbarBloc, BSearchbarState>(
+                  listenWhen: (prev, curr) =>
+                      prev.referenceResult != curr.referenceResult,
+                  listener: (context, state) {
+                    final ref = state.referenceResult;
+                    if (ref == null) return;
+
+                    _paneBloc.add(BiblePaneDisplayChapter(
+                      ref: ref,
+                      withSpans: true,
+                    ));
+                  },
+                  child:
+                      Expanded(child: BiblePane(uniqueId: 0, bloc: _paneBloc)),
+                ),
+              ],
+            ),
           ),
         ),
       ),
