@@ -7,7 +7,6 @@ import 'package:the_smyrna_bible_v2/features/bible_display/bible_selector/data/r
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_selector/presenter/bloc/bloc/bible_selector_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
 import 'package:the_smyrna_bible_v2/features/bible_installer_manager/presentation/bloc/download_manager/bloc/download_manager_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/settings_window/presentation/bloc/settings_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/data/repositories/bible_repository_impl.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/domain/repositories/bible_repository.dart';
 import 'package:the_smyrna_bible_v2/core/data/datasources/bible_ebibleorg_datasource.dart';
@@ -63,9 +62,6 @@ void initBibleManagerFeature() {
   );
   sl.registerFactory(
     () => InstalledBiblesBloc(repository: sl(), notifier: sl()),
-  );
-  sl.registerFactory(
-    () => SettingsBloc(),
   );
   sl.registerFactory(
     () => WindowStackManagerBloc(),
