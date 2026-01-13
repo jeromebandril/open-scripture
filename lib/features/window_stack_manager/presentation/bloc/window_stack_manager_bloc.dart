@@ -16,7 +16,7 @@ class WindowStackManagerBloc
     WindowStackManagerOpen event,
     Emitter<WindowStackManagerState> emit,
   ) async {
-    emit(WindowStackManagerState(window: event.window));
+    emit(WindowStackManagerState(window: (_) => event.window));
   }
 
   Future<void> _onClose(

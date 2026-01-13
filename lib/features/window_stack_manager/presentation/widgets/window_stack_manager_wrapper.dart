@@ -6,7 +6,7 @@ import 'package:the_smyrna_bible_v2/features/window_stack_manager/presentation/b
 // to build and destroy the window every time it opens/closes, so I can
 // save memory, because these Widgets will not be used very often by the user
 
-class WindowStackManagerWrapper extends StatelessWidget {
+class WindowStackManagerWrapper extends StatefulWidget {
   final Widget child;
 
   const WindowStackManagerWrapper({
@@ -15,20 +15,80 @@ class WindowStackManagerWrapper extends StatelessWidget {
   });
 
   @override
+  State<WindowStackManagerWrapper> createState() =>
+      _WindowStackManagerWrapperState();
+}
+
+class _WindowStackManagerWrapperState extends State<WindowStackManagerWrapper> {
+  OverlayEntry? _entry;
+  late final FocusScopeNode _windowFocusScope;
+
+  @override
+  void initState() {
+    _windowFocusScope = FocusScopeNode(debugLabel: 'window');
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _removeEntry();
+    _windowFocusScope.dispose();
+    super.dispose();
+  }
+
+  void _removeEntry() {
+    _entry?.remove();
+    _entry = null;
+  }
+
+  void _showEntry(WidgetBuilder builder) {
+    if (_entry != null) return;
+
+    _entry = OverlayEntry(
+      builder: (overlayContext) {
+        return Stack(
+          children: [
+            const ModalBarrier(dismissible: false, color: Color(0x99000000)),
+            BlockSemantics(
+              blocking: true,
+              child: FocusScope(
+                node: _windowFocusScope,
+                child: Center(
+                  child: Material(
+                    type: MaterialType.transparency,
+                    elevation: 24,
+                    borderRadius: BorderRadius.circular(12),
+                    child: builder(overlayContext), // builds ONLY when opened
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    final overlay = Navigator.of(context, rootNavigator: true).overlay!;
+    overlay.insert(_entry!);
+
+    // ensure focus is moved after insertion
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _windowFocusScope.requestFocus();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocListener<WindowStackManagerBloc, WindowStackManagerState>(
       listener: (dContext, state) {
-        if (state.window != null) {
-          showDialog(
-            barrierDismissible: false,
-            context: dContext,
-            builder: (_) => state.window!,
-          );
+        final builder = state.window;
+        if (builder != null) {
+          _showEntry(builder);
         } else {
-          Navigator.of(dContext).pop();
+          _removeEntry();
         }
       },
-      child: child,
+      child: widget.child,
     );
   }
 }
