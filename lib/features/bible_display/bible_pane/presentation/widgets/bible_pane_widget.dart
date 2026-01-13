@@ -90,63 +90,60 @@ class _BiblePaneState extends State<BiblePane> {
 
               final verseNumbers = segmentsByVerse.keys.toList()..sort();
 
-              return Container(
-                padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
-                child: Stack(
-                  children: [
-                    //
-                    // MAIN VIEW
-                    //
-                    Positioned.fill(
-                      child: state.segments.isEmpty
-                          ? Center(
-                              child: Text(
-                              "Ready :)",
-                            ))
-                          : AdjustableTextSize(
-                              scrollController: _scrollController,
-                              initialiSize: 24,
-                              child: ListView.builder(
-                                  controller: _scrollController,
-                                  itemCount: verseNumbers.length + 1,
-                                  itemBuilder: (_, i) {
-                                    // Fixed empty space at the bottom
-                                    if (i == verseNumbers.length) {
-                                      return const SizedBox(height: 200);
-                                    }
+              return Stack(
+                children: [
+                  //
+                  // MAIN VIEW
+                  //
+                  Positioned.fill(
+                    child: state.segments.isEmpty
+                        ? Center(
+                            child: Text(
+                            "Ready :)",
+                          ))
+                        : AdjustableTextSize(
+                            scrollController: _scrollController,
+                            initialiSize: 24,
+                            child: ListView.builder(
+                                controller: _scrollController,
+                                itemCount: verseNumbers.length + 1,
+                                itemBuilder: (_, i) {
+                                  // Fixed empty space at the bottom
+                                  if (i == verseNumbers.length) {
+                                    return const SizedBox(height: 200);
+                                  }
 
-                                    final vn = verseNumbers[i];
-                                    final segments = segmentsByVerse[vn]!;
-                                    final spans = segments
-                                        .expand((s) => s.spans)
-                                        .toList();
-                                    final vStart = state.reference?.verseStart;
-                                    final vEnd = state.reference?.verseEnd;
+                                  final vn = verseNumbers[i];
+                                  final segments = segmentsByVerse[vn]!;
+                                  final spans =
+                                      segments.expand((s) => s.spans).toList();
+                                  final vStart = state.reference?.verseStart;
+                                  final vEnd = state.reference?.verseEnd;
 
-                                    return VerseWidget(
-                                        verseNumber: vn,
-                                        segments: segments,
-                                        spans: spans,
-                                        isHighlighted:
-                                            (vEnd == null && vn == vStart) ||
-                                                (vEnd != null &&
-                                                    vStart != null &&
-                                                    vn >= vStart &&
-                                                    vn <= vEnd));
-                                  }),
-                            ),
-                    ),
-                    //
-                    // PANE STATUS INFO
-                    //
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: PaneInfo(),
-                    ),
-                  ],
-                ),
+                                  return VerseWidget(
+                                      verseNumber: vn,
+                                      segments: segments,
+                                      spans: spans,
+                                      isHighlighted:
+                                          (vEnd == null && vn == vStart) ||
+                                              (vEnd != null &&
+                                                  vStart != null &&
+                                                  vn >= vStart &&
+                                                  vn <= vEnd));
+                                }),
+                          ),
+                  ),
+                  //
+                  // PANE STATUS INFO
+                  //
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: PaneInfo(),
+                  ),
+                ],
               );
+
             // success case
             // return BlocListener<BSearchbarBloc, BSearchbarState>(
             //   listener: (context, state) {

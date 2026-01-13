@@ -129,33 +129,37 @@ class _HomeState extends State<Home> {
                 },
               ),
             ],
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    BSearchbar(
-                      focusNode: _searchbarFocusNode,
-                      onSubmitted: () => _returnFocusToRoot(),
-                      //onEditComplete: () => _returnFocusToRoot(),
-                    ),
-                    SplitscreenControls(),
-                  ],
-                ),
-                BlocListener<BSearchbarBloc, BSearchbarState>(
-                  listenWhen: (prev, curr) =>
-                      prev.referenceResult != curr.referenceResult,
-                  listener: (context, state) {
-                    final ref = state.referenceResult;
-                    if (ref == null) return;
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+              child: Column(
+                spacing: 8,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      BSearchbar(
+                        focusNode: _searchbarFocusNode,
+                        onSubmitted: () => _returnFocusToRoot(),
+                        //onEditComplete: () => _returnFocusToRoot(),
+                      ),
+                      SplitscreenControls(),
+                    ],
+                  ),
+                  BlocListener<BSearchbarBloc, BSearchbarState>(
+                    listenWhen: (prev, curr) =>
+                        prev.referenceResult != curr.referenceResult,
+                    listener: (context, state) {
+                      final ref = state.referenceResult;
+                      if (ref == null) return;
 
-                    context.read<PaneManagerCubit>().activeBloc().add(
-                          BiblePaneDisplayChapter(ref: ref, withSpans: true),
-                        );
-                  },
-                  child: Expanded(child: MultipleBiblePanes()),
-                ),
-              ],
+                      context.read<PaneManagerCubit>().activeBloc().add(
+                            BiblePaneDisplayChapter(ref: ref, withSpans: true),
+                          );
+                    },
+                    child: Expanded(child: MultipleBiblePanes()),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

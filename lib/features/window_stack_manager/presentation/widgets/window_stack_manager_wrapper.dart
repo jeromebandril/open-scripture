@@ -22,10 +22,7 @@ class WindowStackManagerWrapper extends StatelessWidget {
           showDialog(
             barrierDismissible: false,
             context: dContext,
-            builder: (_) => Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: state.window!,
-            ),
+            builder: (_) => state.window!,
           );
         } else {
           Navigator.of(dContext).pop();

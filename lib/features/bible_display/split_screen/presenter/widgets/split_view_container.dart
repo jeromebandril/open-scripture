@@ -12,6 +12,7 @@ class MultipleBiblePanes extends StatelessWidget {
     return BlocBuilder<PaneManagerCubit, PaneManagerState>(
       builder: (context, state) {
         return Row(
+          spacing: 16,
           children: [
             for (final p in state.panes)
               Expanded(
