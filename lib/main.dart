@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:the_smyrna_bible_v2/core/presentation/cubit/active_pane_cubit.dart';
 import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/widgets/bible_searchbar.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/widgets/bible_pane_widget.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/widgets/split_view_container.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/widgets/split_view_controllers.dart';
 import 'package:the_smyrna_bible_v2/features/keybindings/presentation/widget/keybindings_host.dart';
 import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/settings_window.dart';
 import 'package:the_smyrna_bible_v2/features/toolbar/presentation/widgets/toolbar.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/bloc/split_screen_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/window_stack_manager/presentation/widgets/window_stack_manager_wrapper.dart';
 import 'package:the_smyrna_bible_v2/injection_container.dart';
@@ -42,12 +43,9 @@ class MyApp extends StatelessWidget {
       home: MultiBlocProvider(
         providers: [
           BlocProvider(
-              create: (_) => ActivePaneCubit(
-                  initialPaneId: 0)), // for one pane only for now
-          BlocProvider(create: (_) => di.sl<WindowStackManagerBloc>()),
-          BlocProvider(
               create: (_) =>
-                  di.sl<SplitScreenBloc>()..add(const SplitScreenX())),
+                  di.sl<PaneManagerCubit>()), // for one pane only for now
+          BlocProvider(create: (_) => di.sl<WindowStackManagerBloc>()),
           BlocProvider(
               create: (_) =>
                   di.sl<InstalledBiblesBloc>()..add(InstalledBiblesLoad())),
@@ -67,14 +65,12 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  late final BiblePaneBloc _paneBloc;
   late final FocusNode _searchbarFocusNode;
   late final FocusNode _rootFocusNode;
 
   @override
   void initState() {
     super.initState();
-    _paneBloc = BiblePaneBloc(paneId: 0, repo: sl<BibleRepository>());
     _searchbarFocusNode = FocusNode(debugLabel: 'searchbar');
     _rootFocusNode = FocusNode(debugLabel: 'root');
     // ..add(BiblePaneOpen(1)); // pick initial bibleId here
@@ -82,7 +78,6 @@ class _HomeState extends State<Home> {
 
   @override
   void dispose() {
-    _paneBloc.close();
     _searchbarFocusNode.dispose();
     _rootFocusNode.dispose();
     super.dispose();
@@ -136,10 +131,17 @@ class _HomeState extends State<Home> {
             ],
             child: Column(
               children: [
-                BSearchbar(
-                  focusNode: _searchbarFocusNode,
-                  onSubmitted: () => _returnFocusToRoot(),
-                  //onEditComplete: () => _returnFocusToRoot(),
+                Row(
+                  children: [
+                    BSearchbar(
+                      focusNode: _searchbarFocusNode,
+                      onSubmitted: () => _returnFocusToRoot(),
+                      //onEditComplete: () => _returnFocusToRoot(),
+                    ),
+                    AddPaneXButton(),
+                    RemovePaneButton(),
+                    ActivePaneIndicator()
+                  ],
                 ),
                 BlocListener<BSearchbarBloc, BSearchbarState>(
                   listenWhen: (prev, curr) =>
@@ -148,13 +150,11 @@ class _HomeState extends State<Home> {
                     final ref = state.referenceResult;
                     if (ref == null) return;
 
-                    _paneBloc.add(BiblePaneDisplayChapter(
-                      ref: ref,
-                      withSpans: true,
-                    ));
+                    context.read<PaneManagerCubit>().activeBloc().add(
+                          BiblePaneDisplayChapter(ref: ref, withSpans: true),
+                        );
                   },
-                  child:
-                      Expanded(child: BiblePane(uniqueId: 0, bloc: _paneBloc)),
+                  child: Expanded(child: MultipleBiblePanes()),
                 ),
               ],
             ),

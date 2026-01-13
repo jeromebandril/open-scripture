@@ -5,9 +5,7 @@ import 'package:the_smyrna_bible_v2/features/b_searchbar/data/repositories/b_sea
 import 'package:the_smyrna_bible_v2/features/b_searchbar/domain/repositories/b_searchbar_repository.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_selector/data/repositories/bible_selector_repository_impl.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_selector/presenter/bloc/bloc/bible_selector_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/domain/usecases/split_horizontally.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/domain/usecases/split_vertically.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/bloc/split_screen_bloc.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
 import 'package:the_smyrna_bible_v2/features/bible_installer_manager/presentation/bloc/download_manager/bloc/download_manager_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/settings_window/presentation/bloc/settings_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/data/repositories/bible_repository_impl.dart';
@@ -94,17 +92,6 @@ void initBSearchbarFeature() {
   );
 }
 
-void initSplitScreenFeature() {
-  sl.registerFactory(
-    () => SplitScreenBloc(
-      splitX: sl(),
-      splitY: sl(),
-    ),
-  );
-  sl.registerLazySingleton<SplitHorizontally>(() => SplitHorizontally());
-  sl.registerLazySingleton<SplitVertically>(() => SplitVertically());
-}
-
 void initReaderFeature() {
   // // bloc
   // sl.registerFactory(
@@ -116,6 +103,12 @@ void initReaderFeature() {
     () => BibleRepositoryImpl(localDatasource: sl()),
   );
   sl.registerLazySingleton(() => BibleReferenceParser());
+}
+
+void initSplitScreenFeature() {
+  sl.registerFactory(
+    () => PaneManagerCubit(repo: sl()),
+  );
 }
 
 void initBibleSelectorFeature() {
