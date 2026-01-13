@@ -132,15 +132,14 @@ class _HomeState extends State<Home> {
             child: Column(
               children: [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     BSearchbar(
                       focusNode: _searchbarFocusNode,
                       onSubmitted: () => _returnFocusToRoot(),
                       //onEditComplete: () => _returnFocusToRoot(),
                     ),
-                    AddPaneXButton(),
-                    RemovePaneButton(),
-                    ActivePaneIndicator()
+                    SplitscreenControls(),
                   ],
                 ),
                 BlocListener<BSearchbarBloc, BSearchbarState>(
