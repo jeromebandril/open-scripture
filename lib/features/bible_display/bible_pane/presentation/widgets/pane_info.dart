@@ -26,7 +26,6 @@ class _PaneInfoState extends State<PaneInfo> {
       cursor: SystemMouseCursors.click,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 8),
-        margin: EdgeInsets.all(4),
         height: 25,
         color: Theme.of(context).colorScheme.surface,
         child: Row(

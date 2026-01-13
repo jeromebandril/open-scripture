@@ -16,6 +16,7 @@ class MultipleBiblePanes extends StatelessWidget {
             for (final p in state.panes)
               Expanded(
                 child: Listener(
+                  behavior: HitTestBehavior.opaque,
                   onPointerDown: (_) =>
                       context.read<PaneManagerCubit>().setActive(p.id),
                   child: BiblePane(

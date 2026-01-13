@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:the_smyrna_bible_v2/core/domain/entities/verse_segment.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/cubit/selected_word_cubit.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/widgets/pane_info.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_selector/presenter/widget/bible_selector.dart';
@@ -79,6 +80,16 @@ class _BiblePaneState extends State<BiblePane> {
             // READY SCREEN
             //
             case BiblePaneStatus.ready:
+              // group segments by verse number
+              final segmentsByVerse = <int, List<VerseSegment>>{};
+
+              for (final s in state.segments) {
+                final key = s.ref.verseStart; // assuming int
+                (segmentsByVerse[key!] ??= <VerseSegment>[]).add(s);
+              }
+
+              final verseNumbers = segmentsByVerse.keys.toList()..sort();
+
               return Container(
                 padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
                 child: Stack(
@@ -86,39 +97,45 @@ class _BiblePaneState extends State<BiblePane> {
                     //
                     // MAIN VIEW
                     //
-                    state.segments.isEmpty
-                        ? Padding(
-                            padding: const EdgeInsets.fromLTRB(12, 24, 0, 0),
-                            child: Text("Pronto al tuo servizio padrone"),
-                          )
-                        : AdjustableTextSize(
-                            scrollController: _scrollController,
-                            initialiSize: 24,
-                            child: ListView.builder(
-                                controller: _scrollController,
-                                itemCount: state.segments.length,
-                                itemBuilder: (_, i) {
-                                  final vn = i + 1;
-                                  final segments = state.segments
-                                      .where((v) => v.ref.verseStart == i + 1)
-                                      .toList();
-                                  final spans =
-                                      segments.expand((s) => s.spans).toList();
-                                  final vStart = state.reference?.verseStart;
-                                  final vEnd = state.reference?.verseEnd;
+                    Positioned.fill(
+                      child: state.segments.isEmpty
+                          ? Center(
+                              child: Text(
+                              "Ready :)",
+                            ))
+                          : AdjustableTextSize(
+                              scrollController: _scrollController,
+                              initialiSize: 24,
+                              child: ListView.builder(
+                                  controller: _scrollController,
+                                  itemCount: verseNumbers.length + 1,
+                                  itemBuilder: (_, i) {
+                                    // Fixed empty space at the bottom
+                                    if (i == verseNumbers.length) {
+                                      return const SizedBox(height: 200);
+                                    }
 
-                                  return VerseWidget(
-                                      verseNumber: vn,
-                                      segments: segments,
-                                      spans: spans,
-                                      isHighlighted:
-                                          (vEnd == null && vn == vStart) ||
-                                              (vEnd != null &&
-                                                  vStart != null &&
-                                                  vn >= vStart &&
-                                                  vn <= vEnd));
-                                }),
-                          ),
+                                    final vn = verseNumbers[i];
+                                    final segments = segmentsByVerse[vn]!;
+                                    final spans = segments
+                                        .expand((s) => s.spans)
+                                        .toList();
+                                    final vStart = state.reference?.verseStart;
+                                    final vEnd = state.reference?.verseEnd;
+
+                                    return VerseWidget(
+                                        verseNumber: vn,
+                                        segments: segments,
+                                        spans: spans,
+                                        isHighlighted:
+                                            (vEnd == null && vn == vStart) ||
+                                                (vEnd != null &&
+                                                    vStart != null &&
+                                                    vn >= vStart &&
+                                                    vn <= vEnd));
+                                  }),
+                            ),
+                    ),
                     //
                     // PANE STATUS INFO
                     //
