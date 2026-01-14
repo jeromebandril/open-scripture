@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:the_smyrna_bible_v2/core/domain/entities/verse_segment.dart';
@@ -19,6 +21,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
         super(BiblePaneState(paneId: paneId, status: BiblePaneStatus.initial)) {
     on<BiblePaneOpen>(_onBiblePaneOpen);
     on<BiblePaneDisplayChapter>(_onBiblePaneDisplayChapter);
+    on<BiblePaneJustChangeRef>(_onChangeRef);
   }
 
   final BibleRepository repo;
@@ -76,5 +79,12 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
         ));
       },
     );
+  }
+
+  FutureOr<void> _onChangeRef(
+    BiblePaneJustChangeRef event,
+    Emitter<BiblePaneState> emit,
+  ) {
+    emit(state.copyWith(reference: () => event.ref));
   }
 }

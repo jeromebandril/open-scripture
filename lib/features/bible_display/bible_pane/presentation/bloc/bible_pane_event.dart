@@ -39,3 +39,14 @@ class BiblePaneDisplayChapter extends BiblePaneEvent {
   @override
   List<Object?> get props => [ref, withSpans, source];
 }
+
+class BiblePaneJustChangeRef extends BiblePaneEvent {
+  final BibleRef ref;
+
+  const BiblePaneJustChangeRef({
+    required this.ref,
+  });
+
+  @override
+  List<Object?> get props => [ref];
+}

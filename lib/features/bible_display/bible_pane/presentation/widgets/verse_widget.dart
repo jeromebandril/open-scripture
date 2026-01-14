@@ -28,7 +28,7 @@ class VerseWidget extends StatelessWidget {
     return Listener(
       onPointerDown: (_) {
         final ref = context.read<BiblePaneBloc>().state.reference!;
-        context.read<BiblePaneBloc>().add(BiblePaneDisplayChapter(
+        context.read<BiblePaneBloc>().add(BiblePaneJustChangeRef(
                 ref: ref.copyWith(
               verseStart: verseNumber,
               verseEnd: null,
