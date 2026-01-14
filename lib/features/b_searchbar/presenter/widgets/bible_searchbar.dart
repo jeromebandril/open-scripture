@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:the_smyrna_bible_v2/core/domain/entities/bible_ref.dart';
 
 import '../bloc/b_searchbar_bloc.dart';
 
@@ -17,6 +18,8 @@ class BSearchbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final history = context.select((BSearchbarBloc b) => b.state.history);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -51,6 +54,13 @@ class BSearchbar extends StatelessWidget {
               ),
             ),
           ),
+        ),
+        DropdownButton(
+          items: history.map<DropdownMenuItem<String>>((BibleRef value) {
+            return DropdownMenuItem<String>(
+                value: value.toString(), child: Text(value.toString()));
+          }).toList(),
+          onChanged: (_) {},
         ),
       ],
     );

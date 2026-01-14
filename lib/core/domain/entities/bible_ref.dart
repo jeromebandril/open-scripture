@@ -32,5 +32,10 @@ class BibleRef extends Equatable {
   }
 
   @override
+  String toString() {
+    return '$bookOsisId $chapter${verseStart != null ? ':$verseStart' : ''}${verseEnd != null ? '-$verseEnd' : ''}';
+  }
+
+  @override
   List<Object?> get props => [bookOsisId, chapter, verseStart, verseEnd];
 }

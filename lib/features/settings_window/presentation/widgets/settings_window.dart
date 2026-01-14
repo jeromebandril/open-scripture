@@ -14,7 +14,7 @@ String routeFor(SettingsSection s) => switch (s) {
 
 final Map<String, SettingsRoute> settingsRoutes = {
   '/appearance': SettingsRoute(
-      icon: Icons.auto_awesome_sharp,
+      icon: Icons.palette_rounded,
       name: 'Appearance',
       builder: (_) => const Text('appearance')),
   '/biblemanager': SettingsRoute(

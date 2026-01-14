@@ -58,7 +58,10 @@ class _WindowStackManagerWrapperState extends State<WindowStackManagerWrapper> {
                     type: MaterialType.transparency,
                     elevation: 24,
                     borderRadius: BorderRadius.circular(12),
-                    child: builder(overlayContext), // builds ONLY when opened
+                    child: Container(
+                        margin: EdgeInsets.all(24),
+                        child:
+                            builder(overlayContext)), // builds ONLY when opened
                   ),
                 ),
               ),

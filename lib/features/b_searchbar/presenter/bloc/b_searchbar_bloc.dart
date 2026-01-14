@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/navigation_bus.dart';
 
 import '../../../../core/domain/entities/bible_ref.dart';
 import '../../domain/repositories/b_searchbar_repository.dart';
@@ -8,13 +11,22 @@ part 'b_searchbar_event.dart';
 part 'b_searchbar_state.dart';
 
 class BSearchbarBloc extends Bloc<BSearchbarEvent, BSearchbarState> {
-  final BSearchbarRepository repo;
-
   BSearchbarBloc({
     required this.repo,
-  }) : super(const BSearchbarState()) {
+    NavigationBus? navBus,
+  })  : _navBus = navBus,
+        super(const BSearchbarState()) {
     on<BSearchbarParseIntent>(_onAnalyzeIntent);
+    on<_SaveInHistory>(_onSaveInHistory);
+
+    _sub = _navBus?.stream.listen((event) {
+      add(_SaveInHistory(event));
+    });
   }
+
+  final BSearchbarRepository repo;
+  final NavigationBus? _navBus;
+  late final StreamSubscription<NavigationFeedback>? _sub;
 
   Future<void> _onAnalyzeIntent(
     BSearchbarParseIntent event,
@@ -30,4 +42,26 @@ class BSearchbarBloc extends Bloc<BSearchbarEvent, BSearchbarState> {
       )),
     );
   }
+
+  void _onSaveInHistory(
+    _SaveInHistory event,
+    Emitter<BSearchbarState> emit,
+  ) {
+    if (event.result.success) {
+      emit(state.copyWith(
+        history: () => [event.result.ref, ...state.history],
+      ));
+    }
+  }
+
+  @override
+  Future<void> close() async {
+    await _sub?.cancel();
+    return super.close();
+  }
+}
+
+class _SaveInHistory extends BSearchbarEvent {
+  final NavigationFeedback result;
+  const _SaveInHistory(this.result);
 }

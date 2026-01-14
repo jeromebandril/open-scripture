@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/navigation_bus.dart';
+import 'package:the_smyrna_bible_v2/injection_container.dart';
 
 import '../../../bible_pane/domain/repositories/bible_repository.dart';
 import '../../../bible_pane/presentation/bloc/bible_pane_bloc.dart';
@@ -77,7 +79,8 @@ class PaneManagerCubit extends Cubit<PaneManagerState> {
   void _ensureBloc(int paneId) {
     _blocs.putIfAbsent(
       paneId,
-      () => BiblePaneBloc(paneId: paneId, repo: _repo),
+      () => BiblePaneBloc(
+          paneId: paneId, repo: _repo, navBus: sl<NavigationBus>()),
     );
   }
 

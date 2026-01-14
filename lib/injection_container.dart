@@ -16,6 +16,7 @@ import 'package:the_smyrna_bible_v2/features/bible_installer_manager/domain/repo
 import 'package:the_smyrna_bible_v2/features/bible_installer_manager/presentation/bloc/installed_bibles/installed_bibles_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
 import 'features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
+import 'features/bible_display/bible_pane/presentation/navigation_bus.dart';
 import 'features/bible_display/bible_selector/domain/repositories/bible_selector_repository.dart';
 import 'core/presentation/state_manager/install_notifier.dart';
 import 'features/bible_installer_manager/presentation/bloc/remote_catalog/remote_catalog_bloc.dart';
@@ -36,6 +37,8 @@ Future<void> init() async {
   initReaderFeature();
 
   initBibleSelectorFeature();
+
+  sl.registerLazySingleton(() => NavigationBus());
 }
 
 void initCore() {
@@ -80,7 +83,7 @@ void initBSearchbarFeature() {
   // bloc
   sl.registerFactory(
     // !!!!
-    () => BSearchbarBloc(repo: sl()),
+    () => BSearchbarBloc(repo: sl(), navBus: sl()),
   );
 
   sl.registerLazySingleton<BSearchbarRepository>(

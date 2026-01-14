@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:the_smyrna_bible_v2/core/domain/entities/verse_segment.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/domain/repositories/bible_repository.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/navigation_bus.dart';
 
 import '../../../../../core/domain/entities/bible_meta.dart';
 import '../../../../../core/domain/entities/bible_ref.dart';
@@ -10,15 +11,18 @@ part 'bible_pane_event.dart';
 part 'bible_pane_state.dart';
 
 class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
-  final BibleRepository repo;
-
   BiblePaneBloc({
     required int paneId,
     required this.repo,
-  }) : super(BiblePaneState(paneId: paneId, status: BiblePaneStatus.initial)) {
+    NavigationBus? navBus,
+  })  : _navBus = navBus,
+        super(BiblePaneState(paneId: paneId, status: BiblePaneStatus.initial)) {
     on<BiblePaneOpen>(_onBiblePaneOpen);
     on<BiblePaneDisplayChapter>(_onBiblePaneDisplayChapter);
   }
+
+  final BibleRepository repo;
+  final NavigationBus? _navBus;
 
   Future<void> _onBiblePaneOpen(
     BiblePaneOpen event,
@@ -54,19 +58,19 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
           );
 
     return eitherFailureOrChapter.fold(
-      (f) => emit(
-        state.copyWith(
-          status: () => BiblePaneStatus.error,
-          reference: () => event.ref,
-        ),
-      ),
-      (verses) => emit(
-        state.copyWith(
+      (f) => emit(state.copyWith(
+        status: () => BiblePaneStatus.error,
+        reference: () => event.ref,
+      )),
+      (verses) {
+        emit(state.copyWith(
           status: () => BiblePaneStatus.ready,
           reference: () => event.ref,
           verseSegments: () => verses,
-        ),
-      ),
+        ));
+
+        _navBus?.emit(NavigationFeedback(ref: event.ref, success: true));
+      },
     );
   }
 }

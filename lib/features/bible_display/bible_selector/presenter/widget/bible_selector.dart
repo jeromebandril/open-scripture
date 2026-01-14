@@ -62,8 +62,10 @@ class _BibleSelectorBody extends StatelessWidget {
 
           case InstalledBiblesStatus.loaded:
             body = Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Expanded(
+                SizedBox(
+                  height: state.installedBibles.length * 80,
                   child: ListView.separated(
                     itemCount: state.installedBibles.length,
                     separatorBuilder: (_, __) => const Divider(height: 1),
@@ -99,11 +101,12 @@ class _BibleSelectorBody extends StatelessWidget {
             );
             break;
         }
-        return Container(
-          width: 420,
-          height: 520,
-          padding: const EdgeInsets.all(16),
-          child: body,
+        return Center(
+          child: SizedBox(
+            height: 520,
+            width: 300,
+            child: body,
+          ),
         );
       },
     );
