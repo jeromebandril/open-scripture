@@ -6,7 +6,7 @@ import '../error/failure.dart';
 class BibleReferenceParser {
   static const searchPromptRegex =
       // r"(\d*\s*[a-zA-Z\s]+)(\d*)\D*(\d*)"; // version 1 (no verse end)
-      r'^(.+?)\s+(\d+)(?:[:.] (\d+)(?:-(\d+))?)?$'; // version 2
+      r'^(.+?)\s+(\d+)(?:[:.](\d+)(?:-(\d+))?)?$'; // version 2
 
   static const List<String> kjvBooks = [
     "Genesis",
