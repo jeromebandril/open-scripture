@@ -69,7 +69,11 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
           verseSegments: () => verses,
         ));
 
-        _navBus?.emit(NavigationFeedback(ref: event.ref, success: true));
+        _navBus?.emit(NavigationFeedback(
+          ref: event.ref,
+          success: true,
+          source: event.source,
+        ));
       },
     );
   }

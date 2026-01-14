@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/widgets/bible_searchbar.dart';
+import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/widgets/history_button.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/widgets/split_view_container.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/widgets/split_view_controllers.dart';
@@ -11,6 +12,7 @@ import 'package:the_smyrna_bible_v2/features/window_stack_manager/presentation/b
 import 'package:the_smyrna_bible_v2/features/window_stack_manager/presentation/widgets/window_stack_manager_wrapper.dart';
 import 'features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
 import 'features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
+import 'features/bible_display/bible_pane/presentation/navigation_bus.dart';
 import 'features/bible_installer_manager/presentation/bloc/installed_bibles/installed_bibles_bloc.dart';
 import 'injection_container.dart' as di;
 
@@ -143,13 +145,14 @@ class _HomeState extends State<Home> {
                 spacing: 8,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       BSearchbar(
                         focusNode: _searchbarFocusNode,
                         onSubmitted: () => _returnFocusToRoot(),
                         //onEditComplete: () => _returnFocusToRoot(),
                       ),
+                      HistoryButton(),
                       SplitscreenControls(),
                     ],
                   ),
@@ -161,7 +164,8 @@ class _HomeState extends State<Home> {
                       if (ref == null) return;
 
                       context.read<PaneManagerCubit>().activeBloc().add(
-                            BiblePaneDisplayChapter(ref: ref, withSpans: true),
+                            BiblePaneDisplayChapter(
+                                ref: ref, source: IntentSource.searchbar),
                           );
                     },
                     child: Expanded(child: MultipleBiblePanes()),

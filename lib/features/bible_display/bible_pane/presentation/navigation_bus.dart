@@ -2,15 +2,19 @@ import 'dart:async';
 
 import '../../../../core/domain/entities/bible_ref.dart';
 
+enum IntentSource { searchbar }
+
 class NavigationFeedback {
   final BibleRef ref;
   final bool success;
   final String? error;
+  final IntentSource? source;
 
   const NavigationFeedback({
     required this.ref,
     required this.success,
     this.error,
+    this.source,
   });
 }
 

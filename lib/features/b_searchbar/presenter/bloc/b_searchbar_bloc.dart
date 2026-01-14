@@ -20,6 +20,8 @@ class BSearchbarBloc extends Bloc<BSearchbarEvent, BSearchbarState> {
     on<_SaveInHistory>(_onSaveInHistory);
 
     _sub = _navBus?.stream.listen((event) {
+      // store intent in history only if from searchbar
+      if (event.source != IntentSource.searchbar) return;
       add(_SaveInHistory(event));
     });
   }

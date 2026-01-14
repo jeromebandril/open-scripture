@@ -4,7 +4,7 @@ sealed class BiblePaneEvent extends Equatable {
   const BiblePaneEvent();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class BiblePaneOpen extends BiblePaneEvent {
@@ -28,12 +28,14 @@ class BiblePaneDisplayVerses extends BiblePaneEvent {
 class BiblePaneDisplayChapter extends BiblePaneEvent {
   final BibleRef ref;
   final bool withSpans;
+  final IntentSource? source;
 
   const BiblePaneDisplayChapter({
     required this.ref,
     this.withSpans = true,
+    this.source,
   });
 
   @override
-  List<Object> get props => [ref, withSpans];
+  List<Object?> get props => [ref, withSpans, source];
 }
