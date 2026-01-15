@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,6 +9,29 @@ import '../../../../customizer/presentation/cubit/customizer_cubit.dart';
 class VerseDivider extends StatelessWidget {
   const VerseDivider({super.key});
 
+  // scaling formula definitely not done by me ahah
+  //
+  // How to tune:
+  // Want less spacing at small fonts → increase pSmall (try 1.15 → 1.5)
+  // Want spacing to also grow slower when very large → set pLarge to 0.85–0.95
+  // Choose f0 and s0 based on the size where it “looks correct”
+  double _spacingFromFont(
+    double f, {
+    double f0 =
+        48.0, // font size where spacing looks correct (your "max zoom" reference)
+    double s0 = 36.0, // spacing you want at f0
+    double pSmall = 1.25, // >1 => extra shrink when f < f0
+    double pLarge =
+        1.0, // 1.0 => proportional above f0 (or try 0.9 for slower growth)
+    double min = 8.0,
+    double max = 128.0,
+  }) {
+    final r = (f / f0).clamp(0.01, 1000.0);
+    final p = (f < f0) ? pSmall : pLarge;
+    final raw = s0 * math.pow(r, p).toDouble();
+    return raw.clamp(min, max);
+  }
+
   @override
   Widget build(BuildContext context) {
     final base = DefaultTextStyle.of(context).style.fontSize ?? 14;
@@ -15,20 +40,11 @@ class VerseDivider extends StatelessWidget {
     final isEnabled =
         context.select((CustomizerCubit c) => c.state.theme.showVerseDivider);
 
-    final verticalPadding = clampDouble(
-      effectiveFontSize * (0.95 * effectiveFontSize * .01),
-      12,
-      128,
-    );
-    final spacerHeight = clampDouble(
-      effectiveFontSize * (1 * effectiveFontSize * .01),
-      12,
-      128,
-    );
+    final spacerHeight = _spacingFromFont(effectiveFontSize);
 
     return isEnabled
-        ? Padding(
-            padding: EdgeInsets.symmetric(vertical: verticalPadding),
+        ? Container(
+            margin: EdgeInsets.symmetric(vertical: spacerHeight / 2),
             child: Divider(height: 1),
           )
         : SizedBox(height: spacerHeight);
