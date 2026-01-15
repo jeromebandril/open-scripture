@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:the_smyrna_bible_v2/features/bible_installer_manager/presentation/widgets/translation_manager.dart';
+import 'package:the_smyrna_bible_v2/features/customizer/presentation/widgets/customizer_screen.dart';
 
 import 'sidebar_navigator.dart';
 import 'unknown.dart';
@@ -16,7 +17,7 @@ final Map<String, SettingsRoute> settingsRoutes = {
   '/appearance': SettingsRoute(
       icon: Icons.palette_rounded,
       name: 'Appearance',
-      builder: (_) => const Text('appearance')),
+      builder: (_) => const CustomizerScreen()),
   '/biblemanager': SettingsRoute(
       icon: Icons.menu_book_sharp,
       name: 'Bible Manager',
@@ -137,19 +138,17 @@ class _SettingRouteLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      child: Column(
-        children: [
-          _HeaderSettings(
-            height: 40,
-            onClose: () {
-              if (onClose != null) onClose!();
-            },
-          ),
-          Expanded(child: child),
-        ],
-      ),
+    return Column(
+      children: [
+        _HeaderSettings(
+          height: 40,
+          onClose: () {
+            if (onClose != null) onClose!();
+          },
+        ),
+        SizedBox(height: 16),
+        Expanded(child: child),
+      ],
     );
   }
 }
