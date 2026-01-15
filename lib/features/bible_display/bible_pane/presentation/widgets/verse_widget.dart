@@ -27,42 +27,37 @@ class VerseWidget extends StatelessWidget {
     final String content = segments.map((e) => e.textContent).join();
     final BibleRef ref = segments.first.ref;
 
-    return Padding(
-      padding: EdgeInsets.only(bottom: 36),
-      child: Listener(
-        onPointerDown: (_) {
-          final ref = context.read<BiblePaneBloc>().state.reference!;
-          context.read<BiblePaneBloc>().add(BiblePaneJustChangeRef(
-                  ref: ref.copyWith(
-                verseStart: verseNumber,
-                verseEnd: null,
-              )));
-        },
-        child: spans == null
-            ? Text(content)
-            : SelectableText.rich(
-                TextSpan(style: TextStyle(height: 1.2), children: [
-                TextSpan(
-                  text:
-                      isHighlighted ? '${ref.toString()}  ' : '$verseNumber  ',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: isHighlighted
-                          ? Colors.blueAccent
-                          : Theme.of(context).colorScheme.onSurface),
-                ),
-                VerseSpanBuilder.build(
-                  text: content,
-                  spans: spans!,
-                  onWordTap: (VerseSpan span, String slice) => context
-                      .read<SelectedWordCubit>()
-                      .setSelectedWord(WordInfo(
-                        text: slice,
-                        span: span,
-                      )),
-                ),
-              ])),
-      ),
+    return Listener(
+      onPointerDown: (_) {
+        final ref = context.read<BiblePaneBloc>().state.reference!;
+        context.read<BiblePaneBloc>().add(BiblePaneJustChangeRef(
+                ref: ref.copyWith(
+              verseStart: verseNumber,
+              verseEnd: null,
+            )));
+      },
+      child: spans == null
+          ? Text(content)
+          : SelectableText.rich(
+              TextSpan(style: TextStyle(height: 1.2), children: [
+              TextSpan(
+                text: isHighlighted ? '${ref.toString()}  ' : '$verseNumber  ',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: isHighlighted
+                        ? Colors.blueAccent
+                        : Theme.of(context).colorScheme.onSurface),
+              ),
+              VerseSpanBuilder.build(
+                text: content,
+                spans: spans!,
+                onWordTap: (VerseSpan span, String slice) =>
+                    context.read<SelectedWordCubit>().setSelectedWord(WordInfo(
+                          text: slice,
+                          span: span,
+                        )),
+              ),
+            ])),
     );
   }
 }

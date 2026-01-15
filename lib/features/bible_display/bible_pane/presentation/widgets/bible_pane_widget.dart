@@ -6,7 +6,9 @@ import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentati
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_selector/presenter/widget/bible_selector.dart';
 
 import '../../../../../core/presentation/widgets/adjustable_text_size.dart';
+import '../../../../customizer/presentation/cubit/customizer_cubit.dart';
 import '../bloc/bible_pane_bloc.dart';
+import 'verse_divider.dart';
 import 'verse_widget.dart';
 
 class BiblePane extends StatefulWidget {
@@ -25,6 +27,7 @@ class BiblePane extends StatefulWidget {
 
 class _BiblePaneState extends State<BiblePane> {
   late ScrollController _scrollController;
+  double scale = 1;
 
   @override
   void initState() {
@@ -103,34 +106,38 @@ class _BiblePaneState extends State<BiblePane> {
                           ))
                         : AdjustableTextSize(
                             scrollController: _scrollController,
-                            initialiSize: 24,
-                            child: ListView.builder(
-                                controller: _scrollController,
-                                itemCount: verseNumbers.length + 1,
-                                itemBuilder: (_, i) {
-                                  // Fixed empty space at the bottom
-                                  if (i == verseNumbers.length) {
-                                    return const SizedBox(height: 200);
-                                  }
+                            initialiSize: 14,
+                            child: ListView.separated(
+                              controller: _scrollController,
+                              itemCount: verseNumbers.length + 1,
+                              separatorBuilder: (ctx, _) {
+                                return VerseDivider();
+                              },
+                              itemBuilder: (_, i) {
+                                // Fixed empty space at the bottom
+                                if (i == verseNumbers.length) {
+                                  return const SizedBox(height: 200);
+                                }
 
-                                  final vn = verseNumbers[i];
-                                  final segments = segmentsByVerse[vn]!;
-                                  final spans =
-                                      segments.expand((s) => s.spans).toList();
-                                  final vStart = state.reference?.verseStart;
-                                  final vEnd = state.reference?.verseEnd;
+                                final vn = verseNumbers[i];
+                                final segments = segmentsByVerse[vn]!;
+                                final spans =
+                                    segments.expand((s) => s.spans).toList();
+                                final vStart = state.reference?.verseStart;
+                                final vEnd = state.reference?.verseEnd;
 
-                                  return VerseWidget(
-                                      verseNumber: vn,
-                                      segments: segments,
-                                      spans: spans,
-                                      isHighlighted:
-                                          (vEnd == null && vn == vStart) ||
-                                              (vEnd != null &&
-                                                  vStart != null &&
-                                                  vn >= vStart &&
-                                                  vn <= vEnd));
-                                }),
+                                return VerseWidget(
+                                    verseNumber: vn,
+                                    segments: segments,
+                                    spans: spans,
+                                    isHighlighted:
+                                        (vEnd == null && vn == vStart) ||
+                                            (vEnd != null &&
+                                                vStart != null &&
+                                                vn >= vStart &&
+                                                vn <= vEnd));
+                              },
+                            ),
                           ),
                   ),
                   //
