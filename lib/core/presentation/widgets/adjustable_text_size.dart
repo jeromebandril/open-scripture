@@ -58,21 +58,30 @@ class _AdjustableTextSizeState extends State<AdjustableTextSize> {
 
   @override
   Widget build(BuildContext context) {
+    final mq = MediaQuery.of(context);
+
+    // Multiply the system scaler by your document zoom factor.
+    final combined = TextScaler.linear(
+      mq.textScaler.scale(1.0) * textScaleFactor,
+    );
+
     return Listener(
       onPointerSignal: _onPointerSignal,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () {
-          print('focus requested');
           _focusNode.requestFocus();
         },
         onScaleUpdate: _onScaleUpdate,
         child: Focus(
           focusNode: _focusNode,
           onKeyEvent: _onKeyEvent,
-          child: DefaultTextStyle.merge(
-            style: TextStyle(fontSize: textSize * textScaleFactor),
-            child: widget.child,
+          child: MediaQuery(
+            data: mq.copyWith(textScaler: combined),
+            child: DefaultTextStyle.merge(
+              style: TextStyle(fontSize: textSize),
+              child: widget.child,
+            ),
           ),
         ),
       ),
