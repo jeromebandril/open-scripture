@@ -1,30 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:the_smyrna_bible_v2/features/toolbar/presentation/widgets/app_toolbar.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/widgets/bible_searchbar.dart';
-import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/widgets/history_button.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/widgets/split_view_container.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/widgets/split_view_controllers.dart';
-import 'package:the_smyrna_bible_v2/features/customizer/domain/entities/app_theme.dart';
-import 'package:the_smyrna_bible_v2/features/customizer/domain/entities/bible_pane_theme.dart';
-import 'package:the_smyrna_bible_v2/features/keybindings/presentation/widget/keybindings_host.dart';
-import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/settings_window.dart';
-import 'package:the_smyrna_bible_v2/features/toolbar/presentation/widgets/toolbar.dart';
-import 'package:the_smyrna_bible_v2/features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/window_stack_manager/presentation/widgets/window_stack_manager_wrapper.dart';
+
 import 'features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
+import 'features/b_searchbar/presenter/widgets/bible_searchbar.dart';
+import 'features/b_searchbar/presenter/widgets/history_button.dart';
 import 'features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
 import 'features/bible_display/bible_pane/presentation/navigation_bus.dart';
+import 'features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
+import 'features/bible_display/split_screen/presenter/widgets/split_view_container.dart';
+import 'features/bible_display/split_screen/presenter/widgets/split_view_controllers.dart';
 import 'features/bible_installer_manager/presentation/bloc/installed_bibles/installed_bibles_bloc.dart';
+import 'features/customizer/domain/entities/app_theme.dart';
+import 'features/customizer/domain/entities/bible_pane_theme.dart';
 import 'features/customizer/presentation/cubit/customizer_cubit.dart';
+import 'features/keybindings/presentation/widget/keybindings_host.dart';
+import 'features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
+import 'features/window_stack_manager/presentation/widgets/window_stack_manager_wrapper.dart';
 import 'injection_container.dart' as di;
 
 void main() async {
   await di.init();
-  WidgetsFlutterBinding.ensureInitialized();
 
+  WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
+
   runApp(const MyApp());
 }
 
@@ -88,25 +89,13 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   late final FocusNode _searchbarFocusNode;
   late final FocusNode _rootFocusNode;
-  bool _isFullscreen = false;
 
   @override
   void initState() {
     super.initState();
-    _initWindowState();
     _searchbarFocusNode = FocusNode(debugLabel: 'searchbar');
     _rootFocusNode = FocusNode(debugLabel: 'root');
     // ..add(BiblePaneOpen(1)); // pick initial bibleId here
-  }
-
-  void _initWindowState() async {
-    final isFullscreen = await windowManager.isFullScreen();
-
-    if (!mounted) return;
-
-    setState(() {
-      _isFullscreen = isFullscreen;
-    });
   }
 
   @override
@@ -145,45 +134,7 @@ class _HomeState extends State<Home> {
         // popups or secondary pages in the form of a window (e.g. settings menu)
         //
         body: WindowStackManagerWrapper(
-          child: Toolbar(
-            options: [
-              ToolbarOption(
-                'Bible',
-                onTap: () {
-                  context.read<WindowStackManagerBloc>().add(
-                        WindowStackManagerOpen(
-                          SettingsWindow(
-                            initialRoute: SettingsSection.bibleManager,
-                            onClose: () {
-                              context
-                                  .read<WindowStackManagerBloc>()
-                                  .add(WindowStackManagerClose());
-                            },
-                          ),
-                        ),
-                      );
-                },
-              ),
-              const ToolbarOption('Options'),
-              const ToolbarOption('Tools'),
-              ToolbarOption(
-                'Help',
-                onTap: () {
-                  context.read<WindowStackManagerBloc>().add(
-                        WindowStackManagerOpen(
-                          SettingsWindow(
-                            initialRoute: SettingsSection.about,
-                            onClose: () {
-                              context
-                                  .read<WindowStackManagerBloc>()
-                                  .add(WindowStackManagerClose());
-                            },
-                          ),
-                        ),
-                      );
-                },
-              ),
-            ],
+          child: AppToolbar(
             child: Padding(
               padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
               child: Column(
@@ -191,30 +142,11 @@ class _HomeState extends State<Home> {
                 children: [
                   //
                   // HEADER
-                  //
-                  Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      BSearchbar(
-                        focusNode: _searchbarFocusNode,
-                        onSubmitted: () => _returnFocusToRoot(),
-                        //onEditComplete: () => _returnFocusToRoot(),
-                      ),
-                      HistoryButton(),
-                      SplitscreenControls(),
-                      IconButton(
-                        onPressed: () async {
-                          await windowManager.setFullScreen(!_isFullscreen);
-                          setState(() => _isFullscreen = !_isFullscreen);
-                        },
-                        tooltip: _isFullscreen
-                            ? 'Exit fullscreen'
-                            : 'Enter fullscreen',
-                        icon: _isFullscreen
-                            ? const Icon(Icons.fullscreen_exit)
-                            : const Icon(Icons.fullscreen),
-                      ),
-                    ],
+                  // separated just to be organized,
+                  // pass here all required parameters
+                  _AppHeader(
+                    searchbarFocusNode: _searchbarFocusNode,
+                    returnFocusToRoot: _returnFocusToRoot,
                   ),
                   //
                   // BIBLE PANES
@@ -239,6 +171,73 @@ class _HomeState extends State<Home> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _AppHeader extends StatefulWidget {
+  const _AppHeader({
+    required this.searchbarFocusNode,
+    required this.returnFocusToRoot,
+  });
+
+  final FocusNode searchbarFocusNode;
+  final void Function() returnFocusToRoot;
+
+  @override
+  State<_AppHeader> createState() => _AppHeaderState();
+}
+
+class _AppHeaderState extends State<_AppHeader> {
+  bool _isFullscreen = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initWindowState();
+  }
+
+  void _initWindowState() async {
+    final isFullscreen = await windowManager.isFullScreen();
+
+    if (!mounted) return;
+
+    setState(() {
+      _isFullscreen = isFullscreen;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        BSearchbar(
+          focusNode: widget.searchbarFocusNode,
+          onSubmitted: () => widget.returnFocusToRoot(),
+          //onEditComplete: () => _returnFocusToRoot(),
+        ),
+        HistoryButton(),
+        SplitscreenControls(),
+        IconButton(
+          onPressed: () async {
+            // If currently maximized, restore first
+            // (because of known bug)
+            if (await windowManager.isMaximized()) {
+              await windowManager.unmaximize();
+
+              // Give the OS a moment to apply the style/state change
+              await Future.delayed(const Duration(milliseconds: 60));
+            }
+            await windowManager.setFullScreen(!_isFullscreen);
+            setState(() => _isFullscreen = !_isFullscreen);
+          },
+          tooltip: _isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen',
+          icon: _isFullscreen
+              ? const Icon(Icons.fullscreen_exit)
+              : const Icon(Icons.fullscreen),
+        ),
+      ],
     );
   }
 }
