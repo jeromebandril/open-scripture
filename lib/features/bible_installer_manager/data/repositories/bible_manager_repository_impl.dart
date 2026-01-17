@@ -43,28 +43,29 @@ class BibleManagerRepositoryImpl implements BibleManagerRepository {
   }
 
   @override
-  Stream<InstallProgress> downloadAndInstallBible(String bibleId) async* {
-    //return simulateDownloadAndInstall();
-    // 1) Download phase
-    await for (final p in remoteDataSource.downloadBibleFileContent(bibleId)) {
-      yield p;
+  Stream<InstallProgress> downloadAndInstallBible(String bibleId) {
+    return simulateDownloadAndInstall();
 
-      // Stop immediately on failure
-      if (p.stage == InstallStage.failed) return;
+    // // 1) Download phase
+    // await for (final p in remoteDataSource.downloadBibleFileContent(bibleId)) {
+    //   yield p;
 
-      // When download is done, break and start install
-      if (p.stage == InstallStage.downloadingDone) break;
-    }
+    //   // Stop immediately on failure
+    //   if (p.stage == InstallStage.failed) return;
 
-    // 2) Install phase
-    await for (final p in localDataSource.installBible(bibleId)) {
-      yield p;
-      if (p.stage == InstallStage.failed) return;
-      if (p.stage == InstallStage.done) return;
-    }
+    //   // When download is done, break and start install
+    //   if (p.stage == InstallStage.downloadingDone) break;
+    // }
 
-    // If installer doesn't explicitly emit done, you can emit it here.
-    yield const InstallProgress(stage: InstallStage.done);
+    // // 2) Install phase
+    // await for (final p in localDataSource.installBible(bibleId)) {
+    //   yield p;
+    //   if (p.stage == InstallStage.failed) return;
+    //   if (p.stage == InstallStage.done) return;
+    // }
+
+    // // If installer doesn't explicitly emit done, you can emit it here.
+    // yield const InstallProgress(stage: InstallStage.done);
   }
 
   @override

@@ -23,6 +23,7 @@ class InstalledBiblesSection extends StatelessWidget {
           emptyListPlaceholder: Text('No Installed bibles yet'),
           errorPlaceholder: Text('Error'),
           itemCount: state.installedBibles.length,
+          //separatorBuilder: (_, __) => Divider(),
           itemBuilder: (_, index) {
             return _InstalledBiblesRow(
               bibleMeta: state.installedBibles[index],

@@ -46,8 +46,11 @@ class _HoverableContainerState extends State<HoverableContainer> {
         padding: widget.padding,
         width: widget.width,
         height: widget.height,
-        decoration: widget.decoration?.copyWith(color: _backgroundColor),
-        color: widget.decoration == null ? _backgroundColor : null,
+        decoration: widget.decoration
+            ?.copyWith(color: _backgroundColor ?? widget.initialColor),
+        color: widget.decoration == null
+            ? _backgroundColor ?? widget.initialColor
+            : null,
         child: widget.child,
       ),
     );

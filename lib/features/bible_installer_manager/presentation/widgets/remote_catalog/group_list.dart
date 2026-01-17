@@ -24,7 +24,10 @@ class _GroupListState extends State<_GroupList> {
         HoverableContainer(
           padding: EdgeInsets.only(left: 8),
           height: 40,
-          hoveredColor: const Color.fromRGBO(175, 193, 175, 1),
+          hoveredColor: Theme.of(context).colorScheme.primaryContainer,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -39,7 +42,9 @@ class _GroupListState extends State<_GroupList> {
         Visibility(
           visible: isExpanded,
           child: Container(
-              color: Colors.grey.shade200,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: Theme.of(context).colorScheme.surface),
               child: ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),

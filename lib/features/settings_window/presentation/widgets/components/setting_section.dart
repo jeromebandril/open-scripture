@@ -86,11 +86,13 @@ class SettingListSection extends StatelessWidget {
     this.isError = false,
     this.errorPlaceholder,
     this.emptyListPlaceholder,
+    this.separatorBuilder,
   });
 
   final String title;
   final int itemCount;
   final NullableIndexedWidgetBuilder itemBuilder;
+  final IndexedWidgetBuilder? separatorBuilder;
   final bool isLoading;
   final bool isError;
   final Widget? emptyListPlaceholder;
@@ -105,6 +107,13 @@ class SettingListSection extends StatelessWidget {
     }
     if (itemCount == 0) {
       return emptyListPlaceholder ?? Text('Empty');
+    }
+    if (separatorBuilder != null) {
+      return ListView.separated(
+        itemBuilder: itemBuilder,
+        separatorBuilder: separatorBuilder!,
+        itemCount: itemCount,
+      );
     }
 
     return ListView.builder(
@@ -139,7 +148,10 @@ class SettingListSection extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             padding: EdgeInsets.all(32),
-            child: _builder(),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: _builder(),
+            ),
           ),
         ),
       ],

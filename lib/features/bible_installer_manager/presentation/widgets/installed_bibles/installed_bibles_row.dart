@@ -14,7 +14,7 @@ class _InstalledBiblesRow extends StatelessWidget {
       ),
       height: 36,
       initialColor: null,
-      hoveredColor: Colors.grey.shade200,
+      hoveredColor: Theme.of(context).colorScheme.primaryContainer,
       child: Align(
         alignment: Alignment.centerLeft,
         child: Row(

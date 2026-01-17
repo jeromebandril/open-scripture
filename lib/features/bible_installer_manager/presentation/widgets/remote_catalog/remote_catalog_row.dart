@@ -25,7 +25,8 @@ class RemoteCatalogRow extends StatelessWidget {
       height: 40,
       padding: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
-      hoveredColor: Colors.grey.shade200,
+      initialColor: Theme.of(context).colorScheme.surface,
+      hoveredColor: Theme.of(context).colorScheme.primaryContainer,
       child: Row(children: [
         SizedBox(
           width: 40,
@@ -126,25 +127,25 @@ class _DownloadingProgressBarState extends State<_DownloadingProgressBar> {
           ),
           padding: EdgeInsets.zero,
         ),
-        SizedBox(
-            width: 200,
+        Expanded(
             child: Stack(
-              alignment: AlignmentGeometry.center,
-              children: [
-                LinearProgressIndicator(
-                  minHeight: 20,
-                  value: progress.stage == InstallStage.done ||
-                          progress.stage == InstallStage.installing
-                      ? 1
-                      : progress.fraction,
-                ),
-                Text(
-                  "${progress.received}/${progress.total}",
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 12),
-                ),
-              ],
-            )),
+          alignment: AlignmentGeometry.center,
+          children: [
+            LinearProgressIndicator(
+              minHeight: 20,
+              value: progress.stage == InstallStage.done ||
+                      progress.stage == InstallStage.installing
+                  ? 1
+                  : progress.fraction,
+            ),
+            Text(
+              "${progress.received}/${progress.total}",
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                  fontSize: 12, color: Theme.of(context).colorScheme.onPrimary),
+            ),
+          ],
+        )),
       ]);
     });
   }

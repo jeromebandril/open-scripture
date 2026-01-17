@@ -46,6 +46,7 @@ class RemoteCatalogSection extends StatelessWidget {
           emptyListPlaceholder: Text('Empty'),
           errorPlaceholder: Text(state.errorMessage ?? 'Error'),
           itemCount: groups.values.length,
+          //separatorBuilder: (_, __) => Divider(),
           itemBuilder: (_, index) {
             final String key = keys.elementAt(index);
 
