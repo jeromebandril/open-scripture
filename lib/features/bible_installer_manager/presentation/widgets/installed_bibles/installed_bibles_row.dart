@@ -36,9 +36,9 @@ class _InstalledBiblesRow extends StatelessWidget {
                   .read<InstalledBiblesBloc>()
                   .add(InstalledBiblesUninstall(bibleMeta.extId)),
               child: Row(
+                spacing: 8,
                 children: [
                   const Icon(Icons.delete_forever_outlined),
-                  Gap(8),
                   const Text('Uninstall'),
                 ],
               ),

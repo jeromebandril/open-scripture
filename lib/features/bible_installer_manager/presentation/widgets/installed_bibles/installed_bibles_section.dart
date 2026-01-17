@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:gap/gap.dart';
 import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/components/setting_section.dart';
 
 import '../../../../../core/domain/entities/bible_meta.dart';

@@ -50,7 +50,6 @@ dependencies:
   rxdart: ^0.28.0
   dio: ^5.4.1
   collection: ^1.18.0
-  gap: ^3.0.1
   drift: ^2.21.0
   drift_flutter: ^0.2.1
   path: ^1.9.1
