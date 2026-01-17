@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:window_manager/window_manager.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/widgets/bible_searchbar.dart';
 import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/widgets/history_button.dart';
@@ -21,6 +22,9 @@ import 'injection_container.dart' as di;
 
 void main() async {
   await di.init();
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await windowManager.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -84,13 +88,25 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   late final FocusNode _searchbarFocusNode;
   late final FocusNode _rootFocusNode;
+  bool _isFullscreen = false;
 
   @override
   void initState() {
     super.initState();
+    _initWindowState();
     _searchbarFocusNode = FocusNode(debugLabel: 'searchbar');
     _rootFocusNode = FocusNode(debugLabel: 'root');
     // ..add(BiblePaneOpen(1)); // pick initial bibleId here
+  }
+
+  void _initWindowState() async {
+    final isFullscreen = await windowManager.isFullScreen();
+
+    if (!mounted) return;
+
+    setState(() {
+      _isFullscreen = isFullscreen;
+    });
   }
 
   @override
@@ -124,7 +140,6 @@ class _HomeState extends State<Home> {
       searchFocusNode: _searchbarFocusNode,
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.surface,
-
         //
         // Manages the stacks of windosw that may occur when opening
         // popups or secondary pages in the form of a window (e.g. settings menu)
@@ -174,6 +189,9 @@ class _HomeState extends State<Home> {
               child: Column(
                 spacing: 8,
                 children: [
+                  //
+                  // HEADER
+                  //
                   Row(
                     // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -184,8 +202,23 @@ class _HomeState extends State<Home> {
                       ),
                       HistoryButton(),
                       SplitscreenControls(),
+                      IconButton(
+                        onPressed: () async {
+                          await windowManager.setFullScreen(!_isFullscreen);
+                          setState(() => _isFullscreen = !_isFullscreen);
+                        },
+                        tooltip: _isFullscreen
+                            ? 'Exit fullscreen'
+                            : 'Enter fullscreen',
+                        icon: _isFullscreen
+                            ? const Icon(Icons.fullscreen_exit)
+                            : const Icon(Icons.fullscreen),
+                      ),
                     ],
                   ),
+                  //
+                  // BIBLE PANES
+                  //
                   BlocListener<BSearchbarBloc, BSearchbarState>(
                     listenWhen: (prev, curr) =>
                         prev.referenceResult != curr.referenceResult,
