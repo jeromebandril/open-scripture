@@ -11,6 +11,7 @@ class VerseSpanBuilder {
     required List<VerseSpan> spans,
     TextStyle? baseStyle,
     required void Function(VerseSpan span, String slice)? onWordTap,
+    required BuildContext context,
   }) {
     baseStyle ??= const TextStyle();
 
@@ -41,9 +42,11 @@ class VerseSpanBuilder {
       for (final s in active) {
         switch (s.type) {
           case SpanType.italic:
-            style = style.merge(const TextStyle(
+            style = style.merge(TextStyle(
               fontStyle: FontStyle.italic,
-              color: Colors.black38,
+              color: Theme.brightnessOf(context) == Brightness.light
+                  ? Colors.black38
+                  : Colors.white54,
             ));
             break;
           case SpanType.bold:

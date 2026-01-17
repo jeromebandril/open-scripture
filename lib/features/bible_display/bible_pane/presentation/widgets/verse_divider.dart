@@ -1,9 +1,8 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../customizer/presentation/cubit/customizer_cubit.dart';
+import '../../../../customizer/domain/entities/bible_pane_theme.dart';
 
 class VerseDivider extends StatelessWidget {
   const VerseDivider({super.key});
@@ -35,11 +34,10 @@ class VerseDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     final base = DefaultTextStyle.of(context).style.fontSize ?? 14;
     final effectiveFontSize = MediaQuery.of(context).textScaler.scale(base);
+    final spacerHeight = _spacingFromFont(effectiveFontSize);
 
     final isEnabled =
-        context.select((CustomizerCubit c) => c.state.theme.showVerseDivider);
-
-    final spacerHeight = _spacingFromFont(effectiveFontSize);
+        Theme.of(context).extension<BiblePaneTheme>()!.showVerseDivider;
 
     return isEnabled
         ? Container(

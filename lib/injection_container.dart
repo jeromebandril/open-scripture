@@ -14,6 +14,10 @@ import 'package:the_smyrna_bible_v2/core/data/datasources/bible_sqllite_datasour
 import 'package:the_smyrna_bible_v2/features/bible_installer_manager/data/repositories/bible_manager_repository_impl.dart';
 import 'package:the_smyrna_bible_v2/features/bible_installer_manager/domain/repositories/bible_manager_repository.dart';
 import 'package:the_smyrna_bible_v2/features/bible_installer_manager/presentation/bloc/installed_bibles/installed_bibles_bloc.dart';
+import 'package:the_smyrna_bible_v2/features/customizer/data/datasources/customizer_datasource.dart';
+import 'package:the_smyrna_bible_v2/features/customizer/data/repo/customizer_repo_impl.dart';
+import 'package:the_smyrna_bible_v2/features/customizer/domain/repo/customizer_repo.dart';
+import 'package:the_smyrna_bible_v2/features/customizer/presentation/cubit/customizer_cubit.dart';
 import 'package:the_smyrna_bible_v2/features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
 import 'features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
 import 'features/bible_display/bible_pane/presentation/navigation_bus.dart';
@@ -25,6 +29,8 @@ final sl = GetIt.instance;
 
 Future<void> init() async {
   initDatabase();
+
+  initCustomizerFeature();
 
   initCore();
 
@@ -39,6 +45,18 @@ Future<void> init() async {
   initBibleSelectorFeature();
 
   sl.registerLazySingleton(() => NavigationBus());
+}
+
+void initCustomizerFeature() {
+  sl.registerLazySingleton<CustomizerDatasource>(
+    () => CustomizerDatasourceImpl(),
+  );
+  sl.registerLazySingleton<CustomizerRepo>(
+    () => CustomizerRepoImpl(localDatasource: sl()),
+  );
+  sl.registerFactory(
+    () => CustomizerCubit(repo: sl()),
+  );
 }
 
 void initCore() {

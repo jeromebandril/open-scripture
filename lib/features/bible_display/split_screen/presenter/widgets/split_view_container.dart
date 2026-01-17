@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:the_smyrna_bible_v2/features/customizer/domain/entities/bible_pane_theme.dart';
 
+import '../../../../customizer/presentation/cubit/customizer_cubit.dart';
 import '../../../bible_pane/presentation/widgets/bible_pane_widget.dart';
 import '../cubit/pane_manager_cubit.dart';
 
@@ -9,24 +11,41 @@ class MultipleBiblePanes extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final enableCustom = context.select(
+      (CustomizerCubit c) => c.state.pane.enableCustomTheme,
+    );
+    final biblePaneTheme = Theme.of(context).extension<BiblePaneTheme>()!;
+
     return BlocBuilder<PaneManagerCubit, PaneManagerState>(
       builder: (context, state) {
-        return Row(
-          spacing: 16,
-          children: [
-            for (final p in state.panes)
-              Expanded(
-                child: Listener(
-                  behavior: HitTestBehavior.opaque,
-                  onPointerDown: (_) =>
-                      context.read<PaneManagerCubit>().setActive(p.id),
-                  child: BiblePane(
-                    uniqueId: p.id,
-                    bloc: context.read<PaneManagerCubit>().blocFor(p.id),
+        return Container(
+          padding: EdgeInsets.fromLTRB(12, 12, 12, 0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(8),
+              topRight: Radius.circular(8),
+            ),
+            color: enableCustom
+                ? biblePaneTheme.backgroundColor
+                : Theme.of(context).colorScheme.surface,
+          ),
+          child: Row(
+            spacing: 16,
+            children: [
+              for (final p in state.panes)
+                Expanded(
+                  child: Listener(
+                    behavior: HitTestBehavior.opaque,
+                    onPointerDown: (_) =>
+                        context.read<PaneManagerCubit>().setActive(p.id),
+                    child: BiblePane(
+                      uniqueId: p.id,
+                      bloc: context.read<PaneManagerCubit>().blocFor(p.id),
+                    ),
                   ),
-                ),
-              )
-          ],
+                )
+            ],
+          ),
         );
       },
     );

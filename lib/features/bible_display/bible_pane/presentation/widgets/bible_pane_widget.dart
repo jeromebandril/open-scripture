@@ -6,7 +6,6 @@ import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentati
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_selector/presenter/widget/bible_selector.dart';
 
 import '../../../../../core/presentation/widgets/adjustable_text_size.dart';
-import '../../../../customizer/presentation/cubit/customizer_cubit.dart';
 import '../bloc/bible_pane_bloc.dart';
 import 'verse_divider.dart';
 import 'verse_widget.dart';

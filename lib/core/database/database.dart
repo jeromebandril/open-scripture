@@ -7,7 +7,10 @@ import 'package:path/path.dart' as p;
 part 'database.g.dart';
 
 @DriftDatabase(
-  include: {'tables.drift'},
+  include: {
+    'queries/core_queries.drift',
+    'tables/core_tables,drift',
+  },
 )
 class AppDb extends _$AppDb {
   AppDb() : super(_openConnection());

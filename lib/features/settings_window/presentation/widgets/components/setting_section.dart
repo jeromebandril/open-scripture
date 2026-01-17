@@ -41,7 +41,7 @@ class SettingSection extends StatelessWidget {
         SizedBox(height: 12),
         Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceDim,
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(12),
           ),
           padding: EdgeInsets.all(32),

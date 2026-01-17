@@ -5,6 +5,8 @@ import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/widgets/histo
 import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/widgets/split_view_container.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/widgets/split_view_controllers.dart';
+import 'package:the_smyrna_bible_v2/features/customizer/domain/entities/app_theme.dart';
+import 'package:the_smyrna_bible_v2/features/customizer/domain/entities/bible_pane_theme.dart';
 import 'package:the_smyrna_bible_v2/features/keybindings/presentation/widget/keybindings_host.dart';
 import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/settings_window.dart';
 import 'package:the_smyrna_bible_v2/features/toolbar/presentation/widgets/toolbar.dart';
@@ -14,6 +16,7 @@ import 'features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
 import 'features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
 import 'features/bible_display/bible_pane/presentation/navigation_bus.dart';
 import 'features/bible_installer_manager/presentation/bloc/installed_bibles/installed_bibles_bloc.dart';
+import 'features/customizer/presentation/cubit/customizer_cubit.dart';
 import 'injection_container.dart' as di;
 
 void main() async {
@@ -21,36 +24,51 @@ void main() async {
   runApp(const MyApp());
 }
 
-/// The Application doesn't have any route
-/// because it's design to be single page app.
-/// "Possible" pages will be instead displayed
-/// as floating windows on top
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      themeMode: ThemeMode.dark,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        fontFamily: 'General Sans',
-        useMaterial3: true,
-      ),
-      debugShowCheckedModeBanner: false,
-      home: MultiBlocProvider(
-        providers: [
-          BlocProvider(
-              create: (_) =>
-                  di.sl<PaneManagerCubit>()), // for one pane only for now
-          BlocProvider(create: (_) => di.sl<WindowStackManagerBloc>()),
-          BlocProvider(
-              create: (_) =>
-                  di.sl<InstalledBiblesBloc>()..add(InstalledBiblesLoad())),
-          BlocProvider(create: (_) => di.sl<BSearchbarBloc>()),
-        ],
-        child: const Home(),
+    return BlocProvider(
+      create: (context) => di.sl<CustomizerCubit>(),
+      child: BlocBuilder<CustomizerCubit, CustomizerState>(
+        buildWhen: (prev, curr) {
+          // Only rebuild MaterialApp when app-wide theme changes.
+          return prev.app != curr.app || prev.pane != curr.pane;
+        },
+        builder: (context, state) {
+          final builder = const AppThemeBuilder();
+
+          final biblePaneTheme = state.pane
+              .toExtension()
+              .copyWith(accentColor: state.app.accentColor);
+
+          final light = builder.buildLight(state.app).copyWith(
+            extensions: <ThemeExtension<dynamic>>[biblePaneTheme],
+          );
+          final dark = builder.buildDark(state.app).copyWith(
+            extensions: <ThemeExtension<dynamic>>[biblePaneTheme],
+          );
+
+          return MaterialApp(
+            title: 'Bible App',
+            themeMode: state.app.mode,
+            darkTheme: dark,
+            theme: light,
+            debugShowCheckedModeBanner: false,
+            home: MultiBlocProvider(
+              providers: [
+                BlocProvider(create: (_) => di.sl<PaneManagerCubit>()),
+                BlocProvider(create: (_) => di.sl<WindowStackManagerBloc>()),
+                BlocProvider(
+                    create: (_) => di.sl<InstalledBiblesBloc>()
+                      ..add(InstalledBiblesLoad())),
+                BlocProvider(create: (_) => di.sl<BSearchbarBloc>()),
+              ],
+              child: const Home(),
+            ),
+          );
+        },
       ),
     );
   }
@@ -90,11 +108,23 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    // final backgroundColor = context.select(
+    //   (CustomizerCubit c) => c.state.theme.backgroundColor,
+    // );
+    // final isCustomTheme = context.select(
+    //   (CustomizerCubit c) => c.state.theme.enableCustomTheme,
+    // );
+    // final useBackgroundColorAsAppColor = context.select(
+    //   (CustomizerCubit c) => c.state.theme.useBackgroundColorAsAppColor,
+    // );
+
     // ShortcusHost must be at the very root after the MaterialApp
     return ShortcutHost(
       rootFocusNode: _rootFocusNode,
       searchFocusNode: _searchbarFocusNode,
       child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+
         //
         // Manages the stacks of windosw that may occur when opening
         // popups or secondary pages in the form of a window (e.g. settings menu)

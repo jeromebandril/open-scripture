@@ -27,7 +27,9 @@ class _SettingBoolInputState extends State<SettingBoolInput> {
         padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: widget.value ? Colors.blue : Colors.grey.shade400,
+          color: widget.value
+              ? Theme.of(context).colorScheme.primary
+              : Colors.grey.shade400,
         ),
         child: Align(
           alignment:
