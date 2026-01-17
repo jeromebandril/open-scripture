@@ -129,23 +129,52 @@ class SettingListSection extends StatelessWidget {
       children: [
         SizedBox(height: 16),
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: 32),
+              padding: const EdgeInsets.only(left: 32, bottom: 12),
               child: Text(
                 title,
                 style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
               ),
             ),
-            SizedBox(width: 150, child: TextField()),
+
+            // Connected to the main part
+            Container(
+              decoration: BoxDecoration(
+                //color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  topRight: Radius.circular(12),
+                ),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              width: 250,
+              child: TextField(
+                decoration: InputDecoration(
+                  isDense: true,
+                  hintText: 'Filter',
+                  contentPadding: EdgeInsets.symmetric(vertical: 8),
+                  // prefixIcon: Icon(
+                  //   Icons.search,
+                  //   size: 14,
+                  // ),
+                ),
+              ),
+            ),
           ],
         ),
-        SizedBox(height: 12),
+        // Main part
         Expanded(
           child: Container(
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12),
+                bottomLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+                bottomRight: Radius.circular(12),
+              ),
             ),
             padding: EdgeInsets.all(32),
             child: ClipRRect(
