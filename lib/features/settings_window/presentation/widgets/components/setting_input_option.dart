@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class SettingOptionInput<T> extends StatefulWidget {
-  const SettingOptionInput({
+class SettingInputOption<T> extends StatefulWidget {
+  const SettingInputOption({
     super.key,
     required this.items,
     this.onChanged,
@@ -13,10 +13,10 @@ class SettingOptionInput<T> extends StatefulWidget {
   final T? value;
 
   @override
-  State<SettingOptionInput<T>> createState() => _SettingOptionInputState<T>();
+  State<SettingInputOption<T>> createState() => _SettingInputOptionState<T>();
 }
 
-class _SettingOptionInputState<T> extends State<SettingOptionInput<T>> {
+class _SettingInputOptionState<T> extends State<SettingInputOption<T>> {
   @override
   Widget build(BuildContext context) {
     return DropdownButton<T>(

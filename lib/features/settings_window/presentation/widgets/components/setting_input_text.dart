@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class SettingTextInput extends StatefulWidget {
-  const SettingTextInput({
+class SettingInputText extends StatefulWidget {
+  const SettingInputText({
     super.key,
     this.value,
     this.prefixIcon,
@@ -11,10 +11,10 @@ class SettingTextInput extends StatefulWidget {
   final IconData? prefixIcon;
 
   @override
-  State<SettingTextInput> createState() => _SettingTextInputState();
+  State<SettingInputText> createState() => _SettingInputTextState();
 }
 
-class _SettingTextInputState extends State<SettingTextInput> {
+class _SettingInputTextState extends State<SettingInputText> {
   late final TextEditingController _controller;
 
   @override

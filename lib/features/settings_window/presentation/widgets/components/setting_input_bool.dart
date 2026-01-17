@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class SettingBoolInput extends StatefulWidget {
-  const SettingBoolInput({
+class SettingInputBool extends StatefulWidget {
+  const SettingInputBool({
     super.key,
     this.onChanged,
     required this.value,
@@ -11,10 +11,10 @@ class SettingBoolInput extends StatefulWidget {
   final bool value;
 
   @override
-  State<SettingBoolInput> createState() => _SettingBoolInputState();
+  State<SettingInputBool> createState() => _SettingInputBoolState();
 }
 
-class _SettingBoolInputState extends State<SettingBoolInput> {
+class _SettingInputBoolState extends State<SettingInputBool> {
   @override
   Widget build(BuildContext context) {
     //return Switch.adaptive(value: widget.value, onChanged: widget.onChanged);

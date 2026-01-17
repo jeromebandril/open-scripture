@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:the_smyrna_bible_v2/core/utils/colors_util.dart';
 
-class SettingColorInput extends StatefulWidget {
-  const SettingColorInput({
+class SettingInputColor extends StatefulWidget {
+  const SettingInputColor({
     super.key,
     this.color = Colors.red,
     this.onColorChanged,
@@ -13,10 +13,10 @@ class SettingColorInput extends StatefulWidget {
   final Function(Color)? onColorChanged;
 
   @override
-  State<SettingColorInput> createState() => _SettingColorInputState();
+  State<SettingInputColor> createState() => _SettingInputColorState();
 }
 
-class _SettingColorInputState extends State<SettingColorInput> {
+class _SettingInputColorState extends State<SettingInputColor> {
   OverlayEntry? entry;
   final LayerLink layerLink = LayerLink();
   Color? selectedColor;

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/widgets/verse_widget.dart';
 import 'package:the_smyrna_bible_v2/features/customizer/presentation/widgets/bible_pane_preview.dart';
-import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/components/setting_bool_input.dart';
+import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/components/setting_input_bool.dart';
 import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/components/setting.dart';
-import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/components/setting_color_input.dart';
-import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/components/setting_option_input.dart';
+import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/components/setting_input_color.dart';
+import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/components/setting_input_option.dart';
 import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/components/setting_section.dart';
-import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/components/setting_text_input.dart';
+import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/components/setting_input_text.dart';
 
 import '../cubit/customizer_cubit.dart';
 
@@ -52,7 +52,7 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
               Setting(
                   label: 'Theme',
                   description: 'Set app theme',
-                  child: SettingOptionInput<ThemeMode>(
+                  child: SettingInputOption<ThemeMode>(
                     value:
                         context.select((CustomizerCubit c) => c.state.app.mode),
                     onChanged: (mode) {
@@ -68,7 +68,7 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
               Setting(
                   label: 'Accent color',
                   description: 'Set accent color for app',
-                  child: SettingColorInput(
+                  child: SettingInputColor(
                     onColorChanged: (c) {
                       cubit.updateTheme(
                           appTheme: (a) => a.copyWith(accentColor: c));
@@ -80,7 +80,7 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                   label: 'Enable auto colorscheme',
                   description:
                       'Use generated colorscheme based on accent color',
-                  child: SettingBoolInput(
+                  child: SettingInputBool(
                     value: context.select((CustomizerCubit c) =>
                         c.state.app.enableAutoColorScheme),
                     onChanged: (val) {
@@ -110,7 +110,7 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
               Setting(
                   label: 'Enable custom theming for Bible Viewer',
                   description: 'Enables custom theming for the bible viewer',
-                  child: SettingBoolInput(
+                  child: SettingInputBool(
                     value: context.select(
                         (CustomizerCubit c) => c.state.pane.enableCustomTheme),
                     onChanged: (val) {
@@ -121,7 +121,7 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
               Setting(
                   label: 'Font text',
                   description: 'Set font for the verse text',
-                  child: SettingTextInput(
+                  child: SettingInputText(
                     value: context.select(
                       (CustomizerCubit c) => c.state.app.fontFamily,
                     ),
@@ -129,7 +129,7 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
               Setting(
                   label: 'Text color',
                   description: 'Set color for the verse text',
-                  child: SettingColorInput(
+                  child: SettingInputColor(
                     onColorChanged: (c) {
                       cubit.updateTheme(
                           paneTheme: (p) => p.copyWith(textColor: c));
@@ -141,7 +141,7 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
               Setting(
                   label: 'Background color',
                   description: 'Set color for the background',
-                  child: SettingColorInput(
+                  child: SettingInputColor(
                     onColorChanged: (c) {
                       cubit.updateTheme(
                           paneTheme: (p) => p.copyWith(backgroundColor: c));
@@ -153,7 +153,7 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
               Setting(
                   label: 'Show verse divider',
                   description: 'Show divider between verses',
-                  child: SettingBoolInput(
+                  child: SettingInputBool(
                     value: context.select(
                       (CustomizerCubit c) => c.state.pane.showVerseDivider,
                     ),
@@ -165,7 +165,7 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
               Setting(
                   label: 'Show full ref',
                   description: 'Show full verse reference or only verse number',
-                  child: SettingBoolInput(
+                  child: SettingInputBool(
                     value: context.select(
                       (CustomizerCubit c) => c.state.pane.showFullRefAlways,
                     ),
@@ -177,7 +177,7 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
               Setting(
                   label: 'Selected verses render mode',
                   description: 'How selected verses are rendered',
-                  child: SettingOptionInput<HighlightRenderMode>(
+                  child: SettingInputOption<HighlightRenderMode>(
                     value: context.select((CustomizerCubit c) =>
                         c.state.pane.highlightRenderMode),
                     onChanged: (mode) {
