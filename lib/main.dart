@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:the_smyrna_bible_v2/features/toolbar/presentation/widgets/app_toolbar.dart';
+import 'package:the_smyrna_bible_v2/core/presentation/cubit/fullscreen_cubit.dart';
+import 'package:the_smyrna_bible_v2/core/presentation/cubit/toolbar_cubit.dart';
+import 'package:the_smyrna_bible_v2/features/toolbar/presentation/widgets/toolbar.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -64,6 +66,8 @@ class MyApp extends StatelessWidget {
             home: MultiBlocProvider(
               providers: [
                 BlocProvider(create: (_) => di.sl<PaneManagerCubit>()),
+                BlocProvider(create: (_) => di.sl<ToolbarCubit>()),
+                BlocProvider(create: (_) => di.sl<FullscreenCubit>()..init()),
                 BlocProvider(create: (_) => di.sl<WindowStackManagerBloc>()),
                 BlocProvider(
                     create: (_) => di.sl<InstalledBiblesBloc>()
@@ -134,40 +138,40 @@ class _HomeState extends State<Home> {
         // popups or secondary pages in the form of a window (e.g. settings menu)
         //
         body: WindowStackManagerWrapper(
-          child: AppToolbar(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
-              child: Column(
-                spacing: 8,
-                children: [
-                  //
-                  // HEADER
-                  // separated just to be organized,
-                  // pass here all required parameters
-                  _AppHeader(
-                    searchbarFocusNode: _searchbarFocusNode,
-                    returnFocusToRoot: _returnFocusToRoot,
-                  ),
-                  //
-                  // BIBLE PANES
-                  //
-                  BlocListener<BSearchbarBloc, BSearchbarState>(
-                    listenWhen: (prev, curr) =>
-                        prev.referenceResult != curr.referenceResult,
-                    listener: (context, state) {
-                      final ref = state.referenceResult;
-                      if (ref == null) return;
-
-                      context.read<PaneManagerCubit>().activeBloc().add(
-                            BiblePaneDisplayChapter(
-                                ref: ref, source: IntentSource.searchbar),
-                          );
-                    },
-                    child: Expanded(child: MultipleBiblePanes()),
-                  ),
-                ],
+          child: Column(
+            spacing: 8,
+            children: [
+              //
+              // Simulated classic desktop toolbar
+              //
+              if (context.select((ToolbarCubit t) => t.state)) Toolbar(),
+              //
+              // HEADER
+              // separated just to be organized,
+              // pass here all required parameters
+              //
+              _AppHeader(
+                searchbarFocusNode: _searchbarFocusNode,
+                returnFocusToRoot: _returnFocusToRoot,
               ),
-            ),
+              //
+              // BIBLE PANES
+              //
+              BlocListener<BSearchbarBloc, BSearchbarState>(
+                listenWhen: (prev, curr) =>
+                    prev.referenceResult != curr.referenceResult,
+                listener: (context, state) {
+                  final ref = state.referenceResult;
+                  if (ref == null) return;
+
+                  context.read<PaneManagerCubit>().activeBloc().add(
+                        BiblePaneDisplayChapter(
+                            ref: ref, source: IntentSource.searchbar),
+                      );
+                },
+                child: Expanded(child: MultipleBiblePanes()),
+              ),
+            ],
           ),
         ),
       ),
@@ -175,7 +179,7 @@ class _HomeState extends State<Home> {
   }
 }
 
-class _AppHeader extends StatefulWidget {
+class _AppHeader extends StatelessWidget {
   const _AppHeader({
     required this.searchbarFocusNode,
     required this.returnFocusToRoot,
@@ -185,57 +189,27 @@ class _AppHeader extends StatefulWidget {
   final void Function() returnFocusToRoot;
 
   @override
-  State<_AppHeader> createState() => _AppHeaderState();
-}
-
-class _AppHeaderState extends State<_AppHeader> {
-  bool _isFullscreen = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _initWindowState();
-  }
-
-  void _initWindowState() async {
-    final isFullscreen = await windowManager.isFullScreen();
-
-    if (!mounted) return;
-
-    setState(() {
-      _isFullscreen = isFullscreen;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Row(
       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         BSearchbar(
-          focusNode: widget.searchbarFocusNode,
-          onSubmitted: () => widget.returnFocusToRoot(),
+          focusNode: searchbarFocusNode,
+          onSubmitted: () => returnFocusToRoot(),
           //onEditComplete: () => _returnFocusToRoot(),
         ),
         HistoryButton(),
         SplitscreenControls(),
-        IconButton(
-          onPressed: () async {
-            // If currently maximized, restore first
-            // (because of known bug)
-            if (await windowManager.isMaximized()) {
-              await windowManager.unmaximize();
-
-              // Give the OS a moment to apply the style/state change
-              await Future.delayed(const Duration(milliseconds: 60));
-            }
-            await windowManager.setFullScreen(!_isFullscreen);
-            setState(() => _isFullscreen = !_isFullscreen);
+        BlocBuilder<FullscreenCubit, bool>(
+          builder: (context, isFullscreen) {
+            return IconButton(
+              onPressed: () => context.read<FullscreenCubit>().toggle(),
+              tooltip: isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen',
+              icon: isFullscreen
+                  ? const Icon(Icons.fullscreen_exit)
+                  : const Icon(Icons.fullscreen),
+            );
           },
-          tooltip: _isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen',
-          icon: _isFullscreen
-              ? const Icon(Icons.fullscreen_exit)
-              : const Icon(Icons.fullscreen),
         ),
       ],
     );

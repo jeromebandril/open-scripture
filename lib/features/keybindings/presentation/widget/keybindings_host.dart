@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:the_smyrna_bible_v2/core/presentation/cubit/fullscreen_cubit.dart';
+import 'package:the_smyrna_bible_v2/core/presentation/cubit/toolbar_cubit.dart';
 import '../../domain/app_command.dart';
 import 'intents.dart';
 
@@ -43,6 +46,12 @@ class ShortcutHost extends StatelessWidget {
       const SingleActivator(LogicalKeyboardKey.keyL, control: true):
           const AppCommandIntent(AppCommand.focusSearch),
 
+      const SingleActivator(LogicalKeyboardKey.keyT, alt: true):
+          const AppCommandIntent(AppCommand.toggleToolbar),
+
+      const SingleActivator(LogicalKeyboardKey.keyF, control: true):
+          const AppCommandIntent(AppCommand.toggleFullscreen),
+
       // Cmd+L (macOS)
       const SingleActivator(LogicalKeyboardKey.keyL, meta: true):
           const AppCommandIntent(AppCommand.focusSearch),
@@ -56,6 +65,11 @@ class ShortcutHost extends StatelessWidget {
             case AppCommand.focusSearch:
               searchFocusNode.requestFocus();
               return null;
+            case AppCommand.toggleToolbar:
+              context.read<ToolbarCubit>().toggleVisibility();
+              return null;
+            case AppCommand.toggleFullscreen:
+              context.read<FullscreenCubit>().toggle();
             default:
               return null;
           }

@@ -1,55 +1,54 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-/*
-  TODO:
-  - manage the appearing window widget lifecycle,
-  I think I prefer to destroy it on close and recreate it
-  every time (so it doesn't remain loaded in memory while
-  not been used) 
-*/
+import '../../../settings_window/presentation/widgets/settings_window.dart';
+import '../../../window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
 
 class Toolbar extends StatelessWidget {
-  final Widget child;
-  final List<ToolbarOption> options;
-
-  const Toolbar({
-    required this.child,
-    required this.options,
-    super.key,
-  });
+  const Toolbar({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return _ToolbarApp(
-      options: options,
-      child: child,
-    );
-  }
-
-  void showWindow(ctx, Widget content) {}
-}
-
-/// Usually a top widget, adds a desktop toolbar
-/// on top of the application
-class _ToolbarApp extends StatelessWidget {
-  final Widget child;
-  final List<ToolbarOption> options;
-
-  const _ToolbarApp({
-    required this.options,
-    required this.child,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(
-          height: 24,
-          child: Row(children: options),
+    return SizedBox(
+      height: 24,
+      child: Row(children: [
+        ToolbarOption(
+          'Bible',
+          onTap: () {
+            context.read<WindowStackManagerBloc>().add(
+                  WindowStackManagerOpen(
+                    SettingsWindow(
+                      initialRoute: SettingsSection.bibleManager,
+                      onClose: () {
+                        context
+                            .read<WindowStackManagerBloc>()
+                            .add(WindowStackManagerClose());
+                      },
+                    ),
+                  ),
+                );
+          },
         ),
-        Expanded(child: child),
-      ],
+        const ToolbarOption('Options'),
+        const ToolbarOption('Tools'),
+        ToolbarOption(
+          'Help',
+          onTap: () {
+            context.read<WindowStackManagerBloc>().add(
+                  WindowStackManagerOpen(
+                    SettingsWindow(
+                      initialRoute: SettingsSection.about,
+                      onClose: () {
+                        context
+                            .read<WindowStackManagerBloc>()
+                            .add(WindowStackManagerClose());
+                      },
+                    ),
+                  ),
+                );
+          },
+        ),
+      ]),
     );
   }
 }
@@ -97,22 +96,4 @@ class _ToolbarOptionState extends State<ToolbarOption> {
       color = isHovered ? hoverColor : null;
     });
   }
-
-  // void dispatch(ctx, String windowName) async {
-  //   showDialog(
-  //     barrierDismissible: false,
-  //     context: ctx,
-  //     builder: (context) => Builder(
-  //       builder: (context) {
-  //         return BlocProvider.value(
-  //           value: BlocProvider.of<AppScreenManagerBloc>(ctx)
-  //             ..add(AppScreenManagerOpenWindow(windowName)),
-  //           child: SettingsWindow(
-  //             onClose: () => Navigator.pop(context, this),
-  //           ),
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
 }

@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:the_smyrna_bible_v2/core/presentation/cubit/fullscreen_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/utils/bible_reference_parser.dart';
 import 'package:the_smyrna_bible_v2/core/database/database.dart';
 import 'package:the_smyrna_bible_v2/features/b_searchbar/data/repositories/b_searchbar_repository_impl.dart';
@@ -19,10 +20,11 @@ import 'package:the_smyrna_bible_v2/features/customizer/data/repo/customizer_rep
 import 'package:the_smyrna_bible_v2/features/customizer/domain/repo/customizer_repo.dart';
 import 'package:the_smyrna_bible_v2/features/customizer/presentation/cubit/customizer_cubit.dart';
 import 'package:the_smyrna_bible_v2/features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
+import 'core/presentation/cubit/toolbar_cubit.dart';
 import 'features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
 import 'features/bible_display/bible_pane/presentation/navigation_bus.dart';
 import 'features/bible_display/bible_selector/domain/repositories/bible_selector_repository.dart';
-import 'core/presentation/state_manager/install_notifier.dart';
+import 'core/presentation/notifiers/install_notifier.dart';
 import 'features/bible_installer_manager/presentation/bloc/remote_catalog/remote_catalog_bloc.dart';
 
 final sl = GetIt.instance;
@@ -44,7 +46,10 @@ Future<void> init() async {
 
   initBibleSelectorFeature();
 
+  // others
   sl.registerLazySingleton(() => NavigationBus());
+  sl.registerFactory(() => ToolbarCubit());
+  sl.registerFactory(() => FullscreenCubit());
 }
 
 void initCustomizerFeature() {

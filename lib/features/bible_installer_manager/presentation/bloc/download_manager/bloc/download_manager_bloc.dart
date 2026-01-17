@@ -5,7 +5,7 @@ import 'package:equatable/equatable.dart';
 
 import '../../../../domain/entities/bible_download_progress.dart';
 import '../../../../domain/repositories/bible_manager_repository.dart';
-import '../../../../../../core/presentation/state_manager/install_notifier.dart';
+import '../../../../../../core/presentation/notifiers/install_notifier.dart';
 
 part 'download_manager_event.dart';
 part 'download_manager_state.dart';

@@ -6,5 +6,7 @@ enum AppCommand {
   nextPane,
   prevPane,
   addParallelPane,
-  deleteCurrentPane
+  deleteCurrentPane,
+  toggleToolbar,
+  toggleFullscreen,
 }
