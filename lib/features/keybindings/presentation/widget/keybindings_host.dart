@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/fullscreen_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/toolbar_cubit.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
+import '../../../bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
 import '../../domain/app_command.dart';
 import 'intents.dart';
 
@@ -52,6 +54,12 @@ class ShortcutHost extends StatelessWidget {
       const SingleActivator(LogicalKeyboardKey.keyF, control: true):
           const AppCommandIntent(AppCommand.toggleFullscreen),
 
+      const SingleActivator(LogicalKeyboardKey.arrowRight, control: true):
+          const AppCommandIntent(AppCommand.nextVerse),
+
+      const SingleActivator(LogicalKeyboardKey.arrowLeft, control: true):
+          const AppCommandIntent(AppCommand.prevVerse),
+
       // Cmd+L (macOS)
       const SingleActivator(LogicalKeyboardKey.keyL, meta: true):
           const AppCommandIntent(AppCommand.focusSearch),
@@ -71,6 +79,38 @@ class ShortcutHost extends StatelessWidget {
             case AppCommand.toggleFullscreen:
               context.read<FullscreenCubit>().toggle();
               return;
+            case AppCommand.prevVerse:
+              final activeBloc = context.read<PaneManagerCubit>().activeBloc();
+              if (activeBloc.state.reference == null) return;
+              final ref = activeBloc.state.reference!;
+              if (ref.verseStart == 1) return;
+
+              activeBloc.add(
+                BiblePaneJustChangeRef(
+                    ref: ref.copyWith(
+                  verseStart: (ref.verseStart ?? 1) - 1,
+                  verseEnd: null,
+                )),
+              );
+              return;
+            case AppCommand.nextVerse:
+              final activeBloc = context.read<PaneManagerCubit>().activeBloc();
+              if (activeBloc.state.reference == null) return;
+              final ref = activeBloc.state.reference!;
+              // TODO: add to state the number of verses
+              // currently relying on last segment verse number (if it is ordered)
+              if (ref.verseStart ==
+                  activeBloc.state.segments.last.ref.verseStart) return;
+
+              activeBloc.add(
+                BiblePaneJustChangeRef(
+                    ref: ref.copyWith(
+                  verseStart: (ref.verseStart ?? 0) + 1,
+                  verseEnd: null,
+                )),
+              );
+              return;
+
             default:
               return;
           }
