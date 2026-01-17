@@ -454,21 +454,24 @@ class BiblePanePreview extends StatelessWidget {
                 ? biblePaneTheme.backgroundColor
                 : Theme.of(context).colorScheme.surface,
           ),
-          child: ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: previewData.length,
-            itemBuilder: (_, i) {
-              return _VerseWidgetPreview(
-                verseNumber: previewData[i].verseNumber,
-                segments: previewData[i].segments,
-                spans: previewData[i].spans,
-                isHighlighted: i == 0,
-              );
-            },
-            separatorBuilder: (BuildContext context, int index) {
-              return VerseDivider();
-            },
+          child: DefaultTextStyle.merge(
+            style: TextStyle(fontFamily: biblePaneTheme.fontFamily),
+            child: ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: previewData.length,
+              itemBuilder: (_, i) {
+                return _VerseWidgetPreview(
+                  verseNumber: previewData[i].verseNumber,
+                  segments: previewData[i].segments,
+                  spans: previewData[i].spans,
+                  isHighlighted: i == 0,
+                );
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return VerseDivider();
+              },
+            ),
           ),
         ),
       ],

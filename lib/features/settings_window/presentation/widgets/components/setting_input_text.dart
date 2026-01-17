@@ -5,10 +5,12 @@ class SettingInputText extends StatefulWidget {
     super.key,
     this.value,
     this.prefixIcon,
+    this.onSubmitted,
   });
 
   final String? value;
   final IconData? prefixIcon;
+  final Function(String)? onSubmitted;
 
   @override
   State<SettingInputText> createState() => _SettingInputTextState();
@@ -35,6 +37,7 @@ class _SettingInputTextState extends State<SettingInputText> {
       height: 35,
       child: TextField(
         controller: _controller,
+        onSubmitted: (text) => widget.onSubmitted?.call(text),
         decoration: InputDecoration(
           isDense: true,
           contentPadding: EdgeInsets.symmetric(

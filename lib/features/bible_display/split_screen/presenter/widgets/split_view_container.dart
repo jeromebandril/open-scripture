@@ -18,33 +18,36 @@ class MultipleBiblePanes extends StatelessWidget {
 
     return BlocBuilder<PaneManagerCubit, PaneManagerState>(
       builder: (context, state) {
-        return Container(
-          padding: EdgeInsets.fromLTRB(12, 12, 12, 0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(8),
-              topRight: Radius.circular(8),
+        return DefaultTextStyle.merge(
+          style: TextStyle(fontFamily: biblePaneTheme.fontFamily),
+          child: Container(
+            padding: EdgeInsets.fromLTRB(12, 12, 12, 0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(8),
+                topRight: Radius.circular(8),
+              ),
+              color: enableCustom
+                  ? biblePaneTheme.backgroundColor
+                  : Theme.of(context).colorScheme.surface,
             ),
-            color: enableCustom
-                ? biblePaneTheme.backgroundColor
-                : Theme.of(context).colorScheme.surface,
-          ),
-          child: Row(
-            spacing: 16,
-            children: [
-              for (final p in state.panes)
-                Expanded(
-                  child: Listener(
-                    behavior: HitTestBehavior.opaque,
-                    onPointerDown: (_) =>
-                        context.read<PaneManagerCubit>().setActive(p.id),
-                    child: BiblePane(
-                      uniqueId: p.id,
-                      bloc: context.read<PaneManagerCubit>().blocFor(p.id),
+            child: Row(
+              spacing: 16,
+              children: [
+                for (final p in state.panes)
+                  Expanded(
+                    child: Listener(
+                      behavior: HitTestBehavior.opaque,
+                      onPointerDown: (_) =>
+                          context.read<PaneManagerCubit>().setActive(p.id),
+                      child: BiblePane(
+                        uniqueId: p.id,
+                        bloc: context.read<PaneManagerCubit>().blocFor(p.id),
+                      ),
                     ),
-                  ),
-                )
-            ],
+                  )
+              ],
+            ),
           ),
         );
       },

@@ -122,6 +122,11 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                   label: 'Font text',
                   description: 'Set font for the verse text',
                   child: SettingInputText(
+                    onSubmitted: (font) {
+                      print(font);
+                      cubit.updateTheme(
+                          paneTheme: (p) => p.copyWith(fontFamily: font));
+                    },
                     value: context.select(
                       (CustomizerCubit c) => c.state.app.fontFamily,
                     ),
