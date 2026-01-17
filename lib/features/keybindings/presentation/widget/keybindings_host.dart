@@ -64,14 +64,15 @@ class ShortcutHost extends StatelessWidget {
           switch (intent.command) {
             case AppCommand.focusSearch:
               searchFocusNode.requestFocus();
-              return null;
+              return;
             case AppCommand.toggleToolbar:
               context.read<ToolbarCubit>().toggleVisibility();
-              return null;
+              return;
             case AppCommand.toggleFullscreen:
               context.read<FullscreenCubit>().toggle();
+              return;
             default:
-              return null;
+              return;
           }
         },
       ),
