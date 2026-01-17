@@ -18,7 +18,11 @@ class SidebarNavigator extends StatelessWidget {
     return Flexible(
       flex: 1,
       child: Container(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(12), bottomLeft: Radius.circular(12)),
+          color: Theme.of(context).colorScheme.surfaceContainerHigh,
+        ),
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         child: ListView(
           children: [
