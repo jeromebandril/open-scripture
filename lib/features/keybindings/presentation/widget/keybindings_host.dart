@@ -46,7 +46,7 @@ class ShortcutHost extends StatelessWidget {
       const SingleActivator(LogicalKeyboardKey.keyL, control: true):
           const AppCommandIntent(AppCommand.focusSearch),
 
-      const SingleActivator(LogicalKeyboardKey.keyT, alt: true):
+      const SingleActivator(LogicalKeyboardKey.keyT, control: true):
           const AppCommandIntent(AppCommand.toggleToolbar),
 
       const SingleActivator(LogicalKeyboardKey.keyF, control: true):
