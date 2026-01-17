@@ -62,14 +62,17 @@ class VerseWidget extends StatelessWidget {
                         ? '${ref.toString()}  '
                         : '$verseNumber  ',
                     style: TextStyle(
-                        fontWeight: isHighlighted
-                            ? FontWeight.bold
-                            : biblePaneTheme.showFullRefAlways
-                                ? FontWeight.w500
-                                : FontWeight.bold,
-                        color: isHighlighted
-                            ? biblePaneTheme.accentColor
-                            : Theme.of(context).colorScheme.onSurface),
+                      fontWeight: isHighlighted
+                          ? FontWeight.bold
+                          : biblePaneTheme.showFullRefAlways
+                              ? FontWeight.w500
+                              : FontWeight.bold,
+                      color: isHighlighted
+                          ? biblePaneTheme.accentColor
+                          : useCustom
+                              ? biblePaneTheme.textColor
+                              : Theme.of(context).colorScheme.onSurface,
+                    ),
                   ),
                   VerseSpanBuilder.build(
                     context: context,

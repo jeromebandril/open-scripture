@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:gap/gap.dart';
 import 'package:the_smyrna_bible_v2/injection_container.dart';
 
 import '../bloc/download_manager/bloc/download_manager_bloc.dart';
@@ -46,9 +45,8 @@ class _BibleManager extends StatelessWidget {
             flex: 10,
             child: RemoteCatalogSection(),
           ),
-          Gap(8),
           Expanded(
-            flex: 8,
+            flex: 6,
             child: InstalledBiblesSection(),
           ),
         ],

@@ -33,26 +33,6 @@ class InstalledBiblesBloc
     });
   }
 
-  Future<void> _onSubscriptionRequested(
-    InstalledBiblesSubscriptionRequested event,
-    Emitter<InstalledBiblesState> emit,
-  ) async {
-    emit(state.copyWith(status: () => InstalledBiblesStatus.loading));
-
-    final eitherFailureOrData = await repository.getAllInstalledBibles();
-
-    emit(eitherFailureOrData.fold(
-      (failure) => state.copyWith(
-        status: () => InstalledBiblesStatus.error,
-        errorMessage: () => '', // to change with failure
-      ),
-      (bibles) => state.copyWith(
-        status: () => InstalledBiblesStatus.loaded,
-        installedBibles: () => bibles,
-      ),
-    ));
-  }
-
   Future<void> _onLoad(
     InstalledBiblesLoad event,
     Emitter<InstalledBiblesState> emit,

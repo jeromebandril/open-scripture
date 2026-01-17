@@ -71,7 +71,7 @@ class ToolbarOption extends StatefulWidget {
 }
 
 class _ToolbarOptionState extends State<ToolbarOption> {
-  Color hoverColor = Colors.green;
+  Color hoverColor = Colors.transparent;
   Color? color;
 
   @override

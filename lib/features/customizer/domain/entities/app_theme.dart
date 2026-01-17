@@ -165,7 +165,7 @@ class AppThemeBuilder {
                 onSurfaceVariant: Color(0xFFBDBDBD),
 
                 // Borders & dividers
-                outline: Color(0xFF3A3A3A),
+                outline: Color(0xFF6A6A6A),
                 outlineVariant: Color(0xFF2A2A2A),
 
                 // Feedback

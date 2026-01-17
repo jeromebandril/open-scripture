@@ -44,9 +44,7 @@ class VerseSpanBuilder {
           case SpanType.italic:
             style = style.merge(TextStyle(
               fontStyle: FontStyle.italic,
-              color: Theme.brightnessOf(context) == Brightness.light
-                  ? Colors.black38
-                  : Colors.white54,
+              color: Theme.of(context).colorScheme.outline,
             ));
             break;
           case SpanType.bold:
@@ -54,7 +52,7 @@ class VerseSpanBuilder {
             break;
           case SpanType.wordOfJesus:
             // "small caps" isn't directly supported everywhere; approximate
-            style = style.merge(const TextStyle(color: Colors.red));
+            style = style.merge(TextStyle(color: Colors.red[900]));
             break;
 
           case SpanType.strongWords:

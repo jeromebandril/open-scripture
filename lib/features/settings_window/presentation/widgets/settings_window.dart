@@ -154,31 +154,24 @@ class _SettingRouteLayout extends StatelessWidget {
 }
 
 class _HeaderSettings extends StatelessWidget {
-  final String? title;
   final double height;
   final Function()? onClose;
 
   const _HeaderSettings({
-    this.title,
     required this.height,
     this.onClose,
   });
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
+      alignment: Alignment.centerRight,
       height: height,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(title ?? ''),
-          IconButton(
-              onPressed: () {
-                if (onClose != null) onClose!();
-              },
-              icon: const Icon(Icons.close)),
-        ],
-      ),
+      child: IconButton(
+          onPressed: () {
+            if (onClose != null) onClose!();
+          },
+          icon: const Icon(Icons.close)),
     );
   }
 }

@@ -128,7 +128,7 @@ class _SettingColorInputState extends State<SettingColorInput> {
 }
 
 class _ColorCircle extends StatelessWidget {
-  const _ColorCircle({super.key, required this.color});
+  const _ColorCircle({required this.color});
 
   final Color color;
 
