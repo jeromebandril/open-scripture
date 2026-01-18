@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:the_smyrna_bible_v2/core/domain/entities/verse_segment.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/cubit/selected_word_cubit.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/widgets/pane_info.dart';
@@ -25,19 +26,41 @@ class BiblePane extends StatefulWidget {
 }
 
 class _BiblePaneState extends State<BiblePane> {
-  late ScrollController _scrollController;
+  late ItemScrollController _itemScrollController;
+  final ItemPositionsListener _itemPositionsListener =
+      ItemPositionsListener.create();
+
   double scale = 1;
 
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController();
+    _itemScrollController = ItemScrollController();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    _scrollController.dispose();
+  bool _isIndexVisible(int index) {
+    final positions = _itemPositionsListener.itemPositions.value;
+    return positions.any((p) {
+      return p.index == index &&
+          p.itemLeadingEdge > 0 &&
+          p.itemTrailingEdge < 1;
+    });
+  }
+
+  void _scrollUntilVisible(int index) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!context.mounted) return;
+      // Optional guard: only scroll if out of view
+      if (!_isIndexVisible(index)) {
+        if (_itemScrollController.isAttached) {
+          _itemScrollController.scrollTo(
+              index: index,
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeInOut,
+              alignment: 0.1);
+        }
+      }
+    });
   }
 
   @override
@@ -48,7 +71,11 @@ class _BiblePaneState extends State<BiblePane> {
         BlocProvider(
             create: (_) => SelectedWordCubit()), // for one pane only for now
       ],
-      child: BlocBuilder<BiblePaneBloc, BiblePaneState>(
+      child: BlocConsumer<BiblePaneBloc, BiblePaneState>(
+        listenWhen: (prev, curr) =>
+            prev.reference != curr.reference && curr.reference != null,
+        listener: (context, state) =>
+            _scrollUntilVisible(state.reference!.verseStart! - 1),
         builder: (context, state) {
           switch (state.status) {
             //
@@ -104,10 +131,10 @@ class _BiblePaneState extends State<BiblePane> {
                             "Ready :)",
                           ))
                         : AdjustableTextSize(
-                            scrollController: _scrollController,
                             initialiSize: 14,
-                            child: ListView.separated(
-                              controller: _scrollController,
+                            child: ScrollablePositionedList.separated(
+                              itemScrollController: _itemScrollController,
+                              itemPositionsListener: _itemPositionsListener,
                               itemCount: verseNumbers.length + 1,
                               separatorBuilder: (ctx, _) {
                                 return VerseDivider();

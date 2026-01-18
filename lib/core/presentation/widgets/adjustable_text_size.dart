@@ -132,6 +132,7 @@ class _AdjustableTextSizeState extends State<AdjustableTextSize> {
   }
 
   void _prevetNormalScroll() {
+    if (scrollController == null) return;
     scrollController!.jumpTo(scrollOffset);
   }
 }
