@@ -18,7 +18,7 @@ class MultipleBiblePanes extends StatelessWidget {
     return BlocBuilder<PaneManagerCubit, PaneManagerState>(
       builder: (context, state) {
         return Container(
-          padding: EdgeInsets.fromLTRB(12, 12, 12, 0),
+          padding: EdgeInsets.fromLTRB(12, 0, 12, 0),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(8),

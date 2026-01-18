@@ -151,6 +151,7 @@ class _BiblePaneState extends State<BiblePane> {
                                 itemScrollController: _itemScrollController,
                                 itemPositionsListener: _itemPositionsListener,
                                 itemCount: verseNumbers.length + 1,
+                                padding: EdgeInsets.only(top: 16),
                                 separatorBuilder: (ctx, _) {
                                   return VerseDivider();
                                 },
