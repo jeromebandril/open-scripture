@@ -5,6 +5,8 @@ import 'package:the_smyrna_bible_v2/core/domain/entities/verse_segment.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/cubit/selected_word_cubit.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/widgets/pane_info.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_selector/presenter/widget/bible_selector.dart';
+import 'package:the_smyrna_bible_v2/features/customizer/domain/entities/bible_pane_theme.dart';
+import 'package:the_smyrna_bible_v2/features/customizer/presentation/cubit/customizer_cubit.dart';
 
 import '../../../../../core/presentation/widgets/adjustable_text_size.dart';
 import '../bloc/bible_pane_bloc.dart';
@@ -65,128 +67,145 @@ class _BiblePaneState extends State<BiblePane> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider.value(value: widget.bloc),
-        BlocProvider(
-            create: (_) => SelectedWordCubit()), // for one pane only for now
-      ],
-      child: BlocConsumer<BiblePaneBloc, BiblePaneState>(
-        listenWhen: (prev, curr) =>
-            prev.reference != curr.reference && curr.reference != null,
-        listener: (context, state) =>
-            _scrollUntilVisible(state.reference!.verseStart! - 1),
-        builder: (context, state) {
-          switch (state.status) {
-            //
-            // INITIAL
-            //
-            case BiblePaneStatus.initial:
-              if (state.bibleId == null) {
-                return BibleSelector(onConfirm: (bibleId) {
-                  widget.bloc.add(BiblePaneOpen(bibleId));
-                });
-              }
-              return SizedBox();
-            //
-            // LOADING SCREEN
-            //
-            case BiblePaneStatus.loading:
-              return const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  LinearProgressIndicator(),
-                  Text('Opening the bible...')
-                ],
-              );
-            //
-            // ERROR SCREEN
-            //
-            case BiblePaneStatus.error:
-              return Text(state.errorMessage ?? 'An error occurred');
-            //
-            // READY SCREEN
-            //
-            case BiblePaneStatus.ready:
-              // group segments by verse number
-              final segmentsByVerse = <int, List<VerseSegment>>{};
+    bool isCustom = context.select(
+      (CustomizerCubit c) => c.state.pane.enableCustomTheme,
+    );
+    final paneTheme = Theme.of(context).extension<BiblePaneTheme>()!;
 
-              for (final s in state.segments) {
-                final key = s.ref.verseStart; // assuming int
-                (segmentsByVerse[key!] ??= <VerseSegment>[]).add(s);
-              }
+    return DefaultTextStyle(
+      style: TextStyle(
+        color: isCustom
+            ? paneTheme.textColor
+            : Theme.of(context).colorScheme.onSurface,
+        fontFamily: isCustom ? paneTheme.fontFamily : null,
+      ),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider.value(value: widget.bloc),
+          BlocProvider(
+              create: (_) => SelectedWordCubit()), // for one pane only for now
+        ],
+        child: BlocConsumer<BiblePaneBloc, BiblePaneState>(
+          listenWhen: (prev, curr) =>
+              prev.reference != curr.reference && curr.reference != null,
+          listener: (context, state) =>
+              _scrollUntilVisible(state.reference!.verseStart! - 1),
+          builder: (context, state) {
+            switch (state.status) {
+              //
+              // INITIAL
+              //
+              case BiblePaneStatus.initial:
+                if (state.bibleId == null) {
+                  return BibleSelector(onConfirm: (bibleId) {
+                    widget.bloc.add(BiblePaneOpen(bibleId));
+                  });
+                }
+                return SizedBox();
+              //
+              // LOADING SCREEN
+              //
+              case BiblePaneStatus.loading:
+                return const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    LinearProgressIndicator(),
+                    Text('Opening the bible...')
+                  ],
+                );
+              //
+              // ERROR SCREEN
+              //
+              case BiblePaneStatus.error:
+                return Center(
+                    child: Text(state.errorMessage ?? 'An error occurred'));
+              //
+              // READY SCREEN
+              //
+              case BiblePaneStatus.ready:
+                // group segments by verse number
+                final segmentsByVerse = <int, List<VerseSegment>>{};
 
-              final verseNumbers = segmentsByVerse.keys.toList()..sort();
+                for (final s in state.segments) {
+                  final key = s.ref.verseStart; // assuming int
+                  (segmentsByVerse[key!] ??= <VerseSegment>[]).add(s);
+                }
 
-              return Stack(
-                children: [
-                  //
-                  // MAIN VIEW
-                  //
-                  Positioned.fill(
-                    child: state.segments.isEmpty
-                        ? Center(
-                            child: Text(
-                            "Ready :)",
-                          ))
-                        : AdjustableTextSize(
-                            initialiSize: 14,
-                            child: ScrollablePositionedList.separated(
-                              itemScrollController: _itemScrollController,
-                              itemPositionsListener: _itemPositionsListener,
-                              itemCount: verseNumbers.length + 1,
-                              separatorBuilder: (ctx, _) {
-                                return VerseDivider();
-                              },
-                              itemBuilder: (_, i) {
-                                // Fixed empty space at the bottom
-                                if (i == verseNumbers.length) {
-                                  return const SizedBox(height: 200);
-                                }
+                final verseNumbers = segmentsByVerse.keys.toList()..sort();
 
-                                final vn = verseNumbers[i];
-                                final segments = segmentsByVerse[vn]!;
-                                final spans =
-                                    segments.expand((s) => s.spans).toList();
-                                final vStart = state.reference?.verseStart;
-                                final vEnd = state.reference?.verseEnd;
+                return Stack(
+                  children: [
+                    //
+                    // MAIN VIEW
+                    //
+                    Positioned.fill(
+                      child: state.segments.isEmpty
+                          ? Center(
+                              child: Text(
+                              "Ready :)",
+                            ))
+                          : AdjustableTextSize(
+                              initialiSize: 14,
+                              child: ScrollablePositionedList.separated(
+                                itemScrollController: _itemScrollController,
+                                itemPositionsListener: _itemPositionsListener,
+                                itemCount: verseNumbers.length + 1,
+                                separatorBuilder: (ctx, _) {
+                                  return VerseDivider();
+                                },
+                                itemBuilder: (_, i) {
+                                  // Fixed empty space at the bottom
+                                  if (i == verseNumbers.length) {
+                                    return const SizedBox(height: 200);
+                                  }
 
-                                return VerseWidget(
-                                    verseNumber: vn,
-                                    segments: segments,
-                                    spans: spans,
-                                    isHighlighted:
-                                        (vEnd == null && vn == vStart) ||
-                                            (vEnd != null &&
-                                                vStart != null &&
-                                                vn >= vStart &&
-                                                vn <= vEnd));
-                              },
+                                  final vn = verseNumbers[i];
+                                  final segments = segmentsByVerse[vn]!;
+                                  final spans =
+                                      segments.expand((s) => s.spans).toList();
+                                  final vStart = state.reference?.verseStart;
+                                  final vEnd = state.reference?.verseEnd;
+
+                                  return VerseWidget(
+                                      verseNumber: vn,
+                                      segments: segments,
+                                      spans: spans,
+                                      isHighlighted:
+                                          (vEnd == null && vn == vStart) ||
+                                              (vEnd != null &&
+                                                  vStart != null &&
+                                                  vn >= vStart &&
+                                                  vn <= vEnd));
+                                },
+                              ),
                             ),
-                          ),
-                  ),
-                  //
-                  // PANE STATUS INFO
-                  //
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: PaneInfo(),
-                  ),
-                ],
-              );
+                    ),
+                    //
+                    // PANE STATUS INFO
+                    //
+                    DefaultTextStyle(
+                      style: TextStyle(),
+                      child: Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: PaneInfo(),
+                      ),
+                    ),
+                  ],
+                );
 
-            // success case
-            // return BlocListener<BSearchbarBloc, BSearchbarState>(
-            //   listener: (context, state) {
-            //     if (state.referenceResult == null) return;
-            //     BlocProvider.of<ReaderBloc>(context).add(
-            //       BiblePaneDisplayVerses(state.referenceResult!),
-            //     );
-            //   },
-          }
-        },
+              // success case
+              // return BlocListener<BSearchbarBloc, BSearchbarState>(
+              //   listener: (context, state) {
+              //     if (state.referenceResult == null) return;
+              //     BlocProvider.of<ReaderBloc>(context).add(
+              //       BiblePaneDisplayVerses(state.referenceResult!),
+              //     );
+              //   },
+            }
+          },
+        ),
       ),
     );
   }

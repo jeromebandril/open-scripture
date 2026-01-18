@@ -190,28 +190,31 @@ class _AppHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        BSearchbar(
-          focusNode: searchbarFocusNode,
-          onSubmitted: () => returnFocusToRoot(),
-          //onEditComplete: () => _returnFocusToRoot(),
-        ),
-        HistoryButton(),
-        SplitscreenControls(),
-        BlocBuilder<FullscreenCubit, bool>(
-          builder: (context, isFullscreen) {
-            return IconButton(
-              onPressed: () => context.read<FullscreenCubit>().toggle(),
-              tooltip: isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen',
-              icon: isFullscreen
-                  ? const Icon(Icons.fullscreen_exit)
-                  : const Icon(Icons.fullscreen),
-            );
-          },
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Row(
+        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          BSearchbar(
+            focusNode: searchbarFocusNode,
+            onSubmitted: () => returnFocusToRoot(),
+            //onEditComplete: () => _returnFocusToRoot(),
+          ),
+          HistoryButton(),
+          SplitscreenControls(),
+          BlocBuilder<FullscreenCubit, bool>(
+            builder: (context, isFullscreen) {
+              return IconButton(
+                onPressed: () => context.read<FullscreenCubit>().toggle(),
+                tooltip: isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen',
+                icon: isFullscreen
+                    ? const Icon(Icons.fullscreen_exit)
+                    : const Icon(Icons.fullscreen),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }

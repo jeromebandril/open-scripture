@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/bible_installer_manager/presentation/bloc/installed_bibles/installed_bibles_bloc.dart';
+import 'package:the_smyrna_bible_v2/features/customizer/domain/entities/bible_pane_theme.dart';
+import 'package:the_smyrna_bible_v2/features/customizer/presentation/cubit/customizer_cubit.dart';
 
 import '../../../../../injection_container.dart';
 import '../bloc/bloc/bible_selector_bloc.dart';
@@ -33,6 +35,10 @@ class _BibleSelectorBody extends StatelessWidget {
     final selectedId = context.select(
       (BibleSelectorBloc b) => b.state.selectedBibleId,
     );
+    final useCustom = context.select(
+      (CustomizerCubit b) => b.state.pane.enableCustomTheme,
+    );
+    final paneTheme = Theme.of(context).extension<BiblePaneTheme>()!;
 
     return BlocBuilder<InstalledBiblesBloc, InstalledBiblesState>(
       builder: (context, state) {
@@ -68,15 +74,23 @@ class _BibleSelectorBody extends StatelessWidget {
                   height: state.installedBibles.length * 80,
                   child: ListView.separated(
                     itemCount: state.installedBibles.length,
-                    separatorBuilder: (_, __) => const Divider(height: 1),
+                    separatorBuilder: (_, __) => const Divider(height: 0.1),
                     itemBuilder: (context, index) {
                       final bible = state.installedBibles[index];
                       final selected = bible.id == selectedId;
+                      final style = TextStyle(
+                        color: useCustom
+                            ? paneTheme.textColor
+                            : Theme.of(context).colorScheme.onSurface,
+                      );
 
                       return ListTile(
                         selected: selected,
-                        title: Text(bible.bibleName),
-                        subtitle: Text(bible.abbreviation),
+                        title: Text(bible.bibleName, style: style),
+                        subtitle: Text(
+                          bible.abbreviation,
+                          style: style,
+                        ),
                         trailing: selected ? const Icon(Icons.check) : null,
                         onTap: () => context
                             .read<BibleSelectorBloc>()

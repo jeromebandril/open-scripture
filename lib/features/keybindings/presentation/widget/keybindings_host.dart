@@ -60,6 +60,14 @@ class ShortcutHost extends StatelessWidget {
       const SingleActivator(LogicalKeyboardKey.arrowLeft, control: true):
           const AppCommandIntent(AppCommand.prevVerse),
 
+      const SingleActivator(LogicalKeyboardKey.arrowRight,
+          control: true,
+          shift: true): const AppCommandIntent(AppCommand.nextPane),
+
+      const SingleActivator(LogicalKeyboardKey.arrowLeft,
+          control: true,
+          shift: true): const AppCommandIntent(AppCommand.prevPane),
+
       // Cmd+L (macOS)
       const SingleActivator(LogicalKeyboardKey.keyL, meta: true):
           const AppCommandIntent(AppCommand.focusSearch),
@@ -109,6 +117,24 @@ class ShortcutHost extends StatelessWidget {
                   verseEnd: null,
                 )),
               );
+              return;
+            case AppCommand.nextPane:
+              final panes = context.read<PaneManagerCubit>().state.panes;
+              final activePaneId =
+                  context.read<PaneManagerCubit>().state.activePaneId;
+              final index = panes.indexWhere((p) => p.id == activePaneId);
+              final nextIndex = index == panes.length - 1 ? 0 : index + 1;
+              context.read<PaneManagerCubit>().setActive(nextIndex);
+
+              return;
+            case AppCommand.prevPane:
+              final panes = context.read<PaneManagerCubit>().state.panes;
+              final activePaneId =
+                  context.read<PaneManagerCubit>().state.activePaneId;
+              final index = panes.indexWhere((p) => p.id == activePaneId);
+              final nextIndex = index == 0 ? panes.length - 1 : index - 1;
+              context.read<PaneManagerCubit>().setActive(nextIndex);
+
               return;
 
             default:

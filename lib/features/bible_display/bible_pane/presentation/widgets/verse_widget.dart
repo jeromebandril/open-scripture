@@ -49,43 +49,36 @@ class VerseWidget extends StatelessWidget {
       },
       child: spans == null
           ? Text(content)
-          : SelectableText.rich(TextSpan(
-              style: TextStyle(
-                height: 1.2,
-                color: useCustom
-                    ? biblePaneTheme.textColor
-                    : Theme.of(context).colorScheme.onSurface,
+          : SelectableText.rich(
+              TextSpan(style: TextStyle(height: 1.2), children: [
+              TextSpan(
+                text: isHighlighted || biblePaneTheme.showFullRefAlways
+                    ? '${ref.toString()}  '
+                    : '$verseNumber  ',
+                style: TextStyle(
+                  fontWeight: isHighlighted
+                      ? FontWeight.bold
+                      : biblePaneTheme.showFullRefAlways
+                          ? FontWeight.w500
+                          : FontWeight.bold,
+                  color: isHighlighted
+                      ? biblePaneTheme.accentColor
+                      : useCustom
+                          ? biblePaneTheme.textColor
+                          : Theme.of(context).colorScheme.onSurface,
+                ),
               ),
-              children: [
-                  TextSpan(
-                    text: isHighlighted || biblePaneTheme.showFullRefAlways
-                        ? '${ref.toString()}  '
-                        : '$verseNumber  ',
-                    style: TextStyle(
-                      fontWeight: isHighlighted
-                          ? FontWeight.bold
-                          : biblePaneTheme.showFullRefAlways
-                              ? FontWeight.w500
-                              : FontWeight.bold,
-                      color: isHighlighted
-                          ? biblePaneTheme.accentColor
-                          : useCustom
-                              ? biblePaneTheme.textColor
-                              : Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
-                  VerseSpanBuilder.build(
-                    context: context,
-                    text: content,
-                    spans: spans!,
-                    onWordTap: (VerseSpan span, String slice) => context
-                        .read<SelectedWordCubit>()
-                        .setSelectedWord(WordInfo(
+              VerseSpanBuilder.build(
+                context: context,
+                text: content,
+                spans: spans!,
+                onWordTap: (VerseSpan span, String slice) =>
+                    context.read<SelectedWordCubit>().setSelectedWord(WordInfo(
                           text: slice,
                           span: span,
                         )),
-                  ),
-                ])),
+              ),
+            ])),
     );
   }
 }

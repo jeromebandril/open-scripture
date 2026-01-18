@@ -103,10 +103,10 @@ class SettingListSection extends StatelessWidget {
       return const Center(child: CircularProgressIndicator());
     }
     if (isError) {
-      return errorPlaceholder ?? Text('Error');
+      return Center(child: errorPlaceholder ?? Text('Error'));
     }
     if (itemCount == 0) {
-      return emptyListPlaceholder ?? Text('Empty');
+      return Center(child: emptyListPlaceholder ?? Text('Empty'));
     }
     if (separatorBuilder != null) {
       return ListView.separated(
