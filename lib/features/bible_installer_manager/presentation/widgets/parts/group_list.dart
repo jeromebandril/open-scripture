@@ -1,4 +1,4 @@
-part of 'remote_catalog_section.dart';
+part of '../remote_catalog_section.dart';
 
 class _GroupList extends StatefulWidget {
   final String title;

@@ -5,8 +5,8 @@ import 'package:the_smyrna_bible_v2/injection_container.dart';
 import '../bloc/download_manager/bloc/download_manager_bloc.dart';
 import '../bloc/installed_bibles/installed_bibles_bloc.dart';
 import '../bloc/remote_catalog/remote_catalog_bloc.dart';
-import 'installed_bibles/installed_bibles_section.dart';
-import 'remote_catalog/remote_catalog_section.dart';
+import '../widgets/installed_bibles_section.dart';
+import '../widgets/remote_catalog_section.dart';
 
 class BibleManagerWidget extends StatelessWidget {
   const BibleManagerWidget({super.key});

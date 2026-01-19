@@ -13,7 +13,7 @@ import 'features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart
 import 'features/bible_display/bible_pane/presentation/navigation_bus.dart';
 import 'features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
 import 'features/bible_display/split_screen/presenter/widgets/split_view_container.dart';
-import 'features/bible_display/split_screen/presenter/widgets/split_view_controllers.dart';
+import 'features/bible_display/split_screen/presenter/widgets/parts/split_view_controllers.dart';
 import 'features/bible_installer_manager/presentation/bloc/installed_bibles/installed_bibles_bloc.dart';
 import 'features/customizer/domain/entities/app_theme.dart';
 import 'features/customizer/domain/entities/bible_pane_theme.dart';

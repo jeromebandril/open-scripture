@@ -122,6 +122,7 @@ class AppThemeBuilder {
                 onSurface: Color(0xFF121212),
 
                 surfaceContainerHighest: Color(0xFFE4E4E4),
+                surfaceContainerHigh: Color(0xFFE8E8E8),
                 onSurfaceVariant: Color(0xFF3A3A3A),
 
                 // Borders & dividers
@@ -162,6 +163,7 @@ class AppThemeBuilder {
                 onSurface: Color(0xFFE6E6E6),
 
                 surfaceContainerHighest: Color(0xFF2A2A2A),
+                surfaceContainerHigh: Color(0xFF242424),
                 onSurfaceVariant: Color(0xFFBDBDBD),
 
                 // Borders & dividers

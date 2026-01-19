@@ -6,7 +6,7 @@ import '../error/failure.dart';
 class BibleReferenceParser {
   static const searchPromptRegex =
       // r"(\d*\s*[a-zA-Z\s]+)(\d*)\D*(\d*)"; // version 1 (no verse end)
-      r'^(.+?)\s+(\d+)(?:[:.](\d+)(?:-(\d+))?)?$'; // version 2
+      r'^(.+?)\s+(\d+)(?:[:. ](\d+)(?:-(\d+))?)?$'; // version 2
 
   static const List<String> kjvBooks = [
     "Genesis",
@@ -250,8 +250,6 @@ class BibleReferenceParser {
           .replaceAll(RegExp(r'[^a-zA-Z0-9\s]'), '')
           .replaceAll(RegExp(r'\s+'), ' ')
           .trim();
-
-      print(cleanedBook);
       //
       // rebuild book name if there's a digit (e.g   '1john' => '1 john')
       //
@@ -276,7 +274,7 @@ class BibleReferenceParser {
       //
       final BibleRef reference = BibleRef(
         bookOsisId: book3CharId.toUpperCase(),
-        chapter: chapter, // corrections for zero based counting
+        chapter: chapter,
         verseStart: verseStart,
         verseEnd: verseEnd,
       );

@@ -1,10 +1,10 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:the_smyrna_bible_v2/core/utils/colors_util.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/widgets/verse_widget.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/widgets/parts/verse_widget.dart';
 
 class BiblePaneThemeSettings extends Equatable {
-  final String? fontFamily;
+  final String fontFamily;
   final double fontSize;
   final Color textColor;
   final Color backgroundColor;
@@ -13,6 +13,9 @@ class BiblePaneThemeSettings extends Equatable {
   final Color accentColor;
   final bool enableCustomTheme;
   final HighlightRenderMode highlightRenderMode;
+  final FontWeight textFontWeight;
+  // final double adjustWidthOffset;
+  // final bool useAdjustWidthOffsetForWholeApp;
 
   const BiblePaneThemeSettings({
     this.fontFamily = 'General Sans',
@@ -24,6 +27,7 @@ class BiblePaneThemeSettings extends Equatable {
     this.accentColor = Colors.blue,
     this.enableCustomTheme = false,
     this.highlightRenderMode = HighlightRenderMode.fullRefWithColor,
+    this.textFontWeight = FontWeight.w400,
   });
 
   BiblePaneThemeSettings copyWith({
@@ -36,6 +40,7 @@ class BiblePaneThemeSettings extends Equatable {
     Color? accentColor,
     bool? enableCustomTheme,
     HighlightRenderMode? highlightRenderMode,
+    FontWeight? textFontWeight,
   }) {
     return BiblePaneThemeSettings(
       fontFamily: fontFamily ?? this.fontFamily,
@@ -47,6 +52,7 @@ class BiblePaneThemeSettings extends Equatable {
       accentColor: accentColor ?? this.accentColor,
       enableCustomTheme: enableCustomTheme ?? this.enableCustomTheme,
       highlightRenderMode: highlightRenderMode ?? this.highlightRenderMode,
+      textFontWeight: textFontWeight ?? this.textFontWeight,
     );
   }
 
@@ -61,6 +67,7 @@ class BiblePaneThemeSettings extends Equatable {
         accentColor,
         enableCustomTheme,
         highlightRenderMode,
+        textFontWeight,
       ];
 
   Map<String, dynamic> toJson() => {
@@ -73,6 +80,7 @@ class BiblePaneThemeSettings extends Equatable {
         'accentColor': ColorsUtil.colorToHex(accentColor),
         'enableCustomTheme': enableCustomTheme,
         'highlightRenderMode': highlightRenderMode.toString(),
+        'textFontWeight': textFontWeight.toString(),
       };
 
   static BiblePaneThemeSettings fromJson(Map<String, dynamic> json) {
@@ -97,6 +105,7 @@ class BiblePaneThemeSettings extends Equatable {
       enableCustomTheme: (json['enableCustomTheme'] as bool),
       highlightRenderMode:
           parseHighlightRenderMode(json['highlightRenderMode'] as String),
+      textFontWeight: json['textFontWeight'],
     );
   }
 }
@@ -112,6 +121,7 @@ class BiblePaneTheme extends ThemeExtension<BiblePaneTheme> {
   final Color accentColor;
   final bool enableCustomTheme;
   final HighlightRenderMode highlightRenderMode;
+  final FontWeight textFontWeight;
 
   const BiblePaneTheme({
     required this.fontFamily,
@@ -123,6 +133,7 @@ class BiblePaneTheme extends ThemeExtension<BiblePaneTheme> {
     required this.accentColor,
     required this.enableCustomTheme,
     required this.highlightRenderMode,
+    required this.textFontWeight,
   });
 
   @override
@@ -136,6 +147,7 @@ class BiblePaneTheme extends ThemeExtension<BiblePaneTheme> {
     Color? accentColor,
     bool? enableCustomTheme,
     HighlightRenderMode? highlightRenderMode,
+    FontWeight? textFontWeight,
   }) {
     return BiblePaneTheme(
       fontFamily: fontFamily ?? this.fontFamily,
@@ -147,6 +159,7 @@ class BiblePaneTheme extends ThemeExtension<BiblePaneTheme> {
       accentColor: accentColor ?? this.accentColor,
       enableCustomTheme: enableCustomTheme ?? this.enableCustomTheme,
       highlightRenderMode: highlightRenderMode ?? this.highlightRenderMode,
+      textFontWeight: textFontWeight ?? this.textFontWeight,
     );
   }
 
@@ -163,6 +176,7 @@ class BiblePaneTheme extends ThemeExtension<BiblePaneTheme> {
       accentColor: Color.lerp(accentColor, other.accentColor, t)!,
       enableCustomTheme: t < 0.5 ? enableCustomTheme : other.enableCustomTheme,
       highlightRenderMode: highlightRenderMode,
+      textFontWeight: textFontWeight,
     );
   }
 }
@@ -179,5 +193,6 @@ extension BiblePaneThemeSettingsX on BiblePaneThemeSettings {
         accentColor: accentColor,
         enableCustomTheme: enableCustomTheme,
         highlightRenderMode: highlightRenderMode,
+        textFontWeight: textFontWeight,
       );
 }

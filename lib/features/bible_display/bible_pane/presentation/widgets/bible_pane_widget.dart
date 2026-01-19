@@ -3,15 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:the_smyrna_bible_v2/core/domain/entities/verse_segment.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/cubit/selected_word_cubit.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/widgets/pane_info.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/widgets/parts/pane_info.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_selector/presenter/widget/bible_selector.dart';
 import 'package:the_smyrna_bible_v2/features/customizer/domain/entities/bible_pane_theme.dart';
 import 'package:the_smyrna_bible_v2/features/customizer/presentation/cubit/customizer_cubit.dart';
 
 import '../../../../../core/presentation/widgets/adjustable_text_size.dart';
 import '../bloc/bible_pane_bloc.dart';
-import 'verse_divider.dart';
-import 'verse_widget.dart';
+import 'parts/verse_divider.dart';
+import 'parts/verse_widget.dart';
 
 class BiblePane extends StatefulWidget {
   final int uniqueId;

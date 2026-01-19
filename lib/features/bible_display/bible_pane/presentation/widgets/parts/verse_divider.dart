@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import '../../../../customizer/domain/entities/bible_pane_theme.dart';
+import '../../../../../customizer/domain/entities/bible_pane_theme.dart';
 
 class VerseDivider extends StatelessWidget {
   const VerseDivider({super.key});

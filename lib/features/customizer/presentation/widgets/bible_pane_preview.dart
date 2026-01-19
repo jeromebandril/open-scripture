@@ -5,7 +5,7 @@ import 'package:the_smyrna_bible_v2/core/domain/entities/verse_span.dart';
 
 import '../../../../core/domain/entities/bible_ref.dart';
 import '../../../bible_display/bible_pane/presentation/rendering/verse_richtext_builder.dart';
-import '../../../bible_display/bible_pane/presentation/widgets/verse_divider.dart';
+import '../../../bible_display/bible_pane/presentation/widgets/parts/verse_divider.dart';
 import '../../domain/entities/bible_pane_theme.dart';
 import '../cubit/customizer_cubit.dart';
 

@@ -18,14 +18,12 @@ class AdjustableTextSize extends StatefulWidget {
   const AdjustableTextSize({
     required this.child,
     required this.initialiSize,
-    this.scrollController,
     this.onZoom,
     super.key,
   });
 
   final Widget child;
   final double initialiSize;
-  final ScrollController? scrollController;
   final Function(double scaleFactor)? onZoom;
 
   @override
@@ -33,7 +31,6 @@ class AdjustableTextSize extends StatefulWidget {
 }
 
 class _AdjustableTextSizeState extends State<AdjustableTextSize> {
-  ScrollController? scrollController;
   late double textSize;
   double textScaleFactor = 1.0;
   bool isControlPressed = false;
@@ -46,7 +43,6 @@ class _AdjustableTextSizeState extends State<AdjustableTextSize> {
     super.initState();
 
     textSize = widget.initialiSize;
-    scrollController = widget.scrollController;
     _focusNode = FocusNode(debugLabel: 'ZoomTextWrapper');
   }
 
@@ -67,20 +63,23 @@ class _AdjustableTextSizeState extends State<AdjustableTextSize> {
 
     return Listener(
       onPointerSignal: _onPointerSignal,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () {
-          _focusNode.requestFocus();
-        },
-        onScaleUpdate: _onScaleUpdate,
-        child: Focus(
-          focusNode: _focusNode,
-          onKeyEvent: _onKeyEvent,
-          child: MediaQuery(
-            data: mq.copyWith(textScaler: combined),
-            child: DefaultTextStyle.merge(
-              style: TextStyle(fontSize: textSize),
-              child: widget.child,
+      child: NotificationListener<ScrollNotification>(
+        onNotification: (n) => isControlPressed,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            _focusNode.requestFocus();
+          },
+          onScaleUpdate: _onScaleUpdate,
+          child: Focus(
+            focusNode: _focusNode,
+            onKeyEvent: _onKeyEvent,
+            child: MediaQuery(
+              data: mq.copyWith(textScaler: combined),
+              child: DefaultTextStyle.merge(
+                style: TextStyle(fontSize: textSize),
+                child: widget.child,
+              ),
             ),
           ),
         ),
@@ -103,20 +102,15 @@ class _AdjustableTextSizeState extends State<AdjustableTextSize> {
     if (event is KeyDownEvent) isControlPressed = true;
     if (event is KeyUpEvent) isControlPressed = false;
 
-    // * prevent a possible scrollable child to scroll while zomming:
-    // when pressing ctrl, save the scroll offset
-    if (scrollController != null && isControlPressed) {
-      scrollOffset = scrollController!.offset;
-    }
     return KeyEventResult.handled;
   }
 
   /// To handle zooming with scroll wheel
   void _onPointerSignal(PointerSignalEvent signal) {
     if (isControlPressed && signal is PointerScrollEvent) {
+      print('consumed scroll event');
       // * prevent a possible scrollable child to scroll while zooming:
       // by jumping to the initial offset of when ctrl was pressed
-      _prevetNormalScroll();
       signal.scrollDelta.dy < 0 ? _zoom(1) : _zoom(-1);
     }
   }
@@ -129,10 +123,5 @@ class _AdjustableTextSizeState extends State<AdjustableTextSize> {
       );
       if (widget.onZoom != null) widget.onZoom!(textScaleFactor);
     });
-  }
-
-  void _prevetNormalScroll() {
-    if (scrollController == null) return;
-    scrollController!.jumpTo(scrollOffset);
   }
 }

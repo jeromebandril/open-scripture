@@ -5,7 +5,7 @@ import 'package:the_smyrna_bible_v2/injection_container.dart';
 
 import '../../../bible_pane/domain/repositories/bible_repository.dart';
 import '../../../bible_pane/presentation/bloc/bible_pane_bloc.dart';
-import '../split_pane_data.dart';
+import '../models/split_pane_data.dart';
 
 part 'pane_manager_state.dart';
 

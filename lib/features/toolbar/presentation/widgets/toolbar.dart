@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../settings_window/presentation/widgets/settings_window.dart';
+import '../../../settings_window/presentation/models/settings_route.dart';
+import '../../../settings_window/presentation/pages/settings_window.dart';
 import '../../../window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
 
 class Toolbar extends StatelessWidget {

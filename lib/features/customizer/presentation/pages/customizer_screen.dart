@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/widgets/verse_widget.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/widgets/parts/verse_widget.dart';
 import 'package:the_smyrna_bible_v2/features/customizer/presentation/widgets/bible_pane_preview.dart';
-import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/components/setting_input_bool.dart';
-import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/components/setting.dart';
-import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/components/setting_input_color.dart';
-import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/components/setting_input_option.dart';
-import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/components/setting_section.dart';
-import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/components/setting_input_text.dart';
+import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/setting_input_bool.dart';
+import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/setting.dart';
+import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/setting_input_color.dart';
+import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/setting_input_option.dart';
+import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/setting_section.dart';
+import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/setting_input_text.dart';
 
 import '../cubit/customizer_cubit.dart';
 

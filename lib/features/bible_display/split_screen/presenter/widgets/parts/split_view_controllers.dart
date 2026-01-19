@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../cubit/pane_manager_cubit.dart';
+import '../../cubit/pane_manager_cubit.dart';
 
 class SplitscreenControls extends StatefulWidget {
   const SplitscreenControls({super.key});

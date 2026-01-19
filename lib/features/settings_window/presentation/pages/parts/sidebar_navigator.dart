@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/settings_window.dart';
+
+import '../../models/settings_route.dart';
 
 class SidebarNavigator extends StatelessWidget {
   final double width;

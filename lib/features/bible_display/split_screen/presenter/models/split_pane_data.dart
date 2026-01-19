@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../../../../core/domain/entities/bible_ref.dart';
+import '../../../../../core/domain/entities/bible_ref.dart';
 
 class PaneDescriptor extends Equatable {
   const PaneDescriptor({

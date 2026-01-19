@@ -42,7 +42,7 @@ class BibleRepositoryImpl implements BibleRepository {
   }) async {
     try {
       final verses = await localDatasource.getChapterWithSpans(
-          bibleId, reference.bookOsisId, reference.chapter);
+          bibleId, reference.bookOsisId!, reference.chapter!);
       return Right(verses);
     } catch (e) {
       return Left(NotFoundFailure());
