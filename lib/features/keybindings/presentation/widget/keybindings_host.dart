@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/fullscreen_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/toolbar_cubit.dart';
