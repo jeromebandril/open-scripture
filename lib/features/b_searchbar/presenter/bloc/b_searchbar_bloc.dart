@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:the_smyrna_bible_v2/features/b_searchbar/domain/repositories/b_search_intent_type.dart';
+import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/history_data.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/navigation_bus.dart';
 
 import '../../../../core/domain/entities/bible_ref.dart';
@@ -20,6 +21,7 @@ class BSearchbarBloc extends Bloc<BSearchbarEvent, BSearchbarState> {
     on<BSearchbarParseIntent>(_onAnalyzeIntent);
     on<_SaveInHistory>(_onSaveInHistory);
     on<_ExecuteIntent>(_onExecuteIntent);
+    on<DeleteHistoryItem>(_onDeleteHistoryItem);
 
     _sub = _navBus?.stream.listen((event) {
       // store intent in history only if from searchbar
@@ -88,10 +90,20 @@ class BSearchbarBloc extends Bloc<BSearchbarEvent, BSearchbarState> {
     Emitter<BSearchbarState> emit,
   ) {
     if (event.result.success) {
+      final data = HistoryData(ref: event.result.ref, time: DateTime.now());
+
       emit(state.copyWith(
-        history: () => [event.result.ref, ...state.history],
+        history: () => [data, ...state.history],
       ));
     }
+  }
+
+  void _onDeleteHistoryItem(
+    DeleteHistoryItem event,
+    Emitter<BSearchbarState> emit,
+  ) {
+    final newHistory = List.of(state.history)..removeAt(event.index);
+    emit(state.copyWith(history: () => newHistory));
   }
 
   @override

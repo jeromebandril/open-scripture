@@ -15,3 +15,11 @@ class BSearchbarParseIntent extends BSearchbarEvent {
   @override
   List<Object> get props => [query];
 }
+
+class DeleteHistoryItem extends BSearchbarEvent {
+  final int index;
+  const DeleteHistoryItem(this.index);
+
+  @override
+  List<Object> get props => [index];
+}

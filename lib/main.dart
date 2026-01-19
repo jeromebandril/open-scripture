@@ -8,7 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
 import 'features/b_searchbar/presenter/widgets/bible_searchbar.dart';
-import 'features/b_searchbar/presenter/widgets/history_button.dart';
+import 'features/b_searchbar/presenter/widgets/show_history_button.dart';
 import 'features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
 import 'features/bible_display/bible_pane/presentation/navigation_bus.dart';
 import 'features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
@@ -140,7 +140,6 @@ class _HomeState extends State<Home> {
         //
         body: WindowStackManagerWrapper(
           child: Column(
-            spacing: 8,
             children: [
               //
               // Simulated classic desktop toolbar
@@ -204,7 +203,7 @@ class _AppHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Row(
         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -213,7 +212,7 @@ class _AppHeader extends StatelessWidget {
             onSubmitted: () => returnFocusToRoot(),
             //onEditComplete: () => _returnFocusToRoot(),
           ),
-          HistoryButton(),
+          ShowHistoryButton(),
           SplitscreenControls(),
           BlocBuilder<FullscreenCubit, bool>(
             builder: (context, isFullscreen) {

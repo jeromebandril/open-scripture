@@ -16,13 +16,13 @@ class BSearchbarState extends Equatable {
 
   final BSearchbarStatus status;
   final BibleRef? referenceResult;
-  final List<BibleRef> history;
+  final List<HistoryData> history;
   final BSearchIntentType intentType;
 
   BSearchbarState copyWith({
     BSearchbarStatus Function()? status,
     BibleRef Function()? referenceResult,
-    List<BibleRef> Function()? history,
+    List<HistoryData> Function()? history,
     BSearchIntentType Function()? intentType,
   }) {
     return BSearchbarState(
