@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/fullscreen_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/toolbar_cubit.dart';
+import 'package:the_smyrna_bible_v2/features/b_searchbar/domain/repositories/b_search_intent_type.dart';
 import 'package:the_smyrna_bible_v2/features/toolbar/presentation/widgets/toolbar.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -164,10 +165,22 @@ class _HomeState extends State<Home> {
                   final ref = state.referenceResult;
                   if (ref == null) return;
 
-                  context.read<PaneManagerCubit>().activeBloc().add(
-                        BiblePaneDisplayChapter(
-                            ref: ref, source: IntentSource.searchbar),
-                      );
+                  final BiblePaneEvent event = switch (state.intentType) {
+                    BSearchIntentType.gotoReference => BiblePaneDisplayChapter(
+                        ref: ref,
+                        source: IntentSource.searchbar,
+                      ),
+                    BSearchIntentType.gotoVerseNumber => BiblePaneJustChangeRef(
+                        ref: ref,
+                        source: IntentSource.searchbar,
+                        saveHistory: true,
+                      ),
+                    BSearchIntentType.findByString => BiblePaneJustChangeRef(
+                        ref: ref,
+                      )
+                  };
+
+                  context.read<PaneManagerCubit>().activeBloc().add(event);
                 },
                 child: Expanded(child: MultipleBiblePanes()),
               ),

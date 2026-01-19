@@ -81,10 +81,23 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     );
   }
 
-  FutureOr<void> _onChangeRef(
+  void _onChangeRef(
     BiblePaneJustChangeRef event,
     Emitter<BiblePaneState> emit,
   ) {
+    final vn = event.ref.verseStart;
+    if (vn == null || vn < 1 || vn > state.segments.last.ref.verseStart!) {
+      return;
+    }
+
+    if (event.saveHistory) {
+      _navBus?.emit(NavigationFeedback(
+        ref: event.ref,
+        success: true,
+        source: event.source,
+      ));
+    }
+
     emit(state.copyWith(reference: () => event.ref));
   }
 }

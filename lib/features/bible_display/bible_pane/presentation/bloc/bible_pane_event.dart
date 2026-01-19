@@ -42,11 +42,15 @@ class BiblePaneDisplayChapter extends BiblePaneEvent {
 
 class BiblePaneJustChangeRef extends BiblePaneEvent {
   final BibleRef ref;
+  final bool saveHistory;
+  final IntentSource? source;
 
   const BiblePaneJustChangeRef({
     required this.ref,
+    this.saveHistory = false,
+    this.source,
   });
 
   @override
-  List<Object?> get props => [ref];
+  List<Object?> get props => [ref, saveHistory, source];
 }
