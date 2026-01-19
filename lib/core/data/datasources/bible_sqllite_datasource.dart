@@ -17,65 +17,98 @@ import '../../error/exception.dart';
 import '../../domain/entities/verse_segment.dart';
 
 abstract class BibleLocalDataSource {
-  /// Try to install a translation locally.
-  /// It receives a path to the temp_file were the content of
-  /// type [List<int>] has been downloaded,
-  /// and convert it into expected files/structure.
+  /// Installs a previously downloaded bible archive into the local store.
   ///
-  /// Throws a [InstallationException] if it fails
+  /// This method assumes the archive has already been downloaded to the
+  /// deterministic location used by the remote data source (based on [bibleId]).
+  ///
+  /// Installation typically includes:
+  /// - reading the downloaded ZIP file from disk
+  /// - extracting USFX + metadata
+  /// - parsing XML into models
+  /// - writing content to SQLite (usually in a transaction)
+  /// - cleanup of temporary artifacts
+  ///
+  /// Returns a [Stream] of [InstallProgress] describing the installation
+  /// lifecycle (installing, writing to DB, done, failed).
+  ///
+  /// Errors are surfaced through the stream error channel as an [AppException]
+  /// subtype (e.g. InstallFileMissingException, InstallParseException,
+  /// InstallDatabaseException).
   Stream<InstallProgress> installBible(String bibleId);
 
-  /// Uninstall a local translation (removes files).
+  /// Uninstalls an installed bible from the local store.
   ///
-  /// Throws a [InstallationException] if it fails
+  /// This should remove the bible metadata and all related content rows.
+  ///
+  /// Throws an [AppException] subtype if the operation fails.
+  /// Common cases:
+  /// - [UninstallNotFoundException] if the bible is not installed
+  /// - [UninstallationException] for unexpected database failures
   Future<void> uninstallBible(String bibleId);
 
-  /// Get a list of installed translations info
-  /// as [TranslationInfoModel] object
+  /// Returns the list of bibles currently installed in the local store.
   ///
-  /// Throws a [LocalDataException] if it fails
+  /// This is a one-shot read (no live updates).
+  ///
+  /// Throws an [AppException] subtype (e.g. [LocalDataException]) if the
+  /// query fails.
   Future<List<BibleMeta>> getInstalledBibles();
 
-  /// Get a list of installed translations info
-  /// as [TranslationInfoModel] object
+  /// Retrieves bible metadata for a specific installed bible by its local id.
   ///
-  /// Throws a [LocalDataException] if it fails
+  /// Throws:
+  /// - [NotFoundException] if the bible id does not exist
+  /// - [LocalDataException] for database/query failures
   Future<BibleMeta> getBible(int bibleId);
 
-  /// Get a list of installed translations info
-  /// as [TranslationInfoModel] object
+  /// Watches the list of installed bibles and emits updates whenever the
+  /// underlying local store changes.
   ///
-  /// Throws a [LocalDataException] if it fails
+  /// Errors are surfaced via the stream error channel as an [AppException]
+  /// subtype (typically [LocalDataException]).
   Stream<List<BibleMeta>> watchInstalledBibles();
 
-  /// Get one verse
+  /// Loads a single verse (as one or more segments depending on your model).
   ///
-  /// Throws a [NoDbConnectionException] if the verse does not exist
+  /// Throws:
+  /// - [NotFoundException] if the verse does not exist
+  /// - [LocalDataException] for database/query failures
   Future<VerseSegment> getVerse(
       int bibleId, String book, int chapter, int verse);
 
-  /// Get a list of verses from a range
+  /// Loads a list of verses within a range.
   ///
-  /// Throws a [NoDbConnectionException] if the verse does not exist
+  /// Throws:
+  /// - [NotFoundException] if the range yields no verses
+  /// - [LocalDataException] for database/query failures
   Future<List<VerseSegment>> getVerseFromRange(
       int bibleId, String bookId, int chapter, int verse);
 
-  /// Get the whole chapter, including the verses
+  /// Loads all verse segments for a chapter (text only, no spans
+  /// e.g. no formatting)
   ///
-  /// Throws a [NoDbConnectionException] if the verse does not exist
+  /// Throws:
+  /// - [NotFoundException] if the chapter has no content
+  /// - [LocalDataException] for database/query failures
   Future<List<VerseSegment>> getChapter(
       int bibleId, String bookId, int chapter);
 
-  /// Get the whole chapter, including the verses
+  /// Loads all verse segments for a chapter, including formatting spans.
   ///
-  /// Throws a [NoDbConnectionException] if the verse does not exist
+  /// Throws:
+  /// - [NotFoundException] if the chapter has no content
+  /// - [LocalDataException] for database/query failures
   Future<List<VerseSegment>> getChapterWithSpans(
       int bibleId, String bookId, int chapter);
 
-  /// Get a list of books
+  /// Loads the list of books available for a given installed bible.
   ///
-  /// Throws a [NoDbConnectionException] if the verse does not exist
-  Future<List<Book>> getBooks(String version);
+  ///
+  /// Throws:
+  /// - [NotFoundException] if the bible has no books / is not installed
+  /// - [LocalDataException] for database/query failures
+  Future<List<Book>> getBooks(int bibleId);
 }
 
 class BibleLocalDatasourceImpl implements BibleLocalDataSource {
@@ -124,6 +157,12 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
       final dir = Directory(p.join(appSupDir.path, bibleId));
       zipFile = File(p.join(dir.path, '$bibleId.zip')); // <-- prefer .zip
 
+      if (!await zipFile.exists()) {
+        throw InstallFileMissingException(
+          'Downloaded archive not found at ${zipFile.path}',
+        );
+      }
+
       yield const InstallProgress(
         stage: InstallStage.installing,
         received: 1,
@@ -131,7 +170,16 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
         message: 'Reading downloaded file...',
       );
 
-      final zipBytes = await zipFile.readAsBytes();
+      late final List<int> zipBytes;
+      try {
+        zipBytes = await zipFile.readAsBytes();
+      } catch (e, st) {
+        throw InstallFileMissingException(
+          'Failed to read archive bytes',
+          cause: e,
+          stackTrace: st,
+        );
+      }
 
       // 2) Decode zip
       yield const InstallProgress(
@@ -141,7 +189,16 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
         message: 'Opening archive...',
       );
 
-      final archive = ZipDecoder().decodeBytes(zipBytes);
+      late final Archive archive;
+      try {
+        archive = ZipDecoder().decodeBytes(zipBytes);
+      } catch (e, st) {
+        throw InstallZipDecodeException(
+          'Failed to decode ZIP archive',
+          cause: e,
+          stackTrace: st,
+        );
+      }
 
       String? bibleContent;
       String? metadataContent;
@@ -163,11 +220,15 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
         }
       }
 
-      if (bibleContent == null || bibleContent.isEmpty) {
-        throw InstallationException(); // or a more specific one
+      if (bibleContent == null || bibleContent.trim().isEmpty) {
+        throw InstallArchiveContentException(
+          'Missing metadata XML in archive (expected *metadata.xml)',
+        );
       }
-      if (metadataContent == null || metadataContent.isEmpty) {
-        throw InstallationException();
+      if (metadataContent == null || metadataContent.trim().isEmpty) {
+        throw InstallArchiveContentException(
+          'Missing metadata XML in archive (expected *metadata.xml)',
+        );
       }
 
       // 3) Parse
@@ -178,13 +239,22 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
         message: 'Parsing bible content...',
       );
 
-      final usfxParser = UsfxParser(bibleContent, metadataContent);
-      final bible = usfxParser.getBible();
-      final books = usfxParser.getBooks();
-      final verseWithSpans = usfxParser.getVersesWithSpans();
+      late final BibleMeta bible;
+      late final List<Book> books;
+      late final (List<VerseSegment>, List<VerseSpanModel>) verseWithSpans;
 
-      // final books = usfxParser.getBooks();
-      // final verses = usfxParser.getVerses();
+      try {
+        final usfxParser = UsfxParser(bibleContent, metadataContent);
+        bible = usfxParser.getBible();
+        books = usfxParser.getBooks();
+        verseWithSpans = usfxParser.getVersesWithSpans();
+      } catch (e, st) {
+        throw InstallParseException(
+          'Failed to parse USFX/metadata into models',
+          cause: e,
+          stackTrace: st,
+        );
+      }
 
       // 4) Insert into DB (placeholder)
       yield const InstallProgress(
@@ -194,9 +264,20 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
         message: 'Writing to database...',
       );
 
-      // TODO: transaction insert:
-      // await db.transaction(() async { ... });
-      await db.insertBible(bible, books, verseWithSpans.$1, verseWithSpans.$2);
+      try {
+        await db.insertBible(
+          bible,
+          books,
+          verseWithSpans.$1,
+          verseWithSpans.$2,
+        );
+      } catch (e, st) {
+        throw InstallDatabaseException(
+          'Failed inserting bible into database',
+          cause: e,
+          stackTrace: st,
+        );
+      }
 
       // 5) Cleanup
       yield const InstallProgress(
@@ -206,8 +287,16 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
         message: 'Cleaning up...',
       );
 
-      // Use async delete (don’t use deleteSync in async code)
-      await zipFile.delete();
+      try {
+        await zipFile.delete();
+      } catch (e, st) {
+        // Not fatal for correctness, but good to track
+        throw InstallCleanupException(
+          'Install succeeded but cleanup failed (could not delete ZIP)',
+          cause: e,
+          stackTrace: st,
+        );
+      }
 
       yield const InstallProgress(
         stage: InstallStage.done,
@@ -215,27 +304,53 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
         total: 1,
         message: 'Installed',
       );
-    } catch (e) {
+    } on AppException catch (e) {
+      // Emit failed progress with message + then end stream.
       yield InstallProgress(
         stage: InstallStage.failed,
         received: 0,
         total: 0,
-        message: 'Installation failed',
+        message: e.message,
       );
+
+      // throw e;
+
+      return;
+    } catch (e) {
+      // Truly unexpected
+      yield const InstallProgress(
+        stage: InstallStage.failed,
+        received: 0,
+        total: 0,
+        message: 'Installation failed (unexpected error)',
+      );
+      return;
     }
   }
 
   @override
   Future<void> uninstallBible(String bibleId) async {
     try {
-      await (db.delete(db.bibles)..where((b) => b.extId.equals(bibleId))).go();
-    } catch (e) {
-      throw UninstallationException();
+      final deleted = await (db.delete(db.bibles)
+            ..where((b) => b.extId.equals(bibleId)))
+          .go();
+
+      if (deleted == 0) {
+        throw UninstallNotFoundException('Bible not found: $bibleId');
+      }
+    } catch (e, st) {
+      if (e is UninstallNotFoundException) rethrow;
+
+      throw UninstallationException(
+        'Failed to uninstall bible: $bibleId',
+        cause: e,
+        stackTrace: st,
+      );
     }
   }
 
   @override
-  Future<List<Book>> getBooks(String version) {
+  Future<List<Book>> getBooks(int bibleId) {
     // TODO: implement getBooks
     throw UnimplementedError();
   }
@@ -247,7 +362,11 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
       final rows =
           await db.getVerseSegmentsForChapter(bibleId, bookId, chapter).get();
 
-      if (rows.isEmpty) throw NotFoundException();
+      if (rows.isEmpty) {
+        throw NotFoundException(
+          'No verses for $bookId $chapter (bibleId =$bibleId)',
+        );
+      }
 
       return rows
           .map((r) => VerseSegment(
@@ -264,8 +383,15 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
                 spans: const [],
               ))
           .toList();
-    } catch (e) {
-      throw LocalDataException();
+    } on AppException {
+      rethrow;
+    } catch (e, st) {
+      // Wrap *unexpected* DB/Drift errors
+      throw LocalDataException(
+        'Failed to load chapter $bookId $chapter (bibleId=$bibleId)',
+        cause: e,
+        stackTrace: st,
+      );
     }
   }
 
@@ -277,7 +403,11 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
           .getSegmentsForChapterWithSpans(bibleId, bookId, chapter)
           .get();
 
-      if (rows.isEmpty) throw NotFoundException();
+      if (rows.isEmpty) {
+        throw NotFoundException(
+          'No verses for $bookId $chapter (bibleId =$bibleId)',
+        );
+      }
 
       final List<VerseSegment> segments = [];
       for (final r in rows) {
@@ -304,8 +434,15 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
       }
 
       return segments;
-    } catch (e) {
-      throw LocalDataException();
+    } on AppException {
+      rethrow;
+    } catch (e, st) {
+      // Wrap *unexpected* DB/Drift errors
+      throw LocalDataException(
+        'Failed to load chapter $bookId $chapter (bibleId=$bibleId)',
+        cause: e,
+        stackTrace: st,
+      );
     }
   }
 
@@ -327,6 +464,11 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
   Future<BibleMeta> getBible(int bibleId) async {
     try {
       final rows = await db.getBible(bibleId).get();
+
+      if (rows.isEmpty) {
+        throw NotFoundException('Bible not found (id=$bibleId)');
+      }
+
       final r = rows.first;
 
       return BibleMeta(
@@ -340,8 +482,15 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
         langIsoCode: r.langIsoCode,
         langNativeName: r.langNativeName,
       );
-    } catch (e) {
-      throw NotFoundException();
+    } on AppException {
+      rethrow;
+    } catch (e, st) {
+      // Wrap unexpected DB / Drift errors
+      throw LocalDataException(
+        'Failed to load bible metadata (id=$bibleId)',
+        cause: e,
+        stackTrace: st,
+      );
     }
   }
 }

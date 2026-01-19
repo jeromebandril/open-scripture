@@ -11,20 +11,31 @@ import '../../domain/entities/bible_meta.dart';
 import '../../error/exception.dart';
 
 abstract class BibleRemoteDataSource {
-  /// Get bytes of a general bible file format
-  /// And writes it temporarly in local file system,
-  /// ready to be installed (converted to the preferred
-  /// and expected file format).
+  /// Downloads a bible archive from the remote catalog and persists it
+  /// to a deterministic location in the local file system.
   ///
-  /// Returns a Stream to listen to the download
-  /// progress.
+  /// The archive is not parsed or installed by this method. Its sole
+  /// responsibility is network transfer and progress reporting.
   ///
-  /// Throws [ServerException] if it is unsuccessful
+  /// The returned [Stream] emits [InstallProgress] updates describing
+  /// the download lifecycle (started, in progress, completed, failed).
+  ///
+  /// Errors are surfaced through the stream error channel as
+  /// [DownloadException] (or other [AppException] subtypes).
+  ///
+  /// The stream completes once the download finishes or fails.
   Stream<InstallProgress> downloadBibleFileContent(String id);
 
-  /// Gets a list of available to download translations
+  /// Retrieves the remote catalog of available bible translations.
   ///
-  /// Throws [ServerException] if it is unsuccessful
+  /// This method performs a network request to the content source and
+  /// parses the response into a list of [BibleMeta] descriptors.
+  ///
+  /// No local persistence or installation is performed.
+  ///
+  /// Throws an [AppException] subtype (e.g. [ServerException],
+  /// [ParsingException]) if the request fails or the response
+  /// cannot be interpreted.
   Future<List<BibleMeta>> getListOfAllBibles();
 }
 
@@ -38,6 +49,7 @@ class BibleRemoteDataSourceImpl implements BibleRemoteDataSource {
     String bibleId,
   ) {
     final controller = StreamController<InstallProgress>.broadcast();
+
     () async {
       try {
         final url = '${constants.contentSourceURL}/${bibleId}_usfx.zip';
@@ -52,38 +64,77 @@ class BibleRemoteDataSourceImpl implements BibleRemoteDataSource {
           received: 0,
           total: 0,
           stage: InstallStage.downloading,
+          message: 'Starting download...',
         ));
 
         await dio.download(
           url,
           filePath,
           onReceiveProgress: (received, total) {
+            if (controller.isClosed) return;
+
             controller.add(
               InstallProgress(
                 received: received,
-                total: total < 0 ? 0 : total, // dio uses -1 when unknown
+                total: total < 0 ? 0 : total,
                 stage: InstallStage.downloading,
+                message: 'Downloading...',
               ),
             );
           },
         );
 
-        controller.add(InstallProgress(
+        controller.add(const InstallProgress(
           received: 1,
           total: 1,
           stage: InstallStage.downloadingDone,
+          message: 'Download completed',
         ));
+      } on DioException catch (e, st) {
+        // Emit failed progress for UI:
+        if (!controller.isClosed) {
+          controller.add(InstallProgress(
+            received: 0,
+            total: 0,
+            stage: InstallStage.failed,
+            message: 'Download failed',
+          ));
+        }
 
-        await controller.close();
-      } catch (e) {
-        controller.add(InstallProgress(
-          received: 0,
-          total: 0,
-          stage: InstallStage.failed,
-        ));
-        await controller.close();
+        // Also emit a typed error so repository/bloc can classify it:
+        if (!controller.isClosed) {
+          controller.addError(
+            DownloadException(
+              'Failed to download $bibleId: ${e.message ?? e.type.name}',
+              cause: e,
+              stackTrace: st,
+            ),
+            st,
+          );
+        }
+      } catch (e, st) {
+        if (!controller.isClosed) {
+          controller.add(const InstallProgress(
+            received: 0,
+            total: 0,
+            stage: InstallStage.failed,
+            message: 'Download failed (unexpected)',
+          ));
+        }
+        if (!controller.isClosed) {
+          controller.addError(
+            DownloadException(
+              'Unexpected error while downloading $bibleId',
+              cause: e,
+              stackTrace: st,
+            ),
+            st,
+          );
+        }
       } finally {
-        await controller.close();
+        if (!controller.isClosed) {
+          await controller.close();
+        }
       }
     }();
 
@@ -95,43 +146,80 @@ class BibleRemoteDataSourceImpl implements BibleRemoteDataSource {
     try {
       final response = await http.get(Uri.parse(constants.contentSourceURL));
 
-      if (response.statusCode != 200) throw ServerException();
+      if (response.statusCode != 200) {
+        throw ServerException('HTTP ${response.statusCode}');
+      }
 
       final document = parser.parse(response.body);
       final rows = document.querySelectorAll('tr.redist');
-      final List<BibleMeta> identificators = [];
+      // final List<BibleMeta> identificators = [];
 
       if (rows.isEmpty) {
-        throw ServerException();
-      } else {
-        for (var row in rows) {
-          final lastTd = row.querySelector('td:last-child');
-          final thirdTd = row.querySelector('td:nth-child(2)');
-
-          final link = lastTd!.querySelector('a');
-          final language = thirdTd!.querySelector('a')!.innerHtml;
-          final name = link?.innerHtml;
-
-          if (link != null) {
-            final href = link.attributes['href'];
-            if (href != null) {
-              final id = Uri.parse(href).queryParameters['id'];
-              if (id != null) {
-                identificators.add(BibleMeta(
-                  id: -1,
-                  extId: id,
-                  bibleName: name!,
-                  langEngName: language,
-                  abbreviation: id,
-                ));
-              }
-            }
-          }
-        }
+        throw ParseException('No rows found: tr.redist');
       }
-      return identificators;
-    } catch (e) {
-      throw ServerException();
+
+      final metas = <BibleMeta>[];
+
+      for (final row in rows) {
+        final lastTd = row.querySelector('td:last-child');
+        final thirdTd = row.querySelector('td:nth-child(2)');
+
+        final link = lastTd?.querySelector('a');
+        final language = thirdTd?.querySelector('a')?.innerHtml;
+        final name = link?.innerHtml;
+
+        final href = link?.attributes['href'];
+        final id = href == null ? null : Uri.parse(href).queryParameters['id'];
+
+        if (id == null || name == null || language == null) {
+          // Skip malformed rows rather than crashing the whole call.
+          continue;
+        }
+
+        metas.add(BibleMeta(
+          id: -1,
+          extId: id,
+          bibleName: name,
+          langEngName: language,
+          abbreviation: id,
+        ));
+      }
+
+      if (metas.isEmpty) {
+        throw ParseException('No valid BibleMeta parsed from page');
+      }
+
+      return metas;
+
+      // for (final row in rows) {
+      //   final lastTd = row.querySelector('td:last-child');
+      //   final thirdTd = row.querySelector('td:nth-child(2)');
+
+      //   final link = lastTd!.querySelector('a');
+      //   final language = thirdTd!.querySelector('a')!.innerHtml;
+      //   final name = link?.innerHtml;
+
+      //   if (link != null) {
+      //     final href = link.attributes['href'];
+      //     if (href != null) {
+      //       final id = Uri.parse(href).queryParameters['id'];
+      //       if (id != null) {
+      //         identificators.add(BibleMeta(
+      //           id: -1,
+      //           extId: id,
+      //           bibleName: name!,
+      //           langEngName: language,
+      //           abbreviation: id,
+      //         ));
+      //       }
+      //     }
+      //   }
+      // }
+      // return identificators;
+    } on http.ClientException catch (e) {
+      throw NetworkException(e.toString());
+    } on FormatException catch (e) {
+      throw ParseException(e.toString());
     }
   }
 }

@@ -39,7 +39,7 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
     final cubit = context.read<CustomizerCubit>();
 
     return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(42, 0, 42, 0),
+      padding: EdgeInsets.fromLTRB(42, 0, 42, 42),
       child: Column(
         children: [
           TextButton(
@@ -199,8 +199,7 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                         .toList(),
                   ))
             ],
-          ),
-          SizedBox(height: 42)
+          )
         ],
       ),
     );
