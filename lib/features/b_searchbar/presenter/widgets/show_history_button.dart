@@ -20,7 +20,7 @@ class ShowHistoryButton extends StatelessWidget {
         return BlockSemantics(
           blocking: true,
           child: Container(
-            width: 190,
+            width: 200,
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surfaceContainerHighest,
@@ -118,41 +118,43 @@ class _HistoryItemState extends State<_HistoryItem> {
       onExit: (_) => setState(() => _isDelBtnVisible = false),
       child: SizedBox(
         height: 32,
-        child: DefaultTextStyle.merge(
-          style: TextStyle(fontFamily: 'monospace'),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              TextButton(
-                onPressed: () {
-                  context.read<PaneManagerCubit>().activeBloc().add(
-                        BiblePaneDisplayChapter(ref: widget.historyData.ref),
-                      );
-                  widget.onPressed?.call();
-                },
-                child: Row(
-                  spacing: 12,
-                  children: [
-                    Text(time,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Theme.of(context).colorScheme.onSurface,
-                          fontWeight: FontWeight.w400,
-                        )),
-                    Text(widget.historyData.ref.toString()),
-                  ],
-                ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            TextButton(
+              onPressed: () {
+                context.read<PaneManagerCubit>().activeBloc().add(
+                      BiblePaneDisplayChapter(ref: widget.historyData.ref),
+                    );
+                widget.onPressed?.call();
+              },
+              child: Row(
+                spacing: 12,
+                children: [
+                  Text(
+                    time,
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontWeight: FontWeight.w400,
+                        fontFamily: 'monospace'),
+                  ),
+                  Text(
+                    widget.historyData.ref.toString(),
+                    style: const TextStyle(fontFamily: 'monospace'),
+                  ),
+                ],
               ),
-              if (_isDelBtnVisible)
-                IconButton(
-                  visualDensity: VisualDensity.compact,
-                  icon: Icon(Icons.remove_circle, size: 18),
-                  onPressed: () => context
-                      .read<BSearchbarBloc>()
-                      .add(DeleteHistoryItem(widget.index)),
-                )
-            ],
-          ),
+            ),
+            if (_isDelBtnVisible)
+              IconButton(
+                visualDensity: VisualDensity.compact,
+                icon: Icon(Icons.remove_circle, size: 18),
+                onPressed: () => context
+                    .read<BSearchbarBloc>()
+                    .add(DeleteHistoryItem(widget.index)),
+              )
+          ],
         ),
       ),
     );
