@@ -6,18 +6,28 @@ class SettingSection extends StatelessWidget {
     required this.title,
     this.children,
     this.rightSideChild,
-  });
+  })  : itemCount = null,
+        itemBuilder = null;
+
+  const SettingSection.builder({
+    super.key,
+    required this.title,
+    required this.itemCount,
+    required this.itemBuilder,
+  })  : children = null,
+        rightSideChild = null;
 
   final String title;
   final List<Widget>? children;
   final Widget? rightSideChild;
+  final int? itemCount;
+  final NullableIndexedWidgetBuilder? itemBuilder;
 
   List<Widget> _withDividers(
     List<Widget> children, {
     Widget divider = const Divider(),
   }) {
     if (children.isEmpty) return const [];
-
     return [
       for (int i = 0; i < children.length; i++) ...[
         if (i > 0) divider,
@@ -52,6 +62,16 @@ class SettingSection extends StatelessWidget {
               //
               // LEFT SIDE
               //
+              if (itemBuilder != null)
+                Expanded(
+                  child: ListView.separated(
+                    separatorBuilder: (_, __) => Divider(),
+                    shrinkWrap: true,
+                    itemCount: itemCount!,
+                    itemBuilder: itemBuilder!,
+                  ),
+                ),
+
               if (children != null)
                 Expanded(
                   flex: 2,

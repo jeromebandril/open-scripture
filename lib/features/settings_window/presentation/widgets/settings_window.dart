@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:the_smyrna_bible_v2/features/bible_installer_manager/presentation/widgets/translation_manager.dart';
 import 'package:the_smyrna_bible_v2/features/customizer/presentation/widgets/customizer_screen.dart';
+import 'package:the_smyrna_bible_v2/features/keybindings/presentation/pages/keybindings_screen.dart';
 
 import 'sidebar_navigator.dart';
 import 'unknown.dart';
 
-enum SettingsSection { appearance, bibleManager, about }
+enum SettingsSection { appearance, bibleManager, shortcuts, about }
 
 String routeFor(SettingsSection s) => switch (s) {
       SettingsSection.appearance => '/appearance',
       SettingsSection.bibleManager => '/biblemanager',
+      SettingsSection.shortcuts => '/shortcuts',
       SettingsSection.about => '/about',
     };
 
@@ -22,6 +24,10 @@ final Map<String, SettingsRoute> settingsRoutes = {
       icon: Icons.menu_book_sharp,
       name: 'Bible Manager',
       builder: (_) => const BibleManagerWidget()),
+  '/shortcuts': SettingsRoute(
+      icon: Icons.keyboard,
+      name: 'Shortcuts',
+      builder: (_) => const KeybindingsScreen()),
   '/about': SettingsRoute(
       icon: Icons.info_outline,
       name: 'About',
