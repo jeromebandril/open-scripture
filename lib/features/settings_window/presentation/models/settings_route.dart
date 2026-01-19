@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:the_smyrna_bible_v2/features/settings_window/presentation/pages/about_setting_page.dart';
 
 import '../../../bible_installer_manager/presentation/pages/translation_manager.dart';
 import '../../../customizer/presentation/pages/customizer_screen.dart';
@@ -29,7 +30,7 @@ final Map<String, SettingsRoute> settingsRoutes = {
   '/about': SettingsRoute(
       icon: Icons.info_outline,
       name: 'About',
-      builder: (_) => const Text('about')),
+      builder: (_) => const AboutSettingsPage()),
 };
 
 class SettingsRoute {
