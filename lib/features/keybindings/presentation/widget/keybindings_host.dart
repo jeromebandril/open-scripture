@@ -6,7 +6,7 @@ import 'package:the_smyrna_bible_v2/core/presentation/cubit/toolbar_cubit.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
 import '../../../bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
 import '../../domain/app_command.dart';
-import 'intents.dart';
+import '../models/intents.dart';
 
 // Convert to stateful widget and uncomment the following lines
 // to debug the focus scope
@@ -28,6 +28,18 @@ import 'intents.dart';
 //   super.dispose();
 // }
 
+Map<ShortcutActivator, Intent> buildShortcutIntentMap(
+  Map<AppCommand, SingleActivator> source,
+) {
+  final result = <ShortcutActivator, Intent>{};
+
+  for (final entry in source.entries) {
+    result[entry.value] = AppCommandIntent(entry.key);
+  }
+
+  return result;
+}
+
 class ShortcutHost extends StatelessWidget {
   const ShortcutHost({
     super.key,
@@ -42,37 +54,6 @@ class ShortcutHost extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Map physical keys -> intent
-    final shortcuts = <ShortcutActivator, Intent>{
-      // Ctrl+L (Windows/Linux)
-      const SingleActivator(LogicalKeyboardKey.keyL, control: true):
-          const AppCommandIntent(AppCommand.focusSearch),
-
-      const SingleActivator(LogicalKeyboardKey.keyT, control: true):
-          const AppCommandIntent(AppCommand.toggleToolbar),
-
-      const SingleActivator(LogicalKeyboardKey.keyF, control: true):
-          const AppCommandIntent(AppCommand.toggleFullscreen),
-
-      const SingleActivator(LogicalKeyboardKey.arrowRight, control: true):
-          const AppCommandIntent(AppCommand.nextVerse),
-
-      const SingleActivator(LogicalKeyboardKey.arrowLeft, control: true):
-          const AppCommandIntent(AppCommand.prevVerse),
-
-      const SingleActivator(LogicalKeyboardKey.arrowRight,
-          control: true,
-          shift: true): const AppCommandIntent(AppCommand.nextPane),
-
-      const SingleActivator(LogicalKeyboardKey.arrowLeft,
-          control: true,
-          shift: true): const AppCommandIntent(AppCommand.prevPane),
-
-      // Cmd+L (macOS)
-      const SingleActivator(LogicalKeyboardKey.keyL, meta: true):
-          const AppCommandIntent(AppCommand.focusSearch),
-    };
-
     // Map intent -> action
     final actions = <Type, Action<Intent>>{
       AppCommandIntent: CallbackAction<AppCommandIntent>(
@@ -161,7 +142,7 @@ class ShortcutHost extends StatelessWidget {
       child: Actions(
         actions: actions,
         child: Shortcuts(
-          shortcuts: shortcuts,
+          shortcuts: buildShortcutIntentMap(appCommandShortcuts),
           child: Focus(
             focusNode: rootFocusNode,
             autofocus: true,
