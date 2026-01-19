@@ -32,12 +32,16 @@ class _BiblePaneState extends State<BiblePane> {
   final ItemPositionsListener _itemPositionsListener =
       ItemPositionsListener.create();
 
-  double scale = 1;
+  bool _isMounted = false;
 
   @override
   void initState() {
     super.initState();
     _itemScrollController = ItemScrollController();
+
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _isMounted = context.mounted,
+    );
   }
 
   bool _isIndexVisible(int index) {
@@ -50,19 +54,17 @@ class _BiblePaneState extends State<BiblePane> {
   }
 
   void _scrollUntilVisible(int index) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!context.mounted) return;
-      // Optional guard: only scroll if out of view
-      if (!_isIndexVisible(index)) {
-        if (_itemScrollController.isAttached) {
-          _itemScrollController.scrollTo(
-              index: index,
-              duration: const Duration(milliseconds: 250),
-              curve: Curves.easeInOut,
-              alignment: 0.1);
-        }
+    if (!_isMounted) return;
+    // Optional guard: only scroll if out of view
+    if (!_isIndexVisible(index)) {
+      if (_itemScrollController.isAttached) {
+        _itemScrollController.scrollTo(
+            index: index,
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeInOut,
+            alignment: 0.1);
       }
-    });
+    }
   }
 
   @override
