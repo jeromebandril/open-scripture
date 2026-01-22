@@ -73,7 +73,7 @@ class _AdjustableTextSizeState extends State<AdjustableTextSize> {
           onScaleUpdate: _onScaleUpdate,
           child: Focus(
             focusNode: _focusNode,
-            onKeyEvent: _onKeyEvent,
+            //onKeyEvent: _onKeyEvent,
             child: MediaQuery(
               data: mq.copyWith(textScaler: combined),
               child: DefaultTextStyle.merge(
@@ -93,25 +93,31 @@ class _AdjustableTextSizeState extends State<AdjustableTextSize> {
     details.scale > 1 ? _zoom(1) : _zoom(-1);
   }
 
+  // HardwareKeyboard.instance.isControlPressed instead
   KeyEventResult _onKeyEvent(_, event) {
     // handle zoom activation only if ctrl is pressed
     if (event.logicalKey != LogicalKeyboardKey.controlLeft &&
         event.logicalKey != LogicalKeyboardKey.controlRight) {
       return KeyEventResult.ignored;
     }
-    if (event is KeyDownEvent) isControlPressed = true;
-    if (event is KeyUpEvent) isControlPressed = false;
+    if (event is KeyDownEvent && !isControlPressed) isControlPressed = true;
+    if (event is KeyUpEvent && isControlPressed) isControlPressed = false;
 
     return KeyEventResult.handled;
   }
 
   /// To handle zooming with scroll wheel
   void _onPointerSignal(PointerSignalEvent signal) {
-    if (isControlPressed && signal is PointerScrollEvent) {
-      print('consumed scroll event');
+    if (HardwareKeyboard.instance.isControlPressed &&
+        signal is PointerScrollEvent) {
       // * prevent a possible scrollable child to scroll while zooming:
       // by jumping to the initial offset of when ctrl was pressed
       signal.scrollDelta.dy < 0 ? _zoom(1) : _zoom(-1);
+
+      GestureBinding.instance.pointerSignalResolver.register(signal,
+          (PointerSignalEvent e) {
+        signal.scrollDelta.dy < 0 ? _zoom(1) : _zoom(-1);
+      });
     }
   }
 
