@@ -3,34 +3,90 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../cubit/pane_manager_cubit.dart';
 
-class SplitscreenControls extends StatefulWidget {
-  const SplitscreenControls({super.key});
+class SplitscreenControls extends StatelessWidget {
+  SplitscreenControls({super.key});
 
-  @override
-  State<SplitscreenControls> createState() => _SplitscreenControlsState();
-}
+  final _controller = OverlayPortalController();
+  final LayerLink layerLink = LayerLink();
+  final double menuGap = 5;
 
-class _SplitscreenControlsState extends State<SplitscreenControls> {
-  bool _expanded = false;
+  Widget _buildOverlay(BuildContext context, Size screenSize) {
+    return BlockSemantics(
+      blocking: true,
+      child: Container(
+        width: 360,
+        padding: const EdgeInsets.symmetric(
+          horizontal: 18,
+          vertical: 4,
+        ),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: ConstrainedBox(
+            constraints: BoxConstraints.loose(Size(
+              screenSize.width,
+              screenSize.height * .2,
+            )),
+            child: const Row(
+              spacing: 8,
+              children: [
+                ActivePaneIndicator(),
+                Row(
+                  children: [
+                    AddPaneXButton(),
+                    RemovePaneButton(),
+                  ],
+                ),
+                Row(
+                  children: [
+                    MovePaneButton(direction: -1),
+                    MovePaneButton(direction: 1),
+                  ],
+                ),
+              ],
+            )),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return _expanded
-        ? Row(
-            children: [
-              IconButton(
-                  onPressed: () => setState(() => _expanded = false),
-                  icon: Icon(Icons.expand_circle_down_rounded)),
-              const ActivePaneIndicator(),
-              const AddPaneXButton(),
-              const RemovePaneButton(),
-              const MovePaneButton(direction: -1),
-              const MovePaneButton(direction: 1),
-            ],
-          )
-        : IconButton(
-            onPressed: () => setState(() => _expanded = true),
-            icon: Icon(Icons.splitscreen_rounded));
+    return CompositedTransformTarget(
+      link: layerLink,
+      child: OverlayPortal.overlayChildLayoutBuilder(
+          controller: _controller,
+          overlayChildBuilder: (BuildContext context, info) {
+            final screen = MediaQuery.of(context).size;
+            final top = info.childSize.height + menuGap;
+
+            return Stack(
+              children: [
+                // Full-screen barrier for outside taps
+                Positioned.fill(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      _controller.hide();
+                    },
+                  ),
+                ),
+                CompositedTransformFollower(
+                  link: layerLink,
+                  showWhenUnlinked: false,
+                  offset: Offset(0, top), // place under anchor
+                  child: _buildOverlay(context, screen),
+                ),
+              ],
+            );
+          },
+          child: IconButton(
+              tooltip: 'Splitscreen',
+              onPressed: () => _controller.isShowing
+                  ? _controller.hide()
+                  : _controller.show(),
+              icon: Icon(Icons.splitscreen_rounded))),
+    );
   }
 }
 
@@ -39,12 +95,19 @@ class AddPaneXButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-        tooltip: "Add new pane to the right",
-        onPressed: () {
-          context.read<PaneManagerCubit>().splitNewPane();
-        },
-        icon: Icon(Icons.add_circle_outlined));
+    return TextButton(
+      //tooltip: "Add new pane to the right",
+      onPressed: () {
+        context.read<PaneManagerCubit>().splitNewPane();
+      },
+      child: Row(
+        spacing: 8,
+        children: [
+          Icon(Icons.add_circle_outlined),
+          Text('Add'),
+        ],
+      ),
+    );
   }
 }
 
@@ -62,7 +125,7 @@ class MovePaneButton extends StatelessWidget {
     );
 
     return IconButton(
-        tooltip: "Move pane to the ${direction == 1 ? 'right' : 'left'}",
+        //tooltip: "Move pane to the ${direction == 1 ? 'right' : 'left'}",
         onPressed: () {
           final index = panes.indexWhere((p) => p.id == activeId) + direction;
           if (index == -1) return;
@@ -81,10 +144,11 @@ class ActivePaneIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final activeId = context.select(
-      (PaneManagerCubit c) => c.state.activePaneId,
+      (PaneManagerCubit c) => c.state.activePaneId + 1,
     );
 
-    return Text(activeId.toString());
+    return SizedBox(
+        width: 40, height: 20, child: Center(child: Text('id: $activeId')));
   }
 }
 
@@ -97,11 +161,18 @@ class RemovePaneButton extends StatelessWidget {
       (PaneManagerCubit c) => c.state.activePaneId,
     );
 
-    return IconButton(
-        tooltip: "Close current active pane",
-        onPressed: () {
-          context.read<PaneManagerCubit>().closePane(activeId);
-        },
-        icon: Icon(Icons.remove_circle));
+    return TextButton(
+      //tooltip: "Close current active pane",
+      onPressed: () {
+        context.read<PaneManagerCubit>().closePane(activeId);
+      },
+      child: Row(
+        spacing: 8,
+        children: [
+          Icon(Icons.remove_circle),
+          Text('Remove'),
+        ],
+      ),
+    );
   }
 }
