@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/widgets/parts/verse_widget.dart';
+import 'package:the_smyrna_bible_v2/features/customizer/domain/entities/app_theme.dart';
 import 'package:the_smyrna_bible_v2/features/customizer/presentation/widgets/bible_pane_preview.dart';
 import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/setting_input_bool.dart';
 import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/setting.dart';
@@ -19,6 +20,11 @@ const Map<ThemeMode, String> themeModeString = {
   ThemeMode.dark: 'Dark',
   ThemeMode.light: 'Light',
   ThemeMode.system: 'System',
+};
+
+const Map<SearchbarPosition, String> searchbarPosString = {
+  SearchbarPosition.center: 'Center',
+  SearchbarPosition.left: 'Left',
 };
 
 class CustomizerScreen extends StatefulWidget {
@@ -101,6 +107,27 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
               //             theme.copyWith(useBackgroundColorAsAppColor: val));
               //       },
               //     )),
+            ],
+          ),
+          SettingSection(
+            title: 'Interface',
+            children: [
+              Setting(
+                  label: 'Searchbar position',
+                  description: 'Set searchbar\'s horizontal position',
+                  child: SettingInputOption<SearchbarPosition>(
+                    value: context.select(
+                        (CustomizerCubit c) => c.state.app.searchbarPosition),
+                    onChanged: (sp) {
+                      cubit.updateTheme(
+                          appTheme: (a) => a.copyWith(searchbarPosition: sp));
+                    },
+                    items: SearchbarPosition.values
+                        .map((sp) => DropdownMenuItem<SearchbarPosition>(
+                            value: sp,
+                            child: Text(searchbarPosString[sp] ?? 'error')))
+                        .toList(),
+                  )),
             ],
           ),
           SettingSection(

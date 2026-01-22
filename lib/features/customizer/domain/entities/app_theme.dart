@@ -3,32 +3,38 @@ import 'package:flutter/material.dart';
 import 'package:the_smyrna_bible_v2/core/utils/colors_util.dart';
 
 /// App-wide theme settings that affect MaterialApp.
+
+enum SearchbarPosition { left, center }
+
 class AppThemeSettings extends Equatable {
   final ThemeMode mode;
   final String fontFamily;
   final Color accentColor;
   final bool enableAutoColorScheme;
+  final SearchbarPosition searchbarPosition;
 
   const AppThemeSettings({
     this.mode = ThemeMode.system,
     this.fontFamily = 'General Sans',
     this.accentColor = Colors.blue,
     this.enableAutoColorScheme = true,
+    this.searchbarPosition = SearchbarPosition.left,
   });
 
-  AppThemeSettings copyWith({
-    ThemeMode? mode,
-    String? fontFamily,
-    Color? accentColor,
-    bool? enableAutoColorScheme,
-    bool? enableCustomTheme,
-  }) {
+  AppThemeSettings copyWith(
+      {ThemeMode? mode,
+      String? fontFamily,
+      Color? accentColor,
+      bool? enableAutoColorScheme,
+      bool? enableCustomTheme,
+      SearchbarPosition? searchbarPosition}) {
     return AppThemeSettings(
       mode: mode ?? this.mode,
       fontFamily: fontFamily ?? this.fontFamily,
       accentColor: accentColor ?? this.accentColor,
       enableAutoColorScheme:
           enableAutoColorScheme ?? this.enableAutoColorScheme,
+      searchbarPosition: searchbarPosition ?? this.searchbarPosition,
     );
   }
 
@@ -38,6 +44,7 @@ class AppThemeSettings extends Equatable {
         fontFamily,
         accentColor,
         enableAutoColorScheme,
+        searchbarPosition,
       ];
 
   Map<String, dynamic> toJson() => {
@@ -45,6 +52,7 @@ class AppThemeSettings extends Equatable {
         'fontFamily': fontFamily,
         'accentColor': ColorsUtil.colorToHex(accentColor),
         'enableAutoColorScheme': enableAutoColorScheme,
+        'searchbarPosition': searchbarPosition.toString(),
       };
 
   static AppThemeSettings fromJson(Map<String, dynamic> json) {
@@ -59,11 +67,21 @@ class AppThemeSettings extends Equatable {
       }
     }
 
+    SearchbarPosition parseSearchbarPosition(String? p) {
+      switch (p) {
+        case 'SearchbarPosition.center':
+          return SearchbarPosition.center;
+        default:
+          return SearchbarPosition.left;
+      }
+    }
+
     return AppThemeSettings(
       mode: parseMode(json['mode'] as String),
       fontFamily: json['fontFamily'] as String,
       accentColor: Color(ColorsUtil.parseHex(json['accentColor'] as String)),
       enableAutoColorScheme: json['enableAutoColorScheme'] as bool,
+      searchbarPosition: parseSearchbarPosition(json['searchbarPosition']),
     );
   }
 }
@@ -121,6 +139,9 @@ class AppThemeBuilder {
                 surface: Color(0xFFF7F7F7),
                 onSurface: Color(0xFF121212),
 
+                surfaceContainerLowest: Color(0xFFFFFFFF),
+                surfaceContainerLow: Color(0xFFF2F2F2),
+                surfaceContainer: Color(0xFFEDEDED),
                 surfaceContainerHighest: Color(0xFFE4E4E4),
                 surfaceContainerHigh: Color(0xFFE8E8E8),
                 onSurfaceVariant: Color(0xFF3A3A3A),
@@ -162,8 +183,11 @@ class AppThemeBuilder {
                 surface: Color(0xFF1A1A1A),
                 onSurface: Color(0xFFE6E6E6),
 
-                surfaceContainerHighest: Color(0xFF2A2A2A),
+                surfaceContainerLowest: Color(0xFF141414),
+                surfaceContainerLow: Color(0xFF1E1E1E),
+                surfaceContainer: Color(0xFF222222),
                 surfaceContainerHigh: Color(0xFF242424),
+                surfaceContainerHighest: Color(0xFF2A2A2A),
                 onSurfaceVariant: Color(0xFFBDBDBD),
 
                 // Borders & dividers
