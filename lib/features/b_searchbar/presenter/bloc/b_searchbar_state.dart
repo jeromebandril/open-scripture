@@ -12,18 +12,21 @@ class BSearchbarState extends Equatable {
     this.referenceResult,
     this.history = const [],
     this.intentType = BSearchIntentType.gotoReference,
+    this.errorMessage,
   });
 
   final BSearchbarStatus status;
   final BibleRef? referenceResult;
   final List<HistoryData> history;
   final BSearchIntentType intentType;
+  final String? errorMessage;
 
   BSearchbarState copyWith({
     BSearchbarStatus Function()? status,
     BibleRef Function()? referenceResult,
     List<HistoryData> Function()? history,
     BSearchIntentType Function()? intentType,
+    String? Function()? errorMessage,
   }) {
     return BSearchbarState(
       status: status != null ? status() : this.status,
@@ -31,9 +34,16 @@ class BSearchbarState extends Equatable {
           referenceResult != null ? referenceResult() : this.referenceResult,
       history: history != null ? history() : this.history,
       intentType: intentType != null ? intentType() : this.intentType,
+      errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
     );
   }
 
   @override
-  List<Object?> get props => [status, referenceResult, history, intentType];
+  List<Object?> get props => [
+        status,
+        referenceResult,
+        history,
+        intentType,
+        errorMessage,
+      ];
 }

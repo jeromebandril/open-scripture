@@ -43,29 +43,29 @@ class BibleManagerRepositoryImpl implements BibleManagerRepository {
   }
 
   @override
-  Stream<InstallProgress> downloadAndInstallBible(String bibleId) {
-    return simulateDownloadAndInstall();
+  Stream<InstallProgress> downloadAndInstallBible(String bibleId) async* {
+    // return simulateDownloadAndInstall();
 
-    // // 1) Download phase
-    // await for (final p in remoteDataSource.downloadBibleFileContent(bibleId)) {
-    //   yield p;
+    // 1) Download phase
+    await for (final p in remoteDataSource.downloadBibleFileContent(bibleId)) {
+      yield p;
 
-    //   // Stop immediately on failure
-    //   if (p.stage == InstallStage.failed) return;
+      // Stop immediately on failure
+      if (p.stage == InstallStage.failed) return;
 
-    //   // When download is done, break and start install
-    //   if (p.stage == InstallStage.downloadingDone) break;
-    // }
+      // When download is done, break and start install
+      if (p.stage == InstallStage.downloadingDone) break;
+    }
 
-    // // 2) Install phase
-    // await for (final p in localDataSource.installBible(bibleId)) {
-    //   yield p;
-    //   if (p.stage == InstallStage.failed) return;
-    //   if (p.stage == InstallStage.done) return;
-    // }
+    // 2) Install phase
+    await for (final p in localDataSource.installBible(bibleId)) {
+      yield p;
+      if (p.stage == InstallStage.failed) return;
+      if (p.stage == InstallStage.done) return;
+    }
 
-    // // If installer doesn't explicitly emit done, you can emit it here.
-    // yield const InstallProgress(stage: InstallStage.done);
+    // If installer doesn't explicitly emit done, you can emit it here.
+    yield const InstallProgress(stage: InstallStage.done);
   }
 
   @override
@@ -73,7 +73,7 @@ class BibleManagerRepositoryImpl implements BibleManagerRepository {
     try {
       return Right(await localDataSource.uninstallBible(bibleId));
     } catch (e) {
-      return Left(InstallManagerFailure());
+      return Left(InstallFailure());
     }
   }
 

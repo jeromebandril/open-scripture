@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
 
-import '../domain/entities/bible_ref.dart';
-import '../error/failure.dart';
+import '../../domain/entities/bible_ref.dart';
+import 'bible_ref_parser_exceptions.dart';
 
 class BibleReferenceParser {
   static const searchPromptRegex =
@@ -225,71 +225,85 @@ class BibleReferenceParser {
     );
   }
 
-  Future<BibleRef> analyze(String text) async {
-    try {
-      //
-      // Extract book and chapter+verse information
-      //
-      final match = RegExp(searchPromptRegex).firstMatch(text);
-      //
-      // check if the match on prompt is actually catching something,
-      //otherwise it's surely not formatted correctly
-      //
-      if (match == null) throw Exception();
-      //
-      // extrapolate book, chapter and verse as strings as they were in prompt
-      //
-      final rawBook = match.group(1)?.trim();
-      final chapterStr = match.group(2)?.trim();
-      final verseStartStr = match.group(3)?.trim();
-      final verseEndStr = match.group(4)?.trim();
-      //
-      // normalize book name by clearing from special characters
-      //
-      final cleanedBook = rawBook!
-          .replaceAll(RegExp(r'[^a-zA-Z0-9\s]'), '')
-          .replaceAll(RegExp(r'\s+'), ' ')
-          .trim();
-      //
-      // rebuild book name if there's a digit (e.g   '1john' => '1 john')
-      //
-      final book = cleanedBook.replaceAllMapped(
-        RegExp(r'(\d)([a-zA-Z])'),
-        (match) => '${match[1]} ${match[2]}',
+  BibleRef analyze(String text) {
+    //
+    // Extract book and chapter+verse information
+    //
+    final match = RegExp(searchPromptRegex).firstMatch(text);
+    //
+    // check if the match on prompt is actually catching something,
+    //otherwise it's surely not formatted correctly
+    //
+    if (match == null) {
+      throw const BibleRefInvalidFormatException(
+        'Invalid reference format. Example: "John 3:16" or "1 John 1:1-3".',
       );
-      final book3CharId =
-          _findByKeyPrefix(bibleBookNameTo3CharCode, book)?.value;
-      if (book3CharId == null) throw Exception();
-      //
-      // Parse chapter and verse, default to 1 if not specified
-      //
-      final chapter =
-          chapterStr == null || chapterStr.isEmpty ? 1 : int.parse(chapterStr);
-      final verseStart = verseStartStr == null || verseStartStr.isEmpty
-          ? 1
-          : int.parse(verseStartStr);
-      final verseEnd = verseEndStr != null ? int.parse(verseEndStr) : null;
-      //
-      // result
-      //
-      final BibleRef reference = BibleRef(
-        bookOsisId: book3CharId.toUpperCase(),
-        chapter: chapter,
-        verseStart: verseStart,
-        verseEnd: verseEnd,
-      );
-      return Future.value(reference);
-    } catch (e) {
-      throw Error();
     }
+    //
+    // extrapolate book, chapter and verse as strings as they were in prompt
+    //
+    final rawBook = match.group(1)?.trim();
+    if (rawBook == null || rawBook.isEmpty) {
+      throw const BibleRefInvalidFormatException('Missing book name.');
+    }
+
+    final chapterStr = match.group(2)?.trim();
+    final verseStartStr = match.group(3)?.trim();
+    final verseEndStr = match.group(4)?.trim();
+    //
+    // normalize book name by clearing from special characters
+    //
+    final cleanedBook = rawBook
+        .replaceAll(RegExp(r'[^a-zA-Z0-9\s]'), '')
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .trim();
+    if (cleanedBook.isEmpty) {
+      throw const BibleRefInvalidFormatException('Book name is empty.');
+    }
+    //
+    // rebuild book name if there's a digit (e.g   '1john' => '1 john')
+    //
+    final book = cleanedBook.replaceAllMapped(
+      RegExp(r'(\d)([a-zA-Z])'),
+      (match) => '${match[1]} ${match[2]}',
+    );
+    final book3CharId = _findByKeyPrefix(bibleBookNameTo3CharCode, book)?.value;
+    if (book3CharId == null) {
+      throw BibleRefUnknownBookException('Book not found');
+    }
+    //
+    // Parse chapter and verse, default to 1 if not specified
+    //
+    final chapter =
+        chapterStr == null || chapterStr.isEmpty ? 1 : int.parse(chapterStr);
+    final verseStart = verseStartStr == null || verseStartStr.isEmpty
+        ? 1
+        : int.parse(verseStartStr);
+    final verseEnd = verseEndStr != null ? int.parse(verseEndStr) : null;
+    //
+    // Sanity constraints
+    //
+    if (chapter <= 0) {
+      throw BibleRefOutOfRangeException('Chapter must be >= 1 (got $chapter).');
+    }
+    if (verseStart <= 0) {
+      throw BibleRefOutOfRangeException(
+          'Verse must be >= 1 (got $verseStart).');
+    }
+    if (verseEnd != null && verseEnd < verseStart) {
+      throw BibleRefOutOfRangeException(
+        'Verse end must be >= verse start ($verseStart-$verseEnd).',
+      );
+    }
+    //
+    // result
+    //
+    final BibleRef reference = BibleRef(
+      bookOsisId: book3CharId.toUpperCase(),
+      chapter: chapter,
+      verseStart: verseStart,
+      verseEnd: verseEnd,
+    );
+    return reference;
   }
-}
-
-class InvalidInputFailure extends Failure {
-  @override
-  List<Object?> get props => [];
-}
-
-class InvalidInputException implements Exception {
-  InvalidInputException();
 }

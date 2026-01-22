@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:the_smyrna_bible_v2/features/b_searchbar/domain/repositories/b_search_intent_type.dart';
-import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/history_data.dart';
+import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/models/history_data.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/navigation_bus.dart';
 
 import '../../../../core/domain/entities/bible_ref.dart';
@@ -61,7 +61,11 @@ class BSearchbarBloc extends Bloc<BSearchbarEvent, BSearchbarState> {
       final eitherFailureOrReference = await repo.getParseIntent(event.query);
 
       return eitherFailureOrReference.fold(
-        (_) => print("> BSearchbar: not a valid prompt"),
+        (f) => emit(state.copyWith(
+          intentType: () => BSearchIntentType.gotoReference,
+          status: () => BSearchbarStatus.error,
+          errorMessage: () => f.details,
+        )),
         (ref) => emit(state.copyWith(
           intentType: () => BSearchIntentType.gotoReference,
           status: () => BSearchbarStatus.success,

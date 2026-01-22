@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
 import '../../../bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
 import '../bloc/b_searchbar_bloc.dart';
-import '../history_data.dart';
+import '../models/history_data.dart';
 
 class ShowHistoryButton extends StatelessWidget {
   ShowHistoryButton({super.key});

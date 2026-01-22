@@ -1,27 +1,85 @@
-class ServerException implements Exception {
-  ServerException();
+/// Base class for all app-specific exceptions thrown by data sources.
+abstract class AppException implements Exception {
+  const AppException(this.message, {this.cause, this.stackTrace});
+
+  final String message;
+  final Object? cause;
+  final StackTrace? stackTrace;
+
+  @override
+  String toString() => '$runtimeType: $message';
 }
 
-class LocalDataException implements Exception {
-  LocalDataException();
+class ServerException extends AppException {
+  const ServerException(super.details);
 }
 
-class InstallationException implements Exception {
-  InstallationException();
+class NetworkException extends AppException {
+  const NetworkException(super.details);
 }
 
-class NoLoadedDataExcepetion implements Exception {
-  NoLoadedDataExcepetion();
+class ParseException extends AppException {
+  const ParseException(super.details);
 }
 
-class NoDbConnectionExcepetion implements Exception {
-  NoDbConnectionExcepetion();
+class DatabaseException extends AppException {
+  const DatabaseException(super.details);
 }
 
-class UninstallationException implements Exception {
-  UninstallationException();
+class NotFoundException extends AppException {
+  const NotFoundException(super.details);
 }
 
-class NotFoundException implements Exception {
-  NotFoundException();
+// Install pipeline exceptions
+class InstallFileMissingException extends AppException {
+  const InstallFileMissingException(super.message,
+      {super.cause, super.stackTrace});
+}
+
+class InstallZipDecodeException extends AppException {
+  const InstallZipDecodeException(super.message,
+      {super.cause, super.stackTrace});
+}
+
+class InstallArchiveContentException extends AppException {
+  const InstallArchiveContentException(super.message,
+      {super.cause, super.stackTrace});
+}
+
+class InstallParseException extends AppException {
+  const InstallParseException(super.message, {super.cause, super.stackTrace});
+}
+
+class InstallDatabaseException extends AppException {
+  const InstallDatabaseException(super.message,
+      {super.cause, super.stackTrace});
+}
+
+class InstallCleanupException extends AppException {
+  const InstallCleanupException(super.message, {super.cause, super.stackTrace});
+}
+
+class UninstallationException extends AppException {
+  const UninstallationException(super.message, {super.cause, super.stackTrace});
+}
+
+class UninstallNotFoundException extends AppException {
+  const UninstallNotFoundException(super.message,
+      {super.cause, super.stackTrace});
+}
+
+class LocalDataException extends AppException {
+  const LocalDataException(
+    super.message, {
+    super.cause,
+    super.stackTrace,
+  });
+}
+
+class DownloadException extends AppException {
+  const DownloadException(
+    super.message, {
+    super.cause,
+    super.stackTrace,
+  });
 }

@@ -108,20 +108,12 @@ class _BiblePaneState extends State<BiblePane> {
               // LOADING SCREEN
               //
               case BiblePaneStatus.loading:
-                return const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    LinearProgressIndicator(),
-                    Text('Opening the bible...')
-                  ],
-                );
+                return Center(child: CircularProgressIndicator());
               //
               // ERROR SCREEN
               //
               case BiblePaneStatus.error:
-                return Center(
-                    child: Text(state.errorMessage ?? 'An error occurred'));
+                return Center(child: Text(state.errorMessage ?? 'Error'));
               //
               // READY SCREEN
               //

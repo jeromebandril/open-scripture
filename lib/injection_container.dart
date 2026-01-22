@@ -1,6 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/fullscreen_cubit.dart';
-import 'package:the_smyrna_bible_v2/core/utils/bible_reference_parser.dart';
+import 'package:the_smyrna_bible_v2/core/utils/bible_ref_parser/bible_ref_parser.dart';
 import 'package:the_smyrna_bible_v2/core/database/database.dart';
 import 'package:the_smyrna_bible_v2/features/b_searchbar/data/repositories/b_searchbar_repository_impl.dart';
 import 'package:the_smyrna_bible_v2/features/b_searchbar/domain/repositories/b_searchbar_repository.dart';

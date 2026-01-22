@@ -36,7 +36,10 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     final result = await repo.getBibleMetadata(bibleId: event.bibleId);
 
     result.fold(
-      (l) => emit(state.copyWith(status: () => BiblePaneStatus.error)),
+      (f) => emit(state.copyWith(
+        status: () => BiblePaneStatus.error,
+        errorMessage: () => f.message,
+      )),
       (bm) => emit(state.copyWith(
           status: () => BiblePaneStatus.ready,
           bibleId: () => event.bibleId,
@@ -64,6 +67,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
       (f) => emit(state.copyWith(
         status: () => BiblePaneStatus.error,
         reference: () => event.ref,
+        errorMessage: () => f.message,
       )),
       (verses) {
         emit(state.copyWith(

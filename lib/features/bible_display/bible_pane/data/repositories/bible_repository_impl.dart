@@ -4,6 +4,7 @@ import '../../../../../core/data/datasources/bible_sqllite_datasource.dart';
 import '../../../../../core/domain/entities/bible_meta.dart';
 import '../../../../../core/domain/entities/bible_ref.dart';
 import '../../../../../core/domain/entities/verse_segment.dart';
+import '../../../../../core/error/exception.dart';
 import '../../../../../core/error/failure.dart';
 import '../../domain/repositories/bible_repository.dart';
 
@@ -30,8 +31,26 @@ class BibleRepositoryImpl implements BibleRepository {
       final List<VerseSegment> verses = await localDatasource.getChapter(
           bibleId, reference.bookOsisId, reference.chapter);
       return Right(verses);
-    } catch (e) {
-      return Left(NotFoundFailure());
+    } on NotFoundException catch (e) {
+      return Left(
+        ResourceNotFoundFailure(details: e.message),
+      );
+    } on LocalDataException catch (e) {
+      return Left(
+        DatabaseFailure(details: e.message),
+      );
+    } on AppException catch (e) {
+      // Catch-all for future domain exceptions
+      return Left(
+        UnknownFailure(details: e.message),
+      );
+    } catch (e, st) {
+      return Left(
+        UnexpectedFailure(
+          details: e.toString(),
+          stackTrace: st,
+        ),
+      );
     }
   }
 
@@ -44,8 +63,26 @@ class BibleRepositoryImpl implements BibleRepository {
       final verses = await localDatasource.getChapterWithSpans(
           bibleId, reference.bookOsisId, reference.chapter);
       return Right(verses);
-    } catch (e) {
-      return Left(NotFoundFailure());
+    } on NotFoundException catch (e) {
+      return Left(
+        ResourceNotFoundFailure(details: e.message),
+      );
+    } on LocalDataException catch (e) {
+      return Left(
+        DatabaseFailure(details: e.message),
+      );
+    } on AppException catch (e) {
+      // Catch-all for future domain exceptions
+      return Left(
+        UnknownFailure(details: e.message),
+      );
+    } catch (e, st) {
+      return Left(
+        UnexpectedFailure(
+          details: e.toString(),
+          stackTrace: st,
+        ),
+      );
     }
   }
 
