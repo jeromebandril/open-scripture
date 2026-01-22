@@ -202,9 +202,15 @@ class _AppHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final alignment =
+        context.select((CustomizerCubit c) => c.state.app.searchbarPosition);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Row(
+        mainAxisAlignment: alignment == SearchbarPosition.center
+            ? MainAxisAlignment.center
+            : MainAxisAlignment.start,
         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           BSearchbar(
