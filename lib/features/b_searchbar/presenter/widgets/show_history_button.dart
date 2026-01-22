@@ -20,7 +20,7 @@ class ShowHistoryButton extends StatelessWidget {
         return BlockSemantics(
           blocking: true,
           child: Container(
-            width: 200,
+            width: 210,
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surfaceContainerHighest,
@@ -32,7 +32,7 @@ class ShowHistoryButton extends StatelessWidget {
                 screenSize.height * .2,
               )),
               child: state.history.isEmpty
-                  ? Center(child: Text('Empty'))
+                  ? Center(child: Text('Empty history'))
                   : ListView.builder(
                       itemCount: state.history.length,
                       itemBuilder: (_, i) {
