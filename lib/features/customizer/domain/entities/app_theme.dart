@@ -81,7 +81,8 @@ class AppThemeSettings extends Equatable {
       fontFamily: json['fontFamily'] as String,
       accentColor: Color(ColorsUtil.parseHex(json['accentColor'] as String)),
       enableAutoColorScheme: json['enableAutoColorScheme'] as bool,
-      searchbarPosition: parseSearchbarPosition(json['searchbarPosition']),
+      searchbarPosition:
+          parseSearchbarPosition(json['searchbarPosition'] as String),
     );
   }
 }

@@ -6,6 +6,7 @@ import 'package:the_smyrna_bible_v2/features/customizer/presentation/widgets/bib
 import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/setting_input_bool.dart';
 import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/setting.dart';
 import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/setting_input_color.dart';
+import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/setting_input_number.dart';
 import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/setting_input_option.dart';
 import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/setting_section.dart';
 import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/setting_input_text.dart';
@@ -159,6 +160,18 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                     ),
                   )),
               Setting(
+                  label: 'Reference color',
+                  description: 'Set color for the verse reference (unselected)',
+                  child: SettingInputColor(
+                    onColorChanged: (c) {
+                      cubit.updateTheme(
+                          paneTheme: (p) => p.copyWith(refColor: c));
+                    },
+                    color: context.select(
+                      (CustomizerCubit c) => c.state.pane.refColor,
+                    ),
+                  )),
+              Setting(
                   label: 'Text color',
                   description: 'Set color for the verse text',
                   child: SettingInputColor(
@@ -224,7 +237,23 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                               highlitghtRenderModeString[m] ?? 'error',
                             )))
                         .toList(),
-                  ))
+                  )),
+              Setting(
+                  label: 'Width adjustment',
+                  description: 'Set left and right padding of the bible view',
+                  child: SettingInputNumber(
+                    min: 0,
+                    max: 300,
+                    onSubmitted: (n) {
+                      cubit.updateTheme(
+                          paneTheme: (p) =>
+                              p.copyWith(widthAdjustmentOffset: n));
+                    },
+                    value: context.select(
+                      (CustomizerCubit c) =>
+                          c.state.pane.widthAdjustmentOffset.toString(),
+                    ),
+                  )),
             ],
           )
         ],

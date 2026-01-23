@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/fullscreen_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/toolbar_cubit.dart';
 import 'package:the_smyrna_bible_v2/features/b_searchbar/domain/repositories/b_search_intent_type.dart';
+import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/widgets/three_tap_navigator.dart';
 import 'package:the_smyrna_bible_v2/features/toolbar/presentation/widgets/toolbar.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -213,6 +214,7 @@ class _AppHeader extends StatelessWidget {
             : MainAxisAlignment.start,
         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          ThreeTapNavigator(),
           BSearchbar(
             focusNode: searchbarFocusNode,
             onSubmitted: () => returnFocusToRoot(),

@@ -64,7 +64,7 @@ class VerseWidget extends StatelessWidget {
                   color: isHighlighted
                       ? biblePaneTheme.accentColor
                       : useCustom
-                          ? biblePaneTheme.textColor
+                          ? biblePaneTheme.refColor
                           : Theme.of(context).colorScheme.onSurface,
                 ),
               ),

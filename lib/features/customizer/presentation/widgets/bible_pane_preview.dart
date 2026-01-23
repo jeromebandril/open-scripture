@@ -503,7 +503,11 @@ class _VerseWidgetPreview extends StatelessWidget {
     final biblePaneTheme = Theme.of(context).extension<BiblePaneTheme>()!;
 
     return Padding(
-      padding: EdgeInsets.only(bottom: 8),
+      padding: EdgeInsets.only(
+        bottom: 8,
+        left: biblePaneTheme.widthAdjustmentOffset / 5,
+        right: biblePaneTheme.widthAdjustmentOffset / 5,
+      ),
       child: spans == null
           ? Text(content)
           : SelectableText.rich(TextSpan(
@@ -527,7 +531,7 @@ class _VerseWidgetPreview extends StatelessWidget {
                       color: isHighlighted
                           ? biblePaneTheme.accentColor
                           : useCustom
-                              ? biblePaneTheme.textColor
+                              ? biblePaneTheme.refColor
                               : Theme.of(context).colorScheme.onSurface,
                     ),
                   ),

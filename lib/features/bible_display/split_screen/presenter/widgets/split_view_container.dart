@@ -14,11 +14,14 @@ class MultipleBiblePanes extends StatelessWidget {
     final enableCustom = context.select(
       (CustomizerCubit c) => c.state.pane.enableCustomTheme,
     );
+    final offset = context.select(
+      (CustomizerCubit c) => c.state.pane.widthAdjustmentOffset,
+    );
 
     return BlocBuilder<PaneManagerCubit, PaneManagerState>(
       builder: (context, state) {
         return Container(
-          padding: EdgeInsets.fromLTRB(12, 0, 12, 0),
+          padding: EdgeInsets.fromLTRB(12 + offset, 0, 12 + offset, 0),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(8),

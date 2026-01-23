@@ -11,10 +11,11 @@ class BiblePaneThemeSettings extends Equatable {
   final bool showVerseDivider;
   final bool showFullRefAlways;
   final Color accentColor;
+  final Color refColor;
   final bool enableCustomTheme;
   final HighlightRenderMode highlightRenderMode;
   final FontWeight textFontWeight;
-  // final double adjustWidthOffset;
+  final double widthAdjustmentOffset;
   // final bool useAdjustWidthOffsetForWholeApp;
 
   const BiblePaneThemeSettings({
@@ -25,9 +26,11 @@ class BiblePaneThemeSettings extends Equatable {
     this.showVerseDivider = false,
     this.showFullRefAlways = false,
     this.accentColor = Colors.blue,
+    this.refColor = Colors.black,
     this.enableCustomTheme = false,
     this.highlightRenderMode = HighlightRenderMode.fullRefWithColor,
     this.textFontWeight = FontWeight.w400,
+    this.widthAdjustmentOffset = 0.0,
   });
 
   BiblePaneThemeSettings copyWith({
@@ -38,9 +41,11 @@ class BiblePaneThemeSettings extends Equatable {
     bool? showVerseDivider,
     bool? showFullRefAlways,
     Color? accentColor,
+    Color? refColor,
     bool? enableCustomTheme,
     HighlightRenderMode? highlightRenderMode,
     FontWeight? textFontWeight,
+    double? widthAdjustmentOffset,
   }) {
     return BiblePaneThemeSettings(
       fontFamily: fontFamily ?? this.fontFamily,
@@ -50,9 +55,12 @@ class BiblePaneThemeSettings extends Equatable {
       showVerseDivider: showVerseDivider ?? this.showVerseDivider,
       showFullRefAlways: showFullRefAlways ?? this.showFullRefAlways,
       accentColor: accentColor ?? this.accentColor,
+      refColor: refColor ?? this.refColor,
       enableCustomTheme: enableCustomTheme ?? this.enableCustomTheme,
       highlightRenderMode: highlightRenderMode ?? this.highlightRenderMode,
       textFontWeight: textFontWeight ?? this.textFontWeight,
+      widthAdjustmentOffset:
+          widthAdjustmentOffset ?? this.widthAdjustmentOffset,
     );
   }
 
@@ -65,9 +73,11 @@ class BiblePaneThemeSettings extends Equatable {
         showVerseDivider,
         showFullRefAlways,
         accentColor,
+        refColor,
         enableCustomTheme,
         highlightRenderMode,
         textFontWeight,
+        widthAdjustmentOffset,
       ];
 
   Map<String, dynamic> toJson() => {
@@ -78,9 +88,11 @@ class BiblePaneThemeSettings extends Equatable {
         'showVerseDivider': showVerseDivider,
         'showFullRefAlways': showFullRefAlways,
         'accentColor': ColorsUtil.colorToHex(accentColor),
+        'refColor': ColorsUtil.colorToHex(refColor),
         'enableCustomTheme': enableCustomTheme,
         'highlightRenderMode': highlightRenderMode.toString(),
         'textFontWeight': textFontWeight.toString(),
+        'widthAdjustmentOffset': widthAdjustmentOffset,
       };
 
   static BiblePaneThemeSettings fromJson(Map<String, dynamic> json) {
@@ -102,10 +114,12 @@ class BiblePaneThemeSettings extends Equatable {
       showVerseDivider: (json['showVerseDivider'] as bool),
       showFullRefAlways: (json['showFullRefAlways'] as bool),
       accentColor: Color(ColorsUtil.parseHex(json['accentColor'] as String)),
+      refColor: Color(ColorsUtil.parseHex(json['refColor'] as String)),
       enableCustomTheme: (json['enableCustomTheme'] as bool),
       highlightRenderMode:
           parseHighlightRenderMode(json['highlightRenderMode'] as String),
-      textFontWeight: json['textFontWeight'],
+      widthAdjustmentOffset: json['widthAdjustmentOffset'] as double,
+      //textFontWeight: json['textFontWeight'],
     );
   }
 }
@@ -119,9 +133,11 @@ class BiblePaneTheme extends ThemeExtension<BiblePaneTheme> {
   final bool showVerseDivider;
   final bool showFullRefAlways;
   final Color accentColor;
+  final Color refColor;
   final bool enableCustomTheme;
   final HighlightRenderMode highlightRenderMode;
   final FontWeight textFontWeight;
+  final double widthAdjustmentOffset;
 
   const BiblePaneTheme({
     required this.fontFamily,
@@ -131,9 +147,11 @@ class BiblePaneTheme extends ThemeExtension<BiblePaneTheme> {
     required this.showVerseDivider,
     required this.showFullRefAlways,
     required this.accentColor,
+    required this.refColor,
     required this.enableCustomTheme,
     required this.highlightRenderMode,
     required this.textFontWeight,
+    required this.widthAdjustmentOffset,
   });
 
   @override
@@ -145,9 +163,11 @@ class BiblePaneTheme extends ThemeExtension<BiblePaneTheme> {
     bool? showVerseDivider,
     bool? showFullRefAlways,
     Color? accentColor,
+    Color? refColor,
     bool? enableCustomTheme,
     HighlightRenderMode? highlightRenderMode,
     FontWeight? textFontWeight,
+    double? widthAdjustmentOffset,
   }) {
     return BiblePaneTheme(
       fontFamily: fontFamily ?? this.fontFamily,
@@ -157,9 +177,12 @@ class BiblePaneTheme extends ThemeExtension<BiblePaneTheme> {
       showVerseDivider: showVerseDivider ?? this.showVerseDivider,
       showFullRefAlways: showFullRefAlways ?? this.showFullRefAlways,
       accentColor: accentColor ?? this.accentColor,
+      refColor: refColor ?? this.refColor,
       enableCustomTheme: enableCustomTheme ?? this.enableCustomTheme,
       highlightRenderMode: highlightRenderMode ?? this.highlightRenderMode,
       textFontWeight: textFontWeight ?? this.textFontWeight,
+      widthAdjustmentOffset:
+          widthAdjustmentOffset ?? this.widthAdjustmentOffset,
     );
   }
 
@@ -174,9 +197,11 @@ class BiblePaneTheme extends ThemeExtension<BiblePaneTheme> {
       showVerseDivider: t < 0.5 ? showVerseDivider : other.showVerseDivider,
       showFullRefAlways: t < 0.5 ? showFullRefAlways : other.showFullRefAlways,
       accentColor: Color.lerp(accentColor, other.accentColor, t)!,
+      refColor: Color.lerp(refColor, other.refColor, t)!,
       enableCustomTheme: t < 0.5 ? enableCustomTheme : other.enableCustomTheme,
       highlightRenderMode: highlightRenderMode,
       textFontWeight: textFontWeight,
+      widthAdjustmentOffset: widthAdjustmentOffset,
     );
   }
 }
@@ -191,8 +216,10 @@ extension BiblePaneThemeSettingsX on BiblePaneThemeSettings {
         showVerseDivider: showVerseDivider,
         showFullRefAlways: showFullRefAlways,
         accentColor: accentColor,
+        refColor: refColor,
         enableCustomTheme: enableCustomTheme,
         highlightRenderMode: highlightRenderMode,
         textFontWeight: textFontWeight,
+        widthAdjustmentOffset: widthAdjustmentOffset,
       );
 }
