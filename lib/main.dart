@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/fullscreen_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/toolbar_cubit.dart';
+import 'package:the_smyrna_bible_v2/core/presentation/widgets/titlebar.dart';
 import 'package:the_smyrna_bible_v2/features/b_searchbar/domain/repositories/b_search_intent_type.dart';
 import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/widgets/three_tap_navigator.dart';
 import 'package:the_smyrna_bible_v2/features/toolbar/presentation/widgets/toolbar.dart';
@@ -29,6 +30,18 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
+
+  WindowOptions windowOptions = WindowOptions(
+    size: Size(800, 600),
+    center: true,
+    backgroundColor: Colors.transparent,
+    skipTaskbar: false,
+    titleBarStyle: TitleBarStyle.hidden,
+  );
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+  });
 
   runApp(const MyApp());
 }
@@ -128,6 +141,8 @@ class _HomeState extends State<Home> {
     // final useBackgroundColorAsAppColor = context.select(
     //   (CustomizerCubit c) => c.state.theme.useBackgroundColorAsAppColor,
     // );
+    final isFullscreen = context.select((FullscreenCubit f) => f.state);
+    final showToolbar = context.select((ToolbarCubit t) => t.state);
 
     // ShortcusHost must be at the very root after the MaterialApp
     return ShortcutHost(
@@ -142,10 +157,11 @@ class _HomeState extends State<Home> {
         body: WindowStackManagerWrapper(
           child: Column(
             children: [
+              if (!isFullscreen) const Titlebar(child: Toolbar()),
+              if (isFullscreen && showToolbar) const Toolbar(),
               //
               // Simulated classic desktop toolbar
               //
-              if (context.select((ToolbarCubit t) => t.state)) Toolbar(),
               //
               // HEADER
               // separated just to be organized,
