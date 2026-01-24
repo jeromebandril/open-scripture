@@ -18,7 +18,15 @@ class Titlebar extends StatelessWidget {
           // Logo + toolbar
           //
           SizedBox(width: 2),
-          DragToMoveArea(child: Icon(Icons.logo_dev)),
+          DragToMoveArea(
+            child: Image.asset(
+              'assets/icon/icon.png',
+              width: 24,
+              height: 24,
+              filterQuality: FilterQuality.medium,
+            ),
+          ),
+
           if (child != null) child!,
           //
           // Space in between and draggable
