@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../../core/domain/entities/bible_ref.dart';
 import '../../../../../../core/domain/entities/verse_segment.dart';
 import '../../../../../../core/domain/entities/verse_span.dart';
+import '../../../../../../core/utils/bible_ref_parser/bible_ref_parser.dart';
 import '../../../../../customizer/domain/entities/bible_pane_theme.dart';
 import '../../rendering/verse_richtext_builder.dart';
 
@@ -18,6 +19,11 @@ class VersePresentation extends StatelessWidget {
   final List<List<VerseSpan>>? spans;
   final BibleRef ref;
 
+  static final Map<String, String> charCodeToBibleBookName =
+      BibleReferenceParser.bibleBookNameTo3CharCode.map(
+    (key, value) => MapEntry(value.toUpperCase(), key),
+  );
+
   @override
   Widget build(BuildContext context) {
     final biblePaneTheme = Theme.of(context).extension<BiblePaneTheme>()!;
@@ -28,7 +34,8 @@ class VersePresentation extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            ref.toString(),
+            ref.toString().replaceFirst(ref.bookOsisId,
+                charCodeToBibleBookName[ref.bookOsisId] ?? 'error'),
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: biblePaneTheme.accentColor,

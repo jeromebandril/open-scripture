@@ -57,7 +57,7 @@ class VerseWidget extends StatelessWidget {
                     : '$verseNumber  ',
                 style: TextStyle(
                   fontWeight: isHighlighted
-                      ? FontWeight.bold
+                      ? FontWeight.w800
                       : biblePaneTheme.showFullRefAlways
                           ? FontWeight.w500
                           : FontWeight.bold,

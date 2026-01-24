@@ -232,7 +232,7 @@ class _AppHeader extends StatelessWidget {
             : MainAxisAlignment.start,
         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          ThreeTapNavigator(),
+          // ThreeTapNavigator(),
           BSearchbar(
             focusNode: searchbarFocusNode,
             onSubmitted: () => returnFocusToRoot(),
@@ -266,7 +266,7 @@ class _AppHeader extends StatelessWidget {
                           .set(DisplayMode.presentation);
                     }
                   },
-                  icon: Icon(Icons.present_to_all_rounded));
+                  icon: Icon(Icons.fit_screen_rounded));
             },
           )
         ],

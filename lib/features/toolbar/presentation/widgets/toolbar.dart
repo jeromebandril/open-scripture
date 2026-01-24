@@ -29,10 +29,26 @@ class Toolbar extends StatelessWidget {
                 );
           },
         ),
-        const ToolbarOption('Options'),
-        const ToolbarOption('Tools'),
         ToolbarOption(
-          'Help',
+          'Settings',
+          onTap: () {
+            context.read<WindowStackManagerBloc>().add(
+                  WindowStackManagerOpen(
+                    SettingsWindow(
+                      initialRoute: SettingsSection.appearance,
+                      onClose: () {
+                        context
+                            .read<WindowStackManagerBloc>()
+                            .add(WindowStackManagerClose());
+                      },
+                    ),
+                  ),
+                );
+          },
+        ),
+        const ToolbarOption('Help'),
+        ToolbarOption(
+          'About',
           onTap: () {
             context.read<WindowStackManagerBloc>().add(
                   WindowStackManagerOpen(

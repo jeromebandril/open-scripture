@@ -22,65 +22,73 @@ class _PaneInfoState extends State<PaneInfo> {
     final bibleMeta = context.select((BiblePaneBloc b) => b.state.bibleMeta);
     final paneId = context.select((BiblePaneBloc b) => b.state.paneId);
 
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 8),
-        height: 25,
-        color: Theme.of(context).colorScheme.surface,
-        child: Row(
-          children: [
-            // SELECTED WORD
-            BlocBuilder<SelectedWordCubit, WordInfo?>(
-              builder: (context, wordInfo) {
-                return wordInfo == null
-                    ? SizedBox()
-                    : HoverableContainer(
-                        hoveredColor: Theme.of(context).colorScheme.surfaceDim,
-                        padding: EdgeInsets.symmetric(horizontal: 8),
-                        child: Tooltip(
-                          waitDuration: const Duration(days: 1),
-                          key: _tooltipKey,
-                          message: 'copied to clipboard !',
-                          triggerMode: TooltipTriggerMode.manual,
-                          showDuration: const Duration(seconds: 2),
-                          exitDuration: const Duration(seconds: 2),
-                          ignorePointer: true,
-                          enableTapToDismiss: false,
-                          child: InkWell(
-                            onTap: () {
-                              Clipboard.setData(ClipboardData(
-                                  text: wordInfo.span.payload ?? ''));
-                              _tooltipKey.currentState?.ensureTooltipVisible();
-                            },
-                            child: Text(
-                                '${wordInfo.text} ~ ${wordInfo.span.payload}'),
+    return DefaultTextStyle(
+      style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface, fontSize: 12),
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: Theme.of(context).colorScheme.surface,
+          ),
+          padding: EdgeInsets.symmetric(horizontal: 8),
+          height: 18,
+          child: Row(
+            children: [
+              // SELECTED WORD
+              BlocBuilder<SelectedWordCubit, WordInfo?>(
+                builder: (context, wordInfo) {
+                  return wordInfo == null
+                      ? SizedBox()
+                      : HoverableContainer(
+                          hoveredColor:
+                              Theme.of(context).colorScheme.surfaceDim,
+                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          child: Tooltip(
+                            waitDuration: const Duration(days: 1),
+                            key: _tooltipKey,
+                            message: 'copied to clipboard !',
+                            triggerMode: TooltipTriggerMode.manual,
+                            showDuration: const Duration(seconds: 2),
+                            exitDuration: const Duration(seconds: 2),
+                            ignorePointer: true,
+                            enableTapToDismiss: false,
+                            child: InkWell(
+                              onTap: () {
+                                Clipboard.setData(ClipboardData(
+                                    text: wordInfo.span.payload ?? ''));
+                                _tooltipKey.currentState
+                                    ?.ensureTooltipVisible();
+                              },
+                              child: Text(
+                                  '${wordInfo.text} ~ ${wordInfo.span.payload}'),
+                            ),
                           ),
-                        ),
-                      );
-              },
-            ),
+                        );
+                },
+              ),
 
-            // BIBLE METADATA
-            GestureDetector(
-              onTap: () => setState(() {
-                isExpanded = !isExpanded;
-              }),
-              child: HoverableContainer(
-                hoveredColor: Theme.of(context).colorScheme.surfaceDim,
-                padding: EdgeInsets.symmetric(horizontal: 8),
-                child: Text(
-                  bibleMeta == null
-                      ? 'Unknown'
-                      : isExpanded
-                          ? '${bibleMeta.extId} — ${bibleMeta.bibleName} — ${bibleMeta.langEngName}'
-                          : bibleMeta.abbreviation,
+              // BIBLE METADATA
+              GestureDetector(
+                onTap: () => setState(() {
+                  isExpanded = !isExpanded;
+                }),
+                child: HoverableContainer(
+                  hoveredColor: Theme.of(context).colorScheme.surfaceDim,
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: Text(
+                    bibleMeta == null
+                        ? 'Unknown'
+                        : isExpanded
+                            ? '${bibleMeta.extId} — ${bibleMeta.bibleName} — ${bibleMeta.langEngName}'
+                            : bibleMeta.abbreviation,
+                  ),
                 ),
               ),
-            ),
-
-            ActivePaneIndicator(id: paneId)
-          ],
+              ActivePaneIndicator(id: paneId)
+            ],
+          ),
         ),
       ),
     );

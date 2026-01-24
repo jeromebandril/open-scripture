@@ -158,10 +158,11 @@ class _BiblePaneState extends State<BiblePane> {
                                             [];
 
                                         for (var i = vn; i <= ve; i++) {
-                                          verses.add(segmentsByVerse[i]!);
+                                          if (segmentsByVerse[i] != null) {
+                                            verses.add(segmentsByVerse[i]!);
+                                          }
                                         }
 
-                                        segmentsByVerse[vn]!;
                                         final spans = verses
                                             .map(
                                               (v) => v

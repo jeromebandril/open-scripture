@@ -20,7 +20,7 @@ class ShowHistoryButton extends StatelessWidget {
         return BlockSemantics(
           blocking: true,
           child: Container(
-            width: 210,
+            width: 250,
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surfaceContainerHighest,

@@ -37,7 +37,9 @@ class Dot extends StatelessWidget {
       height: size,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(size),
-        color: glowing ? Colors.white : Colors.white38,
+        color: glowing
+            ? Theme.of(context).colorScheme.onSurfaceVariant
+            : Theme.of(context).colorScheme.surfaceContainerHighest,
       ),
     );
   }
