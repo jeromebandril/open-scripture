@@ -89,7 +89,7 @@ class _AdjustableTextSizeState extends State<AdjustableTextSize> {
 
   /// To handle trackpad zoom gestures
   void _onScaleUpdate(ScaleUpdateDetails details) {
-    if (details.rotation == 0) return;
+    if (details.scale == 1) return;
     details.scale > 1 ? _zoom(1) : _zoom(-1);
   }
 
