@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:the_smyrna_bible_v2/core/domain/entities/verse_segment.dart';
+import 'package:the_smyrna_bible_v2/core/presentation/cubit/display_mode_cubit.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/cubit/selected_word_cubit.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/widgets/parts/pane_info.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/widgets/parts/verse_presentation.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_selector/presenter/widget/bible_selector.dart';
 import 'package:the_smyrna_bible_v2/features/customizer/domain/entities/bible_pane_theme.dart';
 import 'package:the_smyrna_bible_v2/features/customizer/presentation/cubit/customizer_cubit.dart';
@@ -73,6 +75,7 @@ class _BiblePaneState extends State<BiblePane> {
       (CustomizerCubit c) => c.state.pane.enableCustomTheme,
     );
     final paneTheme = Theme.of(context).extension<BiblePaneTheme>()!;
+    final displayMode = context.select((DisplayModeCubit dm) => dm.state);
 
     return DefaultTextStyle(
       style: TextStyle(
@@ -141,39 +144,79 @@ class _BiblePaneState extends State<BiblePane> {
                             ))
                           : AdjustableTextSize(
                               initialiSize: 14,
-                              child: ScrollablePositionedList.separated(
-                                itemScrollController: _itemScrollController,
-                                itemPositionsListener: _itemPositionsListener,
-                                itemCount: verseNumbers.length + 1,
-                                padding: EdgeInsets.only(top: 16),
-                                separatorBuilder: (ctx, _) {
-                                  return VerseDivider();
-                                },
-                                itemBuilder: (_, i) {
-                                  // Fixed empty space at the bottom
-                                  if (i == verseNumbers.length) {
-                                    return const SizedBox(height: 200);
-                                  }
+                              child: displayMode == DisplayMode.presentation
+                                  //
+                                  // Presentation mode
+                                  //
+                                  ? Center(
+                                      child: Builder(builder: (context) {
+                                        final vn =
+                                            state.reference?.verseStart ?? 1;
+                                        final ve =
+                                            state.reference?.verseEnd ?? vn;
+                                        final List<List<VerseSegment>> verses =
+                                            [];
 
-                                  final vn = verseNumbers[i];
-                                  final segments = segmentsByVerse[vn]!;
-                                  final spans =
-                                      segments.expand((s) => s.spans).toList();
-                                  final vStart = state.reference?.verseStart;
-                                  final vEnd = state.reference?.verseEnd;
+                                        for (var i = vn; i <= ve; i++) {
+                                          verses.add(segmentsByVerse[i]!);
+                                        }
 
-                                  return VerseWidget(
-                                      verseNumber: vn,
-                                      segments: segments,
-                                      spans: spans,
-                                      isHighlighted:
-                                          (vEnd == null && vn == vStart) ||
-                                              (vEnd != null &&
-                                                  vStart != null &&
-                                                  vn >= vStart &&
-                                                  vn <= vEnd));
-                                },
-                              ),
+                                        segmentsByVerse[vn]!;
+                                        final spans = verses
+                                            .map(
+                                              (v) => v
+                                                  .expand((s) => s.spans)
+                                                  .toList(),
+                                            )
+                                            .toList();
+
+                                        return VersePresentation(
+                                          ref: state.reference!,
+                                          verses: verses,
+                                          spans: spans,
+                                        );
+                                      }),
+                                    )
+                                  //
+                                  // Normal mode
+                                  //
+                                  : ScrollablePositionedList.separated(
+                                      itemScrollController:
+                                          _itemScrollController,
+                                      itemPositionsListener:
+                                          _itemPositionsListener,
+                                      itemCount: verseNumbers.length + 1,
+                                      padding: EdgeInsets.only(top: 16),
+                                      separatorBuilder: (ctx, _) {
+                                        return VerseDivider();
+                                      },
+                                      itemBuilder: (_, i) {
+                                        // Fixed empty space at the bottom
+                                        if (i == verseNumbers.length) {
+                                          return const SizedBox(height: 200);
+                                        }
+
+                                        final vn = verseNumbers[i];
+                                        final segments = segmentsByVerse[vn]!;
+                                        final spans = segments
+                                            .expand((s) => s.spans)
+                                            .toList();
+                                        final vStart =
+                                            state.reference?.verseStart;
+                                        final vEnd = state.reference?.verseEnd;
+
+                                        return VerseWidget(
+                                            verseNumber: vn,
+                                            segments: segments,
+                                            spans: spans,
+                                            isHighlighted: (vEnd == null &&
+                                                    vn == vStart) ||
+                                                (vEnd != null &&
+                                                    vStart != null &&
+                                                    vn >= vStart &&
+                                                    vn <= vEnd));
+                                      },
+                                    ),
                             ),
                     ),
                     //

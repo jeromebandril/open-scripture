@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:the_smyrna_bible_v2/core/presentation/cubit/display_mode_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/fullscreen_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/utils/bible_ref_parser/bible_ref_parser.dart';
 import 'package:the_smyrna_bible_v2/core/database/database.dart';
@@ -50,6 +51,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => NavigationBus());
   sl.registerFactory(() => ToolbarCubit());
   sl.registerFactory(() => FullscreenCubit());
+  sl.registerFactory(() => DisplayModeCubit());
 }
 
 void initCustomizerFeature() {

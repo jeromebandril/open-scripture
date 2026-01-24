@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:the_smyrna_bible_v2/core/presentation/cubit/display_mode_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/fullscreen_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/toolbar_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/widgets/titlebar.dart';
@@ -82,6 +83,7 @@ class MyApp extends StatelessWidget {
               providers: [
                 BlocProvider(create: (_) => di.sl<PaneManagerCubit>()),
                 BlocProvider(create: (_) => di.sl<ToolbarCubit>()),
+                BlocProvider(create: (_) => di.sl<DisplayModeCubit>()),
                 BlocProvider(create: (_) => di.sl<FullscreenCubit>()..init()),
                 BlocProvider(create: (_) => di.sl<WindowStackManagerBloc>()),
                 BlocProvider(
@@ -249,6 +251,24 @@ class _AppHeader extends StatelessWidget {
               );
             },
           ),
+          BlocBuilder<DisplayModeCubit, DisplayMode>(
+            builder: (context, dm) {
+              return IconButton(
+                  tooltip: dm == DisplayMode.presentation
+                      ? 'Exit presentation mode'
+                      : 'Enter presentation mode',
+                  onPressed: () {
+                    if (dm == DisplayMode.presentation) {
+                      context.read<DisplayModeCubit>().set(DisplayMode.normal);
+                    } else {
+                      context
+                          .read<DisplayModeCubit>()
+                          .set(DisplayMode.presentation);
+                    }
+                  },
+                  icon: Icon(Icons.present_to_all_rounded));
+            },
+          )
         ],
       ),
     );

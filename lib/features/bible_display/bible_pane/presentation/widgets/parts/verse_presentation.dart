@@ -1,0 +1,72 @@
+import 'package:flutter/material.dart';
+
+import '../../../../../../core/domain/entities/bible_ref.dart';
+import '../../../../../../core/domain/entities/verse_segment.dart';
+import '../../../../../../core/domain/entities/verse_span.dart';
+import '../../../../../customizer/domain/entities/bible_pane_theme.dart';
+import '../../rendering/verse_richtext_builder.dart';
+
+class VersePresentation extends StatelessWidget {
+  const VersePresentation({
+    super.key,
+    required this.verses,
+    required this.ref,
+    this.spans,
+  });
+
+  final List<List<VerseSegment>> verses;
+  final List<List<VerseSpan>>? spans;
+  final BibleRef ref;
+
+  @override
+  Widget build(BuildContext context) {
+    final biblePaneTheme = Theme.of(context).extension<BiblePaneTheme>()!;
+
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            ref.toString(),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: biblePaneTheme.accentColor,
+            ),
+          ),
+          Builder(builder: (context) {
+            List<InlineSpan> inlineSpans = [];
+            for (int i = 0; i < verses.length; i++) {
+              String content = verses[i].map((e) => e.textContent).join();
+
+              inlineSpans.add(VerseSpanBuilder.build(
+                context: context,
+                text: content,
+                spans: spans![i],
+                onWordTap: (VerseSpan span, String slice) {},
+              ));
+            }
+            // add verse number before each verse
+            List<InlineSpan> build() {
+              return [
+                for (int i = 0; i < verses.length; i++) ...[
+                  TextSpan(
+                    text: '   ${i + ref.verseStart!} ',
+                    style: TextStyle(
+                      fontSize: 8,
+                      fontWeight: FontWeight.bold,
+                      color: biblePaneTheme.accentColor,
+                    ),
+                  ),
+                  inlineSpans[i],
+                ],
+              ];
+            }
+
+            return Text.rich(TextSpan(children: build()));
+          })
+        ],
+      ),
+    );
+  }
+}
