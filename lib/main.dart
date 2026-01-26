@@ -245,6 +245,25 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                       ),
+
+                    if (isFullscreen && !showToolbar)
+                      Positioned.fill(
+                          child: Align(
+                              alignment: AlignmentGeometry.topRight,
+                              child: IconButton(
+                                  tooltip: 'Help',
+                                  onPressed: () {
+                                    context
+                                        .read<WindowStackManagerBloc>()
+                                        .add(WindowStackManagerOpen(HelpWidget(
+                                      onClose: () {
+                                        context
+                                            .read<WindowStackManagerBloc>()
+                                            .add(WindowStackManagerClose());
+                                      },
+                                    )));
+                                  },
+                                  icon: Icon(Icons.help_outline_rounded)))),
                   ],
                 ),
               ),

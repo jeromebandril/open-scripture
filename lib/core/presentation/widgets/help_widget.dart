@@ -12,7 +12,7 @@ class HelpWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 300,
-      height: 240,
+      height: 275,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
         color: Theme.of(context).colorScheme.surface,
@@ -43,6 +43,15 @@ class HelpWidget extends StatelessWidget {
               children: [
                 Text('Stuck in this view? Be ye not worried bretheren:'),
                 SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('-  Quickly focus searchbar'),
+                    ShortcutView(
+                        activator: appCommandShortcuts[AppCommand.focusSearch])
+                  ],
+                ),
+                SizedBox(height: 4),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

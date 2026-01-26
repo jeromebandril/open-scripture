@@ -44,7 +44,7 @@ class VerseSpanBuilder {
           case SpanType.italic:
             style = style.merge(TextStyle(
               fontStyle: FontStyle.italic,
-              color: Theme.of(context).colorScheme.outline,
+              color: Theme.of(context).colorScheme.tertiary,
             ));
             break;
           case SpanType.bold:
@@ -59,7 +59,8 @@ class VerseSpanBuilder {
             style = style.merge(TextStyle(
               decoration: TextDecoration.underline,
               decorationStyle: TextDecorationStyle.dotted,
-              decorationColor: Colors.black26,
+              decorationColor:
+                  Colors.black26, //Theme.of(context).colorScheme.tertiaryFixed,
               fontWeight: s.payload == strongWordBold ? FontWeight.w500 : null,
             ));
             break;
