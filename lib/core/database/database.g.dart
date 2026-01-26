@@ -313,6 +313,13 @@ class Bibles extends Table with TableInfo<Bibles, Bible> {
       type: DriftSqlType.string,
       requiredDuringInsert: true,
       $customConstraints: 'NOT NULL');
+  static const VerificationMeta _bibleNameLocalMeta =
+      const VerificationMeta('bibleNameLocal');
+  late final GeneratedColumn<String> bibleNameLocal = GeneratedColumn<String>(
+      'bibleNameLocal', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
   static const VerificationMeta _bibleNameAbbreviationMeta =
       const VerificationMeta('bibleNameAbbreviation');
   late final GeneratedColumn<String> bibleNameAbbreviation =
@@ -328,8 +335,15 @@ class Bibles extends Table with TableInfo<Bibles, Bible> {
       requiredDuringInsert: false,
       $customConstraints: '');
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, extId, languageId, bibleName, bibleNameAbbreviation, originSource];
+  List<GeneratedColumn> get $columns => [
+        id,
+        extId,
+        languageId,
+        bibleName,
+        bibleNameLocal,
+        bibleNameAbbreviation,
+        originSource
+      ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -360,6 +374,14 @@ class Bibles extends Table with TableInfo<Bibles, Bible> {
           bibleName.isAcceptableOrUnknown(data['bibleName']!, _bibleNameMeta));
     } else if (isInserting) {
       context.missing(_bibleNameMeta);
+    }
+    if (data.containsKey('bibleNameLocal')) {
+      context.handle(
+          _bibleNameLocalMeta,
+          bibleNameLocal.isAcceptableOrUnknown(
+              data['bibleNameLocal']!, _bibleNameLocalMeta));
+    } else if (isInserting) {
+      context.missing(_bibleNameLocalMeta);
     }
     if (data.containsKey('bibleNameAbbreviation')) {
       context.handle(
@@ -392,6 +414,8 @@ class Bibles extends Table with TableInfo<Bibles, Bible> {
           .read(DriftSqlType.int, data['${effectivePrefix}languageId']),
       bibleName: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}bibleName'])!,
+      bibleNameLocal: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}bibleNameLocal'])!,
       bibleNameAbbreviation: attachedDatabase.typeMapping.read(
           DriftSqlType.string,
           data['${effectivePrefix}bibleNameAbbreviation'])!,
@@ -418,6 +442,7 @@ class Bible extends DataClass implements Insertable<Bible> {
   final String extId;
   final int? languageId;
   final String bibleName;
+  final String bibleNameLocal;
   final String bibleNameAbbreviation;
   final String? originSource;
   const Bible(
@@ -425,6 +450,7 @@ class Bible extends DataClass implements Insertable<Bible> {
       required this.extId,
       this.languageId,
       required this.bibleName,
+      required this.bibleNameLocal,
       required this.bibleNameAbbreviation,
       this.originSource});
   @override
@@ -436,6 +462,7 @@ class Bible extends DataClass implements Insertable<Bible> {
       map['languageId'] = Variable<int>(languageId);
     }
     map['bibleName'] = Variable<String>(bibleName);
+    map['bibleNameLocal'] = Variable<String>(bibleNameLocal);
     map['bibleNameAbbreviation'] = Variable<String>(bibleNameAbbreviation);
     if (!nullToAbsent || originSource != null) {
       map['originSource'] = Variable<String>(originSource);
@@ -451,6 +478,7 @@ class Bible extends DataClass implements Insertable<Bible> {
           ? const Value.absent()
           : Value(languageId),
       bibleName: Value(bibleName),
+      bibleNameLocal: Value(bibleNameLocal),
       bibleNameAbbreviation: Value(bibleNameAbbreviation),
       originSource: originSource == null && nullToAbsent
           ? const Value.absent()
@@ -466,6 +494,7 @@ class Bible extends DataClass implements Insertable<Bible> {
       extId: serializer.fromJson<String>(json['extId']),
       languageId: serializer.fromJson<int?>(json['languageId']),
       bibleName: serializer.fromJson<String>(json['bibleName']),
+      bibleNameLocal: serializer.fromJson<String>(json['bibleNameLocal']),
       bibleNameAbbreviation:
           serializer.fromJson<String>(json['bibleNameAbbreviation']),
       originSource: serializer.fromJson<String?>(json['originSource']),
@@ -479,6 +508,7 @@ class Bible extends DataClass implements Insertable<Bible> {
       'extId': serializer.toJson<String>(extId),
       'languageId': serializer.toJson<int?>(languageId),
       'bibleName': serializer.toJson<String>(bibleName),
+      'bibleNameLocal': serializer.toJson<String>(bibleNameLocal),
       'bibleNameAbbreviation': serializer.toJson<String>(bibleNameAbbreviation),
       'originSource': serializer.toJson<String?>(originSource),
     };
@@ -489,6 +519,7 @@ class Bible extends DataClass implements Insertable<Bible> {
           String? extId,
           Value<int?> languageId = const Value.absent(),
           String? bibleName,
+          String? bibleNameLocal,
           String? bibleNameAbbreviation,
           Value<String?> originSource = const Value.absent()}) =>
       Bible(
@@ -496,6 +527,7 @@ class Bible extends DataClass implements Insertable<Bible> {
         extId: extId ?? this.extId,
         languageId: languageId.present ? languageId.value : this.languageId,
         bibleName: bibleName ?? this.bibleName,
+        bibleNameLocal: bibleNameLocal ?? this.bibleNameLocal,
         bibleNameAbbreviation:
             bibleNameAbbreviation ?? this.bibleNameAbbreviation,
         originSource:
@@ -508,6 +540,9 @@ class Bible extends DataClass implements Insertable<Bible> {
       languageId:
           data.languageId.present ? data.languageId.value : this.languageId,
       bibleName: data.bibleName.present ? data.bibleName.value : this.bibleName,
+      bibleNameLocal: data.bibleNameLocal.present
+          ? data.bibleNameLocal.value
+          : this.bibleNameLocal,
       bibleNameAbbreviation: data.bibleNameAbbreviation.present
           ? data.bibleNameAbbreviation.value
           : this.bibleNameAbbreviation,
@@ -524,6 +559,7 @@ class Bible extends DataClass implements Insertable<Bible> {
           ..write('extId: $extId, ')
           ..write('languageId: $languageId, ')
           ..write('bibleName: $bibleName, ')
+          ..write('bibleNameLocal: $bibleNameLocal, ')
           ..write('bibleNameAbbreviation: $bibleNameAbbreviation, ')
           ..write('originSource: $originSource')
           ..write(')'))
@@ -531,8 +567,8 @@ class Bible extends DataClass implements Insertable<Bible> {
   }
 
   @override
-  int get hashCode => Object.hash(
-      id, extId, languageId, bibleName, bibleNameAbbreviation, originSource);
+  int get hashCode => Object.hash(id, extId, languageId, bibleName,
+      bibleNameLocal, bibleNameAbbreviation, originSource);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -541,6 +577,7 @@ class Bible extends DataClass implements Insertable<Bible> {
           other.extId == this.extId &&
           other.languageId == this.languageId &&
           other.bibleName == this.bibleName &&
+          other.bibleNameLocal == this.bibleNameLocal &&
           other.bibleNameAbbreviation == this.bibleNameAbbreviation &&
           other.originSource == this.originSource);
 }
@@ -550,6 +587,7 @@ class BiblesCompanion extends UpdateCompanion<Bible> {
   final Value<String> extId;
   final Value<int?> languageId;
   final Value<String> bibleName;
+  final Value<String> bibleNameLocal;
   final Value<String> bibleNameAbbreviation;
   final Value<String?> originSource;
   const BiblesCompanion({
@@ -557,6 +595,7 @@ class BiblesCompanion extends UpdateCompanion<Bible> {
     this.extId = const Value.absent(),
     this.languageId = const Value.absent(),
     this.bibleName = const Value.absent(),
+    this.bibleNameLocal = const Value.absent(),
     this.bibleNameAbbreviation = const Value.absent(),
     this.originSource = const Value.absent(),
   });
@@ -565,16 +604,19 @@ class BiblesCompanion extends UpdateCompanion<Bible> {
     required String extId,
     this.languageId = const Value.absent(),
     required String bibleName,
+    required String bibleNameLocal,
     required String bibleNameAbbreviation,
     this.originSource = const Value.absent(),
   })  : extId = Value(extId),
         bibleName = Value(bibleName),
+        bibleNameLocal = Value(bibleNameLocal),
         bibleNameAbbreviation = Value(bibleNameAbbreviation);
   static Insertable<Bible> custom({
     Expression<int>? id,
     Expression<String>? extId,
     Expression<int>? languageId,
     Expression<String>? bibleName,
+    Expression<String>? bibleNameLocal,
     Expression<String>? bibleNameAbbreviation,
     Expression<String>? originSource,
   }) {
@@ -583,6 +625,7 @@ class BiblesCompanion extends UpdateCompanion<Bible> {
       if (extId != null) 'extId': extId,
       if (languageId != null) 'languageId': languageId,
       if (bibleName != null) 'bibleName': bibleName,
+      if (bibleNameLocal != null) 'bibleNameLocal': bibleNameLocal,
       if (bibleNameAbbreviation != null)
         'bibleNameAbbreviation': bibleNameAbbreviation,
       if (originSource != null) 'originSource': originSource,
@@ -594,6 +637,7 @@ class BiblesCompanion extends UpdateCompanion<Bible> {
       Value<String>? extId,
       Value<int?>? languageId,
       Value<String>? bibleName,
+      Value<String>? bibleNameLocal,
       Value<String>? bibleNameAbbreviation,
       Value<String?>? originSource}) {
     return BiblesCompanion(
@@ -601,6 +645,7 @@ class BiblesCompanion extends UpdateCompanion<Bible> {
       extId: extId ?? this.extId,
       languageId: languageId ?? this.languageId,
       bibleName: bibleName ?? this.bibleName,
+      bibleNameLocal: bibleNameLocal ?? this.bibleNameLocal,
       bibleNameAbbreviation:
           bibleNameAbbreviation ?? this.bibleNameAbbreviation,
       originSource: originSource ?? this.originSource,
@@ -622,6 +667,9 @@ class BiblesCompanion extends UpdateCompanion<Bible> {
     if (bibleName.present) {
       map['bibleName'] = Variable<String>(bibleName.value);
     }
+    if (bibleNameLocal.present) {
+      map['bibleNameLocal'] = Variable<String>(bibleNameLocal.value);
+    }
     if (bibleNameAbbreviation.present) {
       map['bibleNameAbbreviation'] =
           Variable<String>(bibleNameAbbreviation.value);
@@ -639,6 +687,7 @@ class BiblesCompanion extends UpdateCompanion<Bible> {
           ..write('extId: $extId, ')
           ..write('languageId: $languageId, ')
           ..write('bibleName: $bibleName, ')
+          ..write('bibleNameLocal: $bibleNameLocal, ')
           ..write('bibleNameAbbreviation: $bibleNameAbbreviation, ')
           ..write('originSource: $originSource')
           ..write(')'))
@@ -1813,7 +1862,7 @@ abstract class _$AppDb extends GeneratedDatabase {
       'CREATE UNIQUE INDEX ux_languages_iso ON languages (langIsoCode)');
   Selectable<GetBiblesResult> getBibles() {
     return customSelect(
-        'SELECT b.id, b.extId, b.languageId, b.bibleName, b.bibleNameAbbreviation, b.originSource, l.langEngName, l.langIsoCode, l.langNativeName FROM bibles AS b JOIN languages AS l ON b.languageId = l.id',
+        'SELECT b.id, b.extId, b.languageId, b.bibleName, b.bibleNameLocal, b.bibleNameAbbreviation, b.originSource, l.langEngName, l.langIsoCode, l.langNativeName FROM bibles AS b JOIN languages AS l ON b.languageId = l.id',
         variables: [],
         readsFrom: {
           bibles,
@@ -1823,6 +1872,7 @@ abstract class _$AppDb extends GeneratedDatabase {
           extId: row.read<String>('extId'),
           languageId: row.readNullable<int>('languageId'),
           bibleName: row.read<String>('bibleName'),
+          bibleNameLocal: row.read<String>('bibleNameLocal'),
           bibleNameAbbreviation: row.read<String>('bibleNameAbbreviation'),
           originSource: row.readNullable<String>('originSource'),
           langEngName: row.read<String>('langEngName'),
@@ -1833,7 +1883,7 @@ abstract class _$AppDb extends GeneratedDatabase {
 
   Selectable<GetBibleResult> getBible(int bibleId) {
     return customSelect(
-        'SELECT b.id, b.extId, b.languageId, b.bibleName, b.bibleNameAbbreviation, b.originSource, l.langEngName, l.langIsoCode, l.langNativeName FROM bibles AS b JOIN languages AS l ON b.languageId = l.id WHERE b.id = ?1',
+        'SELECT b.id, b.extId, b.languageId, b.bibleName, b.bibleNameLocal, b.bibleNameAbbreviation, b.originSource, l.langEngName, l.langIsoCode, l.langNativeName FROM bibles AS b JOIN languages AS l ON b.languageId = l.id WHERE b.id = ?1',
         variables: [
           Variable<int>(bibleId)
         ],
@@ -1845,6 +1895,7 @@ abstract class _$AppDb extends GeneratedDatabase {
           extId: row.read<String>('extId'),
           languageId: row.readNullable<int>('languageId'),
           bibleName: row.read<String>('bibleName'),
+          bibleNameLocal: row.read<String>('bibleNameLocal'),
           bibleNameAbbreviation: row.read<String>('bibleNameAbbreviation'),
           originSource: row.readNullable<String>('originSource'),
           langEngName: row.read<String>('langEngName'),
@@ -2125,6 +2176,7 @@ typedef $BiblesCreateCompanionBuilder = BiblesCompanion Function({
   required String extId,
   Value<int?> languageId,
   required String bibleName,
+  required String bibleNameLocal,
   required String bibleNameAbbreviation,
   Value<String?> originSource,
 });
@@ -2133,6 +2185,7 @@ typedef $BiblesUpdateCompanionBuilder = BiblesCompanion Function({
   Value<String> extId,
   Value<int?> languageId,
   Value<String> bibleName,
+  Value<String> bibleNameLocal,
   Value<String> bibleNameAbbreviation,
   Value<String?> originSource,
 });
@@ -2156,6 +2209,10 @@ class $BiblesFilterComposer extends Composer<_$AppDb, Bibles> {
 
   ColumnFilters<String> get bibleName => $composableBuilder(
       column: $table.bibleName, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get bibleNameLocal => $composableBuilder(
+      column: $table.bibleNameLocal,
+      builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get bibleNameAbbreviation => $composableBuilder(
       column: $table.bibleNameAbbreviation,
@@ -2185,6 +2242,10 @@ class $BiblesOrderingComposer extends Composer<_$AppDb, Bibles> {
   ColumnOrderings<String> get bibleName => $composableBuilder(
       column: $table.bibleName, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get bibleNameLocal => $composableBuilder(
+      column: $table.bibleNameLocal,
+      builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get bibleNameAbbreviation => $composableBuilder(
       column: $table.bibleNameAbbreviation,
       builder: (column) => ColumnOrderings(column));
@@ -2213,6 +2274,9 @@ class $BiblesAnnotationComposer extends Composer<_$AppDb, Bibles> {
 
   GeneratedColumn<String> get bibleName =>
       $composableBuilder(column: $table.bibleName, builder: (column) => column);
+
+  GeneratedColumn<String> get bibleNameLocal => $composableBuilder(
+      column: $table.bibleNameLocal, builder: (column) => column);
 
   GeneratedColumn<String> get bibleNameAbbreviation => $composableBuilder(
       column: $table.bibleNameAbbreviation, builder: (column) => column);
@@ -2248,6 +2312,7 @@ class $BiblesTableManager extends RootTableManager<
             Value<String> extId = const Value.absent(),
             Value<int?> languageId = const Value.absent(),
             Value<String> bibleName = const Value.absent(),
+            Value<String> bibleNameLocal = const Value.absent(),
             Value<String> bibleNameAbbreviation = const Value.absent(),
             Value<String?> originSource = const Value.absent(),
           }) =>
@@ -2256,6 +2321,7 @@ class $BiblesTableManager extends RootTableManager<
             extId: extId,
             languageId: languageId,
             bibleName: bibleName,
+            bibleNameLocal: bibleNameLocal,
             bibleNameAbbreviation: bibleNameAbbreviation,
             originSource: originSource,
           ),
@@ -2264,6 +2330,7 @@ class $BiblesTableManager extends RootTableManager<
             required String extId,
             Value<int?> languageId = const Value.absent(),
             required String bibleName,
+            required String bibleNameLocal,
             required String bibleNameAbbreviation,
             Value<String?> originSource = const Value.absent(),
           }) =>
@@ -2272,6 +2339,7 @@ class $BiblesTableManager extends RootTableManager<
             extId: extId,
             languageId: languageId,
             bibleName: bibleName,
+            bibleNameLocal: bibleNameLocal,
             bibleNameAbbreviation: bibleNameAbbreviation,
             originSource: originSource,
           ),
@@ -2861,6 +2929,7 @@ class GetBiblesResult {
   final String extId;
   final int? languageId;
   final String bibleName;
+  final String bibleNameLocal;
   final String bibleNameAbbreviation;
   final String? originSource;
   final String langEngName;
@@ -2871,6 +2940,7 @@ class GetBiblesResult {
     required this.extId,
     this.languageId,
     required this.bibleName,
+    required this.bibleNameLocal,
     required this.bibleNameAbbreviation,
     this.originSource,
     required this.langEngName,
@@ -2884,6 +2954,7 @@ class GetBibleResult {
   final String extId;
   final int? languageId;
   final String bibleName;
+  final String bibleNameLocal;
   final String bibleNameAbbreviation;
   final String? originSource;
   final String langEngName;
@@ -2894,6 +2965,7 @@ class GetBibleResult {
     required this.extId,
     this.languageId,
     required this.bibleName,
+    required this.bibleNameLocal,
     required this.bibleNameAbbreviation,
     this.originSource,
     required this.langEngName,

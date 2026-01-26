@@ -8,8 +8,8 @@ part 'database.g.dart';
 
 @DriftDatabase(
   include: {
+    'tables/core_tables.drift',
     'queries/core_queries.drift',
-    'tables/core_tables,drift',
   },
 )
 class AppDb extends _$AppDb {

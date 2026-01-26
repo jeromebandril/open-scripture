@@ -5,6 +5,7 @@ class BibleMeta extends Equatable {
   final int? id;
   final String extId;
   final String bibleName;
+  final String bibleNameLocal;
   final String abbreviation;
   final String? langEngName;
   final String? langNativeName;
@@ -16,6 +17,7 @@ class BibleMeta extends Equatable {
     this.id,
     required this.extId,
     required this.bibleName,
+    required this.bibleNameLocal,
     required this.abbreviation,
     this.langEngName,
     this.langNativeName,
@@ -29,6 +31,7 @@ class BibleMeta extends Equatable {
       id: b.id,
       extId: b.extId,
       bibleName: b.bibleName,
+      bibleNameLocal: b.bibleNameLocal,
       abbreviation: b.bibleNameAbbreviation,
       originSource: b.originSource,
       isAlreadyInstalled: true,
@@ -39,6 +42,7 @@ class BibleMeta extends Equatable {
     int? id,
     String? extId,
     String? bibleName,
+    String? bibleNameLocal,
     String? abbreviation,
     String? langEngName,
     String? langNativeName,
@@ -56,6 +60,7 @@ class BibleMeta extends Equatable {
       langIsoCode: langAbbreviation ?? this.langIsoCode,
       originSource: originSource ?? this.originSource,
       isAlreadyInstalled: isAlreadyInstalled ?? this.isAlreadyInstalled,
+      bibleNameLocal: bibleNameLocal ?? this.bibleNameLocal,
     );
   }
 
@@ -63,6 +68,7 @@ class BibleMeta extends Equatable {
   List<Object?> get props => [
         id,
         bibleName,
+        bibleNameLocal,
         abbreviation,
         langEngName,
         langNativeName,

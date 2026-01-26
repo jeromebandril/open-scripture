@@ -161,17 +161,25 @@ class BibleRemoteDataSourceImpl implements BibleRemoteDataSource {
       final metas = <BibleMeta>[];
 
       for (final row in rows) {
-        final lastTd = row.querySelector('td:last-child');
-        final thirdTd = row.querySelector('td:nth-child(2)');
+        final lastTd =
+            row.querySelector('td:last-child'); // language name (in english)
+        final thirdTd =
+            row.querySelector('td:nth-child(2)'); // bible name (english title)
+        final fourthTd = row.querySelector(
+            'td:nth-child(3)'); // bibleNameLocal (vernacular title)
 
         final link = lastTd?.querySelector('a');
         final language = thirdTd?.querySelector('a')?.innerHtml;
         final name = link?.innerHtml;
+        final localName = fourthTd?.querySelector('a')?.innerHtml;
 
         final href = link?.attributes['href'];
         final id = href == null ? null : Uri.parse(href).queryParameters['id'];
 
-        if (id == null || name == null || language == null) {
+        if (id == null ||
+            name == null ||
+            language == null ||
+            localName == null) {
           // Skip malformed rows rather than crashing the whole call.
           continue;
         }
@@ -180,6 +188,7 @@ class BibleRemoteDataSourceImpl implements BibleRemoteDataSource {
           id: -1,
           extId: id,
           bibleName: name,
+          bibleNameLocal: localName,
           langEngName: language,
           abbreviation: id,
         ));

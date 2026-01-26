@@ -81,6 +81,7 @@ extension BibleInstallQueries on db.AppDb {
           extId: meta.extId,
           languageId: Value(languageId), // nullable
           bibleName: meta.bibleName,
+          bibleNameLocal: meta.bibleNameLocal,
           bibleNameAbbreviation: meta.abbreviation,
           originSource: Value(meta.originSource),
         ),

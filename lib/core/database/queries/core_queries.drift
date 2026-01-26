@@ -1,13 +1,15 @@
+import '../tables/core_tables.drift';
+
 getBibles: 
 SELECT 
-  b.id, b.extId, b.languageId, b.bibleName, b.bibleNameAbbreviation, b.originSource, 
+  b.id, b.extId, b.languageId, b.bibleName, b.bibleNameLocal, b.bibleNameAbbreviation, b.originSource, 
   l.langEngName, l.langIsoCode, l.langNativeName
 FROM bibles AS b
 JOIN languages AS l on b.languageId = l.id;
 
 getBible: 
 SELECT 
-  b.id, b.extId, b.languageId, b.bibleName, b.bibleNameAbbreviation, b.originSource, 
+  b.id, b.extId, b.languageId, b.bibleName, b.bibleNameLocal, b.bibleNameAbbreviation, b.originSource, 
   l.langEngName, l.langIsoCode, l.langNativeName
 FROM bibles AS b
 JOIN languages AS l on b.languageId = l.id

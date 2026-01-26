@@ -48,6 +48,7 @@ class UsfxParser {
 
   BibleMeta getBible() {
     final bibleName = _text('//identification/name');
+    final bibleNameLocal = _text('//identification/nameLocal');
     final abbreviation = _text('//identification/abbreviation');
     final langEngName = _text('//language/name');
     final langNativeName = _text('//language/nameLocal');
@@ -56,6 +57,7 @@ class UsfxParser {
     return BibleMeta(
       id: null,
       extId: abbreviation,
+      bibleNameLocal: bibleNameLocal,
       bibleName: bibleName,
       abbreviation: abbreviation,
       langEngName: langEngName,
