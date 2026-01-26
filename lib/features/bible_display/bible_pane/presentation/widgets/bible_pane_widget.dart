@@ -175,7 +175,10 @@ class _BiblePaneState extends State<BiblePane> {
                                             )
                                             .toList();
 
-                                        return Padding(
+                                        return VersePresentation(
+                                          ref: state.reference!,
+                                          verses: verses,
+                                          spans: spans,
                                           padding: EdgeInsets.only(
                                             left: thisPaneIndex == 0
                                                 ? paneTheme.xPadding.toDouble()
@@ -184,11 +187,6 @@ class _BiblePaneState extends State<BiblePane> {
                                                     panes.length - 1
                                                 ? paneTheme.xPadding.toDouble()
                                                 : 0,
-                                          ),
-                                          child: VersePresentation(
-                                            ref: state.reference!,
-                                            verses: verses,
-                                            spans: spans,
                                           ),
                                         );
                                       }),
