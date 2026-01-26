@@ -455,7 +455,7 @@ class BiblePanePreview extends StatelessWidget {
                 : Theme.of(context).colorScheme.surface,
           ),
           child: DefaultTextStyle.merge(
-            style: TextStyle(fontFamily: biblePaneTheme.fontFamily),
+            style: TextStyle(fontFamily: biblePaneTheme.textFont),
             child: ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -505,14 +505,17 @@ class _VerseWidgetPreview extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(
         bottom: 8,
-        left: biblePaneTheme.widthAdjustmentOffset / 5,
-        right: biblePaneTheme.widthAdjustmentOffset / 5,
+        left: biblePaneTheme.widthAdjustmentOffset / 5 +
+            biblePaneTheme.xPadding / 5,
+        right: biblePaneTheme.widthAdjustmentOffset / 5 +
+            biblePaneTheme.xPadding / 5,
       ),
       child: spans == null
           ? Text(content)
           : SelectableText.rich(TextSpan(
               style: TextStyle(
                 height: 1.2,
+                fontWeight: biblePaneTheme.textFontWeight,
                 color: useCustom
                     ? biblePaneTheme.textColor
                     : Theme.of(context).colorScheme.onSurface,
@@ -523,6 +526,7 @@ class _VerseWidgetPreview extends StatelessWidget {
                         ? '${ref.toString()}  '
                         : '$verseNumber  ',
                     style: TextStyle(
+                      fontFamily: biblePaneTheme.referenceFont,
                       fontWeight: isHighlighted
                           ? FontWeight.bold
                           : biblePaneTheme.showFullRefAlways

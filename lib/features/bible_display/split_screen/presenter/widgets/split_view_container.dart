@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/models/split_pane_data.dart';
 import 'package:the_smyrna_bible_v2/features/customizer/domain/entities/bible_pane_theme.dart';
 
 import '../../../../customizer/presentation/cubit/customizer_cubit.dart';
@@ -13,6 +14,9 @@ class MultipleBiblePanes extends StatelessWidget {
   Widget build(BuildContext context) {
     final enableCustom = context.select(
       (CustomizerCubit c) => c.state.pane.enableCustomTheme,
+    );
+    final gap = context.select(
+      (CustomizerCubit c) => c.state.pane.splitscreenGap,
     );
     final offset = context.select(
       (CustomizerCubit c) => c.state.pane.widthAdjustmentOffset,
@@ -32,7 +36,7 @@ class MultipleBiblePanes extends StatelessWidget {
                 : Theme.of(context).colorScheme.surface,
           ),
           child: Row(
-            spacing: 16,
+            spacing: gap.toDouble(),
             children: [
               for (final p in state.panes)
                 Expanded(

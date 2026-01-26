@@ -2,9 +2,10 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:the_smyrna_bible_v2/core/utils/colors_util.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/widgets/parts/verse_widget.dart';
+import 'package:the_smyrna_bible_v2/features/customizer/domain/entities/app_font_weight.dart';
 
 class BiblePaneThemeSettings extends Equatable {
-  final String fontFamily;
+  final String textFont;
   final double fontSize;
   final Color textColor;
   final Color backgroundColor;
@@ -14,12 +15,14 @@ class BiblePaneThemeSettings extends Equatable {
   final Color refColor;
   final bool enableCustomTheme;
   final HighlightRenderMode highlightRenderMode;
-  final FontWeight textFontWeight;
+  final AppFontWeight textFontWeight;
   final double widthAdjustmentOffset;
-  // final bool useAdjustWidthOffsetForWholeApp;
+  final String referenceFont;
+  final int xPadding;
+  final int splitscreenGap;
 
   const BiblePaneThemeSettings({
-    this.fontFamily = 'General Sans',
+    this.textFont = 'General Sans',
     this.fontSize = 14,
     this.textColor = Colors.black,
     this.backgroundColor = Colors.white,
@@ -29,26 +32,31 @@ class BiblePaneThemeSettings extends Equatable {
     this.refColor = Colors.black,
     this.enableCustomTheme = false,
     this.highlightRenderMode = HighlightRenderMode.fullRefWithColor,
-    this.textFontWeight = FontWeight.w400,
+    this.textFontWeight = AppFontWeight.regular,
     this.widthAdjustmentOffset = 0.0,
+    this.referenceFont = 'General Sans',
+    this.xPadding = 0,
+    this.splitscreenGap = 16,
   });
 
-  BiblePaneThemeSettings copyWith({
-    String? fontFamily,
-    double? fontSize,
-    Color? textColor,
-    Color? backgroundColor,
-    bool? showVerseDivider,
-    bool? showFullRefAlways,
-    Color? accentColor,
-    Color? refColor,
-    bool? enableCustomTheme,
-    HighlightRenderMode? highlightRenderMode,
-    FontWeight? textFontWeight,
-    double? widthAdjustmentOffset,
-  }) {
+  BiblePaneThemeSettings copyWith(
+      {String? textFont,
+      double? fontSize,
+      Color? textColor,
+      Color? backgroundColor,
+      bool? showVerseDivider,
+      bool? showFullRefAlways,
+      Color? accentColor,
+      Color? refColor,
+      bool? enableCustomTheme,
+      HighlightRenderMode? highlightRenderMode,
+      AppFontWeight? textFontWeight,
+      double? widthAdjustmentOffset,
+      String? referenceFont,
+      int? xPadding,
+      int? splitscreenGap}) {
     return BiblePaneThemeSettings(
-      fontFamily: fontFamily ?? this.fontFamily,
+      textFont: textFont ?? this.textFont,
       fontSize: fontSize ?? this.fontSize,
       textColor: textColor ?? this.textColor,
       backgroundColor: backgroundColor ?? this.backgroundColor,
@@ -61,12 +69,15 @@ class BiblePaneThemeSettings extends Equatable {
       textFontWeight: textFontWeight ?? this.textFontWeight,
       widthAdjustmentOffset:
           widthAdjustmentOffset ?? this.widthAdjustmentOffset,
+      referenceFont: referenceFont ?? this.referenceFont,
+      xPadding: xPadding ?? this.xPadding,
+      splitscreenGap: splitscreenGap ?? this.splitscreenGap,
     );
   }
 
   @override
   List<Object?> get props => [
-        fontFamily,
+        textFont,
         fontSize,
         textColor,
         backgroundColor,
@@ -78,10 +89,13 @@ class BiblePaneThemeSettings extends Equatable {
         highlightRenderMode,
         textFontWeight,
         widthAdjustmentOffset,
+        referenceFont,
+        xPadding,
+        splitscreenGap,
       ];
 
   Map<String, dynamic> toJson() => {
-        'fontFamily': fontFamily,
+        'fontFamily': textFont,
         'fontSize': fontSize,
         'textColor': ColorsUtil.colorToHex(textColor),
         'backgroundColor': ColorsUtil.colorToHex(backgroundColor),
@@ -91,8 +105,11 @@ class BiblePaneThemeSettings extends Equatable {
         'refColor': ColorsUtil.colorToHex(refColor),
         'enableCustomTheme': enableCustomTheme,
         'highlightRenderMode': highlightRenderMode.toString(),
-        'textFontWeight': textFontWeight.toString(),
+        'textFontWeight': textFontWeight.wire,
         'widthAdjustmentOffset': widthAdjustmentOffset,
+        'referenceFont': referenceFont,
+        'xPadding': xPadding,
+        'splitscreenGap': splitscreenGap,
       };
 
   static BiblePaneThemeSettings fromJson(Map<String, dynamic> json) {
@@ -106,7 +123,7 @@ class BiblePaneThemeSettings extends Equatable {
     }
 
     return BiblePaneThemeSettings(
-      fontFamily: json['fontFamily'] as String,
+      textFont: json['fontFamily'] as String,
       fontSize: (json['fontSize'] as num).toDouble(),
       textColor: Color(ColorsUtil.parseHex(json['textColor'] as String)),
       backgroundColor:
@@ -119,14 +136,18 @@ class BiblePaneThemeSettings extends Equatable {
       highlightRenderMode:
           parseHighlightRenderMode(json['highlightRenderMode'] as String),
       widthAdjustmentOffset: json['widthAdjustmentOffset'] as double,
-      //textFontWeight: json['textFontWeight'],
+      referenceFont: json['referenceFont'] as String,
+      textFontWeight:
+          AppFontWeightWire.fromWire((json['textFontWeight'] as String)),
+      xPadding: json['xPadding'] as int,
+      splitscreenGap: json['splitscreenGap'] as int,
     );
   }
 }
 
 @immutable
 class BiblePaneTheme extends ThemeExtension<BiblePaneTheme> {
-  final String? fontFamily;
+  final String? textFont;
   final double fontSize;
   final Color textColor;
   final Color backgroundColor;
@@ -138,9 +159,12 @@ class BiblePaneTheme extends ThemeExtension<BiblePaneTheme> {
   final HighlightRenderMode highlightRenderMode;
   final FontWeight textFontWeight;
   final double widthAdjustmentOffset;
+  final String referenceFont;
+  final int xPadding;
+  final int splitscreenGap;
 
   const BiblePaneTheme({
-    required this.fontFamily,
+    required this.textFont,
     required this.fontSize,
     required this.textColor,
     required this.backgroundColor,
@@ -152,11 +176,14 @@ class BiblePaneTheme extends ThemeExtension<BiblePaneTheme> {
     required this.highlightRenderMode,
     required this.textFontWeight,
     required this.widthAdjustmentOffset,
+    required this.referenceFont,
+    required this.xPadding,
+    required this.splitscreenGap,
   });
 
   @override
   BiblePaneTheme copyWith({
-    String? fontFamily,
+    String? textFont,
     double? fontSize,
     Color? textColor,
     Color? backgroundColor,
@@ -168,9 +195,12 @@ class BiblePaneTheme extends ThemeExtension<BiblePaneTheme> {
     HighlightRenderMode? highlightRenderMode,
     FontWeight? textFontWeight,
     double? widthAdjustmentOffset,
+    String? referenceFont,
+    int? xPadding,
+    int? splitscreenGap,
   }) {
     return BiblePaneTheme(
-      fontFamily: fontFamily ?? this.fontFamily,
+      textFont: textFont ?? this.textFont,
       fontSize: fontSize ?? this.fontSize,
       textColor: textColor ?? this.textColor,
       backgroundColor: backgroundColor ?? this.backgroundColor,
@@ -183,6 +213,9 @@ class BiblePaneTheme extends ThemeExtension<BiblePaneTheme> {
       textFontWeight: textFontWeight ?? this.textFontWeight,
       widthAdjustmentOffset:
           widthAdjustmentOffset ?? this.widthAdjustmentOffset,
+      referenceFont: referenceFont ?? this.referenceFont,
+      xPadding: xPadding ?? this.xPadding,
+      splitscreenGap: splitscreenGap ?? this.splitscreenGap,
     );
   }
 
@@ -190,7 +223,7 @@ class BiblePaneTheme extends ThemeExtension<BiblePaneTheme> {
   BiblePaneTheme lerp(ThemeExtension<BiblePaneTheme>? other, double t) {
     if (other is! BiblePaneTheme) return this;
     return BiblePaneTheme(
-      fontFamily: t < 0.5 ? fontFamily : other.fontFamily,
+      textFont: t < 0.5 ? textFont : other.textFont,
       fontSize: fontSize + (other.fontSize - fontSize) * t,
       textColor: Color.lerp(textColor, other.textColor, t)!,
       backgroundColor: Color.lerp(backgroundColor, other.backgroundColor, t)!,
@@ -202,6 +235,9 @@ class BiblePaneTheme extends ThemeExtension<BiblePaneTheme> {
       highlightRenderMode: highlightRenderMode,
       textFontWeight: textFontWeight,
       widthAdjustmentOffset: widthAdjustmentOffset,
+      referenceFont: t < 0.5 ? referenceFont : other.referenceFont,
+      xPadding: t < 0.5 ? xPadding : other.xPadding,
+      splitscreenGap: t < 0.5 ? splitscreenGap : other.splitscreenGap,
     );
   }
 }
@@ -209,7 +245,7 @@ class BiblePaneTheme extends ThemeExtension<BiblePaneTheme> {
 /// Adapter from settings -> ThemeExtension.
 extension BiblePaneThemeSettingsX on BiblePaneThemeSettings {
   BiblePaneTheme toExtension() => BiblePaneTheme(
-        fontFamily: fontFamily,
+        textFont: textFont,
         fontSize: fontSize,
         textColor: textColor,
         backgroundColor: backgroundColor,
@@ -219,7 +255,10 @@ extension BiblePaneThemeSettingsX on BiblePaneThemeSettings {
         refColor: refColor,
         enableCustomTheme: enableCustomTheme,
         highlightRenderMode: highlightRenderMode,
-        textFontWeight: textFontWeight,
+        textFontWeight: textFontWeight.toFlutter(),
         widthAdjustmentOffset: widthAdjustmentOffset,
+        referenceFont: referenceFont,
+        xPadding: xPadding,
+        splitscreenGap: splitscreenGap,
       );
 }

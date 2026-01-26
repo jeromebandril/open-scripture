@@ -60,9 +60,7 @@ class VerseSpanBuilder {
               decoration: TextDecoration.underline,
               decorationStyle: TextDecorationStyle.dotted,
               decorationColor: Colors.black26,
-              fontWeight: s.payload == strongWordBold
-                  ? FontWeight.w500
-                  : FontWeight.w400,
+              fontWeight: s.payload == strongWordBold ? FontWeight.w500 : null,
             ));
             break;
           default:

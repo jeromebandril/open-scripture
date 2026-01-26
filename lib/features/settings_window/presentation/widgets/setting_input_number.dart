@@ -13,7 +13,7 @@ class SettingInputNumber extends StatefulWidget {
 
   final String? value;
   final IconData? prefixIcon;
-  final Function(double)? onSubmitted;
+  final Function(num)? onSubmitted;
   final int? max;
   final int? min;
 

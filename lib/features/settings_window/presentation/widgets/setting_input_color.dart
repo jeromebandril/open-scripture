@@ -1,16 +1,21 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:the_smyrna_bible_v2/core/utils/colors_util.dart';
+
+import '../../../../core/utils/colors_util.dart';
 
 class SettingInputColor extends StatefulWidget {
   const SettingInputColor({
     super.key,
     this.color = Colors.red,
     this.onColorChanged,
+    this.isDisabled = false,
   });
 
   final Color color;
   final Function(Color)? onColorChanged;
+  final bool isDisabled;
 
   @override
   State<SettingInputColor> createState() => _SettingInputColorState();
@@ -113,13 +118,19 @@ class _SettingInputColorState extends State<SettingInputColor> {
           link: layerLink,
           child: GestureDetector(
             onTap: () {
+              if (widget.isDisabled) return;
               if (entry == null) {
                 _showOverlay();
               } else {
                 _hideOverlay();
               }
             },
-            child: _ColorCircle(color: widget.color),
+            child: _ColorCircle(
+                size: 24,
+                isDisabled: widget.isDisabled,
+                color: widget.isDisabled
+                    ? Theme.of(context).colorScheme.onSurface.withAlpha(97)
+                    : widget.color),
           ),
         )
       ],
@@ -128,16 +139,83 @@ class _SettingInputColorState extends State<SettingInputColor> {
 }
 
 class _ColorCircle extends StatelessWidget {
-  const _ColorCircle({required this.color});
+  const _ColorCircle({
+    required this.color,
+    this.size = 24,
+    this.isDisabled = false,
+  });
 
+  final double size;
   final Color color;
+  final bool isDisabled;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 24,
-      width: 24,
-      decoration: BoxDecoration(shape: BoxShape.circle, color: color),
+    return SizedBox(
+      height: size,
+      width: size,
+      child: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: color,
+            ),
+          ),
+          if (isDisabled)
+            Center(
+              child: CustomPaint(
+                size: Size(size, size),
+                painter: const _DiagonalLinePainter(
+                  strokeWidth: 2,
+                  color: Colors.red,
+                ),
+              ),
+            ),
+        ],
+      ),
     );
+  }
+}
+
+class _DiagonalLinePainter extends CustomPainter {
+  const _DiagonalLinePainter({
+    this.strokeWidth = 2,
+    this.color = Colors.red,
+    this.angleRadians = math.pi / 4, // 45 degrees: top-left -> bottom-right
+    this.strokeCap = StrokeCap.butt, // use butt for exact diameter length
+  });
+
+  final double strokeWidth;
+  final Color color;
+  final double angleRadians;
+  final StrokeCap strokeCap;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final r = size.shortestSide / 2.0;
+    final c = Offset(r, r);
+
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = strokeWidth
+      ..strokeCap = strokeCap;
+
+    canvas.save();
+    canvas.translate(c.dx, c.dy);
+    canvas.rotate(angleRadians);
+
+    // Draw a line exactly equal to the circle diameter (2r), centered.
+    canvas.drawLine(Offset(-r, 0), Offset(r, 0), paint);
+
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant _DiagonalLinePainter oldDelegate) {
+    return strokeWidth != oldDelegate.strokeWidth ||
+        color != oldDelegate.color ||
+        angleRadians != oldDelegate.angleRadians ||
+        strokeCap != oldDelegate.strokeCap;
   }
 }

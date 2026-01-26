@@ -7,6 +7,7 @@ import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentati
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/widgets/parts/pane_info.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/widgets/parts/verse_presentation.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_selector/presenter/widget/bible_selector.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
 import 'package:the_smyrna_bible_v2/features/customizer/domain/entities/bible_pane_theme.dart';
 import 'package:the_smyrna_bible_v2/features/customizer/presentation/cubit/customizer_cubit.dart';
 
@@ -82,7 +83,7 @@ class _BiblePaneState extends State<BiblePane> {
         color: isCustom
             ? paneTheme.textColor
             : Theme.of(context).colorScheme.onSurface,
-        fontFamily: isCustom ? paneTheme.fontFamily : null,
+        fontFamily: isCustom ? paneTheme.textFont : null,
       ),
       child: MultiBlocProvider(
         providers: [
@@ -123,13 +124,16 @@ class _BiblePaneState extends State<BiblePane> {
               case BiblePaneStatus.ready:
                 // group segments by verse number
                 final segmentsByVerse = <int, List<VerseSegment>>{};
-
                 for (final s in state.segments) {
                   final key = s.ref.verseStart; // assuming int
                   (segmentsByVerse[key!] ??= <VerseSegment>[]).add(s);
                 }
-
                 final verseNumbers = segmentsByVerse.keys.toList()..sort();
+
+                // Set padding
+                final panes = context.read<PaneManagerCubit>().state.panes;
+                final thisPaneIndex =
+                    panes.indexWhere((e) => e.id == widget.uniqueId);
 
                 return Stack(
                   children: [
@@ -171,10 +175,21 @@ class _BiblePaneState extends State<BiblePane> {
                                             )
                                             .toList();
 
-                                        return VersePresentation(
-                                          ref: state.reference!,
-                                          verses: verses,
-                                          spans: spans,
+                                        return Padding(
+                                          padding: EdgeInsets.only(
+                                            left: thisPaneIndex == 0
+                                                ? paneTheme.xPadding.toDouble()
+                                                : 0,
+                                            right: thisPaneIndex ==
+                                                    panes.length - 1
+                                                ? paneTheme.xPadding.toDouble()
+                                                : 0,
+                                          ),
+                                          child: VersePresentation(
+                                            ref: state.reference!,
+                                            verses: verses,
+                                            spans: spans,
+                                          ),
                                         );
                                       }),
                                     )
@@ -197,6 +212,7 @@ class _BiblePaneState extends State<BiblePane> {
                                           return const SizedBox(height: 200);
                                         }
 
+                                        // Set content
                                         final vn = verseNumbers[i];
                                         final segments = segmentsByVerse[vn]!;
                                         final spans = segments
@@ -206,16 +222,27 @@ class _BiblePaneState extends State<BiblePane> {
                                             state.reference?.verseStart;
                                         final vEnd = state.reference?.verseEnd;
 
-                                        return VerseWidget(
-                                            verseNumber: vn,
-                                            segments: segments,
-                                            spans: spans,
-                                            isHighlighted: (vEnd == null &&
-                                                    vn == vStart) ||
-                                                (vEnd != null &&
-                                                    vStart != null &&
-                                                    vn >= vStart &&
-                                                    vn <= vEnd));
+                                        return Padding(
+                                          padding: EdgeInsets.only(
+                                            left: thisPaneIndex == 0
+                                                ? paneTheme.xPadding.toDouble()
+                                                : 0,
+                                            right: thisPaneIndex ==
+                                                    panes.length - 1
+                                                ? paneTheme.xPadding.toDouble()
+                                                : 0,
+                                          ),
+                                          child: VerseWidget(
+                                              verseNumber: vn,
+                                              segments: segments,
+                                              spans: spans,
+                                              isHighlighted: (vEnd == null &&
+                                                      vn == vStart) ||
+                                                  (vEnd != null &&
+                                                      vStart != null &&
+                                                      vn >= vStart &&
+                                                      vn <= vEnd)),
+                                        );
                                       },
                                     ),
                             ),

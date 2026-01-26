@@ -38,6 +38,7 @@ class VersePresentation extends StatelessWidget {
                 charCodeToBibleBookName[ref.bookOsisId] ?? 'error'),
             style: TextStyle(
               fontWeight: FontWeight.bold,
+              fontFamily: biblePaneTheme.referenceFont,
               color: biblePaneTheme.accentColor,
             ),
           ),
@@ -70,7 +71,11 @@ class VersePresentation extends StatelessWidget {
               ];
             }
 
-            return Text.rich(TextSpan(children: build()));
+            return Text.rich(TextSpan(
+                style: TextStyle(
+                  fontWeight: biblePaneTheme.textFontWeight,
+                ),
+                children: build()));
           })
         ],
       ),

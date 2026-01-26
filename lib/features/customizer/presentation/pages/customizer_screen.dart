@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/widgets/parts/verse_widget.dart';
+import 'package:the_smyrna_bible_v2/features/customizer/domain/entities/app_font_weight.dart';
 import 'package:the_smyrna_bible_v2/features/customizer/domain/entities/app_theme.dart';
 import 'package:the_smyrna_bible_v2/features/customizer/presentation/widgets/bible_pane_preview.dart';
 import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/setting_input_bool.dart';
@@ -136,8 +137,9 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
             rightSideChild: const BiblePanePreview(),
             children: [
               Setting(
-                  label: 'Enable custom theming for Bible Viewer',
-                  description: 'Enables custom theming for the bible viewer',
+                  label: 'Enable custom colors for Bible Viewer',
+                  description:
+                      'Enables custom color theming for the bible viewer',
                   child: SettingInputBool(
                     value: context.select(
                         (CustomizerCubit c) => c.state.pane.enableCustomTheme),
@@ -147,22 +149,25 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                     },
                   )),
               Setting(
-                  label: 'Font text',
-                  description: 'Set font for the verse text',
-                  child: SettingInputText(
-                    onSubmitted: (font) {
-                      print(font);
+                  label: 'Background color',
+                  description: 'Set color for the background',
+                  child: SettingInputColor(
+                    isDisabled: !context.select(
+                        (CustomizerCubit c) => c.state.pane.enableCustomTheme),
+                    onColorChanged: (c) {
                       cubit.updateTheme(
-                          paneTheme: (p) => p.copyWith(fontFamily: font));
+                          paneTheme: (p) => p.copyWith(backgroundColor: c));
                     },
-                    value: context.select(
-                      (CustomizerCubit c) => c.state.app.fontFamily,
+                    color: context.select(
+                      (CustomizerCubit c) => c.state.pane.backgroundColor,
                     ),
                   )),
               Setting(
                   label: 'Reference color',
                   description: 'Set color for the verse reference (unselected)',
                   child: SettingInputColor(
+                    isDisabled: !context.select(
+                        (CustomizerCubit c) => c.state.pane.enableCustomTheme),
                     onColorChanged: (c) {
                       cubit.updateTheme(
                           paneTheme: (p) => p.copyWith(refColor: c));
@@ -175,6 +180,8 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                   label: 'Text color',
                   description: 'Set color for the verse text',
                   child: SettingInputColor(
+                    isDisabled: !context.select(
+                        (CustomizerCubit c) => c.state.pane.enableCustomTheme),
                     onColorChanged: (c) {
                       cubit.updateTheme(
                           paneTheme: (p) => p.copyWith(textColor: c));
@@ -184,16 +191,43 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                     ),
                   )),
               Setting(
-                  label: 'Background color',
-                  description: 'Set color for the background',
-                  child: SettingInputColor(
-                    onColorChanged: (c) {
+                  label: 'Reference Font',
+                  description: 'Set font for the reference text',
+                  child: SettingInputText(
+                    onSubmitted: (font) {
                       cubit.updateTheme(
-                          paneTheme: (p) => p.copyWith(backgroundColor: c));
+                          paneTheme: (p) => p.copyWith(referenceFont: font));
                     },
-                    color: context.select(
-                      (CustomizerCubit c) => c.state.pane.backgroundColor,
+                    value: context.select(
+                      (CustomizerCubit c) => c.state.pane.referenceFont,
                     ),
+                  )),
+              Setting(
+                  label: 'Text Font',
+                  description: 'Set font for the verse text',
+                  child: SettingInputText(
+                    onSubmitted: (font) {
+                      cubit.updateTheme(
+                          paneTheme: (p) => p.copyWith(textFont: font));
+                    },
+                    value: context.select(
+                      (CustomizerCubit c) => c.state.pane.textFont,
+                    ),
+                  )),
+              Setting(
+                  label: 'Text Font Weight',
+                  description: 'Set font weight for verse text',
+                  child: SettingInputOption<AppFontWeight>(
+                    value: context.select(
+                        (CustomizerCubit c) => c.state.pane.textFontWeight),
+                    onChanged: (fw) {
+                      cubit.updateTheme(
+                          paneTheme: (p) => p.copyWith(textFontWeight: fw));
+                    },
+                    items: AppFontWeight.values
+                        .map((fw) => DropdownMenuItem<AppFontWeight>(
+                            value: fw, child: Text(fw.wire)))
+                        .toList(),
                   )),
               Setting(
                   label: 'Show verse divider',
@@ -239,15 +273,55 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                         .toList(),
                   )),
               Setting(
-                  label: 'Width adjustment',
-                  description: 'Set left and right padding of the bible view',
+                  label: 'Horizontal padding',
+                  description: 'Set horizontal padding',
                   child: SettingInputNumber(
                     min: 0,
                     max: 300,
                     onSubmitted: (n) {
                       cubit.updateTheme(
+                          paneTheme: (p) => p.copyWith(xPadding: n.toInt()));
+                    },
+                    value: context.select(
+                      (CustomizerCubit c) => c.state.pane.xPadding.toString(),
+                    ),
+                  )),
+            ],
+          ),
+          SettingSection(
+            title: 'Splitscreenn prefs',
+            children: [
+              Setting(
+                  label: 'Gap',
+                  description: 'Set gap space between each bible pane view',
+                  child: SettingInputNumber(
+                    min: 0,
+                    max: 100,
+                    onSubmitted: (n) {
+                      cubit.updateTheme(
                           paneTheme: (p) =>
-                              p.copyWith(widthAdjustmentOffset: n));
+                              p.copyWith(splitscreenGap: n.toInt()));
+                    },
+                    value: context.select(
+                      (CustomizerCubit c) =>
+                          c.state.pane.splitscreenGap.toString(),
+                    ),
+                  )),
+            ],
+          ),
+          SettingSection(
+            title: 'Advanced',
+            children: [
+              Setting(
+                  label: 'Width adjustment',
+                  description: 'Set horizontal padding to fit screen if needed',
+                  child: SettingInputNumber(
+                    min: 0,
+                    max: 100,
+                    onSubmitted: (n) {
+                      cubit.updateTheme(
+                          paneTheme: (p) =>
+                              p.copyWith(widthAdjustmentOffset: n.toDouble()));
                     },
                     value: context.select(
                       (CustomizerCubit c) =>
