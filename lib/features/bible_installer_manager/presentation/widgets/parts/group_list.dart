@@ -45,12 +45,55 @@ class _GroupListState extends State<_GroupList> {
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   color: Theme.of(context).colorScheme.surface),
-              child: ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: widget.bibles.length,
-                itemBuilder: (_, index) => RemoteCatalogRow(
-                    bibleMeta: widget.bibles[index], index: index + 1),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 20,
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 40,
+                          child: Text('N.', textAlign: TextAlign.center),
+                        ),
+                        Expanded(
+                            child: Text(
+                          'Abbr',
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis,
+                        )),
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            'Vernacular Title',
+                            textAlign: TextAlign.center,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            'Language',
+                            textAlign: TextAlign.center,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Expanded(
+                            flex: 2,
+                            child: Text(
+                              'Download',
+                              textAlign: TextAlign.center,
+                            )),
+                      ],
+                    ),
+                  ),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: widget.bibles.length,
+                    itemBuilder: (_, index) => RemoteCatalogRow(
+                        bibleMeta: widget.bibles[index], index: index + 1),
+                  ),
+                ],
               )),
         ),
       ],

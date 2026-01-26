@@ -86,7 +86,7 @@ class _BibleSelectorBody extends StatelessWidget {
 
                       return ListTile(
                         selected: selected,
-                        title: Text(bible.bibleName, style: style),
+                        title: Text(bible.bibleNameLocal, style: style),
                         subtitle: Text(
                           bible.abbreviation,
                           style: style,
