@@ -131,6 +131,9 @@ class ShortcutHost extends StatelessWidget {
               if (i < modes.length - 1) next = i + 1;
               dmc.set(modes[next]);
               return;
+            case AppCommand.unfocusSearch:
+              rootFocusNode.requestFocus();
+              return;
             default:
               return;
           }

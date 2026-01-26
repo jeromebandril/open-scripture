@@ -13,7 +13,7 @@ class KeybindingsScreen extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(42, 0, 42, 42),
       child: SettingSection.builder(
         title: 'Keybindings',
-        itemCount: AppCommand.values.length,
+        itemCount: AppCommand.values.length - 1,
         itemBuilder: (_, i) {
           final info = appCommandInfo[AppCommand.values[i]]!;
           return Setting(
