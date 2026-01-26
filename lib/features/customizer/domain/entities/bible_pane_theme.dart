@@ -20,6 +20,7 @@ class BiblePaneThemeSettings extends Equatable {
   final String referenceFont;
   final int xPadding;
   final int splitscreenGap;
+  final bool enableHangingRefs;
 
   const BiblePaneThemeSettings({
     this.textFont = 'General Sans',
@@ -37,24 +38,27 @@ class BiblePaneThemeSettings extends Equatable {
     this.referenceFont = 'General Sans',
     this.xPadding = 0,
     this.splitscreenGap = 16,
+    this.enableHangingRefs = false,
   });
 
-  BiblePaneThemeSettings copyWith(
-      {String? textFont,
-      double? fontSize,
-      Color? textColor,
-      Color? backgroundColor,
-      bool? showVerseDivider,
-      bool? showFullRefAlways,
-      Color? accentColor,
-      Color? refColor,
-      bool? enableCustomTheme,
-      HighlightRenderMode? highlightRenderMode,
-      AppFontWeight? textFontWeight,
-      double? widthAdjustmentOffset,
-      String? referenceFont,
-      int? xPadding,
-      int? splitscreenGap}) {
+  BiblePaneThemeSettings copyWith({
+    String? textFont,
+    double? fontSize,
+    Color? textColor,
+    Color? backgroundColor,
+    bool? showVerseDivider,
+    bool? showFullRefAlways,
+    Color? accentColor,
+    Color? refColor,
+    bool? enableCustomTheme,
+    HighlightRenderMode? highlightRenderMode,
+    AppFontWeight? textFontWeight,
+    double? widthAdjustmentOffset,
+    String? referenceFont,
+    int? xPadding,
+    int? splitscreenGap,
+    bool? enableHangingRefs,
+  }) {
     return BiblePaneThemeSettings(
       textFont: textFont ?? this.textFont,
       fontSize: fontSize ?? this.fontSize,
@@ -72,6 +76,7 @@ class BiblePaneThemeSettings extends Equatable {
       referenceFont: referenceFont ?? this.referenceFont,
       xPadding: xPadding ?? this.xPadding,
       splitscreenGap: splitscreenGap ?? this.splitscreenGap,
+      enableHangingRefs: enableHangingRefs ?? this.enableHangingRefs,
     );
   }
 
@@ -92,6 +97,7 @@ class BiblePaneThemeSettings extends Equatable {
         referenceFont,
         xPadding,
         splitscreenGap,
+        enableHangingRefs,
       ];
 
   Map<String, dynamic> toJson() => {
@@ -110,6 +116,7 @@ class BiblePaneThemeSettings extends Equatable {
         'referenceFont': referenceFont,
         'xPadding': xPadding,
         'splitscreenGap': splitscreenGap,
+        'enableHangingRefs': enableHangingRefs,
       };
 
   static BiblePaneThemeSettings fromJson(Map<String, dynamic> json) {
@@ -141,6 +148,7 @@ class BiblePaneThemeSettings extends Equatable {
           AppFontWeightWire.fromWire((json['textFontWeight'] as String)),
       xPadding: json['xPadding'] as int,
       splitscreenGap: json['splitscreenGap'] as int,
+      enableHangingRefs: json['enableHangingRefs'] as bool,
     );
   }
 }
@@ -162,6 +170,7 @@ class BiblePaneTheme extends ThemeExtension<BiblePaneTheme> {
   final String referenceFont;
   final int xPadding;
   final int splitscreenGap;
+  final bool enableHangingRefs;
 
   const BiblePaneTheme({
     required this.textFont,
@@ -179,6 +188,7 @@ class BiblePaneTheme extends ThemeExtension<BiblePaneTheme> {
     required this.referenceFont,
     required this.xPadding,
     required this.splitscreenGap,
+    required this.enableHangingRefs,
   });
 
   @override
@@ -198,6 +208,7 @@ class BiblePaneTheme extends ThemeExtension<BiblePaneTheme> {
     String? referenceFont,
     int? xPadding,
     int? splitscreenGap,
+    bool? enableHangingRefs,
   }) {
     return BiblePaneTheme(
       textFont: textFont ?? this.textFont,
@@ -216,6 +227,7 @@ class BiblePaneTheme extends ThemeExtension<BiblePaneTheme> {
       referenceFont: referenceFont ?? this.referenceFont,
       xPadding: xPadding ?? this.xPadding,
       splitscreenGap: splitscreenGap ?? this.splitscreenGap,
+      enableHangingRefs: enableHangingRefs ?? this.enableHangingRefs,
     );
   }
 
@@ -238,6 +250,7 @@ class BiblePaneTheme extends ThemeExtension<BiblePaneTheme> {
       referenceFont: t < 0.5 ? referenceFont : other.referenceFont,
       xPadding: t < 0.5 ? xPadding : other.xPadding,
       splitscreenGap: t < 0.5 ? splitscreenGap : other.splitscreenGap,
+      enableHangingRefs: t < 0.5 ? enableHangingRefs : other.enableHangingRefs,
     );
   }
 }
@@ -260,5 +273,6 @@ extension BiblePaneThemeSettingsX on BiblePaneThemeSettings {
         referenceFont: referenceFont,
         xPadding: xPadding,
         splitscreenGap: splitscreenGap,
+        enableHangingRefs: enableHangingRefs,
       );
 }

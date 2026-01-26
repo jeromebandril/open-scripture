@@ -37,7 +37,6 @@ class VerseWidget extends StatelessWidget {
       (CustomizerCubit c) => c.state.pane.enableCustomTheme,
     );
     final biblePaneTheme = Theme.of(context).extension<BiblePaneTheme>()!;
-    final hangingVn = true;
 
     final refStyle = TextStyle(
       height: 1.25,
@@ -66,9 +65,11 @@ class VerseWidget extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (hangingVn)
-            Text('${verseNumber.toString().padLeft(3, ' ')}   ',
-                style: refStyle),
+          if (biblePaneTheme.enableHangingRefs)
+            Text(
+              '${verseNumber.toString().padLeft(3, ' ')}   ',
+              style: refStyle,
+            ),
           Expanded(
             child: SelectableText.rich(TextSpan(
                 style: TextStyle(
@@ -76,7 +77,7 @@ class VerseWidget extends StatelessWidget {
                   fontWeight: biblePaneTheme.textFontWeight,
                 ),
                 children: [
-                  if (!hangingVn)
+                  if (!biblePaneTheme.enableHangingRefs)
                     TextSpan(
                       text: isHighlighted || biblePaneTheme.showFullRefAlways
                           ? '${ref.toString()}  '

@@ -254,6 +254,17 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                     },
                   )),
               Setting(
+                  label: 'Use hanging refs',
+                  description: 'Enables hanging refs',
+                  child: SettingInputBool(
+                    value: context.select(
+                        (CustomizerCubit c) => c.state.pane.enableHangingRefs),
+                    onChanged: (val) {
+                      cubit.updateTheme(
+                          paneTheme: (p) => p.copyWith(enableHangingRefs: val));
+                    },
+                  )),
+              Setting(
                   label: 'Selected verses render mode',
                   description: 'How selected verses are rendered',
                   child: SettingInputOption<HighlightRenderMode>(

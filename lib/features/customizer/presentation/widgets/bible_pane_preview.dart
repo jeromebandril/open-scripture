@@ -502,6 +502,21 @@ class _VerseWidgetPreview extends StatelessWidget {
     );
     final biblePaneTheme = Theme.of(context).extension<BiblePaneTheme>()!;
 
+    final refStyle = TextStyle(
+      height: 1.25,
+      fontFamily: biblePaneTheme.referenceFont,
+      fontWeight: isHighlighted
+          ? FontWeight.w800
+          : biblePaneTheme.showFullRefAlways
+              ? FontWeight.w500
+              : FontWeight.bold,
+      color: isHighlighted
+          ? biblePaneTheme.accentColor
+          : useCustom
+              ? biblePaneTheme.refColor
+              : Theme.of(context).colorScheme.onSurface,
+    );
+
     return Padding(
       padding: EdgeInsets.only(
         bottom: 8,
@@ -510,35 +525,31 @@ class _VerseWidgetPreview extends StatelessWidget {
         right: biblePaneTheme.widthAdjustmentOffset / 5 +
             biblePaneTheme.xPadding / 5,
       ),
-      child: spans == null
-          ? Text(content)
-          : SelectableText.rich(TextSpan(
-              style: TextStyle(
-                height: 1.2,
-                fontWeight: biblePaneTheme.textFontWeight,
-                color: useCustom
-                    ? biblePaneTheme.textColor
-                    : Theme.of(context).colorScheme.onSurface,
-              ),
-              children: [
-                  TextSpan(
-                    text: isHighlighted || biblePaneTheme.showFullRefAlways
-                        ? '${ref.toString()}  '
-                        : '$verseNumber  ',
-                    style: TextStyle(
-                      fontFamily: biblePaneTheme.referenceFont,
-                      fontWeight: isHighlighted
-                          ? FontWeight.bold
-                          : biblePaneTheme.showFullRefAlways
-                              ? FontWeight.w500
-                              : FontWeight.bold,
-                      color: isHighlighted
-                          ? biblePaneTheme.accentColor
-                          : useCustom
-                              ? biblePaneTheme.refColor
-                              : Theme.of(context).colorScheme.onSurface,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (biblePaneTheme.enableHangingRefs)
+            Text(
+              '${verseNumber.toString().padLeft(3, ' ')}   ',
+              style: refStyle,
+            ),
+          Expanded(
+            child: SelectableText.rich(TextSpan(
+                style: TextStyle(
+                  height: 1.2,
+                  fontWeight: biblePaneTheme.textFontWeight,
+                  color: useCustom
+                      ? biblePaneTheme.textColor
+                      : Theme.of(context).colorScheme.onSurface,
+                ),
+                children: [
+                  if (!biblePaneTheme.enableHangingRefs)
+                    TextSpan(
+                      text: isHighlighted || biblePaneTheme.showFullRefAlways
+                          ? '${ref.toString()}  '
+                          : '$verseNumber  ',
+                      style: refStyle,
                     ),
-                  ),
                   VerseSpanBuilder.build(
                     context: context,
                     text: content,
@@ -546,6 +557,9 @@ class _VerseWidgetPreview extends StatelessWidget {
                     onWordTap: (VerseSpan span, String slice) {},
                   ),
                 ])),
+          ),
+        ],
+      ),
     );
   }
 }
