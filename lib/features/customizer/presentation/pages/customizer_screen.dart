@@ -287,14 +287,16 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                   label: 'Horizontal padding',
                   description: 'Set horizontal padding',
                   child: SettingInputNumber(
+                    prefixIcon: Icons.percent,
                     min: 0,
-                    max: 300,
+                    max: 100,
                     onSubmitted: (n) {
                       cubit.updateTheme(
-                          paneTheme: (p) => p.copyWith(xPadding: n.toInt()));
+                          paneTheme: (p) => p.copyWith(xPadding: n / 100));
                     },
                     value: context.select(
-                      (CustomizerCubit c) => c.state.pane.xPadding.toString(),
+                      (CustomizerCubit c) =>
+                          (c.state.pane.xPadding * 100).toString(),
                     ),
                   )),
             ],

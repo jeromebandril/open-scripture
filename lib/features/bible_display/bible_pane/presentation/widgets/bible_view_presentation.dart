@@ -34,6 +34,7 @@ class BibleViewPresentation extends StatelessWidget {
     }
 
     // Set padding
+    final screen = MediaQuery.of(context).size;
     final panes = context.read<PaneManagerCubit>().state.panes;
     final thisPaneIndex = panes.indexWhere((e) => e.id == uniqueId);
 
@@ -65,9 +66,10 @@ class BibleViewPresentation extends StatelessWidget {
           child: SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.only(
-                left: thisPaneIndex == 0 ? paneTheme.xPadding.toDouble() : 0,
+                left:
+                    thisPaneIndex == 0 ? screen.width * paneTheme.xPadding : 0,
                 right: thisPaneIndex == panes.length - 1
-                    ? paneTheme.xPadding.toDouble()
+                    ? screen.width * paneTheme.xPadding
                     : 0,
               ),
               child: Column(

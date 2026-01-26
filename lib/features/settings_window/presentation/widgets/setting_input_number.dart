@@ -77,6 +77,7 @@ class _SettingInputNumberState extends State<SettingInputNumber> {
     return SizedBox(
       height: 35,
       child: TextField(
+        textAlign: TextAlign.end,
         controller: _controller,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         keyboardType: TextInputType.number,
@@ -93,8 +94,8 @@ class _SettingInputNumberState extends State<SettingInputNumber> {
             vertical: 10,
           ),
           border: OutlineInputBorder(),
-          prefixIcon:
-              widget.prefixIcon != null ? Icon(Icons.text_fields) : null,
+          suffixIcon:
+              widget.prefixIcon != null ? Icon(widget.prefixIcon) : null,
         ),
       ),
     );

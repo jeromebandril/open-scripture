@@ -230,54 +230,72 @@ class _AppHeader extends StatelessWidget {
       child: Column(
         spacing: 18,
         children: [
-          Row(
-            mainAxisAlignment: alignment == SearchbarPosition.center
-                ? MainAxisAlignment.center
-                : MainAxisAlignment.start,
-            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Stack(
             children: [
-              // ThreeTapNavigator(),
-              BSearchbar(
-                focusNode: searchbarFocusNode,
-                onSubmitted: () => returnFocusToRoot(),
-                //onEditComplete: () => _returnFocusToRoot(),
+              Row(
+                mainAxisAlignment: alignment == SearchbarPosition.center
+                    ? MainAxisAlignment.center
+                    : MainAxisAlignment.start,
+                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // ThreeTapNavigator(),
+                  BSearchbar(
+                    focusNode: searchbarFocusNode,
+                    onSubmitted: () => returnFocusToRoot(),
+                    //onEditComplete: () => _returnFocusToRoot(),
+                  ),
+                  ShowHistoryButton(),
+                  SplitscreenControls(),
+                  BlocBuilder<FullscreenCubit, bool>(
+                    builder: (context, isFullscreen) {
+                      return IconButton(
+                        onPressed: () =>
+                            context.read<FullscreenCubit>().toggle(),
+                        tooltip: isFullscreen
+                            ? 'Exit fullscreen'
+                            : 'Enter fullscreen',
+                        icon: isFullscreen
+                            ? const Icon(Icons.fullscreen_exit)
+                            : const Icon(Icons.fullscreen),
+                      );
+                    },
+                  ),
+                  BlocBuilder<DisplayModeCubit, DisplayMode>(
+                    builder: (context, dm) {
+                      return IconButton(
+                          tooltip: dm == DisplayMode.presentation
+                              ? 'Exit presentation mode'
+                              : 'Enter presentation mode',
+                          onPressed: () {
+                            if (dm == DisplayMode.presentation) {
+                              context
+                                  .read<DisplayModeCubit>()
+                                  .set(DisplayMode.normal);
+                            } else {
+                              context
+                                  .read<DisplayModeCubit>()
+                                  .set(DisplayMode.presentation);
+                            }
+                          },
+                          icon: Icon(Icons.fit_screen_rounded));
+                    },
+                  ),
+                ],
               ),
-              ShowHistoryButton(),
-              SplitscreenControls(),
-              BlocBuilder<FullscreenCubit, bool>(
-                builder: (context, isFullscreen) {
-                  return IconButton(
-                    onPressed: () => context.read<FullscreenCubit>().toggle(),
-                    tooltip:
-                        isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen',
-                    icon: isFullscreen
-                        ? const Icon(Icons.fullscreen_exit)
-                        : const Icon(Icons.fullscreen),
-                  );
-                },
-              ),
-              BlocBuilder<DisplayModeCubit, DisplayMode>(
-                builder: (context, dm) {
-                  return IconButton(
-                      tooltip: dm == DisplayMode.presentation
-                          ? 'Exit presentation mode'
-                          : 'Enter presentation mode',
-                      onPressed: () {
-                        if (dm == DisplayMode.presentation) {
-                          context
-                              .read<DisplayModeCubit>()
-                              .set(DisplayMode.normal);
-                        } else {
-                          context
-                              .read<DisplayModeCubit>()
-                              .set(DisplayMode.presentation);
-                        }
-                      },
-                      icon: Icon(Icons.fit_screen_rounded));
-                },
-              ),
+              //
+              // Aligned right
+              //
+              Positioned.fill(
+                  child: Align(
+                      alignment: AlignmentGeometry.centerRight,
+                      child: IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.help_outline_rounded)))),
             ],
           ),
+          //
+          //
+          //
           if (paneTheme.enableHangingRefs)
             Builder(builder: (context) {
               final activePaneBloc =

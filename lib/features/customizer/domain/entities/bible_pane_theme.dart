@@ -18,7 +18,7 @@ class BiblePaneThemeSettings extends Equatable {
   final AppFontWeight textFontWeight;
   final double widthAdjustmentOffset;
   final String referenceFont;
-  final int xPadding;
+  final double xPadding;
   final int splitscreenGap;
   final bool enableHangingRefs;
 
@@ -55,7 +55,7 @@ class BiblePaneThemeSettings extends Equatable {
     AppFontWeight? textFontWeight,
     double? widthAdjustmentOffset,
     String? referenceFont,
-    int? xPadding,
+    double? xPadding,
     int? splitscreenGap,
     bool? enableHangingRefs,
   }) {
@@ -146,7 +146,7 @@ class BiblePaneThemeSettings extends Equatable {
       referenceFont: json['referenceFont'] as String,
       textFontWeight:
           AppFontWeightWire.fromWire((json['textFontWeight'] as String)),
-      xPadding: json['xPadding'] as int,
+      xPadding: json['xPadding'] as double,
       splitscreenGap: json['splitscreenGap'] as int,
       enableHangingRefs: json['enableHangingRefs'] as bool,
     );
@@ -168,7 +168,7 @@ class BiblePaneTheme extends ThemeExtension<BiblePaneTheme> {
   final FontWeight textFontWeight;
   final double widthAdjustmentOffset;
   final String referenceFont;
-  final int xPadding;
+  final double xPadding;
   final int splitscreenGap;
   final bool enableHangingRefs;
 
@@ -206,7 +206,7 @@ class BiblePaneTheme extends ThemeExtension<BiblePaneTheme> {
     FontWeight? textFontWeight,
     double? widthAdjustmentOffset,
     String? referenceFont,
-    int? xPadding,
+    double? xPadding,
     int? splitscreenGap,
     bool? enableHangingRefs,
   }) {
