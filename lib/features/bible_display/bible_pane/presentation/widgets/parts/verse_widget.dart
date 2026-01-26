@@ -37,6 +37,22 @@ class VerseWidget extends StatelessWidget {
       (CustomizerCubit c) => c.state.pane.enableCustomTheme,
     );
     final biblePaneTheme = Theme.of(context).extension<BiblePaneTheme>()!;
+    final hangingVn = true;
+
+    final refStyle = TextStyle(
+      height: 1.25,
+      fontFamily: biblePaneTheme.referenceFont,
+      fontWeight: isHighlighted
+          ? FontWeight.w800
+          : biblePaneTheme.showFullRefAlways
+              ? FontWeight.w500
+              : FontWeight.bold,
+      color: isHighlighted
+          ? biblePaneTheme.accentColor
+          : useCustom
+              ? biblePaneTheme.refColor
+              : Theme.of(context).colorScheme.onSurface,
+    );
 
     return Listener(
       onPointerDown: (_) {
@@ -47,32 +63,26 @@ class VerseWidget extends StatelessWidget {
               verseEnd: null,
             )));
       },
-      child: spans == null
-          ? Text(content)
-          : SelectableText.rich(TextSpan(
-              style: TextStyle(
-                height: 1.2,
-                fontWeight: biblePaneTheme.textFontWeight,
-              ),
-              children: [
-                  TextSpan(
-                    text: isHighlighted || biblePaneTheme.showFullRefAlways
-                        ? '${ref.toString()}  '
-                        : '$verseNumber  ',
-                    style: TextStyle(
-                      fontFamily: biblePaneTheme.referenceFont,
-                      fontWeight: isHighlighted
-                          ? FontWeight.w800
-                          : biblePaneTheme.showFullRefAlways
-                              ? FontWeight.w500
-                              : FontWeight.bold,
-                      color: isHighlighted
-                          ? biblePaneTheme.accentColor
-                          : useCustom
-                              ? biblePaneTheme.refColor
-                              : Theme.of(context).colorScheme.onSurface,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (hangingVn)
+            Text('${verseNumber.toString().padLeft(3, ' ')}   ',
+                style: refStyle),
+          Expanded(
+            child: SelectableText.rich(TextSpan(
+                style: TextStyle(
+                  height: 1.25,
+                  fontWeight: biblePaneTheme.textFontWeight,
+                ),
+                children: [
+                  if (!hangingVn)
+                    TextSpan(
+                      text: isHighlighted || biblePaneTheme.showFullRefAlways
+                          ? '${ref.toString()}  '
+                          : '$verseNumber  ',
+                      style: refStyle,
                     ),
-                  ),
                   VerseSpanBuilder.build(
                     context: context,
                     text: content,
@@ -85,6 +95,9 @@ class VerseWidget extends StatelessWidget {
                         )),
                   ),
                 ])),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -4,7 +4,6 @@ import 'package:the_smyrna_bible_v2/core/presentation/cubit/fullscreen_cubit.dar
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/toolbar_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/widgets/titlebar.dart';
 import 'package:the_smyrna_bible_v2/features/b_searchbar/domain/repositories/b_search_intent_type.dart';
-import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/widgets/three_tap_navigator.dart';
 import 'package:the_smyrna_bible_v2/features/toolbar/presentation/widgets/toolbar.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,7 +32,7 @@ void main() async {
   await windowManager.ensureInitialized();
 
   WindowOptions windowOptions = WindowOptions(
-    size: Size(800, 600),
+    size: Size(1000, 600),
     center: true,
     backgroundColor: Colors.transparent,
     skipTaskbar: false,

@@ -129,9 +129,10 @@ class _ErrorNotifierState extends State<_ErrorNotifier> {
         return Tooltip(
           key: _tooltipKey,
           //triggerMode: TooltipTriggerMode.manual,
-          textStyle: TextStyle(color: Colors.black87),
+          textStyle:
+              TextStyle(color: Theme.of(context).colorScheme.onErrorContainer),
           decoration: BoxDecoration(
-            color: Colors.red.shade200,
+            color: Theme.of(context).colorScheme.errorContainer,
             borderRadius: BorderRadius.circular(6),
           ),
           showDuration: const Duration(seconds: 1),

@@ -4,7 +4,7 @@ import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presente
 import 'package:the_smyrna_bible_v2/features/customizer/domain/entities/bible_pane_theme.dart';
 
 import '../../../../customizer/presentation/cubit/customizer_cubit.dart';
-import '../../../bible_pane/presentation/widgets/bible_pane_widget.dart';
+import '../../../bible_pane/presentation/widgets/bible_pane.dart';
 import '../cubit/pane_manager_cubit.dart';
 
 class MultipleBiblePanes extends StatelessWidget {
