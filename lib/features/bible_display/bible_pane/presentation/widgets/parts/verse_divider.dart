@@ -20,9 +20,9 @@ class VerseDivider extends StatelessWidget {
     double s0 = 36.0, // spacing you want at f0
     double pSmall = 1.25, // >1 => extra shrink when f < f0
     double pLarge =
-        1.0, // 1.0 => proportional above f0 (or try 0.9 for slower growth)
+        1.2, // 1.0 => proportional above f0 (or try 0.9 for slower growth)
     double min = 8.0,
-    double max = 128.0,
+    double max = 144.0,
   }) {
     final r = (f / f0).clamp(0.01, 1000.0);
     final p = (f < f0) ? pSmall : pLarge;
@@ -41,7 +41,7 @@ class VerseDivider extends StatelessWidget {
 
     return isEnabled
         ? Container(
-            margin: EdgeInsets.symmetric(vertical: spacerHeight / 2),
+            margin: EdgeInsets.symmetric(vertical: spacerHeight / 1.2),
             child: Divider(height: 1),
           )
         : SizedBox(height: spacerHeight);
