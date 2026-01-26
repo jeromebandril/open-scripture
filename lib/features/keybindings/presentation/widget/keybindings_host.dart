@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:the_smyrna_bible_v2/core/presentation/cubit/display_mode_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/fullscreen_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/toolbar_cubit.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
@@ -120,6 +121,16 @@ class ShortcutHost extends StatelessWidget {
             case AppCommand.changeBible:
               final active = context.read<PaneManagerCubit>().activeBloc();
               active.add(BiblePaneCloseBible());
+              return;
+
+            case AppCommand.switchDisplayMode:
+              final dmc = context.read<DisplayModeCubit>();
+              final modes = DisplayMode.values;
+              final i = modes.indexOf(dmc.state);
+              int next = 0;
+              if (i < modes.length - 1) next = i + 1;
+              dmc.set(modes[next]);
+              return;
             default:
               return;
           }

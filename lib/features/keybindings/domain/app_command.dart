@@ -12,6 +12,7 @@ enum AppCommand {
   deleteCurrentPane,
   toggleToolbar,
   toggleFullscreen,
+  switchDisplayMode,
 }
 
 class AppCommandInfo {
@@ -65,6 +66,10 @@ const Map<AppCommand, AppCommandInfo> appCommandInfo = {
     label: 'Toggle Fullscreen',
     description: 'Enter or exit fullscreen mode.',
   ),
+  AppCommand.switchDisplayMode: AppCommandInfo(
+    label: 'Switch Display Mode',
+    description: 'Switch bible view render type',
+  ),
 };
 
 const Map<AppCommand, SingleActivator> appCommandShortcuts = {
@@ -90,6 +95,11 @@ const Map<AppCommand, SingleActivator> appCommandShortcuts = {
   ),
   AppCommand.changeBible: SingleActivator(
     LogicalKeyboardKey.keyB,
+    control: true,
+    shift: true,
+  ),
+  AppCommand.switchDisplayMode: SingleActivator(
+    LogicalKeyboardKey.keyD,
     control: true,
     shift: true,
   ),
