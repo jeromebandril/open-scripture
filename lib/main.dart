@@ -223,51 +223,87 @@ class _AppHeader extends StatelessWidget {
     final alignment =
         context.select((CustomizerCubit c) => c.state.app.searchbarPosition);
 
+    final paneTheme = Theme.of(context).extension<BiblePaneTheme>()!;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      child: Row(
-        mainAxisAlignment: alignment == SearchbarPosition.center
-            ? MainAxisAlignment.center
-            : MainAxisAlignment.start,
-        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        spacing: 18,
         children: [
-          // ThreeTapNavigator(),
-          BSearchbar(
-            focusNode: searchbarFocusNode,
-            onSubmitted: () => returnFocusToRoot(),
-            //onEditComplete: () => _returnFocusToRoot(),
+          Row(
+            mainAxisAlignment: alignment == SearchbarPosition.center
+                ? MainAxisAlignment.center
+                : MainAxisAlignment.start,
+            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // ThreeTapNavigator(),
+              BSearchbar(
+                focusNode: searchbarFocusNode,
+                onSubmitted: () => returnFocusToRoot(),
+                //onEditComplete: () => _returnFocusToRoot(),
+              ),
+              ShowHistoryButton(),
+              SplitscreenControls(),
+              BlocBuilder<FullscreenCubit, bool>(
+                builder: (context, isFullscreen) {
+                  return IconButton(
+                    onPressed: () => context.read<FullscreenCubit>().toggle(),
+                    tooltip:
+                        isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen',
+                    icon: isFullscreen
+                        ? const Icon(Icons.fullscreen_exit)
+                        : const Icon(Icons.fullscreen),
+                  );
+                },
+              ),
+              BlocBuilder<DisplayModeCubit, DisplayMode>(
+                builder: (context, dm) {
+                  return IconButton(
+                      tooltip: dm == DisplayMode.presentation
+                          ? 'Exit presentation mode'
+                          : 'Enter presentation mode',
+                      onPressed: () {
+                        if (dm == DisplayMode.presentation) {
+                          context
+                              .read<DisplayModeCubit>()
+                              .set(DisplayMode.normal);
+                        } else {
+                          context
+                              .read<DisplayModeCubit>()
+                              .set(DisplayMode.presentation);
+                        }
+                      },
+                      icon: Icon(Icons.fit_screen_rounded));
+                },
+              ),
+            ],
           ),
-          ShowHistoryButton(),
-          SplitscreenControls(),
-          BlocBuilder<FullscreenCubit, bool>(
-            builder: (context, isFullscreen) {
-              return IconButton(
-                onPressed: () => context.read<FullscreenCubit>().toggle(),
-                tooltip: isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen',
-                icon: isFullscreen
-                    ? const Icon(Icons.fullscreen_exit)
-                    : const Icon(Icons.fullscreen),
-              );
-            },
-          ),
-          BlocBuilder<DisplayModeCubit, DisplayMode>(
-            builder: (context, dm) {
-              return IconButton(
-                  tooltip: dm == DisplayMode.presentation
-                      ? 'Exit presentation mode'
-                      : 'Enter presentation mode',
-                  onPressed: () {
-                    if (dm == DisplayMode.presentation) {
-                      context.read<DisplayModeCubit>().set(DisplayMode.normal);
-                    } else {
-                      context
-                          .read<DisplayModeCubit>()
-                          .set(DisplayMode.presentation);
-                    }
+          if (paneTheme.enableHangingRefs)
+            Builder(builder: (context) {
+              final activePaneBloc =
+                  context.select((PaneManagerCubit pm) => pm.activeBloc());
+
+              return BlocProvider.value(
+                value: activePaneBloc,
+                child: BlocBuilder<BiblePaneBloc, BiblePaneState>(
+                  buildWhen: (prev, curr) => prev.reference != curr.reference,
+                  builder: (context, state) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 18),
+                      child: Text(
+                        state.reference.toString(),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: paneTheme.referenceFont,
+                          //color: paneTheme.accentColor,
+                          fontSize: 34,
+                        ),
+                      ),
+                    );
                   },
-                  icon: Icon(Icons.fit_screen_rounded));
-            },
-          )
+                ),
+              );
+            })
         ],
       ),
     );

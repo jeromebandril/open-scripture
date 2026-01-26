@@ -447,31 +447,64 @@ class BiblePanePreview extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.w100, fontSize: 12),
         ),
         Container(
-          padding: EdgeInsets.all(8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
-            color: useCustom
-                ? biblePaneTheme.backgroundColor
-                : Theme.of(context).colorScheme.surface,
+            color: !useCustom || biblePaneTheme.enableHangingRefs
+                ? Theme.of(context).colorScheme.surface
+                : biblePaneTheme.backgroundColor,
           ),
-          child: DefaultTextStyle.merge(
-            style: TextStyle(fontFamily: biblePaneTheme.textFont),
-            child: ListView.separated(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: previewData.length,
-              itemBuilder: (_, i) {
-                return _VerseWidgetPreview(
-                  verseNumber: previewData[i].verseNumber,
-                  segments: previewData[i].segments,
-                  spans: previewData[i].spans,
-                  isHighlighted: i == 0,
-                );
-              },
-              separatorBuilder: (BuildContext context, int index) {
-                return VerseDivider();
-              },
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (biblePaneTheme.enableHangingRefs)
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(8),
+                      topRight: Radius.circular(8),
+                    ),
+                  ),
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Text(
+                    'John 7',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontFamily: biblePaneTheme.referenceFont,
+                      //color: paneTheme.accentColor,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: useCustom
+                      ? biblePaneTheme.backgroundColor
+                      : Theme.of(context).colorScheme.surface,
+                ),
+                padding: EdgeInsets.all(8),
+                child: DefaultTextStyle.merge(
+                  style: TextStyle(fontFamily: biblePaneTheme.textFont),
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: previewData.length,
+                    itemBuilder: (_, i) {
+                      return _VerseWidgetPreview(
+                        verseNumber: previewData[i].verseNumber,
+                        segments: previewData[i].segments,
+                        spans: previewData[i].spans,
+                        isHighlighted: i == 0,
+                      );
+                    },
+                    separatorBuilder: (BuildContext context, int index) {
+                      return VerseDivider();
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ],
