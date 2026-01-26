@@ -88,4 +88,9 @@ const Map<AppCommand, SingleActivator> appCommandShortcuts = {
     control: true,
     shift: true,
   ),
+  AppCommand.changeBible: SingleActivator(
+    LogicalKeyboardKey.keyB,
+    control: true,
+    shift: true,
+  ),
 };

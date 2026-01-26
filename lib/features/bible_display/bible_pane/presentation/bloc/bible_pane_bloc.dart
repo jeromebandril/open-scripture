@@ -22,6 +22,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     on<BiblePaneOpen>(_onBiblePaneOpen);
     on<BiblePaneDisplayChapter>(_onBiblePaneDisplayChapter);
     on<BiblePaneJustChangeRef>(_onChangeRef);
+    on<BiblePaneCloseBible>(_onCloseBible);
   }
 
   final BibleRepository repo;
@@ -103,5 +104,15 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     }
 
     emit(state.copyWith(reference: () => event.ref));
+  }
+
+  Future<void> _onCloseBible(
+    BiblePaneCloseBible event,
+    Emitter<BiblePaneState> emit,
+  ) async {
+    emit(state.copyWith(
+      status: () => BiblePaneStatus.initial,
+      bibleId: () => null,
+    ));
   }
 }

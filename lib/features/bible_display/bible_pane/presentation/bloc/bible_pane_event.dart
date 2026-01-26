@@ -54,3 +54,7 @@ class BiblePaneJustChangeRef extends BiblePaneEvent {
   @override
   List<Object?> get props => [ref, saveHistory, source];
 }
+
+class BiblePaneCloseBible extends BiblePaneEvent {
+  const BiblePaneCloseBible();
+}

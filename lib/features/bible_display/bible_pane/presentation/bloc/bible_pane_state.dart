@@ -28,7 +28,7 @@ class BiblePaneState extends Equatable {
 
   BiblePaneState copyWith({
     int Function()? paneId,
-    int Function()? bibleId,
+    int? Function()? bibleId,
     BibleMeta Function()? bibleMeta,
     BiblePaneStatus Function()? status,
     BibleRef Function()? reference,

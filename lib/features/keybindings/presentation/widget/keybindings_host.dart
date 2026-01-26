@@ -117,6 +117,9 @@ class ShortcutHost extends StatelessWidget {
 
               return;
 
+            case AppCommand.changeBible:
+              final active = context.read<PaneManagerCubit>().activeBloc();
+              active.add(BiblePaneCloseBible());
             default:
               return;
           }
