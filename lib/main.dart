@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/display_mode_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/fullscreen_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/toolbar_cubit.dart';
+import 'package:the_smyrna_bible_v2/core/presentation/widgets/help_widget.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/widgets/titlebar.dart';
 import 'package:the_smyrna_bible_v2/features/b_searchbar/domain/repositories/b_search_intent_type.dart';
 import 'package:the_smyrna_bible_v2/features/toolbar/presentation/widgets/toolbar.dart';
@@ -220,9 +221,11 @@ class _AppHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final alignment =
-        context.select((CustomizerCubit c) => c.state.app.searchbarPosition);
-
+    final alignment = context.select(
+      (CustomizerCubit c) => c.state.app.searchbarPosition,
+    );
+    final isFullscreen = context.select((FullscreenCubit c) => c.state);
+    final showToolbar = context.select((ToolbarCubit t) => t.state);
     final paneTheme = Theme.of(context).extension<BiblePaneTheme>()!;
 
     return Padding(
@@ -245,52 +248,64 @@ class _AppHeader extends StatelessWidget {
                     //onEditComplete: () => _returnFocusToRoot(),
                   ),
                   ShowHistoryButton(),
-                  SplitscreenControls(),
-                  BlocBuilder<FullscreenCubit, bool>(
-                    builder: (context, isFullscreen) {
-                      return IconButton(
-                        onPressed: () =>
-                            context.read<FullscreenCubit>().toggle(),
-                        tooltip: isFullscreen
-                            ? 'Exit fullscreen'
-                            : 'Enter fullscreen',
-                        icon: isFullscreen
-                            ? const Icon(Icons.fullscreen_exit)
-                            : const Icon(Icons.fullscreen),
-                      );
-                    },
-                  ),
-                  BlocBuilder<DisplayModeCubit, DisplayMode>(
-                    builder: (context, dm) {
-                      return IconButton(
-                          tooltip: dm == DisplayMode.presentation
-                              ? 'Exit presentation mode'
-                              : 'Enter presentation mode',
-                          onPressed: () {
-                            if (dm == DisplayMode.presentation) {
-                              context
-                                  .read<DisplayModeCubit>()
-                                  .set(DisplayMode.normal);
-                            } else {
-                              context
-                                  .read<DisplayModeCubit>()
-                                  .set(DisplayMode.presentation);
-                            }
-                          },
-                          icon: Icon(Icons.fit_screen_rounded));
-                    },
-                  ),
+                  // SplitscreenControls(),
+                  // BlocBuilder<FullscreenCubit, bool>(
+                  //   builder: (context, isFullscreen) {
+                  //     return IconButton(
+                  //       onPressed: () =>
+                  //           context.read<FullscreenCubit>().toggle(),
+                  //       tooltip: isFullscreen
+                  //           ? 'Exit fullscreen'
+                  //           : 'Enter fullscreen',
+                  //       icon: isFullscreen
+                  //           ? const Icon(Icons.fullscreen_exit)
+                  //           : const Icon(Icons.fullscreen),
+                  //     );
+                  //   },
+                  // ),
+                  // BlocBuilder<DisplayModeCubit, DisplayMode>(
+                  //   builder: (context, dm) {
+                  //     return IconButton(
+                  //         tooltip: dm == DisplayMode.presentation
+                  //             ? 'Exit presentation mode'
+                  //             : 'Enter presentation mode',
+                  //         onPressed: () {
+                  //           if (dm == DisplayMode.presentation) {
+                  //             context
+                  //                 .read<DisplayModeCubit>()
+                  //                 .set(DisplayMode.normal);
+                  //           } else {
+                  //             context
+                  //                 .read<DisplayModeCubit>()
+                  //                 .set(DisplayMode.presentation);
+                  //           }
+                  //         },
+                  //         icon: Icon(Icons.fit_screen_rounded));
+                  //   },
+                  // ),
                 ],
               ),
               //
-              // Aligned right
+              // Show help button to avoid users getting stuck in fullscreen mode with hidden toolbar
               //
-              Positioned.fill(
-                  child: Align(
-                      alignment: AlignmentGeometry.centerRight,
-                      child: IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.help_outline_rounded)))),
+              if (isFullscreen && !showToolbar)
+                Positioned.fill(
+                    child: Align(
+                        alignment: AlignmentGeometry.centerRight,
+                        child: IconButton(
+                            tooltip: 'Help',
+                            onPressed: () {
+                              context
+                                  .read<WindowStackManagerBloc>()
+                                  .add(WindowStackManagerOpen(HelpWidget(
+                                onClose: () {
+                                  context
+                                      .read<WindowStackManagerBloc>()
+                                      .add(WindowStackManagerClose());
+                                },
+                              )));
+                            },
+                            icon: Icon(Icons.help_outline_rounded)))),
             ],
           ),
           //
