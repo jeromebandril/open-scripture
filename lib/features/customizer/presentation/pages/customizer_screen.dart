@@ -130,6 +130,18 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                             child: Text(searchbarPosString[sp] ?? 'error')))
                         .toList(),
                   )),
+              Setting(
+                  label: 'Enable dynamic searchbar',
+                  description: 'Show/Hide searchbar when needed',
+                  child: SettingInputBool(
+                    value: context.select((CustomizerCubit c) =>
+                        c.state.app.enableDynamicSearchbar),
+                    onChanged: (val) {
+                      cubit.updateTheme(
+                          appTheme: (a) =>
+                              a.copyWith(enableDynamicSearchbar: val));
+                    },
+                  )),
             ],
           ),
           SettingSection(
@@ -194,6 +206,7 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                   label: 'Reference Font',
                   description: 'Set font for the reference text',
                   child: SettingInputText(
+                    prefixIcon: Icons.text_fields_rounded,
                     onSubmitted: (font) {
                       cubit.updateTheme(
                           paneTheme: (p) => p.copyWith(referenceFont: font));
@@ -206,6 +219,7 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                   label: 'Text Font',
                   description: 'Set font for the verse text',
                   child: SettingInputText(
+                    prefixIcon: Icons.text_fields_rounded,
                     onSubmitted: (font) {
                       cubit.updateTheme(
                           paneTheme: (p) => p.copyWith(textFont: font));
@@ -287,7 +301,7 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                   label: 'Horizontal padding',
                   description: 'Set horizontal padding',
                   child: SettingInputNumber(
-                    prefixIcon: Icons.percent,
+                    suffixIcon: Icons.percent,
                     min: 0,
                     max: 100,
                     onSubmitted: (n) {

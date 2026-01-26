@@ -46,7 +46,7 @@ class _SettingInputTextState extends State<SettingInputText> {
           ),
           border: OutlineInputBorder(),
           prefixIcon:
-              widget.prefixIcon != null ? Icon(Icons.text_fields) : null,
+              widget.prefixIcon != null ? Icon(widget.prefixIcon) : null,
         ),
       ),
     );

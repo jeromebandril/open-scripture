@@ -5,14 +5,14 @@ class SettingInputNumber extends StatefulWidget {
   const SettingInputNumber({
     super.key,
     this.value,
-    this.prefixIcon,
+    this.suffixIcon,
     this.onSubmitted,
     this.max,
     this.min = 0,
   });
 
   final String? value;
-  final IconData? prefixIcon;
+  final IconData? suffixIcon;
   final Function(num)? onSubmitted;
   final int? max;
   final int? min;
@@ -95,7 +95,7 @@ class _SettingInputNumberState extends State<SettingInputNumber> {
           ),
           border: OutlineInputBorder(),
           suffixIcon:
-              widget.prefixIcon != null ? Icon(widget.prefixIcon) : null,
+              widget.suffixIcon != null ? Icon(widget.suffixIcon) : null,
         ),
       ),
     );

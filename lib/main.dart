@@ -111,12 +111,14 @@ class _HomeState extends State<Home> {
   late final FocusNode _searchbarFocusNode;
   late final FocusNode _rootFocusNode;
 
+  bool _searchbarHasFocus = false;
+
   @override
   void initState() {
     super.initState();
     _searchbarFocusNode = FocusNode(debugLabel: 'searchbar');
     _rootFocusNode = FocusNode(debugLabel: 'root');
-    // ..add(BiblePaneOpen(1)); // pick initial bibleId here
+    _searchbarFocusNode.addListener(_searchbarFocusNodeListener);
   }
 
   @override
@@ -124,6 +126,10 @@ class _HomeState extends State<Home> {
     _searchbarFocusNode.dispose();
     _rootFocusNode.dispose();
     super.dispose();
+  }
+
+  void _searchbarFocusNodeListener() {
+    setState(() => _searchbarHasFocus = _searchbarFocusNode.hasFocus);
   }
 
   // Return focus to root after search finishes
@@ -143,6 +149,9 @@ class _HomeState extends State<Home> {
     // final useBackgroundColorAsAppColor = context.select(
     //   (CustomizerCubit c) => c.state.theme.useBackgroundColorAsAppColor,
     // );
+    final enableDynamicSearchbar = context.select(
+      (CustomizerCubit c) => c.state.app.enableDynamicSearchbar,
+    );
     final isFullscreen = context.select((FullscreenCubit f) => f.state);
     final showToolbar = context.select((ToolbarCubit t) => t.state);
 
@@ -176,31 +185,68 @@ class _HomeState extends State<Home> {
               //
               // BIBLE PANES
               //
-              BlocListener<BSearchbarBloc, BSearchbarState>(
-                listenWhen: (prev, curr) =>
-                    prev.referenceResult != curr.referenceResult,
-                listener: (context, state) {
-                  final ref = state.referenceResult;
-                  if (ref == null) return;
+              Expanded(
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: BlocListener<BSearchbarBloc, BSearchbarState>(
+                        listenWhen: (prev, curr) =>
+                            prev.referenceResult != curr.referenceResult,
+                        listener: (context, state) {
+                          final ref = state.referenceResult;
+                          if (ref == null) return;
 
-                  final BiblePaneEvent event = switch (state.intentType) {
-                    BSearchIntentType.gotoReference => BiblePaneDisplayChapter(
-                        ref: ref,
-                        source: IntentSource.searchbar,
-                      ),
-                    BSearchIntentType.gotoVerseNumber => BiblePaneJustChangeRef(
-                        ref: ref,
-                        source: IntentSource.searchbar,
-                        saveHistory: true,
-                      ),
-                    BSearchIntentType.findByString => BiblePaneJustChangeRef(
-                        ref: ref,
-                      )
-                  };
+                          final BiblePaneEvent event =
+                              switch (state.intentType) {
+                            BSearchIntentType.gotoReference =>
+                              BiblePaneDisplayChapter(
+                                ref: ref,
+                                source: IntentSource.searchbar,
+                              ),
+                            BSearchIntentType.gotoVerseNumber =>
+                              BiblePaneJustChangeRef(
+                                ref: ref,
+                                source: IntentSource.searchbar,
+                                saveHistory: true,
+                              ),
+                            BSearchIntentType.findByString =>
+                              BiblePaneJustChangeRef(
+                                ref: ref,
+                              )
+                          };
 
-                  context.read<PaneManagerCubit>().activeBloc().add(event);
-                },
-                child: Expanded(child: MultipleBiblePanes()),
+                          context
+                              .read<PaneManagerCubit>()
+                              .activeBloc()
+                              .add(event);
+                        },
+                        child: MultipleBiblePanes(),
+                      ),
+                    ),
+                    //
+                    // Dynamic searchbar
+                    //
+                    if (enableDynamicSearchbar)
+                      Positioned(
+                        top: 20,
+                        right: 0,
+                        left: 0,
+                        child: Visibility(
+                          maintainFocusability: true,
+                          maintainState: true,
+                          visible: _searchbarHasFocus,
+                          child: Align(
+                            alignment: Alignment.topCenter,
+                            child: BSearchbar(
+                              focusNode: _searchbarFocusNode,
+                              onSubmitted: () => _returnFocusToRoot(),
+                              //onEditComplete: () => _returnFocusToRoot(),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -227,87 +273,93 @@ class _AppHeader extends StatelessWidget {
     final isFullscreen = context.select((FullscreenCubit c) => c.state);
     final showToolbar = context.select((ToolbarCubit t) => t.state);
     final paneTheme = Theme.of(context).extension<BiblePaneTheme>()!;
+    final enableDynamicSearchbar = context.select(
+      (CustomizerCubit c) => c.state.app.enableDynamicSearchbar,
+    );
+    //final screen = MediaQuery.of(context)
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: EdgeInsets.symmetric(
+          horizontal: 12, vertical: enableDynamicSearchbar ? 0 : 8),
       child: Column(
         spacing: 18,
         children: [
-          Stack(
-            children: [
-              Row(
-                mainAxisAlignment: alignment == SearchbarPosition.center
-                    ? MainAxisAlignment.center
-                    : MainAxisAlignment.start,
-                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // ThreeTapNavigator(),
-                  BSearchbar(
-                    focusNode: searchbarFocusNode,
-                    onSubmitted: () => returnFocusToRoot(),
-                    //onEditComplete: () => _returnFocusToRoot(),
-                  ),
-                  ShowHistoryButton(),
-                  // SplitscreenControls(),
-                  // BlocBuilder<FullscreenCubit, bool>(
-                  //   builder: (context, isFullscreen) {
-                  //     return IconButton(
-                  //       onPressed: () =>
-                  //           context.read<FullscreenCubit>().toggle(),
-                  //       tooltip: isFullscreen
-                  //           ? 'Exit fullscreen'
-                  //           : 'Enter fullscreen',
-                  //       icon: isFullscreen
-                  //           ? const Icon(Icons.fullscreen_exit)
-                  //           : const Icon(Icons.fullscreen),
-                  //     );
-                  //   },
-                  // ),
-                  // BlocBuilder<DisplayModeCubit, DisplayMode>(
-                  //   builder: (context, dm) {
-                  //     return IconButton(
-                  //         tooltip: dm == DisplayMode.presentation
-                  //             ? 'Exit presentation mode'
-                  //             : 'Enter presentation mode',
-                  //         onPressed: () {
-                  //           if (dm == DisplayMode.presentation) {
-                  //             context
-                  //                 .read<DisplayModeCubit>()
-                  //                 .set(DisplayMode.normal);
-                  //           } else {
-                  //             context
-                  //                 .read<DisplayModeCubit>()
-                  //                 .set(DisplayMode.presentation);
-                  //           }
-                  //         },
-                  //         icon: Icon(Icons.fit_screen_rounded));
-                  //   },
-                  // ),
-                ],
-              ),
-              //
-              // Show help button to avoid users getting stuck in fullscreen mode with hidden toolbar
-              //
-              if (isFullscreen && !showToolbar)
-                Positioned.fill(
-                    child: Align(
-                        alignment: AlignmentGeometry.centerRight,
-                        child: IconButton(
-                            tooltip: 'Help',
-                            onPressed: () {
-                              context
-                                  .read<WindowStackManagerBloc>()
-                                  .add(WindowStackManagerOpen(HelpWidget(
-                                onClose: () {
-                                  context
-                                      .read<WindowStackManagerBloc>()
-                                      .add(WindowStackManagerClose());
-                                },
-                              )));
-                            },
-                            icon: Icon(Icons.help_outline_rounded)))),
-            ],
-          ),
+          if (!enableDynamicSearchbar)
+            Stack(
+              children: [
+                Row(
+                  mainAxisAlignment: alignment == SearchbarPosition.center
+                      ? MainAxisAlignment.center
+                      : MainAxisAlignment.start,
+                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // ThreeTapNavigator(),
+                    BSearchbar(
+                      focusNode: searchbarFocusNode,
+                      onSubmitted: () => returnFocusToRoot(),
+                      //onEditComplete: () => _returnFocusToRoot(),
+                    ),
+                    ShowHistoryButton(),
+                    // SplitscreenControls(),
+                    // BlocBuilder<FullscreenCubit, bool>(
+                    //   builder: (context, isFullscreen) {
+                    //     return IconButton(
+                    //       onPressed: () =>
+                    //           context.read<FullscreenCubit>().toggle(),
+                    //       tooltip: isFullscreen
+                    //           ? 'Exit fullscreen'
+                    //           : 'Enter fullscreen',
+                    //       icon: isFullscreen
+                    //           ? const Icon(Icons.fullscreen_exit)
+                    //           : const Icon(Icons.fullscreen),
+                    //     );
+                    //   },
+                    // ),
+                    // BlocBuilder<DisplayModeCubit, DisplayMode>(
+                    //   builder: (context, dm) {
+                    //     return IconButton(
+                    //         tooltip: dm == DisplayMode.presentation
+                    //             ? 'Exit presentation mode'
+                    //             : 'Enter presentation mode',
+                    //         onPressed: () {
+                    //           if (dm == DisplayMode.presentation) {
+                    //             context
+                    //                 .read<DisplayModeCubit>()
+                    //                 .set(DisplayMode.normal);
+                    //           } else {
+                    //             context
+                    //                 .read<DisplayModeCubit>()
+                    //                 .set(DisplayMode.presentation);
+                    //           }
+                    //         },
+                    //         icon: Icon(Icons.fit_screen_rounded));
+                    //   },
+                    // ),
+                  ],
+                ),
+                //
+                // Show help button to avoid users getting stuck in fullscreen mode with hidden toolbar
+                //
+                if (isFullscreen && !showToolbar)
+                  Positioned.fill(
+                      child: Align(
+                          alignment: AlignmentGeometry.centerRight,
+                          child: IconButton(
+                              tooltip: 'Help',
+                              onPressed: () {
+                                context
+                                    .read<WindowStackManagerBloc>()
+                                    .add(WindowStackManagerOpen(HelpWidget(
+                                  onClose: () {
+                                    context
+                                        .read<WindowStackManagerBloc>()
+                                        .add(WindowStackManagerClose());
+                                  },
+                                )));
+                              },
+                              icon: Icon(Icons.help_outline_rounded)))),
+              ],
+            ),
           //
           //
           //
@@ -322,14 +374,17 @@ class _AppHeader extends StatelessWidget {
                   buildWhen: (prev, curr) => prev.reference != curr.reference,
                   builder: (context, state) {
                     return Padding(
-                      padding: const EdgeInsets.only(bottom: 18),
+                      padding: EdgeInsets.only(
+                        top: enableDynamicSearchbar ? 18 : 0,
+                        bottom: 18,
+                      ),
                       child: Text(
                         state.reference.toString(),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontFamily: paneTheme.referenceFont,
-                          //color: paneTheme.accentColor,
-                          fontSize: 34,
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: 42,
                         ),
                       ),
                     );

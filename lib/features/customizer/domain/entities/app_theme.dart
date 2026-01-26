@@ -12,6 +12,7 @@ class AppThemeSettings extends Equatable {
   final Color accentColor;
   final bool enableAutoColorScheme;
   final SearchbarPosition searchbarPosition;
+  final bool enableDynamicSearchbar;
 
   const AppThemeSettings({
     this.mode = ThemeMode.system,
@@ -19,15 +20,18 @@ class AppThemeSettings extends Equatable {
     this.accentColor = Colors.blue,
     this.enableAutoColorScheme = true,
     this.searchbarPosition = SearchbarPosition.left,
+    this.enableDynamicSearchbar = false,
   });
 
-  AppThemeSettings copyWith(
-      {ThemeMode? mode,
-      String? fontFamily,
-      Color? accentColor,
-      bool? enableAutoColorScheme,
-      bool? enableCustomTheme,
-      SearchbarPosition? searchbarPosition}) {
+  AppThemeSettings copyWith({
+    ThemeMode? mode,
+    String? fontFamily,
+    Color? accentColor,
+    bool? enableAutoColorScheme,
+    bool? enableCustomTheme,
+    SearchbarPosition? searchbarPosition,
+    bool? enableDynamicSearchbar,
+  }) {
     return AppThemeSettings(
       mode: mode ?? this.mode,
       fontFamily: fontFamily ?? this.fontFamily,
@@ -35,6 +39,8 @@ class AppThemeSettings extends Equatable {
       enableAutoColorScheme:
           enableAutoColorScheme ?? this.enableAutoColorScheme,
       searchbarPosition: searchbarPosition ?? this.searchbarPosition,
+      enableDynamicSearchbar:
+          enableDynamicSearchbar ?? this.enableDynamicSearchbar,
     );
   }
 
@@ -45,6 +51,7 @@ class AppThemeSettings extends Equatable {
         accentColor,
         enableAutoColorScheme,
         searchbarPosition,
+        enableDynamicSearchbar,
       ];
 
   Map<String, dynamic> toJson() => {
@@ -53,6 +60,7 @@ class AppThemeSettings extends Equatable {
         'accentColor': ColorsUtil.colorToHex(accentColor),
         'enableAutoColorScheme': enableAutoColorScheme,
         'searchbarPosition': searchbarPosition.toString(),
+        'enableDynamicSearchbar': enableDynamicSearchbar,
       };
 
   static AppThemeSettings fromJson(Map<String, dynamic> json) {
@@ -83,6 +91,7 @@ class AppThemeSettings extends Equatable {
       enableAutoColorScheme: json['enableAutoColorScheme'] as bool,
       searchbarPosition:
           parseSearchbarPosition(json['searchbarPosition'] as String),
+      enableDynamicSearchbar: json['enableDynamicSearchbar'] as bool,
     );
   }
 }

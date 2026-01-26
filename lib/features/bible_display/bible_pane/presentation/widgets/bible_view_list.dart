@@ -108,6 +108,8 @@ class _BibleViewListState extends State<BibleViewList> {
             // Selected verse
             final vStart = state.reference?.verseStart;
             final vEnd = state.reference?.verseEnd;
+            final isHighlighted = (vEnd == null && vn == vStart) ||
+                (vEnd != null && vStart != null && vn >= vStart && vn <= vEnd);
 
             return Padding(
               padding: EdgeInsets.only(
@@ -121,11 +123,7 @@ class _BibleViewListState extends State<BibleViewList> {
                   verseNumber: vn,
                   segments: segments,
                   spans: spans,
-                  isHighlighted: (vEnd == null && vn == vStart) ||
-                      (vEnd != null &&
-                          vStart != null &&
-                          vn >= vStart &&
-                          vn <= vEnd)),
+                  isHighlighted: isHighlighted),
             );
           },
         );
