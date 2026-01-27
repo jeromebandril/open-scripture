@@ -15,6 +15,7 @@ class BiblePaneState extends Equatable {
     this.bibleMeta,
     this.reference,
     this.segments = const [],
+    this.isMixed = false,
     this.errorMessage,
   });
 
@@ -24,6 +25,7 @@ class BiblePaneState extends Equatable {
   final BibleMeta? bibleMeta;
   final BibleRef? reference;
   final List<VerseSegment> segments;
+  final bool isMixed;
   final String? errorMessage;
 
   BiblePaneState copyWith({
@@ -33,6 +35,7 @@ class BiblePaneState extends Equatable {
     BiblePaneStatus Function()? status,
     BibleRef Function()? reference,
     List<VerseSegment> Function()? verseSegments,
+    bool Function()? isMixed,
     String? Function()? errorMessage,
   }) {
     return BiblePaneState(
@@ -42,6 +45,7 @@ class BiblePaneState extends Equatable {
       reference: reference != null ? reference() : this.reference,
       segments: verseSegments != null ? verseSegments() : this.segments,
       paneId: paneId != null ? paneId() : this.paneId,
+      isMixed: isMixed != null ? isMixed() : this.isMixed,
       errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
     );
   }
@@ -54,6 +58,7 @@ class BiblePaneState extends Equatable {
         bibleMeta,
         reference,
         segments,
+        isMixed,
         errorMessage,
       ];
 }

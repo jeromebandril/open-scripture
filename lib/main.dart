@@ -16,7 +16,6 @@ import 'features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart
 import 'features/bible_display/bible_pane/presentation/navigation_bus.dart';
 import 'features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
 import 'features/bible_display/split_screen/presenter/widgets/split_view_container.dart';
-import 'features/bible_display/split_screen/presenter/widgets/parts/split_view_controllers.dart';
 import 'features/bible_installer_manager/presentation/bloc/installed_bibles/installed_bibles_bloc.dart';
 import 'features/customizer/domain/entities/app_theme.dart';
 import 'features/customizer/domain/entities/bible_pane_theme.dart';
@@ -191,28 +190,27 @@ class _HomeState extends State<Home> {
                     Positioned.fill(
                       child: BlocListener<BSearchbarBloc, BSearchbarState>(
                         listenWhen: (prev, curr) =>
-                            prev.referenceResult != curr.referenceResult,
+                            prev.referenceResult != curr.referenceResult ||
+                            prev.results != curr.results,
                         listener: (context, state) {
                           final ref = state.referenceResult;
-                          if (ref == null) return;
+                          if (ref == null && state.results.isEmpty) return;
 
                           final BiblePaneEvent event =
                               switch (state.intentType) {
                             BSearchIntentType.gotoReference =>
                               BiblePaneDisplayChapter(
-                                ref: ref,
+                                ref: ref!,
                                 source: IntentSource.searchbar,
                               ),
                             BSearchIntentType.gotoVerseNumber =>
                               BiblePaneJustChangeRef(
-                                ref: ref,
+                                ref: ref!,
                                 source: IntentSource.searchbar,
                                 saveHistory: true,
                               ),
                             BSearchIntentType.findByString =>
-                              BiblePaneJustChangeRef(
-                                ref: ref,
-                              )
+                              BiblePaneDisplayVerses(state.results)
                           };
 
                           context

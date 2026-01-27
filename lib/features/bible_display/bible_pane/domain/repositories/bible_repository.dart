@@ -10,12 +10,12 @@ abstract class BibleRepository {
     required int bibleId,
   });
 
-  Future<Either<Failure, List<VerseSegment>>> getChapterSegments({
+  Future<Either<Failure, List<VerseSegment>>> getVersesSegmentsWithSpans({
     required int bibleId,
-    required BibleRef reference,
+    required List<BibleRef> refs,
   });
 
-  Future<Either<Failure, List<VerseSegment>>> getVersesSegments({
+  Future<Either<Failure, List<VerseSegment>>> getChapterSegments({
     required int bibleId,
     required BibleRef reference,
   });

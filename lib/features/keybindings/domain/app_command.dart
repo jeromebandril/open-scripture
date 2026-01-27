@@ -13,7 +13,10 @@ enum AppCommand {
   toggleToolbar,
   toggleFullscreen,
   switchDisplayMode,
-  unfocusSearch, // do not show as shortcut in the app
+  // private shortcuts
+  // do not show as shortcut in the app
+  unfocusSearch,
+  displayChapterOfSelected,
 }
 
 class AppCommandInfo {
@@ -106,5 +109,9 @@ const Map<AppCommand, SingleActivator> appCommandShortcuts = {
   ),
   AppCommand.unfocusSearch: SingleActivator(
     LogicalKeyboardKey.escape,
+  ),
+  AppCommand.displayChapterOfSelected: SingleActivator(
+    LogicalKeyboardKey.enter,
+    control: true,
   ),
 };

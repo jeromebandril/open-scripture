@@ -1,11 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:the_smyrna_bible_v2/core/presentation/cubit/display_mode_cubit.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
 
 import '../bloc/b_searchbar_bloc.dart';
+import '../models/find_intent.dart';
 
-class BSearchbar extends StatelessWidget {
+class BSearchbar extends StatefulWidget {
   const BSearchbar({
     this.focusNode,
     this.onSubmitted,
@@ -16,6 +20,23 @@ class BSearchbar extends StatelessWidget {
   final FocusNode? focusNode;
   final Function()? onSubmitted;
   final Function()? onEditComplete;
+
+  @override
+  State<BSearchbar> createState() => _BSearchbarState();
+}
+
+class _BSearchbarState extends State<BSearchbar> {
+  bool _findMode = false;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.focusNode?.addListener(() {
+      if (widget.focusNode?.hasFocus == null || !widget.focusNode!.hasFocus) {
+        _findMode = false;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,30 +51,71 @@ class BSearchbar extends StatelessWidget {
             //
             Positioned.fill(
               right: 28,
-              child: TextField(
-                focusNode: focusNode,
-                onEditingComplete: () {
-                  if (onEditComplete != null) onEditComplete!();
+              child: Shortcuts(
+                shortcuts: {
+                  const DollarActivator(): const FindIntent(),
                 },
-                onSubmitted: (input) {
-                  BlocProvider.of<BSearchbarBloc>(context)
-                      .add(BSearchbarParseIntent(input));
+                child: Actions(
+                  actions: {
+                    FindIntent: CallbackAction<FindIntent>(
+                      onInvoke: (intent) {
+                        setState(() => _findMode = true);
+                        return;
+                      },
+                    ),
+                  },
+                  child: TextField(
+                    focusNode: widget.focusNode,
+                    onChanged: (key) {},
+                    onEditingComplete: () {
+                      if (widget.onEditComplete != null) {
+                        widget.onEditComplete!();
+                      }
+                    },
+                    onSubmitted: (input) {
+                      if (widget.onSubmitted != null) widget.onSubmitted!();
 
-                  if (onSubmitted != null) onSubmitted!();
-                },
-                decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.search, size: 20),
-                  contentPadding: EdgeInsets.only(right: 8),
-                  hintText: 'Search reference',
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.transparent),
-                  ),
-                  hoverColor: Colors.transparent,
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.transparent),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.transparent),
+                      if (_findMode) {
+                        final bibleId = context
+                            .read<PaneManagerCubit>()
+                            .activeBloc()
+                            .state
+                            .bibleId;
+
+                        if (bibleId == null) return;
+
+                        // only list view
+                        context
+                            .read<DisplayModeCubit>()
+                            .set(DisplayMode.normal);
+                        context.read<BSearchbarBloc>().add(BSearchbarFind(
+                              bibleId: bibleId,
+                              query: input,
+                            ));
+
+                        return;
+                      }
+
+                      BlocProvider.of<BSearchbarBloc>(context)
+                          .add(BSearchbarParseIntent(input));
+                    },
+                    decoration: InputDecoration(
+                      prefixText: !_findMode ? null : '   find:   ',
+                      prefixIcon:
+                          !_findMode ? Icon(Icons.search, size: 20) : null,
+                      contentPadding: const EdgeInsets.only(right: 8),
+                      hintText: !_findMode ? 'Search reference' : null,
+                      border: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.transparent),
+                      ),
+                      hoverColor: Colors.transparent,
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.transparent),
+                      ),
+                      enabledBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.transparent),
+                      ),
+                    ),
                   ),
                 ),
               ),

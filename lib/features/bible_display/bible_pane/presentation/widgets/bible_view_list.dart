@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:the_smyrna_bible_v2/core/domain/entities/bible_ref.dart';
 
 import '../../../../../core/domain/entities/verse_segment.dart';
 import '../../../../customizer/domain/entities/bible_pane_theme.dart';
@@ -51,6 +53,7 @@ class _BibleViewListState extends State<BibleViewList> {
 
   void _scrollUntilVisible(int index) {
     if (!_isMounted) return;
+    if (index < 0) return;
     // Optional guard: only scroll if out of view
     if (!_isIndexVisible(index)) {
       if (_itemScrollController.isAttached) {
@@ -66,12 +69,12 @@ class _BibleViewListState extends State<BibleViewList> {
   @override
   Widget build(BuildContext context) {
     // group segments by verse
-    final segmentsByVerse = <int, List<VerseSegment>>{};
+    final segmentsByVerse = <BibleRef, List<VerseSegment>>{};
     for (final s in widget.segments) {
-      final key = s.ref.verseStart; // assuming int
-      (segmentsByVerse[key!] ??= <VerseSegment>[]).add(s);
+      final key = s.ref;
+      (segmentsByVerse[key] ??= <VerseSegment>[]).add(s);
     }
-    final verseNumbers = segmentsByVerse.keys.toList()..sort();
+    final verseRefs = segmentsByVerse.keys.toList(); //..sort();
 
     // Set padding
     final screen = MediaQuery.of(context).size;
@@ -85,31 +88,38 @@ class _BibleViewListState extends State<BibleViewList> {
       listenWhen: (prev, curr) =>
           prev.reference != curr.reference && curr.reference != null,
       listener: (context, state) =>
-          _scrollUntilVisible(state.reference!.verseStart! - 1),
+          _scrollUntilVisible(verseRefs.indexOf(state.reference!)),
       builder: (context, state) {
         return ScrollablePositionedList.separated(
           itemScrollController: _itemScrollController,
           itemPositionsListener: _itemPositionsListener,
-          itemCount: verseNumbers.length + 1,
+          itemCount: verseRefs.length + 1,
           padding: EdgeInsets.only(top: 16),
           separatorBuilder: (ctx, _) {
             return VerseDivider();
           },
           itemBuilder: (_, i) {
             // Fixed empty space at the bottom
-            if (i == verseNumbers.length) {
+            if (i == verseRefs.length) {
               return const SizedBox(height: 200);
             }
 
             // Set content
-            final vn = verseNumbers[i];
-            final segments = segmentsByVerse[vn]!;
+            final ref = verseRefs[i];
+            final segments = segmentsByVerse[ref]!;
             final spans = segments.expand((s) => s.spans).toList();
             // Selected verse
             final vStart = state.reference?.verseStart;
             final vEnd = state.reference?.verseEnd;
-            final isHighlighted = (vEnd == null && vn == vStart) ||
-                (vEnd != null && vStart != null && vn >= vStart && vn <= vEnd);
+
+            // highlight a range only if verses are of the same book and chapter
+            final isHighlighted = state.isMixed
+                ? state.reference == ref
+                : (vEnd == null && ref.verseStart == vStart) ||
+                    (vEnd != null &&
+                        vStart != null &&
+                        ref.verseStart! >= vStart &&
+                        ref.verseEnd! <= vEnd);
 
             return Padding(
               padding: EdgeInsets.only(
@@ -120,14 +130,19 @@ class _BibleViewListState extends State<BibleViewList> {
                     : 0,
               ),
               child: VerseWidget(
-                  verseNumber: vn,
-                  segments: segments,
-                  spans: spans,
-                  isHighlighted: isHighlighted),
+                reference: ref,
+                segments: segments,
+                spans: spans,
+                isHighlighted: isHighlighted,
+              ),
             );
           },
         );
       },
     );
   }
+}
+
+class ChooseIntent extends Intent {
+  const ChooseIntent();
 }

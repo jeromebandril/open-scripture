@@ -23,10 +23,36 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     on<BiblePaneDisplayChapter>(_onBiblePaneDisplayChapter);
     on<BiblePaneJustChangeRef>(_onChangeRef);
     on<BiblePaneCloseBible>(_onCloseBible);
+    on<BiblePaneDisplayVerses>(_onDisplayVerses);
   }
 
   final BibleRepository repo;
   final NavigationBus? _navBus;
+
+  Future<void> _onDisplayVerses(
+    BiblePaneDisplayVerses event,
+    Emitter<BiblePaneState> emit,
+  ) async {
+    if (state.bibleId == null) return;
+
+    final result = await repo.getVersesSegmentsWithSpans(
+      bibleId: state.bibleId!,
+      refs: event.refs,
+    );
+
+    result.fold(
+      (f) => emit(state.copyWith(
+        status: () => BiblePaneStatus.error,
+        errorMessage: () => f.message,
+      )),
+      (segments) => emit(state.copyWith(
+        status: () => BiblePaneStatus.ready,
+        verseSegments: () => segments,
+        reference: () => segments.first.ref,
+        isMixed: () => true,
+      )),
+    );
+  }
 
   Future<void> _onBiblePaneOpen(
     BiblePaneOpen event,
@@ -44,7 +70,8 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
       (bm) => emit(state.copyWith(
           status: () => BiblePaneStatus.ready,
           bibleId: () => event.bibleId,
-          bibleMeta: () => bm)),
+          bibleMeta: () => bm,
+          isMixed: () => false)),
     );
   }
 
@@ -75,6 +102,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
           status: () => BiblePaneStatus.ready,
           reference: () => event.ref,
           verseSegments: () => verses,
+          isMixed: () => false,
         ));
 
         _navBus?.emit(NavigationFeedback(

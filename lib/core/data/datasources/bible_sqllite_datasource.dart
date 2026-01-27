@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:drift/drift.dart';
 import 'package:path/path.dart' as p;
 import 'package:archive/archive_io.dart';
 import 'package:path_provider/path_provider.dart';
@@ -109,6 +110,22 @@ abstract class BibleLocalDataSource {
   /// - [NotFoundException] if the bible has no books / is not installed
   /// - [LocalDataException] for database/query failures
   Future<List<Book>> getBooks(int bibleId);
+
+  /// Search a string within the given bible
+  /// and returns a List of bible references
+  ///
+  /// Throws:
+  /// - [NotFoundException] if the range yields no verses
+  /// - [LocalDataException] for database/query failures
+  Future<List<BibleRef>> searchVerses(int bibleId, String matchingString);
+
+  /// Get verse segments from a List of bible references
+  ///
+  /// Throws:
+  /// - [NotFoundException] if the range yields no verses
+  /// - [LocalDataException] for database/query failures
+  Future<List<VerseSegment>> getVersesSegments(
+      int bibleId, List<BibleRef> refs);
 }
 
 class BibleLocalDatasourceImpl implements BibleLocalDataSource {
@@ -492,6 +509,106 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
         cause: e,
         stackTrace: st,
       );
+    }
+  }
+
+  @override
+  Future<List<BibleRef>> searchVerses(
+      int bibleId, String matchingString) async {
+    print('******************************');
+    print('source: $bibleId');
+    print('finding: $matchingString');
+    final stopwatch = Stopwatch()..start();
+    final rows = await db.searchVerses(bibleId, matchingString, 100).get();
+    print('finished in ${stopwatch.elapsed}');
+    stopwatch.stop();
+    print('results count: ${rows.length}');
+    print('******************************');
+
+    if (rows.isEmpty) {
+      throw NotFoundException('Match not found (id=$bibleId)');
+    }
+
+    final result = rows
+        .map((r) => BibleRef(
+            bookOsisId: r.bookOsisId,
+            chapter: r.chapterNumber,
+            verseStart: r.verseNumber))
+        .toList();
+
+    return result;
+  }
+
+  @override
+  Future<List<VerseSegment>> getVersesSegments(
+    int bibleId,
+    List<BibleRef> refs,
+  ) async {
+    try {
+      if (refs.isEmpty) return [];
+
+      // hard cap
+      final capped = refs.length > 100 ? refs.sublist(0, 100) : refs;
+
+      final parts = <String>[];
+      final vars = <Variable>[];
+
+      for (final r in capped) {
+        parts.add('(?, ?, ?)'); // osis, chapter, verse
+        vars.addAll([
+          Variable<String>(r.bookOsisId),
+          Variable<int>(r.chapter),
+          Variable<int>(r.verseStart),
+        ]);
+      }
+
+      final sql = '''
+        WITH ref(bookOsisId, chapterNumber, verseNumber) AS (
+          VALUES ${parts.join(',')}
+        )
+        SELECT 
+          s.*,
+          b.osisId AS bookOsisId
+        FROM ref
+        JOIN books AS b
+          ON b.bibleId = ? AND b.osisId = ref.bookOsisId
+        JOIN verse_segments AS s
+          ON s.bookId = b.id
+          AND s.chapterNumber = ref.chapterNumber
+          AND s.verseNumber = ref.verseNumber
+        ORDER BY b.bookOrder, s.chapterNumber, s.verseNumber, s.segmentIndex
+      ''';
+
+      // prepend bibleId var at the right position
+      final allVars = <Variable>[...vars, Variable<int>(bibleId)];
+
+      final rows = await db.customSelect(
+        sql,
+        variables: allVars,
+        readsFrom: {db.verseSegments, db.books},
+      ).get();
+
+      return rows.map((r) {
+        final bookOsisId = r.read<String>('bookOsisId');
+        final chapterNumber = r.read<int>('chapterNumber');
+        final verseNumber = r.read<int>('verseNumber');
+
+        return VerseSegment(
+          bibleId: bibleId,
+          ref: BibleRef(
+            bookOsisId: bookOsisId,
+            chapter: chapterNumber,
+            verseStart: verseNumber,
+          ),
+          segmentIndex: r.read<int>('segmentIndex'),
+          paragraphStart: r.read<int>('paragraphStart') == 1,
+          textContent: r.read<String>('textContent'),
+          subtitle: r.readNullable<String>('subtitle'),
+          spans: const [],
+        );
+      }).toList();
+    } catch (e) {
+      return [];
     }
   }
 }

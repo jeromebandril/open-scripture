@@ -19,7 +19,9 @@ class BSearchbarBloc extends Bloc<BSearchbarEvent, BSearchbarState> {
   })  : _navBus = navBus,
         super(const BSearchbarState()) {
     on<BSearchbarParseIntent>(_onAnalyzeIntent);
+    on<BSearchbarFind>(_onFind);
     on<_SaveInHistory>(_onSaveInHistory);
+    //
     on<_ExecuteIntent>(_onExecuteIntent);
     on<DeleteHistoryItem>(_onDeleteHistoryItem);
 
@@ -34,6 +36,29 @@ class BSearchbarBloc extends Bloc<BSearchbarEvent, BSearchbarState> {
   final NavigationBus? _navBus;
   late final StreamSubscription<NavigationFeedback>? _sub;
 
+  Future<void> _onFind(
+    BSearchbarFind event,
+    Emitter<BSearchbarState> emit,
+  ) async {
+    final eitherFailureOrResults = await repo.find(
+      bibleId: event.bibleId,
+      match: event.query,
+    );
+
+    return eitherFailureOrResults.fold(
+      (f) => emit(state.copyWith(
+        intentType: () => BSearchIntentType.findByString,
+        status: () => BSearchbarStatus.error,
+        errorMessage: () => f.details,
+      )),
+      (refs) => emit(state.copyWith(
+        intentType: () => BSearchIntentType.findByString,
+        status: () => BSearchbarStatus.success,
+        results: () => refs,
+      )),
+    );
+  }
+
   Future<void> _onAnalyzeIntent(
     BSearchbarParseIntent event,
     Emitter<BSearchbarState> emit,
@@ -42,10 +67,6 @@ class BSearchbarBloc extends Bloc<BSearchbarEvent, BSearchbarState> {
 
     if (int.tryParse(event.query) != null) {
       add(_ExecuteIntent(BSearchIntentType.gotoVerseNumber, event.query));
-      return;
-    }
-    if (event.query.startsWith('\$')) {
-      // TODO: search from text
       return;
     }
 
@@ -70,6 +91,7 @@ class BSearchbarBloc extends Bloc<BSearchbarEvent, BSearchbarState> {
           intentType: () => BSearchIntentType.gotoReference,
           status: () => BSearchbarStatus.success,
           referenceResult: () => ref,
+          results: () => [],
         )),
       );
     }
@@ -85,6 +107,7 @@ class BSearchbarBloc extends Bloc<BSearchbarEvent, BSearchbarState> {
           verseStart: vn,
           verseEnd: null,
         ),
+        results: () => [],
       ));
     }
   }

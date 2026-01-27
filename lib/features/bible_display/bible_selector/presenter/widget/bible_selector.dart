@@ -43,7 +43,6 @@ class _BibleSelectorBody extends StatelessWidget {
     return BlocBuilder<InstalledBiblesBloc, InstalledBiblesState>(
       builder: (context, state) {
         Widget body;
-
         switch (state.status) {
           case InstalledBiblesStatus.loading || InstalledBiblesStatus.initial:
             body = const Center(child: CircularProgressIndicator());
@@ -67,6 +66,11 @@ class _BibleSelectorBody extends StatelessWidget {
             break;
 
           case InstalledBiblesStatus.loaded:
+            if (state.installedBibles.isEmpty) {
+              body = Text('Go to <Bible> to install a bible',
+                  textAlign: TextAlign.center);
+              break;
+            }
             body = Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [

@@ -14,12 +14,15 @@ class BibleRepositoryImpl implements BibleRepository {
   const BibleRepositoryImpl({required this.localDatasource});
 
   @override
-  Future<Either<Failure, List<VerseSegment>>> getVersesSegments({
+  Future<Either<Failure, List<VerseSegment>>> getVersesSegmentsWithSpans({
     required int bibleId,
-    required BibleRef reference,
+    required List<BibleRef> refs,
   }) async {
-    // TODO: implement getVerse
-    throw UnimplementedError();
+    try {
+      return Right(await localDatasource.getVersesSegments(bibleId, refs));
+    } catch (e) {
+      return Left(UnknownFailure(details: e.toString()));
+    }
   }
 
   @override

@@ -15,13 +15,13 @@ enum HighlightRenderMode {
 }
 
 class VerseWidget extends StatelessWidget {
-  final int verseNumber;
+  final BibleRef reference;
   final List<VerseSegment> segments;
   final List<VerseSpan>? spans;
   final bool isHighlighted;
 
   const VerseWidget({
-    required this.verseNumber,
+    required this.reference,
     required this.segments,
     this.spans,
     this.isHighlighted = false,
@@ -31,7 +31,7 @@ class VerseWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String content = segments.map((e) => e.textContent).join();
-    final BibleRef ref = segments.first.ref;
+    final int verseNumber = reference.verseStart!;
 
     final useCustom = context.select(
       (CustomizerCubit c) => c.state.pane.enableCustomTheme,
@@ -58,7 +58,9 @@ class VerseWidget extends StatelessWidget {
         final ref = context.read<BiblePaneBloc>().state.reference!;
         context.read<BiblePaneBloc>().add(BiblePaneJustChangeRef(
                 ref: ref.copyWith(
-              verseStart: verseNumber,
+              bookOsisId: reference.bookOsisId,
+              chapter: reference.chapter,
+              verseStart: reference.verseStart,
               verseEnd: null,
             )));
       },
@@ -67,7 +69,7 @@ class VerseWidget extends StatelessWidget {
         children: [
           if (biblePaneTheme.enableHangingRefs)
             Text(
-              '${verseNumber.toString().padLeft(3, ' ')}   ',
+              '${reference.toString().padLeft(3, ' ')}   ',
               style: refStyle,
             ),
           Expanded(
@@ -80,7 +82,7 @@ class VerseWidget extends StatelessWidget {
                   if (!biblePaneTheme.enableHangingRefs)
                     TextSpan(
                       text: isHighlighted || biblePaneTheme.showFullRefAlways
-                          ? '${ref.toString()}  '
+                          ? '${reference.toString()}  '
                           : '$verseNumber  ',
                       style: refStyle,
                     ),

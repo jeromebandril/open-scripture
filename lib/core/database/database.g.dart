@@ -1848,6 +1848,619 @@ class SegmentSpansCompanion extends UpdateCompanion<SegmentSpan> {
   }
 }
 
+class VerseText extends Table with TableInfo<VerseText, VerseTextData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  VerseText(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      $customConstraints: 'NOT NULL PRIMARY KEY AUTOINCREMENT');
+  static const VerificationMeta _bibleIdMeta =
+      const VerificationMeta('bibleId');
+  late final GeneratedColumn<int> bibleId = GeneratedColumn<int>(
+      'bibleId', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _bookOsisIdMeta =
+      const VerificationMeta('bookOsisId');
+  late final GeneratedColumn<String> bookOsisId = GeneratedColumn<String>(
+      'bookOsisId', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _bookIdMeta = const VerificationMeta('bookId');
+  late final GeneratedColumn<int> bookId = GeneratedColumn<int>(
+      'bookId', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _chapterNumberMeta =
+      const VerificationMeta('chapterNumber');
+  late final GeneratedColumn<int> chapterNumber = GeneratedColumn<int>(
+      'chapterNumber', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _verseNumberMeta =
+      const VerificationMeta('verseNumber');
+  late final GeneratedColumn<int> verseNumber = GeneratedColumn<int>(
+      'verseNumber', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _textContentMeta =
+      const VerificationMeta('textContent');
+  late final GeneratedColumn<String> textContent = GeneratedColumn<String>(
+      'textContent', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        bibleId,
+        bookOsisId,
+        bookId,
+        chapterNumber,
+        verseNumber,
+        textContent
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'verse_text';
+  @override
+  VerificationContext validateIntegrity(Insertable<VerseTextData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('bibleId')) {
+      context.handle(_bibleIdMeta,
+          bibleId.isAcceptableOrUnknown(data['bibleId']!, _bibleIdMeta));
+    } else if (isInserting) {
+      context.missing(_bibleIdMeta);
+    }
+    if (data.containsKey('bookOsisId')) {
+      context.handle(
+          _bookOsisIdMeta,
+          bookOsisId.isAcceptableOrUnknown(
+              data['bookOsisId']!, _bookOsisIdMeta));
+    } else if (isInserting) {
+      context.missing(_bookOsisIdMeta);
+    }
+    if (data.containsKey('bookId')) {
+      context.handle(_bookIdMeta,
+          bookId.isAcceptableOrUnknown(data['bookId']!, _bookIdMeta));
+    } else if (isInserting) {
+      context.missing(_bookIdMeta);
+    }
+    if (data.containsKey('chapterNumber')) {
+      context.handle(
+          _chapterNumberMeta,
+          chapterNumber.isAcceptableOrUnknown(
+              data['chapterNumber']!, _chapterNumberMeta));
+    } else if (isInserting) {
+      context.missing(_chapterNumberMeta);
+    }
+    if (data.containsKey('verseNumber')) {
+      context.handle(
+          _verseNumberMeta,
+          verseNumber.isAcceptableOrUnknown(
+              data['verseNumber']!, _verseNumberMeta));
+    } else if (isInserting) {
+      context.missing(_verseNumberMeta);
+    }
+    if (data.containsKey('textContent')) {
+      context.handle(
+          _textContentMeta,
+          textContent.isAcceptableOrUnknown(
+              data['textContent']!, _textContentMeta));
+    } else if (isInserting) {
+      context.missing(_textContentMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+        {bibleId, bookOsisId, chapterNumber, verseNumber},
+      ];
+  @override
+  VerseTextData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return VerseTextData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      bibleId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}bibleId'])!,
+      bookOsisId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}bookOsisId'])!,
+      bookId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}bookId'])!,
+      chapterNumber: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}chapterNumber'])!,
+      verseNumber: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}verseNumber'])!,
+      textContent: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}textContent'])!,
+    );
+  }
+
+  @override
+  VerseText createAlias(String alias) {
+    return VerseText(attachedDatabase, alias);
+  }
+
+  @override
+  List<String> get customConstraints => const [
+        'FOREIGN KEY(bookId)REFERENCES books(id)ON DELETE CASCADE',
+        'UNIQUE(bibleId, bookOsisId, chapterNumber, verseNumber)'
+      ];
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class VerseTextData extends DataClass implements Insertable<VerseTextData> {
+  final int id;
+  final int bibleId;
+  final String bookOsisId;
+  final int bookId;
+  final int chapterNumber;
+  final int verseNumber;
+  final String textContent;
+  const VerseTextData(
+      {required this.id,
+      required this.bibleId,
+      required this.bookOsisId,
+      required this.bookId,
+      required this.chapterNumber,
+      required this.verseNumber,
+      required this.textContent});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['bibleId'] = Variable<int>(bibleId);
+    map['bookOsisId'] = Variable<String>(bookOsisId);
+    map['bookId'] = Variable<int>(bookId);
+    map['chapterNumber'] = Variable<int>(chapterNumber);
+    map['verseNumber'] = Variable<int>(verseNumber);
+    map['textContent'] = Variable<String>(textContent);
+    return map;
+  }
+
+  VerseTextCompanion toCompanion(bool nullToAbsent) {
+    return VerseTextCompanion(
+      id: Value(id),
+      bibleId: Value(bibleId),
+      bookOsisId: Value(bookOsisId),
+      bookId: Value(bookId),
+      chapterNumber: Value(chapterNumber),
+      verseNumber: Value(verseNumber),
+      textContent: Value(textContent),
+    );
+  }
+
+  factory VerseTextData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return VerseTextData(
+      id: serializer.fromJson<int>(json['id']),
+      bibleId: serializer.fromJson<int>(json['bibleId']),
+      bookOsisId: serializer.fromJson<String>(json['bookOsisId']),
+      bookId: serializer.fromJson<int>(json['bookId']),
+      chapterNumber: serializer.fromJson<int>(json['chapterNumber']),
+      verseNumber: serializer.fromJson<int>(json['verseNumber']),
+      textContent: serializer.fromJson<String>(json['textContent']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'bibleId': serializer.toJson<int>(bibleId),
+      'bookOsisId': serializer.toJson<String>(bookOsisId),
+      'bookId': serializer.toJson<int>(bookId),
+      'chapterNumber': serializer.toJson<int>(chapterNumber),
+      'verseNumber': serializer.toJson<int>(verseNumber),
+      'textContent': serializer.toJson<String>(textContent),
+    };
+  }
+
+  VerseTextData copyWith(
+          {int? id,
+          int? bibleId,
+          String? bookOsisId,
+          int? bookId,
+          int? chapterNumber,
+          int? verseNumber,
+          String? textContent}) =>
+      VerseTextData(
+        id: id ?? this.id,
+        bibleId: bibleId ?? this.bibleId,
+        bookOsisId: bookOsisId ?? this.bookOsisId,
+        bookId: bookId ?? this.bookId,
+        chapterNumber: chapterNumber ?? this.chapterNumber,
+        verseNumber: verseNumber ?? this.verseNumber,
+        textContent: textContent ?? this.textContent,
+      );
+  VerseTextData copyWithCompanion(VerseTextCompanion data) {
+    return VerseTextData(
+      id: data.id.present ? data.id.value : this.id,
+      bibleId: data.bibleId.present ? data.bibleId.value : this.bibleId,
+      bookOsisId:
+          data.bookOsisId.present ? data.bookOsisId.value : this.bookOsisId,
+      bookId: data.bookId.present ? data.bookId.value : this.bookId,
+      chapterNumber: data.chapterNumber.present
+          ? data.chapterNumber.value
+          : this.chapterNumber,
+      verseNumber:
+          data.verseNumber.present ? data.verseNumber.value : this.verseNumber,
+      textContent:
+          data.textContent.present ? data.textContent.value : this.textContent,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VerseTextData(')
+          ..write('id: $id, ')
+          ..write('bibleId: $bibleId, ')
+          ..write('bookOsisId: $bookOsisId, ')
+          ..write('bookId: $bookId, ')
+          ..write('chapterNumber: $chapterNumber, ')
+          ..write('verseNumber: $verseNumber, ')
+          ..write('textContent: $textContent')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      id, bibleId, bookOsisId, bookId, chapterNumber, verseNumber, textContent);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is VerseTextData &&
+          other.id == this.id &&
+          other.bibleId == this.bibleId &&
+          other.bookOsisId == this.bookOsisId &&
+          other.bookId == this.bookId &&
+          other.chapterNumber == this.chapterNumber &&
+          other.verseNumber == this.verseNumber &&
+          other.textContent == this.textContent);
+}
+
+class VerseTextCompanion extends UpdateCompanion<VerseTextData> {
+  final Value<int> id;
+  final Value<int> bibleId;
+  final Value<String> bookOsisId;
+  final Value<int> bookId;
+  final Value<int> chapterNumber;
+  final Value<int> verseNumber;
+  final Value<String> textContent;
+  const VerseTextCompanion({
+    this.id = const Value.absent(),
+    this.bibleId = const Value.absent(),
+    this.bookOsisId = const Value.absent(),
+    this.bookId = const Value.absent(),
+    this.chapterNumber = const Value.absent(),
+    this.verseNumber = const Value.absent(),
+    this.textContent = const Value.absent(),
+  });
+  VerseTextCompanion.insert({
+    this.id = const Value.absent(),
+    required int bibleId,
+    required String bookOsisId,
+    required int bookId,
+    required int chapterNumber,
+    required int verseNumber,
+    required String textContent,
+  })  : bibleId = Value(bibleId),
+        bookOsisId = Value(bookOsisId),
+        bookId = Value(bookId),
+        chapterNumber = Value(chapterNumber),
+        verseNumber = Value(verseNumber),
+        textContent = Value(textContent);
+  static Insertable<VerseTextData> custom({
+    Expression<int>? id,
+    Expression<int>? bibleId,
+    Expression<String>? bookOsisId,
+    Expression<int>? bookId,
+    Expression<int>? chapterNumber,
+    Expression<int>? verseNumber,
+    Expression<String>? textContent,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (bibleId != null) 'bibleId': bibleId,
+      if (bookOsisId != null) 'bookOsisId': bookOsisId,
+      if (bookId != null) 'bookId': bookId,
+      if (chapterNumber != null) 'chapterNumber': chapterNumber,
+      if (verseNumber != null) 'verseNumber': verseNumber,
+      if (textContent != null) 'textContent': textContent,
+    });
+  }
+
+  VerseTextCompanion copyWith(
+      {Value<int>? id,
+      Value<int>? bibleId,
+      Value<String>? bookOsisId,
+      Value<int>? bookId,
+      Value<int>? chapterNumber,
+      Value<int>? verseNumber,
+      Value<String>? textContent}) {
+    return VerseTextCompanion(
+      id: id ?? this.id,
+      bibleId: bibleId ?? this.bibleId,
+      bookOsisId: bookOsisId ?? this.bookOsisId,
+      bookId: bookId ?? this.bookId,
+      chapterNumber: chapterNumber ?? this.chapterNumber,
+      verseNumber: verseNumber ?? this.verseNumber,
+      textContent: textContent ?? this.textContent,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (bibleId.present) {
+      map['bibleId'] = Variable<int>(bibleId.value);
+    }
+    if (bookOsisId.present) {
+      map['bookOsisId'] = Variable<String>(bookOsisId.value);
+    }
+    if (bookId.present) {
+      map['bookId'] = Variable<int>(bookId.value);
+    }
+    if (chapterNumber.present) {
+      map['chapterNumber'] = Variable<int>(chapterNumber.value);
+    }
+    if (verseNumber.present) {
+      map['verseNumber'] = Variable<int>(verseNumber.value);
+    }
+    if (textContent.present) {
+      map['textContent'] = Variable<String>(textContent.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VerseTextCompanion(')
+          ..write('id: $id, ')
+          ..write('bibleId: $bibleId, ')
+          ..write('bookOsisId: $bookOsisId, ')
+          ..write('bookId: $bookId, ')
+          ..write('chapterNumber: $chapterNumber, ')
+          ..write('verseNumber: $verseNumber, ')
+          ..write('textContent: $textContent')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class VerseTextFts extends Table
+    with
+        TableInfo<VerseTextFts, VerseTextFt>,
+        VirtualTableInfo<VerseTextFts, VerseTextFt> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  VerseTextFts(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _textContentMeta =
+      const VerificationMeta('textContent');
+  late final GeneratedColumn<String> textContent = GeneratedColumn<String>(
+      'textContent', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: '');
+  static const VerificationMeta _bibleIdMeta =
+      const VerificationMeta('bibleId');
+  late final GeneratedColumn<String> bibleId = GeneratedColumn<String>(
+      'bibleId', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: '');
+  @override
+  List<GeneratedColumn> get $columns => [textContent, bibleId];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'verse_text_fts';
+  @override
+  VerificationContext validateIntegrity(Insertable<VerseTextFt> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('textContent')) {
+      context.handle(
+          _textContentMeta,
+          textContent.isAcceptableOrUnknown(
+              data['textContent']!, _textContentMeta));
+    } else if (isInserting) {
+      context.missing(_textContentMeta);
+    }
+    if (data.containsKey('bibleId')) {
+      context.handle(_bibleIdMeta,
+          bibleId.isAcceptableOrUnknown(data['bibleId']!, _bibleIdMeta));
+    } else if (isInserting) {
+      context.missing(_bibleIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => const {};
+  @override
+  VerseTextFt map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return VerseTextFt(
+      textContent: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}textContent'])!,
+      bibleId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}bibleId'])!,
+    );
+  }
+
+  @override
+  VerseTextFts createAlias(String alias) {
+    return VerseTextFts(attachedDatabase, alias);
+  }
+
+  @override
+  bool get dontWriteConstraints => true;
+  @override
+  String get moduleAndArgs =>
+      'fts5(textContent, bibleId UNINDEXED, content=\'verse_text\', content_rowid=\'id\')';
+}
+
+class VerseTextFt extends DataClass implements Insertable<VerseTextFt> {
+  final String textContent;
+  final String bibleId;
+  const VerseTextFt({required this.textContent, required this.bibleId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['textContent'] = Variable<String>(textContent);
+    map['bibleId'] = Variable<String>(bibleId);
+    return map;
+  }
+
+  VerseTextFtsCompanion toCompanion(bool nullToAbsent) {
+    return VerseTextFtsCompanion(
+      textContent: Value(textContent),
+      bibleId: Value(bibleId),
+    );
+  }
+
+  factory VerseTextFt.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return VerseTextFt(
+      textContent: serializer.fromJson<String>(json['textContent']),
+      bibleId: serializer.fromJson<String>(json['bibleId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'textContent': serializer.toJson<String>(textContent),
+      'bibleId': serializer.toJson<String>(bibleId),
+    };
+  }
+
+  VerseTextFt copyWith({String? textContent, String? bibleId}) => VerseTextFt(
+        textContent: textContent ?? this.textContent,
+        bibleId: bibleId ?? this.bibleId,
+      );
+  VerseTextFt copyWithCompanion(VerseTextFtsCompanion data) {
+    return VerseTextFt(
+      textContent:
+          data.textContent.present ? data.textContent.value : this.textContent,
+      bibleId: data.bibleId.present ? data.bibleId.value : this.bibleId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VerseTextFt(')
+          ..write('textContent: $textContent, ')
+          ..write('bibleId: $bibleId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(textContent, bibleId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is VerseTextFt &&
+          other.textContent == this.textContent &&
+          other.bibleId == this.bibleId);
+}
+
+class VerseTextFtsCompanion extends UpdateCompanion<VerseTextFt> {
+  final Value<String> textContent;
+  final Value<String> bibleId;
+  final Value<int> rowid;
+  const VerseTextFtsCompanion({
+    this.textContent = const Value.absent(),
+    this.bibleId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  VerseTextFtsCompanion.insert({
+    required String textContent,
+    required String bibleId,
+    this.rowid = const Value.absent(),
+  })  : textContent = Value(textContent),
+        bibleId = Value(bibleId);
+  static Insertable<VerseTextFt> custom({
+    Expression<String>? textContent,
+    Expression<String>? bibleId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (textContent != null) 'textContent': textContent,
+      if (bibleId != null) 'bibleId': bibleId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  VerseTextFtsCompanion copyWith(
+      {Value<String>? textContent, Value<String>? bibleId, Value<int>? rowid}) {
+    return VerseTextFtsCompanion(
+      textContent: textContent ?? this.textContent,
+      bibleId: bibleId ?? this.bibleId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (textContent.present) {
+      map['textContent'] = Variable<String>(textContent.value);
+    }
+    if (bibleId.present) {
+      map['bibleId'] = Variable<String>(bibleId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VerseTextFtsCompanion(')
+          ..write('textContent: $textContent, ')
+          ..write('bibleId: $bibleId, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDb extends GeneratedDatabase {
   _$AppDb(QueryExecutor e) : super(e);
   $AppDbManager get managers => $AppDbManager(this);
@@ -1856,6 +2469,13 @@ abstract class _$AppDb extends GeneratedDatabase {
   late final Books books = Books(this);
   late final VerseSegments verseSegments = VerseSegments(this);
   late final SegmentSpans segmentSpans = SegmentSpans(this);
+  late final VerseText verseText = VerseText(this);
+  late final Index ixVerseTextBible = Index('ix_verse_text_bible',
+      'CREATE INDEX ix_verse_text_bible ON verse_text (bibleId, bookOsisId, chapterNumber, verseNumber)');
+  late final VerseTextFts verseTextFts = VerseTextFts(this);
+  late final Trigger verseTextAi = Trigger(
+      'CREATE TRIGGER verse_text_ai AFTER INSERT ON verse_text BEGIN INSERT INTO verse_text_fts ("rowid", textContent, bibleId) VALUES (new.id, new.textContent, new.bibleId);END',
+      'verse_text_ai');
   late final Index ixSpansSegment = Index('ix_spans_segment',
       'CREATE INDEX ix_spans_segment ON segment_spans (segmentId, startOffset)');
   late final Index uxLanguagesIso = Index('ux_languages_iso',
@@ -1980,6 +2600,54 @@ abstract class _$AppDb extends GeneratedDatabase {
         ));
   }
 
+  Future<int> clearVerseText(int bibleId) {
+    return customUpdate(
+      'DELETE FROM verse_text WHERE bibleId = ?1',
+      variables: [Variable<int>(bibleId)],
+      updates: {verseText},
+      updateKind: UpdateKind.delete,
+    );
+  }
+
+  Future<int> populateVerseText(int bibleId) {
+    return customInsert(
+      'INSERT INTO verse_text (bibleId, bookOsisId, bookId, chapterNumber, verseNumber, textContent) SELECT b.bibleId, b.osisId, v.bookId, v.chapterNumber, v.verseNumber, (SELECT GROUP_CONCAT(vs2.textContent, \' \') FROM verse_segments AS vs2 WHERE vs2.bookId = v.bookId AND vs2.chapterNumber = v.chapterNumber AND vs2.verseNumber = v.verseNumber ORDER BY vs2.segmentIndex) AS textContent FROM (SELECT DISTINCT bookId, chapterNumber, verseNumber FROM verse_segments) AS v JOIN books AS b ON b.id = v.bookId WHERE b.bibleId = ?1',
+      variables: [Variable<int>(bibleId)],
+      updates: {verseText},
+    );
+  }
+
+  Selectable<SearchVersesResult> searchVerses(
+      int bibleId, String query, int limit) {
+    return customSelect(
+        'WITH hits AS (SELECT "rowid", bm25(verse_text_fts) AS rank FROM verse_text_fts WHERE CAST(bibleId AS INTEGER) = ?1 AND verse_text_fts MATCH ?2 ORDER BY rank LIMIT ?3) SELECT vt.bibleId, vt.bookOsisId, vt.chapterNumber, vt.verseNumber FROM hits JOIN verse_text AS vt ON vt.id = hits."rowid" ORDER BY hits.rank',
+        variables: [
+          Variable<int>(bibleId),
+          Variable<String>(query),
+          Variable<int>(limit)
+        ],
+        readsFrom: {
+          verseTextFts,
+          verseText,
+        }).map((QueryRow row) => SearchVersesResult(
+          bibleId: row.read<int>('bibleId'),
+          bookOsisId: row.read<String>('bookOsisId'),
+          chapterNumber: row.read<int>('chapterNumber'),
+          verseNumber: row.read<int>('verseNumber'),
+        ));
+  }
+
+  Selectable<int> testQuery(String q) {
+    return customSelect(
+        'SELECT "rowid" FROM verse_text_fts WHERE verse_text_fts MATCH ?1 LIMIT 100',
+        variables: [
+          Variable<String>(q)
+        ],
+        readsFrom: {
+          verseTextFts,
+        }).map((QueryRow row) => row.read<int>('rowid'));
+  }
+
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1990,6 +2658,10 @@ abstract class _$AppDb extends GeneratedDatabase {
         books,
         verseSegments,
         segmentSpans,
+        verseText,
+        ixVerseTextBible,
+        verseTextFts,
+        verseTextAi,
         ixSpansSegment,
         uxLanguagesIso
       ];
@@ -2022,6 +2694,20 @@ abstract class _$AppDb extends GeneratedDatabase {
                 limitUpdateKind: UpdateKind.delete),
             result: [
               TableUpdate('segment_spans', kind: UpdateKind.delete),
+            ],
+          ),
+          WritePropagation(
+            on: TableUpdateQuery.onTableName('books',
+                limitUpdateKind: UpdateKind.delete),
+            result: [
+              TableUpdate('verse_text', kind: UpdateKind.delete),
+            ],
+          ),
+          WritePropagation(
+            on: TableUpdateQuery.onTableName('verse_text',
+                limitUpdateKind: UpdateKind.insert),
+            result: [
+              TableUpdate('verse_text_fts', kind: UpdateKind.insert),
             ],
           ),
         ],
@@ -2910,6 +3596,310 @@ typedef $SegmentSpansProcessedTableManager = ProcessedTableManager<
     (SegmentSpan, BaseReferences<_$AppDb, SegmentSpans, SegmentSpan>),
     SegmentSpan,
     PrefetchHooks Function()>;
+typedef $VerseTextCreateCompanionBuilder = VerseTextCompanion Function({
+  Value<int> id,
+  required int bibleId,
+  required String bookOsisId,
+  required int bookId,
+  required int chapterNumber,
+  required int verseNumber,
+  required String textContent,
+});
+typedef $VerseTextUpdateCompanionBuilder = VerseTextCompanion Function({
+  Value<int> id,
+  Value<int> bibleId,
+  Value<String> bookOsisId,
+  Value<int> bookId,
+  Value<int> chapterNumber,
+  Value<int> verseNumber,
+  Value<String> textContent,
+});
+
+class $VerseTextFilterComposer extends Composer<_$AppDb, VerseText> {
+  $VerseTextFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get bibleId => $composableBuilder(
+      column: $table.bibleId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get bookOsisId => $composableBuilder(
+      column: $table.bookOsisId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get bookId => $composableBuilder(
+      column: $table.bookId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get chapterNumber => $composableBuilder(
+      column: $table.chapterNumber, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get verseNumber => $composableBuilder(
+      column: $table.verseNumber, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get textContent => $composableBuilder(
+      column: $table.textContent, builder: (column) => ColumnFilters(column));
+}
+
+class $VerseTextOrderingComposer extends Composer<_$AppDb, VerseText> {
+  $VerseTextOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get bibleId => $composableBuilder(
+      column: $table.bibleId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get bookOsisId => $composableBuilder(
+      column: $table.bookOsisId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get bookId => $composableBuilder(
+      column: $table.bookId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get chapterNumber => $composableBuilder(
+      column: $table.chapterNumber,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get verseNumber => $composableBuilder(
+      column: $table.verseNumber, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get textContent => $composableBuilder(
+      column: $table.textContent, builder: (column) => ColumnOrderings(column));
+}
+
+class $VerseTextAnnotationComposer extends Composer<_$AppDb, VerseText> {
+  $VerseTextAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get bibleId =>
+      $composableBuilder(column: $table.bibleId, builder: (column) => column);
+
+  GeneratedColumn<String> get bookOsisId => $composableBuilder(
+      column: $table.bookOsisId, builder: (column) => column);
+
+  GeneratedColumn<int> get bookId =>
+      $composableBuilder(column: $table.bookId, builder: (column) => column);
+
+  GeneratedColumn<int> get chapterNumber => $composableBuilder(
+      column: $table.chapterNumber, builder: (column) => column);
+
+  GeneratedColumn<int> get verseNumber => $composableBuilder(
+      column: $table.verseNumber, builder: (column) => column);
+
+  GeneratedColumn<String> get textContent => $composableBuilder(
+      column: $table.textContent, builder: (column) => column);
+}
+
+class $VerseTextTableManager extends RootTableManager<
+    _$AppDb,
+    VerseText,
+    VerseTextData,
+    $VerseTextFilterComposer,
+    $VerseTextOrderingComposer,
+    $VerseTextAnnotationComposer,
+    $VerseTextCreateCompanionBuilder,
+    $VerseTextUpdateCompanionBuilder,
+    (VerseTextData, BaseReferences<_$AppDb, VerseText, VerseTextData>),
+    VerseTextData,
+    PrefetchHooks Function()> {
+  $VerseTextTableManager(_$AppDb db, VerseText table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $VerseTextFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $VerseTextOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $VerseTextAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<int> bibleId = const Value.absent(),
+            Value<String> bookOsisId = const Value.absent(),
+            Value<int> bookId = const Value.absent(),
+            Value<int> chapterNumber = const Value.absent(),
+            Value<int> verseNumber = const Value.absent(),
+            Value<String> textContent = const Value.absent(),
+          }) =>
+              VerseTextCompanion(
+            id: id,
+            bibleId: bibleId,
+            bookOsisId: bookOsisId,
+            bookId: bookId,
+            chapterNumber: chapterNumber,
+            verseNumber: verseNumber,
+            textContent: textContent,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required int bibleId,
+            required String bookOsisId,
+            required int bookId,
+            required int chapterNumber,
+            required int verseNumber,
+            required String textContent,
+          }) =>
+              VerseTextCompanion.insert(
+            id: id,
+            bibleId: bibleId,
+            bookOsisId: bookOsisId,
+            bookId: bookId,
+            chapterNumber: chapterNumber,
+            verseNumber: verseNumber,
+            textContent: textContent,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $VerseTextProcessedTableManager = ProcessedTableManager<
+    _$AppDb,
+    VerseText,
+    VerseTextData,
+    $VerseTextFilterComposer,
+    $VerseTextOrderingComposer,
+    $VerseTextAnnotationComposer,
+    $VerseTextCreateCompanionBuilder,
+    $VerseTextUpdateCompanionBuilder,
+    (VerseTextData, BaseReferences<_$AppDb, VerseText, VerseTextData>),
+    VerseTextData,
+    PrefetchHooks Function()>;
+typedef $VerseTextFtsCreateCompanionBuilder = VerseTextFtsCompanion Function({
+  required String textContent,
+  required String bibleId,
+  Value<int> rowid,
+});
+typedef $VerseTextFtsUpdateCompanionBuilder = VerseTextFtsCompanion Function({
+  Value<String> textContent,
+  Value<String> bibleId,
+  Value<int> rowid,
+});
+
+class $VerseTextFtsFilterComposer extends Composer<_$AppDb, VerseTextFts> {
+  $VerseTextFtsFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get textContent => $composableBuilder(
+      column: $table.textContent, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get bibleId => $composableBuilder(
+      column: $table.bibleId, builder: (column) => ColumnFilters(column));
+}
+
+class $VerseTextFtsOrderingComposer extends Composer<_$AppDb, VerseTextFts> {
+  $VerseTextFtsOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get textContent => $composableBuilder(
+      column: $table.textContent, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get bibleId => $composableBuilder(
+      column: $table.bibleId, builder: (column) => ColumnOrderings(column));
+}
+
+class $VerseTextFtsAnnotationComposer extends Composer<_$AppDb, VerseTextFts> {
+  $VerseTextFtsAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get textContent => $composableBuilder(
+      column: $table.textContent, builder: (column) => column);
+
+  GeneratedColumn<String> get bibleId =>
+      $composableBuilder(column: $table.bibleId, builder: (column) => column);
+}
+
+class $VerseTextFtsTableManager extends RootTableManager<
+    _$AppDb,
+    VerseTextFts,
+    VerseTextFt,
+    $VerseTextFtsFilterComposer,
+    $VerseTextFtsOrderingComposer,
+    $VerseTextFtsAnnotationComposer,
+    $VerseTextFtsCreateCompanionBuilder,
+    $VerseTextFtsUpdateCompanionBuilder,
+    (VerseTextFt, BaseReferences<_$AppDb, VerseTextFts, VerseTextFt>),
+    VerseTextFt,
+    PrefetchHooks Function()> {
+  $VerseTextFtsTableManager(_$AppDb db, VerseTextFts table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $VerseTextFtsFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $VerseTextFtsOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $VerseTextFtsAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> textContent = const Value.absent(),
+            Value<String> bibleId = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              VerseTextFtsCompanion(
+            textContent: textContent,
+            bibleId: bibleId,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String textContent,
+            required String bibleId,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              VerseTextFtsCompanion.insert(
+            textContent: textContent,
+            bibleId: bibleId,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $VerseTextFtsProcessedTableManager = ProcessedTableManager<
+    _$AppDb,
+    VerseTextFts,
+    VerseTextFt,
+    $VerseTextFtsFilterComposer,
+    $VerseTextFtsOrderingComposer,
+    $VerseTextFtsAnnotationComposer,
+    $VerseTextFtsCreateCompanionBuilder,
+    $VerseTextFtsUpdateCompanionBuilder,
+    (VerseTextFt, BaseReferences<_$AppDb, VerseTextFts, VerseTextFt>),
+    VerseTextFt,
+    PrefetchHooks Function()>;
 
 class $AppDbManager {
   final _$AppDb _db;
@@ -2922,6 +3912,10 @@ class $AppDbManager {
       $VerseSegmentsTableManager(_db, _db.verseSegments);
   $SegmentSpansTableManager get segmentSpans =>
       $SegmentSpansTableManager(_db, _db.segmentSpans);
+  $VerseTextTableManager get verseText =>
+      $VerseTextTableManager(_db, _db.verseText);
+  $VerseTextFtsTableManager get verseTextFts =>
+      $VerseTextFtsTableManager(_db, _db.verseTextFts);
 }
 
 class GetBiblesResult {
@@ -3044,5 +4038,18 @@ class GetSegmentsByBibleIdResult {
     required this.chapterNumber,
     required this.verseNumber,
     required this.segmentIndex,
+  });
+}
+
+class SearchVersesResult {
+  final int bibleId;
+  final String bookOsisId;
+  final int chapterNumber;
+  final int verseNumber;
+  SearchVersesResult({
+    required this.bibleId,
+    required this.bookOsisId,
+    required this.chapterNumber,
+    required this.verseNumber,
   });
 }

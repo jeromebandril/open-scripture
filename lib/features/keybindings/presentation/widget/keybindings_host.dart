@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/display_mode_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/fullscreen_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/toolbar_cubit.dart';
+import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
 import '../../../bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
 import '../../domain/app_command.dart';
@@ -71,33 +72,67 @@ class ShortcutHost extends StatelessWidget {
             case AppCommand.prevVerse:
               final activeBloc = context.read<PaneManagerCubit>().activeBloc();
               if (activeBloc.state.reference == null) return;
-              final ref = activeBloc.state.reference!;
-              if (ref.verseStart == 1) return;
+              final results = context.read<BSearchbarBloc>().state.results;
+              //
+              // Normal next verse
+              //
+              if (results.isEmpty) {
+                final ref = activeBloc.state.reference!;
+                if (ref.verseStart == 1) return;
 
+                activeBloc.add(
+                  BiblePaneJustChangeRef(
+                      ref: ref.copyWith(
+                    verseStart: (ref.verseStart ?? 1) - 1,
+                    verseEnd: null,
+                  )),
+                );
+                return;
+              }
+              //
+              // Next verse on different verses
+              //
+              // TODO: fix problem with order
+              final prev = results.indexOf(activeBloc.state.reference!) - 1;
               activeBloc.add(
                 BiblePaneJustChangeRef(
-                    ref: ref.copyWith(
-                  verseStart: (ref.verseStart ?? 1) - 1,
-                  verseEnd: null,
-                )),
+                  ref: results[prev >= 0 ? prev : results.length - 1],
+                ),
               );
-              return;
             case AppCommand.nextVerse:
               final activeBloc = context.read<PaneManagerCubit>().activeBloc();
               if (activeBloc.state.reference == null) return;
-              final ref = activeBloc.state.reference!;
-              // TODO: add to state the number of verses
-              // currently relying on last segment verse number (if it is ordered)
-              if (ref.verseStart ==
-                  activeBloc.state.segments.last.ref.verseStart) return;
+              final results = context.read<BSearchbarBloc>().state.results;
+              //
+              // Normal next verse
+              //
+              if (results.isEmpty) {
+                final ref = activeBloc.state.reference!;
+                // TODO: add to state the number of verses
+                // currently relying on last segment verse number (if it is ordered)
+                if (ref.verseStart ==
+                    activeBloc.state.segments.last.ref.verseStart) return;
 
+                activeBloc.add(
+                  BiblePaneJustChangeRef(
+                      ref: ref.copyWith(
+                    verseStart: (ref.verseStart ?? 0) + 1,
+                    verseEnd: null,
+                  )),
+                );
+                return;
+              }
+              //
+              // Next verse on different verses
+              //
+              // TODO: fix problem with order
+              final next = results.indexOf(activeBloc.state.reference!) + 1;
               activeBloc.add(
                 BiblePaneJustChangeRef(
-                    ref: ref.copyWith(
-                  verseStart: (ref.verseStart ?? 0) + 1,
-                  verseEnd: null,
-                )),
+                  ref: results[next < results.length ? next : 0],
+                ),
               );
+
               return;
             case AppCommand.nextPane:
               final panes = context.read<PaneManagerCubit>().state.panes;
@@ -133,6 +168,14 @@ class ShortcutHost extends StatelessWidget {
               return;
             case AppCommand.unfocusSearch:
               rootFocusNode.requestFocus();
+              return;
+            case AppCommand.displayChapterOfSelected:
+              final activeBloc = context.read<PaneManagerCubit>().activeBloc();
+              if (!activeBloc.state.isMixed) return;
+              if (activeBloc.state.reference == null) return;
+              activeBloc.add(BiblePaneDisplayChapter(
+                ref: activeBloc.state.reference!,
+              ));
               return;
             default:
               return;

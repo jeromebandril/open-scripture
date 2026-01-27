@@ -150,6 +150,9 @@ extension BibleInstallQueries on db.AppDb {
     await transaction(() async {
       await insertVerseSegmentsOnly(segments, bookMap);
 
+      // Insert verse text for fts5 search
+      await populateVerseText(bibleId);
+
       // Insert verse segments
       final rows = await getSegmentsByBibleId(bibleId).get();
 

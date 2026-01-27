@@ -9,6 +9,7 @@ part 'database.g.dart';
 @DriftDatabase(
   include: {
     'tables/core_tables.drift',
+    'tables/verse_fts5.drift',
     'queries/core_queries.drift',
   },
 )
@@ -50,7 +51,7 @@ LazyDatabase _openConnection() {
     // put the database file, called db.sqlite here, into the documents folder
     // for your app.
     final dbFolder = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dbFolder.path, 'db.sqlite'));
+    final file = File(p.join(dbFolder.path, 'open_scripture.sqlite'));
 
     return NativeDatabase.createInBackground(file);
   });

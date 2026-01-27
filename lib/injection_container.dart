@@ -112,7 +112,10 @@ void initBSearchbarFeature() {
   );
 
   sl.registerLazySingleton<BSearchbarRepository>(
-    () => BSearchbarRepositoryImpl(parser: sl()),
+    () => BSearchbarRepositoryImpl(
+      parser: sl(),
+      localDataSource: sl(),
+    ),
   );
 }
 
