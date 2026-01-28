@@ -50,7 +50,7 @@ class VerseWidget extends StatelessWidget {
           ? biblePaneTheme.accentColor
           : useCustom
               ? biblePaneTheme.refColor
-              : Theme.of(context).colorScheme.onSurface,
+              : Theme.of(context).colorScheme.secondary,
     );
 
     return Listener(

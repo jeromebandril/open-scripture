@@ -235,16 +235,23 @@ class _HomeState extends State<Home> {
                           visible: _searchbarHasFocus,
                           child: Align(
                             alignment: Alignment.topCenter,
-                            child: BSearchbar(
-                              focusNode: _searchbarFocusNode,
-                              onSubmitted: () => _returnFocusToRoot(),
-                              //onEditComplete: () => _returnFocusToRoot(),
+                            child: Container(
+                              padding: EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).dividerColor,
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: BSearchbar(
+                                focusNode: _searchbarFocusNode,
+                                onSubmitted: () => _returnFocusToRoot(),
+                                //onEditComplete: () => _returnFocusToRoot(),
+                              ),
                             ),
                           ),
                         ),
                       ),
 
-                    if (isFullscreen && !showToolbar)
+                    if (isFullscreen && !showToolbar && enableDynamicSearchbar)
                       Positioned.fill(
                           child: Align(
                               alignment: AlignmentGeometry.topRight,

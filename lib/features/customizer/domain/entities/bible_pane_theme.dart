@@ -36,7 +36,7 @@ class BiblePaneThemeSettings extends Equatable {
     this.textFontWeight = AppFontWeight.regular,
     this.widthAdjustmentOffset = 0.0,
     this.referenceFont = 'General Sans',
-    this.xPadding = 0,
+    this.xPadding = 0.10,
     this.splitscreenGap = 16,
     this.enableHangingRefs = false,
   });

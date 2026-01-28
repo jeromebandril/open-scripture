@@ -176,6 +176,7 @@ class ShortcutHost extends StatelessWidget {
               activeBloc.add(BiblePaneDisplayChapter(
                 ref: activeBloc.state.reference!,
               ));
+              rootFocusNode.requestFocus();
               return;
             default:
               return;
