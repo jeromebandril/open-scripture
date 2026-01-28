@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:the_smyrna_bible_v2/core/domain/entities/book_names.dart';
 import 'package:the_smyrna_bible_v2/core/utils/bible_ref_parser/bible_ref_parser.dart';
 import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
+
+import '../../../../injection_container.dart';
 
 class ThreeTapNavigator extends StatefulWidget {
   const ThreeTapNavigator({super.key});
@@ -199,6 +202,10 @@ class _BookGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolver = sl<BibleRefResolver>();
+
+    final books = resolver.versification.books;
+
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 6, // number of columns
@@ -206,17 +213,14 @@ class _BookGrid extends StatelessWidget {
         mainAxisSpacing: 2,
         crossAxisSpacing: 2,
       ),
-      itemCount: BibleReferenceParser.bibleBookNameTo3CharCode.length,
+      itemCount: books.length,
       itemBuilder: (context, index) {
-        final value = BibleReferenceParser.bibleBookNameTo3CharCode.values
-            .elementAt(index);
-        final key =
-            BibleReferenceParser.bibleBookNameTo3CharCode.keys.elementAt(index);
+        final value = books.elementAt(index);
         return GridTile(
             child: TextButton(
-          onPressed: () => onSelect?.call(key),
+          onPressed: () => onSelect?.call(value.usfxId),
           child: Text(
-            value,
+            value.usfxId,
             style: TextStyle(
               color: index <= 39
                   ? null

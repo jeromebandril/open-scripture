@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 class Book extends Equatable {
   final int? id;
-  final String? osisId;
+  final String? usfxId;
   final String longName;
   final String shortName;
   final String? abbr;
@@ -11,7 +11,7 @@ class Book extends Equatable {
 
   const Book({
     this.id,
-    this.osisId,
+    this.usfxId,
     required this.longName,
     required this.shortName,
     this.abbr,
@@ -22,7 +22,7 @@ class Book extends Equatable {
   @override
   List<Object?> get props => [
         id,
-        osisId,
+        usfxId,
         longName,
         shortName,
         abbr,

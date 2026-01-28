@@ -52,7 +52,7 @@ void main() {
     final books = parser.getBooks();
 
     expect(books.length, 2);
-    expect(books.first.osisId, 'GEN');
+    expect(books.first.usfxId, 'GEN');
     expect(books.first.shortName, 'Genesis');
   });
 
@@ -74,7 +74,7 @@ void main() {
     final segments = parser.getVersesWithSpans();
 
     expect(segments.$1.length, 1);
-    expect(segments.$1.first.ref.bookOsisId, 'GEN');
+    expect(segments.$1.first.ref.bookUsfxId, 'GEN');
     expect(segments.$1.first.ref.chapter, 1);
     expect(segments.$1.first.ref.verseStart, 6);
     expect(segments.$1.first.textContent, contains('And God said'));

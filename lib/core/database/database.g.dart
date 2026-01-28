@@ -293,9 +293,9 @@ class Bibles extends Table with TableInfo<Bibles, Bible> {
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       $customConstraints: 'NOT NULL PRIMARY KEY AUTOINCREMENT');
-  static const VerificationMeta _extIdMeta = const VerificationMeta('extId');
-  late final GeneratedColumn<String> extId = GeneratedColumn<String>(
-      'extId', aliasedName, false,
+  static const VerificationMeta _usfxIdMeta = const VerificationMeta('usfxId');
+  late final GeneratedColumn<String> usfxId = GeneratedColumn<String>(
+      'usfxId', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: true,
       $customConstraints: 'NOT NULL UNIQUE');
@@ -337,7 +337,7 @@ class Bibles extends Table with TableInfo<Bibles, Bible> {
   @override
   List<GeneratedColumn> get $columns => [
         id,
-        extId,
+        usfxId,
         languageId,
         bibleName,
         bibleNameLocal,
@@ -357,11 +357,11 @@ class Bibles extends Table with TableInfo<Bibles, Bible> {
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
-    if (data.containsKey('extId')) {
-      context.handle(
-          _extIdMeta, extId.isAcceptableOrUnknown(data['extId']!, _extIdMeta));
+    if (data.containsKey('usfxId')) {
+      context.handle(_usfxIdMeta,
+          usfxId.isAcceptableOrUnknown(data['usfxId']!, _usfxIdMeta));
     } else if (isInserting) {
-      context.missing(_extIdMeta);
+      context.missing(_usfxIdMeta);
     }
     if (data.containsKey('languageId')) {
       context.handle(
@@ -408,8 +408,8 @@ class Bibles extends Table with TableInfo<Bibles, Bible> {
     return Bible(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      extId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}extId'])!,
+      usfxId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}usfxId'])!,
       languageId: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}languageId']),
       bibleName: attachedDatabase.typeMapping
@@ -430,16 +430,15 @@ class Bibles extends Table with TableInfo<Bibles, Bible> {
   }
 
   @override
-  List<String> get customConstraints => const [
-        'FOREIGN KEY(languageId)REFERENCES languages(id)ON DELETE CASCADE'
-      ];
+  List<String> get customConstraints =>
+      const ['FOREIGN KEY(languageId)REFERENCES languages(id)'];
   @override
   bool get dontWriteConstraints => true;
 }
 
 class Bible extends DataClass implements Insertable<Bible> {
   final int id;
-  final String extId;
+  final String usfxId;
   final int? languageId;
   final String bibleName;
   final String bibleNameLocal;
@@ -447,7 +446,7 @@ class Bible extends DataClass implements Insertable<Bible> {
   final String? originSource;
   const Bible(
       {required this.id,
-      required this.extId,
+      required this.usfxId,
       this.languageId,
       required this.bibleName,
       required this.bibleNameLocal,
@@ -457,7 +456,7 @@ class Bible extends DataClass implements Insertable<Bible> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['extId'] = Variable<String>(extId);
+    map['usfxId'] = Variable<String>(usfxId);
     if (!nullToAbsent || languageId != null) {
       map['languageId'] = Variable<int>(languageId);
     }
@@ -473,7 +472,7 @@ class Bible extends DataClass implements Insertable<Bible> {
   BiblesCompanion toCompanion(bool nullToAbsent) {
     return BiblesCompanion(
       id: Value(id),
-      extId: Value(extId),
+      usfxId: Value(usfxId),
       languageId: languageId == null && nullToAbsent
           ? const Value.absent()
           : Value(languageId),
@@ -491,7 +490,7 @@ class Bible extends DataClass implements Insertable<Bible> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Bible(
       id: serializer.fromJson<int>(json['id']),
-      extId: serializer.fromJson<String>(json['extId']),
+      usfxId: serializer.fromJson<String>(json['usfxId']),
       languageId: serializer.fromJson<int?>(json['languageId']),
       bibleName: serializer.fromJson<String>(json['bibleName']),
       bibleNameLocal: serializer.fromJson<String>(json['bibleNameLocal']),
@@ -505,7 +504,7 @@ class Bible extends DataClass implements Insertable<Bible> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'extId': serializer.toJson<String>(extId),
+      'usfxId': serializer.toJson<String>(usfxId),
       'languageId': serializer.toJson<int?>(languageId),
       'bibleName': serializer.toJson<String>(bibleName),
       'bibleNameLocal': serializer.toJson<String>(bibleNameLocal),
@@ -516,7 +515,7 @@ class Bible extends DataClass implements Insertable<Bible> {
 
   Bible copyWith(
           {int? id,
-          String? extId,
+          String? usfxId,
           Value<int?> languageId = const Value.absent(),
           String? bibleName,
           String? bibleNameLocal,
@@ -524,7 +523,7 @@ class Bible extends DataClass implements Insertable<Bible> {
           Value<String?> originSource = const Value.absent()}) =>
       Bible(
         id: id ?? this.id,
-        extId: extId ?? this.extId,
+        usfxId: usfxId ?? this.usfxId,
         languageId: languageId.present ? languageId.value : this.languageId,
         bibleName: bibleName ?? this.bibleName,
         bibleNameLocal: bibleNameLocal ?? this.bibleNameLocal,
@@ -536,7 +535,7 @@ class Bible extends DataClass implements Insertable<Bible> {
   Bible copyWithCompanion(BiblesCompanion data) {
     return Bible(
       id: data.id.present ? data.id.value : this.id,
-      extId: data.extId.present ? data.extId.value : this.extId,
+      usfxId: data.usfxId.present ? data.usfxId.value : this.usfxId,
       languageId:
           data.languageId.present ? data.languageId.value : this.languageId,
       bibleName: data.bibleName.present ? data.bibleName.value : this.bibleName,
@@ -556,7 +555,7 @@ class Bible extends DataClass implements Insertable<Bible> {
   String toString() {
     return (StringBuffer('Bible(')
           ..write('id: $id, ')
-          ..write('extId: $extId, ')
+          ..write('usfxId: $usfxId, ')
           ..write('languageId: $languageId, ')
           ..write('bibleName: $bibleName, ')
           ..write('bibleNameLocal: $bibleNameLocal, ')
@@ -567,14 +566,14 @@ class Bible extends DataClass implements Insertable<Bible> {
   }
 
   @override
-  int get hashCode => Object.hash(id, extId, languageId, bibleName,
+  int get hashCode => Object.hash(id, usfxId, languageId, bibleName,
       bibleNameLocal, bibleNameAbbreviation, originSource);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Bible &&
           other.id == this.id &&
-          other.extId == this.extId &&
+          other.usfxId == this.usfxId &&
           other.languageId == this.languageId &&
           other.bibleName == this.bibleName &&
           other.bibleNameLocal == this.bibleNameLocal &&
@@ -584,7 +583,7 @@ class Bible extends DataClass implements Insertable<Bible> {
 
 class BiblesCompanion extends UpdateCompanion<Bible> {
   final Value<int> id;
-  final Value<String> extId;
+  final Value<String> usfxId;
   final Value<int?> languageId;
   final Value<String> bibleName;
   final Value<String> bibleNameLocal;
@@ -592,7 +591,7 @@ class BiblesCompanion extends UpdateCompanion<Bible> {
   final Value<String?> originSource;
   const BiblesCompanion({
     this.id = const Value.absent(),
-    this.extId = const Value.absent(),
+    this.usfxId = const Value.absent(),
     this.languageId = const Value.absent(),
     this.bibleName = const Value.absent(),
     this.bibleNameLocal = const Value.absent(),
@@ -601,19 +600,19 @@ class BiblesCompanion extends UpdateCompanion<Bible> {
   });
   BiblesCompanion.insert({
     this.id = const Value.absent(),
-    required String extId,
+    required String usfxId,
     this.languageId = const Value.absent(),
     required String bibleName,
     required String bibleNameLocal,
     required String bibleNameAbbreviation,
     this.originSource = const Value.absent(),
-  })  : extId = Value(extId),
+  })  : usfxId = Value(usfxId),
         bibleName = Value(bibleName),
         bibleNameLocal = Value(bibleNameLocal),
         bibleNameAbbreviation = Value(bibleNameAbbreviation);
   static Insertable<Bible> custom({
     Expression<int>? id,
-    Expression<String>? extId,
+    Expression<String>? usfxId,
     Expression<int>? languageId,
     Expression<String>? bibleName,
     Expression<String>? bibleNameLocal,
@@ -622,7 +621,7 @@ class BiblesCompanion extends UpdateCompanion<Bible> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (extId != null) 'extId': extId,
+      if (usfxId != null) 'usfxId': usfxId,
       if (languageId != null) 'languageId': languageId,
       if (bibleName != null) 'bibleName': bibleName,
       if (bibleNameLocal != null) 'bibleNameLocal': bibleNameLocal,
@@ -634,7 +633,7 @@ class BiblesCompanion extends UpdateCompanion<Bible> {
 
   BiblesCompanion copyWith(
       {Value<int>? id,
-      Value<String>? extId,
+      Value<String>? usfxId,
       Value<int?>? languageId,
       Value<String>? bibleName,
       Value<String>? bibleNameLocal,
@@ -642,7 +641,7 @@ class BiblesCompanion extends UpdateCompanion<Bible> {
       Value<String?>? originSource}) {
     return BiblesCompanion(
       id: id ?? this.id,
-      extId: extId ?? this.extId,
+      usfxId: usfxId ?? this.usfxId,
       languageId: languageId ?? this.languageId,
       bibleName: bibleName ?? this.bibleName,
       bibleNameLocal: bibleNameLocal ?? this.bibleNameLocal,
@@ -658,8 +657,8 @@ class BiblesCompanion extends UpdateCompanion<Bible> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
-    if (extId.present) {
-      map['extId'] = Variable<String>(extId.value);
+    if (usfxId.present) {
+      map['usfxId'] = Variable<String>(usfxId.value);
     }
     if (languageId.present) {
       map['languageId'] = Variable<int>(languageId.value);
@@ -684,7 +683,7 @@ class BiblesCompanion extends UpdateCompanion<Bible> {
   String toString() {
     return (StringBuffer('BiblesCompanion(')
           ..write('id: $id, ')
-          ..write('extId: $extId, ')
+          ..write('usfxId: $usfxId, ')
           ..write('languageId: $languageId, ')
           ..write('bibleName: $bibleName, ')
           ..write('bibleNameLocal: $bibleNameLocal, ')
@@ -712,6 +711,12 @@ class Books extends Table with TableInfo<Books, Book> {
   late final GeneratedColumn<int> bibleId = GeneratedColumn<int>(
       'bibleId', aliasedName, false,
       type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _usfxIdMeta = const VerificationMeta('usfxId');
+  late final GeneratedColumn<String> usfxId = GeneratedColumn<String>(
+      'usfxId', aliasedName, false,
+      type: DriftSqlType.string,
       requiredDuringInsert: true,
       $customConstraints: 'NOT NULL');
   static const VerificationMeta _osisIdMeta = const VerificationMeta('osisId');
@@ -743,7 +748,7 @@ class Books extends Table with TableInfo<Books, Book> {
       $customConstraints: 'NOT NULL');
   @override
   List<GeneratedColumn> get $columns =>
-      [id, bibleId, osisId, bookOrder, longName, shortName];
+      [id, bibleId, usfxId, osisId, bookOrder, longName, shortName];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -762,6 +767,12 @@ class Books extends Table with TableInfo<Books, Book> {
           bibleId.isAcceptableOrUnknown(data['bibleId']!, _bibleIdMeta));
     } else if (isInserting) {
       context.missing(_bibleIdMeta);
+    }
+    if (data.containsKey('usfxId')) {
+      context.handle(_usfxIdMeta,
+          usfxId.isAcceptableOrUnknown(data['usfxId']!, _usfxIdMeta));
+    } else if (isInserting) {
+      context.missing(_usfxIdMeta);
     }
     if (data.containsKey('osisId')) {
       context.handle(_osisIdMeta,
@@ -790,7 +801,7 @@ class Books extends Table with TableInfo<Books, Book> {
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   List<Set<GeneratedColumn>> get uniqueKeys => [
-        {bibleId, osisId},
+        {bibleId, usfxId},
       ];
   @override
   Book map(Map<String, dynamic> data, {String? tablePrefix}) {
@@ -800,6 +811,8 @@ class Books extends Table with TableInfo<Books, Book> {
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       bibleId: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}bibleId'])!,
+      usfxId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}usfxId'])!,
       osisId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}osisId'])!,
       bookOrder: attachedDatabase.typeMapping
@@ -819,7 +832,7 @@ class Books extends Table with TableInfo<Books, Book> {
   @override
   List<String> get customConstraints => const [
         'FOREIGN KEY(bibleId)REFERENCES bibles(id)ON DELETE CASCADE',
-        'UNIQUE(bibleId, osisId)'
+        'UNIQUE(bibleId, usfxId)'
       ];
   @override
   bool get dontWriteConstraints => true;
@@ -828,6 +841,7 @@ class Books extends Table with TableInfo<Books, Book> {
 class Book extends DataClass implements Insertable<Book> {
   final int id;
   final int bibleId;
+  final String usfxId;
   final String osisId;
   final int? bookOrder;
   final String? longName;
@@ -835,6 +849,7 @@ class Book extends DataClass implements Insertable<Book> {
   const Book(
       {required this.id,
       required this.bibleId,
+      required this.usfxId,
       required this.osisId,
       this.bookOrder,
       this.longName,
@@ -844,6 +859,7 @@ class Book extends DataClass implements Insertable<Book> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['bibleId'] = Variable<int>(bibleId);
+    map['usfxId'] = Variable<String>(usfxId);
     map['osisId'] = Variable<String>(osisId);
     if (!nullToAbsent || bookOrder != null) {
       map['bookOrder'] = Variable<int>(bookOrder);
@@ -859,6 +875,7 @@ class Book extends DataClass implements Insertable<Book> {
     return BooksCompanion(
       id: Value(id),
       bibleId: Value(bibleId),
+      usfxId: Value(usfxId),
       osisId: Value(osisId),
       bookOrder: bookOrder == null && nullToAbsent
           ? const Value.absent()
@@ -876,6 +893,7 @@ class Book extends DataClass implements Insertable<Book> {
     return Book(
       id: serializer.fromJson<int>(json['id']),
       bibleId: serializer.fromJson<int>(json['bibleId']),
+      usfxId: serializer.fromJson<String>(json['usfxId']),
       osisId: serializer.fromJson<String>(json['osisId']),
       bookOrder: serializer.fromJson<int?>(json['bookOrder']),
       longName: serializer.fromJson<String?>(json['longName']),
@@ -888,6 +906,7 @@ class Book extends DataClass implements Insertable<Book> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'bibleId': serializer.toJson<int>(bibleId),
+      'usfxId': serializer.toJson<String>(usfxId),
       'osisId': serializer.toJson<String>(osisId),
       'bookOrder': serializer.toJson<int?>(bookOrder),
       'longName': serializer.toJson<String?>(longName),
@@ -898,6 +917,7 @@ class Book extends DataClass implements Insertable<Book> {
   Book copyWith(
           {int? id,
           int? bibleId,
+          String? usfxId,
           String? osisId,
           Value<int?> bookOrder = const Value.absent(),
           Value<String?> longName = const Value.absent(),
@@ -905,6 +925,7 @@ class Book extends DataClass implements Insertable<Book> {
       Book(
         id: id ?? this.id,
         bibleId: bibleId ?? this.bibleId,
+        usfxId: usfxId ?? this.usfxId,
         osisId: osisId ?? this.osisId,
         bookOrder: bookOrder.present ? bookOrder.value : this.bookOrder,
         longName: longName.present ? longName.value : this.longName,
@@ -914,6 +935,7 @@ class Book extends DataClass implements Insertable<Book> {
     return Book(
       id: data.id.present ? data.id.value : this.id,
       bibleId: data.bibleId.present ? data.bibleId.value : this.bibleId,
+      usfxId: data.usfxId.present ? data.usfxId.value : this.usfxId,
       osisId: data.osisId.present ? data.osisId.value : this.osisId,
       bookOrder: data.bookOrder.present ? data.bookOrder.value : this.bookOrder,
       longName: data.longName.present ? data.longName.value : this.longName,
@@ -926,6 +948,7 @@ class Book extends DataClass implements Insertable<Book> {
     return (StringBuffer('Book(')
           ..write('id: $id, ')
           ..write('bibleId: $bibleId, ')
+          ..write('usfxId: $usfxId, ')
           ..write('osisId: $osisId, ')
           ..write('bookOrder: $bookOrder, ')
           ..write('longName: $longName, ')
@@ -936,13 +959,14 @@ class Book extends DataClass implements Insertable<Book> {
 
   @override
   int get hashCode =>
-      Object.hash(id, bibleId, osisId, bookOrder, longName, shortName);
+      Object.hash(id, bibleId, usfxId, osisId, bookOrder, longName, shortName);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Book &&
           other.id == this.id &&
           other.bibleId == this.bibleId &&
+          other.usfxId == this.usfxId &&
           other.osisId == this.osisId &&
           other.bookOrder == this.bookOrder &&
           other.longName == this.longName &&
@@ -952,6 +976,7 @@ class Book extends DataClass implements Insertable<Book> {
 class BooksCompanion extends UpdateCompanion<Book> {
   final Value<int> id;
   final Value<int> bibleId;
+  final Value<String> usfxId;
   final Value<String> osisId;
   final Value<int?> bookOrder;
   final Value<String?> longName;
@@ -959,6 +984,7 @@ class BooksCompanion extends UpdateCompanion<Book> {
   const BooksCompanion({
     this.id = const Value.absent(),
     this.bibleId = const Value.absent(),
+    this.usfxId = const Value.absent(),
     this.osisId = const Value.absent(),
     this.bookOrder = const Value.absent(),
     this.longName = const Value.absent(),
@@ -967,16 +993,19 @@ class BooksCompanion extends UpdateCompanion<Book> {
   BooksCompanion.insert({
     this.id = const Value.absent(),
     required int bibleId,
+    required String usfxId,
     required String osisId,
     this.bookOrder = const Value.absent(),
     this.longName = const Value.absent(),
     required String shortName,
   })  : bibleId = Value(bibleId),
+        usfxId = Value(usfxId),
         osisId = Value(osisId),
         shortName = Value(shortName);
   static Insertable<Book> custom({
     Expression<int>? id,
     Expression<int>? bibleId,
+    Expression<String>? usfxId,
     Expression<String>? osisId,
     Expression<int>? bookOrder,
     Expression<String>? longName,
@@ -985,6 +1014,7 @@ class BooksCompanion extends UpdateCompanion<Book> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (bibleId != null) 'bibleId': bibleId,
+      if (usfxId != null) 'usfxId': usfxId,
       if (osisId != null) 'osisId': osisId,
       if (bookOrder != null) 'bookOrder': bookOrder,
       if (longName != null) 'longName': longName,
@@ -995,6 +1025,7 @@ class BooksCompanion extends UpdateCompanion<Book> {
   BooksCompanion copyWith(
       {Value<int>? id,
       Value<int>? bibleId,
+      Value<String>? usfxId,
       Value<String>? osisId,
       Value<int?>? bookOrder,
       Value<String?>? longName,
@@ -1002,6 +1033,7 @@ class BooksCompanion extends UpdateCompanion<Book> {
     return BooksCompanion(
       id: id ?? this.id,
       bibleId: bibleId ?? this.bibleId,
+      usfxId: usfxId ?? this.usfxId,
       osisId: osisId ?? this.osisId,
       bookOrder: bookOrder ?? this.bookOrder,
       longName: longName ?? this.longName,
@@ -1017,6 +1049,9 @@ class BooksCompanion extends UpdateCompanion<Book> {
     }
     if (bibleId.present) {
       map['bibleId'] = Variable<int>(bibleId.value);
+    }
+    if (usfxId.present) {
+      map['usfxId'] = Variable<String>(usfxId.value);
     }
     if (osisId.present) {
       map['osisId'] = Variable<String>(osisId.value);
@@ -1038,6 +1073,7 @@ class BooksCompanion extends UpdateCompanion<Book> {
     return (StringBuffer('BooksCompanion(')
           ..write('id: $id, ')
           ..write('bibleId: $bibleId, ')
+          ..write('usfxId: $usfxId, ')
           ..write('osisId: $osisId, ')
           ..write('bookOrder: $bookOrder, ')
           ..write('longName: $longName, ')
@@ -1867,10 +1903,10 @@ class VerseText extends Table with TableInfo<VerseText, VerseTextData> {
       type: DriftSqlType.int,
       requiredDuringInsert: true,
       $customConstraints: 'NOT NULL');
-  static const VerificationMeta _bookOsisIdMeta =
-      const VerificationMeta('bookOsisId');
-  late final GeneratedColumn<String> bookOsisId = GeneratedColumn<String>(
-      'bookOsisId', aliasedName, false,
+  static const VerificationMeta _bookUsfxIdMeta =
+      const VerificationMeta('bookUsfxId');
+  late final GeneratedColumn<String> bookUsfxId = GeneratedColumn<String>(
+      'bookUsfxId', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: true,
       $customConstraints: 'NOT NULL');
@@ -1905,7 +1941,7 @@ class VerseText extends Table with TableInfo<VerseText, VerseTextData> {
   List<GeneratedColumn> get $columns => [
         id,
         bibleId,
-        bookOsisId,
+        bookUsfxId,
         bookId,
         chapterNumber,
         verseNumber,
@@ -1930,13 +1966,13 @@ class VerseText extends Table with TableInfo<VerseText, VerseTextData> {
     } else if (isInserting) {
       context.missing(_bibleIdMeta);
     }
-    if (data.containsKey('bookOsisId')) {
+    if (data.containsKey('bookUsfxId')) {
       context.handle(
-          _bookOsisIdMeta,
-          bookOsisId.isAcceptableOrUnknown(
-              data['bookOsisId']!, _bookOsisIdMeta));
+          _bookUsfxIdMeta,
+          bookUsfxId.isAcceptableOrUnknown(
+              data['bookUsfxId']!, _bookUsfxIdMeta));
     } else if (isInserting) {
-      context.missing(_bookOsisIdMeta);
+      context.missing(_bookUsfxIdMeta);
     }
     if (data.containsKey('bookId')) {
       context.handle(_bookIdMeta,
@@ -1975,7 +2011,7 @@ class VerseText extends Table with TableInfo<VerseText, VerseTextData> {
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   List<Set<GeneratedColumn>> get uniqueKeys => [
-        {bibleId, bookOsisId, chapterNumber, verseNumber},
+        {bibleId, bookUsfxId, chapterNumber, verseNumber},
       ];
   @override
   VerseTextData map(Map<String, dynamic> data, {String? tablePrefix}) {
@@ -1985,8 +2021,8 @@ class VerseText extends Table with TableInfo<VerseText, VerseTextData> {
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       bibleId: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}bibleId'])!,
-      bookOsisId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}bookOsisId'])!,
+      bookUsfxId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}bookUsfxId'])!,
       bookId: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}bookId'])!,
       chapterNumber: attachedDatabase.typeMapping
@@ -2006,7 +2042,7 @@ class VerseText extends Table with TableInfo<VerseText, VerseTextData> {
   @override
   List<String> get customConstraints => const [
         'FOREIGN KEY(bookId)REFERENCES books(id)ON DELETE CASCADE',
-        'UNIQUE(bibleId, bookOsisId, chapterNumber, verseNumber)'
+        'UNIQUE(bibleId, bookUsfxId, chapterNumber, verseNumber)'
       ];
   @override
   bool get dontWriteConstraints => true;
@@ -2015,7 +2051,7 @@ class VerseText extends Table with TableInfo<VerseText, VerseTextData> {
 class VerseTextData extends DataClass implements Insertable<VerseTextData> {
   final int id;
   final int bibleId;
-  final String bookOsisId;
+  final String bookUsfxId;
   final int bookId;
   final int chapterNumber;
   final int verseNumber;
@@ -2023,7 +2059,7 @@ class VerseTextData extends DataClass implements Insertable<VerseTextData> {
   const VerseTextData(
       {required this.id,
       required this.bibleId,
-      required this.bookOsisId,
+      required this.bookUsfxId,
       required this.bookId,
       required this.chapterNumber,
       required this.verseNumber,
@@ -2033,7 +2069,7 @@ class VerseTextData extends DataClass implements Insertable<VerseTextData> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['bibleId'] = Variable<int>(bibleId);
-    map['bookOsisId'] = Variable<String>(bookOsisId);
+    map['bookUsfxId'] = Variable<String>(bookUsfxId);
     map['bookId'] = Variable<int>(bookId);
     map['chapterNumber'] = Variable<int>(chapterNumber);
     map['verseNumber'] = Variable<int>(verseNumber);
@@ -2045,7 +2081,7 @@ class VerseTextData extends DataClass implements Insertable<VerseTextData> {
     return VerseTextCompanion(
       id: Value(id),
       bibleId: Value(bibleId),
-      bookOsisId: Value(bookOsisId),
+      bookUsfxId: Value(bookUsfxId),
       bookId: Value(bookId),
       chapterNumber: Value(chapterNumber),
       verseNumber: Value(verseNumber),
@@ -2059,7 +2095,7 @@ class VerseTextData extends DataClass implements Insertable<VerseTextData> {
     return VerseTextData(
       id: serializer.fromJson<int>(json['id']),
       bibleId: serializer.fromJson<int>(json['bibleId']),
-      bookOsisId: serializer.fromJson<String>(json['bookOsisId']),
+      bookUsfxId: serializer.fromJson<String>(json['bookUsfxId']),
       bookId: serializer.fromJson<int>(json['bookId']),
       chapterNumber: serializer.fromJson<int>(json['chapterNumber']),
       verseNumber: serializer.fromJson<int>(json['verseNumber']),
@@ -2072,7 +2108,7 @@ class VerseTextData extends DataClass implements Insertable<VerseTextData> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'bibleId': serializer.toJson<int>(bibleId),
-      'bookOsisId': serializer.toJson<String>(bookOsisId),
+      'bookUsfxId': serializer.toJson<String>(bookUsfxId),
       'bookId': serializer.toJson<int>(bookId),
       'chapterNumber': serializer.toJson<int>(chapterNumber),
       'verseNumber': serializer.toJson<int>(verseNumber),
@@ -2083,7 +2119,7 @@ class VerseTextData extends DataClass implements Insertable<VerseTextData> {
   VerseTextData copyWith(
           {int? id,
           int? bibleId,
-          String? bookOsisId,
+          String? bookUsfxId,
           int? bookId,
           int? chapterNumber,
           int? verseNumber,
@@ -2091,7 +2127,7 @@ class VerseTextData extends DataClass implements Insertable<VerseTextData> {
       VerseTextData(
         id: id ?? this.id,
         bibleId: bibleId ?? this.bibleId,
-        bookOsisId: bookOsisId ?? this.bookOsisId,
+        bookUsfxId: bookUsfxId ?? this.bookUsfxId,
         bookId: bookId ?? this.bookId,
         chapterNumber: chapterNumber ?? this.chapterNumber,
         verseNumber: verseNumber ?? this.verseNumber,
@@ -2101,8 +2137,8 @@ class VerseTextData extends DataClass implements Insertable<VerseTextData> {
     return VerseTextData(
       id: data.id.present ? data.id.value : this.id,
       bibleId: data.bibleId.present ? data.bibleId.value : this.bibleId,
-      bookOsisId:
-          data.bookOsisId.present ? data.bookOsisId.value : this.bookOsisId,
+      bookUsfxId:
+          data.bookUsfxId.present ? data.bookUsfxId.value : this.bookUsfxId,
       bookId: data.bookId.present ? data.bookId.value : this.bookId,
       chapterNumber: data.chapterNumber.present
           ? data.chapterNumber.value
@@ -2119,7 +2155,7 @@ class VerseTextData extends DataClass implements Insertable<VerseTextData> {
     return (StringBuffer('VerseTextData(')
           ..write('id: $id, ')
           ..write('bibleId: $bibleId, ')
-          ..write('bookOsisId: $bookOsisId, ')
+          ..write('bookUsfxId: $bookUsfxId, ')
           ..write('bookId: $bookId, ')
           ..write('chapterNumber: $chapterNumber, ')
           ..write('verseNumber: $verseNumber, ')
@@ -2130,14 +2166,14 @@ class VerseTextData extends DataClass implements Insertable<VerseTextData> {
 
   @override
   int get hashCode => Object.hash(
-      id, bibleId, bookOsisId, bookId, chapterNumber, verseNumber, textContent);
+      id, bibleId, bookUsfxId, bookId, chapterNumber, verseNumber, textContent);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is VerseTextData &&
           other.id == this.id &&
           other.bibleId == this.bibleId &&
-          other.bookOsisId == this.bookOsisId &&
+          other.bookUsfxId == this.bookUsfxId &&
           other.bookId == this.bookId &&
           other.chapterNumber == this.chapterNumber &&
           other.verseNumber == this.verseNumber &&
@@ -2147,7 +2183,7 @@ class VerseTextData extends DataClass implements Insertable<VerseTextData> {
 class VerseTextCompanion extends UpdateCompanion<VerseTextData> {
   final Value<int> id;
   final Value<int> bibleId;
-  final Value<String> bookOsisId;
+  final Value<String> bookUsfxId;
   final Value<int> bookId;
   final Value<int> chapterNumber;
   final Value<int> verseNumber;
@@ -2155,7 +2191,7 @@ class VerseTextCompanion extends UpdateCompanion<VerseTextData> {
   const VerseTextCompanion({
     this.id = const Value.absent(),
     this.bibleId = const Value.absent(),
-    this.bookOsisId = const Value.absent(),
+    this.bookUsfxId = const Value.absent(),
     this.bookId = const Value.absent(),
     this.chapterNumber = const Value.absent(),
     this.verseNumber = const Value.absent(),
@@ -2164,13 +2200,13 @@ class VerseTextCompanion extends UpdateCompanion<VerseTextData> {
   VerseTextCompanion.insert({
     this.id = const Value.absent(),
     required int bibleId,
-    required String bookOsisId,
+    required String bookUsfxId,
     required int bookId,
     required int chapterNumber,
     required int verseNumber,
     required String textContent,
   })  : bibleId = Value(bibleId),
-        bookOsisId = Value(bookOsisId),
+        bookUsfxId = Value(bookUsfxId),
         bookId = Value(bookId),
         chapterNumber = Value(chapterNumber),
         verseNumber = Value(verseNumber),
@@ -2178,7 +2214,7 @@ class VerseTextCompanion extends UpdateCompanion<VerseTextData> {
   static Insertable<VerseTextData> custom({
     Expression<int>? id,
     Expression<int>? bibleId,
-    Expression<String>? bookOsisId,
+    Expression<String>? bookUsfxId,
     Expression<int>? bookId,
     Expression<int>? chapterNumber,
     Expression<int>? verseNumber,
@@ -2187,7 +2223,7 @@ class VerseTextCompanion extends UpdateCompanion<VerseTextData> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (bibleId != null) 'bibleId': bibleId,
-      if (bookOsisId != null) 'bookOsisId': bookOsisId,
+      if (bookUsfxId != null) 'bookUsfxId': bookUsfxId,
       if (bookId != null) 'bookId': bookId,
       if (chapterNumber != null) 'chapterNumber': chapterNumber,
       if (verseNumber != null) 'verseNumber': verseNumber,
@@ -2198,7 +2234,7 @@ class VerseTextCompanion extends UpdateCompanion<VerseTextData> {
   VerseTextCompanion copyWith(
       {Value<int>? id,
       Value<int>? bibleId,
-      Value<String>? bookOsisId,
+      Value<String>? bookUsfxId,
       Value<int>? bookId,
       Value<int>? chapterNumber,
       Value<int>? verseNumber,
@@ -2206,7 +2242,7 @@ class VerseTextCompanion extends UpdateCompanion<VerseTextData> {
     return VerseTextCompanion(
       id: id ?? this.id,
       bibleId: bibleId ?? this.bibleId,
-      bookOsisId: bookOsisId ?? this.bookOsisId,
+      bookUsfxId: bookUsfxId ?? this.bookUsfxId,
       bookId: bookId ?? this.bookId,
       chapterNumber: chapterNumber ?? this.chapterNumber,
       verseNumber: verseNumber ?? this.verseNumber,
@@ -2223,8 +2259,8 @@ class VerseTextCompanion extends UpdateCompanion<VerseTextData> {
     if (bibleId.present) {
       map['bibleId'] = Variable<int>(bibleId.value);
     }
-    if (bookOsisId.present) {
-      map['bookOsisId'] = Variable<String>(bookOsisId.value);
+    if (bookUsfxId.present) {
+      map['bookUsfxId'] = Variable<String>(bookUsfxId.value);
     }
     if (bookId.present) {
       map['bookId'] = Variable<int>(bookId.value);
@@ -2246,7 +2282,7 @@ class VerseTextCompanion extends UpdateCompanion<VerseTextData> {
     return (StringBuffer('VerseTextCompanion(')
           ..write('id: $id, ')
           ..write('bibleId: $bibleId, ')
-          ..write('bookOsisId: $bookOsisId, ')
+          ..write('bookUsfxId: $bookUsfxId, ')
           ..write('bookId: $bookId, ')
           ..write('chapterNumber: $chapterNumber, ')
           ..write('verseNumber: $verseNumber, ')
@@ -2471,7 +2507,7 @@ abstract class _$AppDb extends GeneratedDatabase {
   late final SegmentSpans segmentSpans = SegmentSpans(this);
   late final VerseText verseText = VerseText(this);
   late final Index ixVerseTextBible = Index('ix_verse_text_bible',
-      'CREATE INDEX ix_verse_text_bible ON verse_text (bibleId, bookOsisId, chapterNumber, verseNumber)');
+      'CREATE INDEX ix_verse_text_bible ON verse_text (bibleId, bookUsfxId, chapterNumber, verseNumber)');
   late final VerseTextFts verseTextFts = VerseTextFts(this);
   late final Trigger verseTextAi = Trigger(
       'CREATE TRIGGER verse_text_ai AFTER INSERT ON verse_text BEGIN INSERT INTO verse_text_fts ("rowid", textContent, bibleId) VALUES (new.id, new.textContent, new.bibleId);END',
@@ -2482,14 +2518,14 @@ abstract class _$AppDb extends GeneratedDatabase {
       'CREATE UNIQUE INDEX ux_languages_iso ON languages (langIsoCode)');
   Selectable<GetBiblesResult> getBibles() {
     return customSelect(
-        'SELECT b.id, b.extId, b.languageId, b.bibleName, b.bibleNameLocal, b.bibleNameAbbreviation, b.originSource, l.langEngName, l.langIsoCode, l.langNativeName FROM bibles AS b JOIN languages AS l ON b.languageId = l.id',
+        'SELECT b.id, b.usfxId, b.languageId, b.bibleName, b.bibleNameLocal, b.bibleNameAbbreviation, b.originSource, l.langEngName, l.langIsoCode, l.langNativeName FROM bibles AS b JOIN languages AS l ON b.languageId = l.id',
         variables: [],
         readsFrom: {
           bibles,
           languages,
         }).map((QueryRow row) => GetBiblesResult(
           id: row.read<int>('id'),
-          extId: row.read<String>('extId'),
+          usfxId: row.read<String>('usfxId'),
           languageId: row.readNullable<int>('languageId'),
           bibleName: row.read<String>('bibleName'),
           bibleNameLocal: row.read<String>('bibleNameLocal'),
@@ -2503,7 +2539,7 @@ abstract class _$AppDb extends GeneratedDatabase {
 
   Selectable<GetBibleResult> getBible(int bibleId) {
     return customSelect(
-        'SELECT b.id, b.extId, b.languageId, b.bibleName, b.bibleNameLocal, b.bibleNameAbbreviation, b.originSource, l.langEngName, l.langIsoCode, l.langNativeName FROM bibles AS b JOIN languages AS l ON b.languageId = l.id WHERE b.id = ?1',
+        'SELECT b.id, b.usfxId, b.languageId, b.bibleName, b.bibleNameLocal, b.bibleNameAbbreviation, b.originSource, l.langEngName, l.langIsoCode, l.langNativeName FROM bibles AS b JOIN languages AS l ON b.languageId = l.id WHERE b.id = ?1',
         variables: [
           Variable<int>(bibleId)
         ],
@@ -2512,7 +2548,7 @@ abstract class _$AppDb extends GeneratedDatabase {
           languages,
         }).map((QueryRow row) => GetBibleResult(
           id: row.read<int>('id'),
-          extId: row.read<String>('extId'),
+          usfxId: row.read<String>('usfxId'),
           languageId: row.readNullable<int>('languageId'),
           bibleName: row.read<String>('bibleName'),
           bibleNameLocal: row.read<String>('bibleNameLocal'),
@@ -2525,12 +2561,12 @@ abstract class _$AppDb extends GeneratedDatabase {
   }
 
   Selectable<GetVerseSegmentsForChapterResult> getVerseSegmentsForChapter(
-      int bibleId, String bookOsisId, int chapterNumber) {
+      int bibleId, String bookusfxId, int chapterNumber) {
     return customSelect(
-        'SELECT * FROM verse_segments AS s JOIN books AS b ON b.id = s.bookId WHERE b.bibleId = ?1 AND b.osisId = ?2 AND s.chapterNumber = ?3 ORDER BY s.verseNumber, s.segmentIndex',
+        'SELECT * FROM verse_segments AS s JOIN books AS b ON b.id = s.bookId WHERE b.bibleId = ?1 AND b.usfxId = ?2 AND s.chapterNumber = ?3 ORDER BY s.verseNumber, s.segmentIndex',
         variables: [
           Variable<int>(bibleId),
-          Variable<String>(bookOsisId),
+          Variable<String>(bookusfxId),
           Variable<int>(chapterNumber)
         ],
         readsFrom: {
@@ -2547,6 +2583,7 @@ abstract class _$AppDb extends GeneratedDatabase {
           subtitle: row.readNullable<String>('subtitle'),
           id1: row.read<int>('id'),
           bibleId: row.read<int>('bibleId'),
+          usfxId: row.read<String>('usfxId'),
           osisId: row.read<String>('osisId'),
           bookOrder: row.readNullable<int>('bookOrder'),
           longName: row.readNullable<String>('longName'),
@@ -2556,12 +2593,12 @@ abstract class _$AppDb extends GeneratedDatabase {
 
   Selectable<GetSegmentsForChapterWithSpansResult>
       getSegmentsForChapterWithSpans(
-          int bibleId, String bookOsisId, int chapterNumber) {
+          int bibleId, String bookusfxId, int chapterNumber) {
     return customSelect(
-        'SELECT s.id AS segmentId, s.bookId, s.chapterNumber, s.verseNumber, s.segmentIndex, s.paragraphStart, s.textContent, s.subtitle, COALESCE((SELECT json_group_array(json_object(\'segmentId\', sp.segmentId, \'id\', sp.id, \'startOffset\', sp.startOffset, \'endOffset\', sp.endOffset, \'spanType\', sp.spanType, \'payload\', sp.payload)) FROM segment_spans AS sp WHERE sp.segmentId = s.id ORDER BY sp.startOffset), json(\'[]\')) AS spansJson FROM verse_segments AS s LEFT JOIN segment_spans AS sp ON sp.segmentId = s.id JOIN books AS b ON b.id = s.bookId WHERE b.bibleId = ?1 AND b.osisId = ?2 AND s.chapterNumber = ?3 GROUP BY s.id ORDER BY s.verseNumber, s.segmentIndex, sp.startOffset',
+        'SELECT s.id AS segmentId, s.bookId, s.chapterNumber, s.verseNumber, s.segmentIndex, s.paragraphStart, s.textContent, s.subtitle, COALESCE((SELECT json_group_array(json_object(\'segmentId\', sp.segmentId, \'id\', sp.id, \'startOffset\', sp.startOffset, \'endOffset\', sp.endOffset, \'spanType\', sp.spanType, \'payload\', sp.payload)) FROM segment_spans AS sp WHERE sp.segmentId = s.id ORDER BY sp.startOffset), json(\'[]\')) AS spansJson FROM verse_segments AS s LEFT JOIN segment_spans AS sp ON sp.segmentId = s.id JOIN books AS b ON b.id = s.bookId WHERE b.bibleId = ?1 AND b.usfxId = ?2 AND s.chapterNumber = ?3 GROUP BY s.id ORDER BY s.verseNumber, s.segmentIndex, sp.startOffset',
         variables: [
           Variable<int>(bibleId),
-          Variable<String>(bookOsisId),
+          Variable<String>(bookusfxId),
           Variable<int>(chapterNumber)
         ],
         readsFrom: {
@@ -2583,7 +2620,7 @@ abstract class _$AppDb extends GeneratedDatabase {
 
   Selectable<GetSegmentsByBibleIdResult> getSegmentsByBibleId(int bibleId) {
     return customSelect(
-        'SELECT vs.id, bookId, b.osisId AS bookOsisId, chapterNumber, verseNumber, segmentIndex FROM verse_segments AS vs JOIN books AS b ON b.id = vs.bookId WHERE b.bibleId = ?1',
+        'SELECT vs.id, bookId, b.usfxId AS bookUsfxId, chapterNumber, verseNumber, segmentIndex FROM verse_segments AS vs JOIN books AS b ON b.id = vs.bookId WHERE b.bibleId = ?1',
         variables: [
           Variable<int>(bibleId)
         ],
@@ -2593,7 +2630,7 @@ abstract class _$AppDb extends GeneratedDatabase {
         }).map((QueryRow row) => GetSegmentsByBibleIdResult(
           id: row.read<int>('id'),
           bookId: row.read<int>('bookId'),
-          bookOsisId: row.read<String>('bookOsisId'),
+          bookUsfxId: row.read<String>('bookUsfxId'),
           chapterNumber: row.read<int>('chapterNumber'),
           verseNumber: row.read<int>('verseNumber'),
           segmentIndex: row.read<int>('segmentIndex'),
@@ -2611,7 +2648,7 @@ abstract class _$AppDb extends GeneratedDatabase {
 
   Future<int> populateVerseText(int bibleId) {
     return customInsert(
-      'INSERT INTO verse_text (bibleId, bookOsisId, bookId, chapterNumber, verseNumber, textContent) SELECT b.bibleId, b.osisId, v.bookId, v.chapterNumber, v.verseNumber, (SELECT GROUP_CONCAT(vs2.textContent, \' \') FROM verse_segments AS vs2 WHERE vs2.bookId = v.bookId AND vs2.chapterNumber = v.chapterNumber AND vs2.verseNumber = v.verseNumber ORDER BY vs2.segmentIndex) AS textContent FROM (SELECT DISTINCT bookId, chapterNumber, verseNumber FROM verse_segments) AS v JOIN books AS b ON b.id = v.bookId WHERE b.bibleId = ?1',
+      'INSERT INTO verse_text (bibleId, bookUsfxId, bookId, chapterNumber, verseNumber, textContent) SELECT b.bibleId, b.usfxId, v.bookId, v.chapterNumber, v.verseNumber, (SELECT GROUP_CONCAT(vs2.textContent, \' \') FROM verse_segments AS vs2 WHERE vs2.bookId = v.bookId AND vs2.chapterNumber = v.chapterNumber AND vs2.verseNumber = v.verseNumber ORDER BY vs2.segmentIndex) AS textContent FROM (SELECT DISTINCT bookId, chapterNumber, verseNumber FROM verse_segments) AS v JOIN books AS b ON b.id = v.bookId WHERE b.bibleId = ?1',
       variables: [Variable<int>(bibleId)],
       updates: {verseText},
     );
@@ -2620,7 +2657,7 @@ abstract class _$AppDb extends GeneratedDatabase {
   Selectable<SearchVersesResult> searchVerses(
       int bibleId, String query, int limit) {
     return customSelect(
-        'WITH hits AS (SELECT "rowid", bm25(verse_text_fts) AS rank FROM verse_text_fts WHERE CAST(bibleId AS INTEGER) = ?1 AND verse_text_fts MATCH ?2 ORDER BY rank LIMIT ?3) SELECT vt.bibleId, vt.bookOsisId, vt.chapterNumber, vt.verseNumber FROM hits JOIN verse_text AS vt ON vt.id = hits."rowid" ORDER BY hits.rank',
+        'WITH hits AS (SELECT "rowid", bm25(verse_text_fts) AS rank FROM verse_text_fts WHERE CAST(bibleId AS INTEGER) = ?1 AND verse_text_fts MATCH ?2 ORDER BY rank LIMIT ?3) SELECT vt.bibleId, vt.bookUsfxId, vt.chapterNumber, vt.verseNumber FROM hits JOIN verse_text AS vt ON vt.id = hits."rowid" ORDER BY hits.rank',
         variables: [
           Variable<int>(bibleId),
           Variable<String>(query),
@@ -2631,7 +2668,7 @@ abstract class _$AppDb extends GeneratedDatabase {
           verseText,
         }).map((QueryRow row) => SearchVersesResult(
           bibleId: row.read<int>('bibleId'),
-          bookOsisId: row.read<String>('bookOsisId'),
+          bookUsfxId: row.read<String>('bookUsfxId'),
           chapterNumber: row.read<int>('chapterNumber'),
           verseNumber: row.read<int>('verseNumber'),
         ));
@@ -2668,13 +2705,6 @@ abstract class _$AppDb extends GeneratedDatabase {
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules(
         [
-          WritePropagation(
-            on: TableUpdateQuery.onTableName('languages',
-                limitUpdateKind: UpdateKind.delete),
-            result: [
-              TableUpdate('bibles', kind: UpdateKind.delete),
-            ],
-          ),
           WritePropagation(
             on: TableUpdateQuery.onTableName('bibles',
                 limitUpdateKind: UpdateKind.delete),
@@ -2859,7 +2889,7 @@ typedef $LanguagesProcessedTableManager = ProcessedTableManager<
     PrefetchHooks Function()>;
 typedef $BiblesCreateCompanionBuilder = BiblesCompanion Function({
   Value<int> id,
-  required String extId,
+  required String usfxId,
   Value<int?> languageId,
   required String bibleName,
   required String bibleNameLocal,
@@ -2868,7 +2898,7 @@ typedef $BiblesCreateCompanionBuilder = BiblesCompanion Function({
 });
 typedef $BiblesUpdateCompanionBuilder = BiblesCompanion Function({
   Value<int> id,
-  Value<String> extId,
+  Value<String> usfxId,
   Value<int?> languageId,
   Value<String> bibleName,
   Value<String> bibleNameLocal,
@@ -2887,8 +2917,8 @@ class $BiblesFilterComposer extends Composer<_$AppDb, Bibles> {
   ColumnFilters<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get extId => $composableBuilder(
-      column: $table.extId, builder: (column) => ColumnFilters(column));
+  ColumnFilters<String> get usfxId => $composableBuilder(
+      column: $table.usfxId, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<int> get languageId => $composableBuilder(
       column: $table.languageId, builder: (column) => ColumnFilters(column));
@@ -2919,8 +2949,8 @@ class $BiblesOrderingComposer extends Composer<_$AppDb, Bibles> {
   ColumnOrderings<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get extId => $composableBuilder(
-      column: $table.extId, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<String> get usfxId => $composableBuilder(
+      column: $table.usfxId, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<int> get languageId => $composableBuilder(
       column: $table.languageId, builder: (column) => ColumnOrderings(column));
@@ -2952,8 +2982,8 @@ class $BiblesAnnotationComposer extends Composer<_$AppDb, Bibles> {
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<String> get extId =>
-      $composableBuilder(column: $table.extId, builder: (column) => column);
+  GeneratedColumn<String> get usfxId =>
+      $composableBuilder(column: $table.usfxId, builder: (column) => column);
 
   GeneratedColumn<int> get languageId => $composableBuilder(
       column: $table.languageId, builder: (column) => column);
@@ -2995,7 +3025,7 @@ class $BiblesTableManager extends RootTableManager<
               $BiblesAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
-            Value<String> extId = const Value.absent(),
+            Value<String> usfxId = const Value.absent(),
             Value<int?> languageId = const Value.absent(),
             Value<String> bibleName = const Value.absent(),
             Value<String> bibleNameLocal = const Value.absent(),
@@ -3004,7 +3034,7 @@ class $BiblesTableManager extends RootTableManager<
           }) =>
               BiblesCompanion(
             id: id,
-            extId: extId,
+            usfxId: usfxId,
             languageId: languageId,
             bibleName: bibleName,
             bibleNameLocal: bibleNameLocal,
@@ -3013,7 +3043,7 @@ class $BiblesTableManager extends RootTableManager<
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
-            required String extId,
+            required String usfxId,
             Value<int?> languageId = const Value.absent(),
             required String bibleName,
             required String bibleNameLocal,
@@ -3022,7 +3052,7 @@ class $BiblesTableManager extends RootTableManager<
           }) =>
               BiblesCompanion.insert(
             id: id,
-            extId: extId,
+            usfxId: usfxId,
             languageId: languageId,
             bibleName: bibleName,
             bibleNameLocal: bibleNameLocal,
@@ -3051,6 +3081,7 @@ typedef $BiblesProcessedTableManager = ProcessedTableManager<
 typedef $BooksCreateCompanionBuilder = BooksCompanion Function({
   Value<int> id,
   required int bibleId,
+  required String usfxId,
   required String osisId,
   Value<int?> bookOrder,
   Value<String?> longName,
@@ -3059,6 +3090,7 @@ typedef $BooksCreateCompanionBuilder = BooksCompanion Function({
 typedef $BooksUpdateCompanionBuilder = BooksCompanion Function({
   Value<int> id,
   Value<int> bibleId,
+  Value<String> usfxId,
   Value<String> osisId,
   Value<int?> bookOrder,
   Value<String?> longName,
@@ -3078,6 +3110,9 @@ class $BooksFilterComposer extends Composer<_$AppDb, Books> {
 
   ColumnFilters<int> get bibleId => $composableBuilder(
       column: $table.bibleId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get usfxId => $composableBuilder(
+      column: $table.usfxId, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get osisId => $composableBuilder(
       column: $table.osisId, builder: (column) => ColumnFilters(column));
@@ -3106,6 +3141,9 @@ class $BooksOrderingComposer extends Composer<_$AppDb, Books> {
   ColumnOrderings<int> get bibleId => $composableBuilder(
       column: $table.bibleId, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get usfxId => $composableBuilder(
+      column: $table.usfxId, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get osisId => $composableBuilder(
       column: $table.osisId, builder: (column) => ColumnOrderings(column));
 
@@ -3132,6 +3170,9 @@ class $BooksAnnotationComposer extends Composer<_$AppDb, Books> {
 
   GeneratedColumn<int> get bibleId =>
       $composableBuilder(column: $table.bibleId, builder: (column) => column);
+
+  GeneratedColumn<String> get usfxId =>
+      $composableBuilder(column: $table.usfxId, builder: (column) => column);
 
   GeneratedColumn<String> get osisId =>
       $composableBuilder(column: $table.osisId, builder: (column) => column);
@@ -3171,6 +3212,7 @@ class $BooksTableManager extends RootTableManager<
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<int> bibleId = const Value.absent(),
+            Value<String> usfxId = const Value.absent(),
             Value<String> osisId = const Value.absent(),
             Value<int?> bookOrder = const Value.absent(),
             Value<String?> longName = const Value.absent(),
@@ -3179,6 +3221,7 @@ class $BooksTableManager extends RootTableManager<
               BooksCompanion(
             id: id,
             bibleId: bibleId,
+            usfxId: usfxId,
             osisId: osisId,
             bookOrder: bookOrder,
             longName: longName,
@@ -3187,6 +3230,7 @@ class $BooksTableManager extends RootTableManager<
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             required int bibleId,
+            required String usfxId,
             required String osisId,
             Value<int?> bookOrder = const Value.absent(),
             Value<String?> longName = const Value.absent(),
@@ -3195,6 +3239,7 @@ class $BooksTableManager extends RootTableManager<
               BooksCompanion.insert(
             id: id,
             bibleId: bibleId,
+            usfxId: usfxId,
             osisId: osisId,
             bookOrder: bookOrder,
             longName: longName,
@@ -3599,7 +3644,7 @@ typedef $SegmentSpansProcessedTableManager = ProcessedTableManager<
 typedef $VerseTextCreateCompanionBuilder = VerseTextCompanion Function({
   Value<int> id,
   required int bibleId,
-  required String bookOsisId,
+  required String bookUsfxId,
   required int bookId,
   required int chapterNumber,
   required int verseNumber,
@@ -3608,7 +3653,7 @@ typedef $VerseTextCreateCompanionBuilder = VerseTextCompanion Function({
 typedef $VerseTextUpdateCompanionBuilder = VerseTextCompanion Function({
   Value<int> id,
   Value<int> bibleId,
-  Value<String> bookOsisId,
+  Value<String> bookUsfxId,
   Value<int> bookId,
   Value<int> chapterNumber,
   Value<int> verseNumber,
@@ -3629,8 +3674,8 @@ class $VerseTextFilterComposer extends Composer<_$AppDb, VerseText> {
   ColumnFilters<int> get bibleId => $composableBuilder(
       column: $table.bibleId, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get bookOsisId => $composableBuilder(
-      column: $table.bookOsisId, builder: (column) => ColumnFilters(column));
+  ColumnFilters<String> get bookUsfxId => $composableBuilder(
+      column: $table.bookUsfxId, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<int> get bookId => $composableBuilder(
       column: $table.bookId, builder: (column) => ColumnFilters(column));
@@ -3659,8 +3704,8 @@ class $VerseTextOrderingComposer extends Composer<_$AppDb, VerseText> {
   ColumnOrderings<int> get bibleId => $composableBuilder(
       column: $table.bibleId, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get bookOsisId => $composableBuilder(
-      column: $table.bookOsisId, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<String> get bookUsfxId => $composableBuilder(
+      column: $table.bookUsfxId, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<int> get bookId => $composableBuilder(
       column: $table.bookId, builder: (column) => ColumnOrderings(column));
@@ -3690,8 +3735,8 @@ class $VerseTextAnnotationComposer extends Composer<_$AppDb, VerseText> {
   GeneratedColumn<int> get bibleId =>
       $composableBuilder(column: $table.bibleId, builder: (column) => column);
 
-  GeneratedColumn<String> get bookOsisId => $composableBuilder(
-      column: $table.bookOsisId, builder: (column) => column);
+  GeneratedColumn<String> get bookUsfxId => $composableBuilder(
+      column: $table.bookUsfxId, builder: (column) => column);
 
   GeneratedColumn<int> get bookId =>
       $composableBuilder(column: $table.bookId, builder: (column) => column);
@@ -3731,7 +3776,7 @@ class $VerseTextTableManager extends RootTableManager<
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<int> bibleId = const Value.absent(),
-            Value<String> bookOsisId = const Value.absent(),
+            Value<String> bookUsfxId = const Value.absent(),
             Value<int> bookId = const Value.absent(),
             Value<int> chapterNumber = const Value.absent(),
             Value<int> verseNumber = const Value.absent(),
@@ -3740,7 +3785,7 @@ class $VerseTextTableManager extends RootTableManager<
               VerseTextCompanion(
             id: id,
             bibleId: bibleId,
-            bookOsisId: bookOsisId,
+            bookUsfxId: bookUsfxId,
             bookId: bookId,
             chapterNumber: chapterNumber,
             verseNumber: verseNumber,
@@ -3749,7 +3794,7 @@ class $VerseTextTableManager extends RootTableManager<
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             required int bibleId,
-            required String bookOsisId,
+            required String bookUsfxId,
             required int bookId,
             required int chapterNumber,
             required int verseNumber,
@@ -3758,7 +3803,7 @@ class $VerseTextTableManager extends RootTableManager<
               VerseTextCompanion.insert(
             id: id,
             bibleId: bibleId,
-            bookOsisId: bookOsisId,
+            bookUsfxId: bookUsfxId,
             bookId: bookId,
             chapterNumber: chapterNumber,
             verseNumber: verseNumber,
@@ -3920,7 +3965,7 @@ class $AppDbManager {
 
 class GetBiblesResult {
   final int id;
-  final String extId;
+  final String usfxId;
   final int? languageId;
   final String bibleName;
   final String bibleNameLocal;
@@ -3931,7 +3976,7 @@ class GetBiblesResult {
   final String? langNativeName;
   GetBiblesResult({
     required this.id,
-    required this.extId,
+    required this.usfxId,
     this.languageId,
     required this.bibleName,
     required this.bibleNameLocal,
@@ -3945,7 +3990,7 @@ class GetBiblesResult {
 
 class GetBibleResult {
   final int id;
-  final String extId;
+  final String usfxId;
   final int? languageId;
   final String bibleName;
   final String bibleNameLocal;
@@ -3956,7 +4001,7 @@ class GetBibleResult {
   final String? langNativeName;
   GetBibleResult({
     required this.id,
-    required this.extId,
+    required this.usfxId,
     this.languageId,
     required this.bibleName,
     required this.bibleNameLocal,
@@ -3979,6 +4024,7 @@ class GetVerseSegmentsForChapterResult {
   final String? subtitle;
   final int id1;
   final int bibleId;
+  final String usfxId;
   final String osisId;
   final int? bookOrder;
   final String? longName;
@@ -3994,6 +4040,7 @@ class GetVerseSegmentsForChapterResult {
     this.subtitle,
     required this.id1,
     required this.bibleId,
+    required this.usfxId,
     required this.osisId,
     this.bookOrder,
     this.longName,
@@ -4027,14 +4074,14 @@ class GetSegmentsForChapterWithSpansResult {
 class GetSegmentsByBibleIdResult {
   final int id;
   final int bookId;
-  final String bookOsisId;
+  final String bookUsfxId;
   final int chapterNumber;
   final int verseNumber;
   final int segmentIndex;
   GetSegmentsByBibleIdResult({
     required this.id,
     required this.bookId,
-    required this.bookOsisId,
+    required this.bookUsfxId,
     required this.chapterNumber,
     required this.verseNumber,
     required this.segmentIndex,
@@ -4043,12 +4090,12 @@ class GetSegmentsByBibleIdResult {
 
 class SearchVersesResult {
   final int bibleId;
-  final String bookOsisId;
+  final String bookUsfxId;
   final int chapterNumber;
   final int verseNumber;
   SearchVersesResult({
     required this.bibleId,
-    required this.bookOsisId,
+    required this.bookUsfxId,
     required this.chapterNumber,
     required this.verseNumber,
   });

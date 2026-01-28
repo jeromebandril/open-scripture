@@ -3,18 +3,18 @@ import './core_tables.drift';
 CREATE TABLE verse_text (
   id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   bibleId INTEGER NOT NULL,
-  bookOsisId NVARCHAR(10) NOT NULL,
+  bookUsfxId NVARCHAR(10) NOT NULL,
   bookId INTEGER NOT NULL,
   chapterNumber INT NOT NULL,
   verseNumber SMALLINT NOT NULL,
   textContent TEXT NOT NULL,
 
   FOREIGN KEY (bookId) REFERENCES books(id) ON DELETE CASCADE,
-  UNIQUE (bibleId, bookOsisId, chapterNumber, verseNumber)
+  UNIQUE (bibleId, bookUsfxId, chapterNumber, verseNumber)
 );
 
 CREATE INDEX ix_verse_text_bible
-  ON verse_text(bibleId, bookOsisId, chapterNumber, verseNumber);
+  ON verse_text(bibleId, bookUsfxId, chapterNumber, verseNumber);
 
 CREATE VIRTUAL TABLE verse_text_fts
 USING fts5(
@@ -51,10 +51,10 @@ DELETE FROM verse_text WHERE bibleId = :bibleId;
 
 
 populateVerseText:
-INSERT INTO verse_text(bibleId, bookOsisId, bookId, chapterNumber, verseNumber, textContent)
+INSERT INTO verse_text(bibleId, bookUsfxId, bookId, chapterNumber, verseNumber, textContent)
 SELECT
   b.bibleId,
-  b.osisId,
+  b.usfxId,
   v.bookId,
   v.chapterNumber,
   v.verseNumber,
@@ -84,7 +84,7 @@ WITH hits AS (
   ORDER BY rank
   LIMIT :limit
 )
-SELECT vt.bibleId, vt.bookOsisId, vt.chapterNumber, vt.verseNumber
+SELECT vt.bibleId, vt.bookUsfxId, vt.chapterNumber, vt.verseNumber
 FROM hits
 JOIN verse_text vt ON vt.id = hits.rowid
 ORDER BY hits.rank;

@@ -2,14 +2,14 @@ import '../tables/core_tables.drift';
 
 getBibles: 
 SELECT 
-  b.id, b.extId, b.languageId, b.bibleName, b.bibleNameLocal, b.bibleNameAbbreviation, b.originSource, 
+  b.id, b.usfxId, b.languageId, b.bibleName, b.bibleNameLocal, b.bibleNameAbbreviation, b.originSource, 
   l.langEngName, l.langIsoCode, l.langNativeName
 FROM bibles AS b
 JOIN languages AS l on b.languageId = l.id;
 
 getBible: 
 SELECT 
-  b.id, b.extId, b.languageId, b.bibleName, b.bibleNameLocal, b.bibleNameAbbreviation, b.originSource, 
+  b.id, b.usfxId, b.languageId, b.bibleName, b.bibleNameLocal, b.bibleNameAbbreviation, b.originSource, 
   l.langEngName, l.langIsoCode, l.langNativeName
 FROM bibles AS b
 JOIN languages AS l on b.languageId = l.id
@@ -20,7 +20,7 @@ SELECT *
 FROM verse_segments AS s
 JOIN books AS b ON b.id = s.bookId
 WHERE b.bibleId = :bibleId
-  AND b.osisId = :bookOsisId
+  AND b.usfxId = :bookusfxId
   AND s.chapterNumber = :chapterNumber
 ORDER BY s.verseNumber, s.segmentIndex;
 
@@ -69,13 +69,13 @@ FROM verse_segments AS s
 LEFT JOIN segment_spans AS sp ON sp.segmentId = s.id
 JOIN books AS b ON b.id = s.bookId
 WHERE b.bibleId = :bibleId
-  AND b.osisId = :bookOsisId
+  AND b.usfxId = :bookusfxId
   AND s.chapterNumber = :chapterNumber
 GROUP BY s.id
 ORDER BY s.verseNumber, s.segmentIndex, sp.startOffset;
 
 getSegmentsByBibleId: 
-SELECT vs.id, bookId, b.osisId as bookOsisId, chapterNumber, verseNumber, segmentIndex
+SELECT vs.id, bookId, b.usfxId as bookUsfxId, chapterNumber, verseNumber, segmentIndex
 FROM verse_segments AS vs
 JOIN books AS b ON b.id = vs.bookId
 WHERE b.bibleId = :bibleId;

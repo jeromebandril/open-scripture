@@ -56,7 +56,7 @@ class UsfxParser {
 
     return BibleMeta(
       id: null,
-      extId: abbreviation,
+      usfxId: abbreviation,
       bibleNameLocal: bibleNameLocal,
       bibleName: bibleName,
       abbreviation: abbreviation,
@@ -100,7 +100,7 @@ class UsfxParser {
       }
 
       return Book(
-        osisId: code.trim(),
+        usfxId: code.trim(),
         longName: longName.isNotEmpty ? longName : shortName,
         shortName: shortName,
         abbr: (abbr == null || abbr.isEmpty) ? null : abbr,
@@ -180,7 +180,7 @@ class UsfxParser {
         paragraphStart: false,
         subtitle: null,
         ref: BibleRef(
-          bookOsisId: bookOsisId,
+          bookUsfxId: bookOsisId,
           chapter: chapter!,
           verseStart: verse!,
         ),
@@ -258,7 +258,7 @@ class UsfxParser {
             }
             spans.add(VerseSpanModel(
               key: SegmentKey(
-                bookOsisId: bookOsisId,
+                bookUsfxId: bookOsisId,
                 chapter: chapter!,
                 verse: verse!,
                 segmentIndex: segmentIndex,

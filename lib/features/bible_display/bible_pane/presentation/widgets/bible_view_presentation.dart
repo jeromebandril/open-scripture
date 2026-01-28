@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../core/domain/entities/book_names.dart';
 import '../../../../../core/domain/entities/verse_segment.dart';
 import '../../../../../core/domain/entities/verse_span.dart';
 import '../../../../../core/utils/bible_ref_parser/bible_ref_parser.dart';
+import '../../../../../injection_container.dart';
 import '../../../../customizer/domain/entities/bible_pane_theme.dart';
 import '../../../split_screen/presenter/cubit/pane_manager_cubit.dart';
 import '../bloc/bible_pane_bloc.dart';
@@ -19,13 +21,11 @@ class BibleViewPresentation extends StatelessWidget {
   final int uniqueId;
   final List<VerseSegment> segments;
 
-  static final Map<String, String> charCodeToBibleBookName =
-      BibleReferenceParser.bibleBookNameTo3CharCode.map(
-    (key, value) => MapEntry(value.toUpperCase(), key),
-  );
-
   @override
   Widget build(BuildContext context) {
+    final resolver = sl<BibleRefResolver>();
+    // This is the ordered list for that versification/canon
+
     // group segments by verse
     final segmentsByVerse = <int, List<VerseSegment>>{};
     for (final s in segments) {
@@ -77,8 +77,11 @@ class BibleViewPresentation extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    ref.toString().replaceFirst(ref.bookOsisId,
-                        charCodeToBibleBookName[ref.bookOsisId] ?? 'error'),
+                    ref.toString().replaceFirst(
+                          ref.bookUsfxId,
+                          resolver.resolveBook(ref.bookUsfxId)?.fullName ??
+                              'error',
+                        ),
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontFamily: paneTheme.referenceFont,

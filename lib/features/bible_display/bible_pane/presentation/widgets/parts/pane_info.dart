@@ -83,7 +83,7 @@ class _PaneInfoState extends State<PaneInfo> {
                     bibleMeta == null
                         ? 'Unknown'
                         : isExpanded
-                            ? '${bibleMeta.extId} — ${bibleMeta.bibleNameLocal} — ${bibleMeta.langEngName}'
+                            ? '${bibleMeta.usfxId} — ${bibleMeta.bibleNameLocal} — ${bibleMeta.langEngName}'
                             : bibleMeta.abbreviation,
                   ),
                 ),

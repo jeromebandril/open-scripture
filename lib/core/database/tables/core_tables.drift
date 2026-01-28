@@ -7,26 +7,27 @@ CREATE TABLE languages (
 
 CREATE TABLE bibles (
   id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-  extId NVARCHAR(80) NOT NULL UNIQUE,
+  usfxId NVARCHAR(80) NOT NULL UNIQUE,
   languageId INTEGER,
   bibleName NVARCHAR(64) NOT NULL,
   bibleNameLocal NVARCHAR(64) NOT NULL,
   bibleNameAbbreviation NVARCHAR(32) NOT NULL,
   originSource NVARCHAR(128),
 
-  FOREIGN KEY (languageId) REFERENCES languages(id) ON DELETE CASCADE
+  FOREIGN KEY (languageId) REFERENCES languages(id)
 );
 
 CREATE TABLE books(
   id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   bibleId INTEGER NOT NULL,
+  usfxId NVARCHAR(10) NOT NULL,
   osisId NVARCHAR(10) NOT NULL,
   bookOrder INT,
   longName NVARCHAR(256),
   shortName NVARCHAR(64) NOT NULL,
 
   FOREIGN KEY (bibleId) REFERENCES bibles(id) ON DELETE CASCADE,
-  UNIQUE (bibleId, osisId)
+  UNIQUE (bibleId, usfxId)
 
 );
 

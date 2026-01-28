@@ -186,7 +186,7 @@ class BibleRemoteDataSourceImpl implements BibleRemoteDataSource {
 
         metas.add(BibleMeta(
           id: -1,
-          extId: id,
+          usfxId: id,
           bibleName: name,
           bibleNameLocal: localName,
           langEngName: language,

@@ -19,3 +19,13 @@ class BibleRefInvalidNumberException extends InvalidInputException {
 class BibleRefOutOfRangeException extends InvalidInputException {
   const BibleRefOutOfRangeException(super.message);
 }
+
+class BibleRefAmbiguousBookException implements Exception {
+  final String message;
+  final List<String> candidates;
+
+  BibleRefAmbiguousBookException(this.message, {required this.candidates});
+
+  @override
+  String toString() => '$message Candidates: ${candidates.join(", ")}';
+}

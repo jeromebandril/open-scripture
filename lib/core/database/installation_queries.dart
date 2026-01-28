@@ -1,8 +1,10 @@
 import 'package:drift/drift.dart';
+import 'package:the_smyrna_bible_v2/core/domain/entities/book_names.dart';
 import 'package:the_smyrna_bible_v2/core/data/models/segment_key.dart';
 import 'package:the_smyrna_bible_v2/core/data/models/verse_span_model.dart';
 import 'package:the_smyrna_bible_v2/core/domain/entities/verse_segment.dart';
 
+import '../../injection_container.dart';
 import '../domain/entities/bible_meta.dart';
 import '../domain/entities/book.dart';
 import 'database.dart' as db;
@@ -78,7 +80,7 @@ extension BibleInstallQueries on db.AppDb {
 
       return await into(bibles).insert(
         db.BiblesCompanion.insert(
-          extId: meta.extId,
+          usfxId: meta.usfxId,
           languageId: Value(languageId), // nullable
           bibleName: meta.bibleName,
           bibleNameLocal: meta.bibleNameLocal,
@@ -91,6 +93,8 @@ extension BibleInstallQueries on db.AppDb {
   }
 
   Future<void> insertBooksOnly(int bibleId, List<Book> bookList) async {
+    final resolver = sl<BibleRefResolver>();
+
     await batch((b) {
       b.insertAll(
         books,
@@ -98,7 +102,8 @@ extension BibleInstallQueries on db.AppDb {
           for (var i = 0; i < bookList.length; i++)
             db.BooksCompanion.insert(
               bibleId: bibleId,
-              osisId: bookList[i].osisId!,
+              usfxId: bookList[i].usfxId!,
+              osisId: resolver.resolveBook(bookList[i].usfxId!)!.osisId,
               shortName: bookList[i].shortName,
               longName: Value(bookList[i].longName),
             )
@@ -114,9 +119,9 @@ extension BibleInstallQueries on db.AppDb {
 
     final map = <String, int>{};
     for (final r in rows) {
-      final osis = r.osisId;
-      if (osis == null || osis.isEmpty) continue;
-      map[osis] = r.id;
+      final usfxId = r.usfxId;
+      if (usfxId == null || usfxId.isEmpty) continue;
+      map[usfxId] = r.id;
     }
     return map;
   }
@@ -129,7 +134,7 @@ extension BibleInstallQueries on db.AppDb {
         [
           for (var i = 0; i < verses.length; i++)
             db.VerseSegmentsCompanion.insert(
-              bookId: bookMap[verses[i].ref.bookOsisId]!,
+              bookId: bookMap[verses[i].ref.bookUsfxId]!,
               chapterNumber: verses[i].ref.chapter,
               verseNumber: verses[i].ref.verseStart!,
               segmentIndex: verses[i].segmentIndex,
@@ -160,7 +165,7 @@ extension BibleInstallQueries on db.AppDb {
       final Map<SegmentKey, int> segmentIdByKey = {};
       for (final row in rows) {
         final key = SegmentKey(
-          bookOsisId: row.bookOsisId,
+          bookUsfxId: row.bookUsfxId,
           chapter: row.chapterNumber,
           verse: row.verseNumber,
           segmentIndex: row.segmentIndex,
@@ -183,7 +188,7 @@ extension BibleInstallQueries on db.AppDb {
         }
 
         final key = SegmentKey(
-          bookOsisId: s.key!.bookOsisId,
+          bookUsfxId: s.key!.bookUsfxId,
           chapter: s.key!.chapter,
           verse: s.key!.verse,
           segmentIndex: s.key!.segmentIndex,

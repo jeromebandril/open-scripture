@@ -21,6 +21,7 @@ import 'package:the_smyrna_bible_v2/features/customizer/data/repo/customizer_rep
 import 'package:the_smyrna_bible_v2/features/customizer/domain/repo/customizer_repo.dart';
 import 'package:the_smyrna_bible_v2/features/customizer/presentation/cubit/customizer_cubit.dart';
 import 'package:the_smyrna_bible_v2/features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
+import 'core/domain/entities/book_names.dart';
 import 'core/presentation/cubit/toolbar_cubit.dart';
 import 'features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
 import 'features/bible_display/bible_pane/presentation/navigation_bus.dart';
@@ -31,6 +32,10 @@ import 'features/bible_installer_manager/presentation/bloc/remote_catalog/remote
 final sl = GetIt.instance;
 
 Future<void> init() async {
+  sl.registerLazySingleton<BibleRefResolver>(
+    () => BibleRefResolver(versification: Versification.protestant66),
+  );
+
   initDatabase();
 
   initCustomizerFeature();
@@ -129,7 +134,7 @@ void initReaderFeature() {
   sl.registerLazySingleton<BibleRepository>(
     () => BibleRepositoryImpl(localDatasource: sl()),
   );
-  sl.registerLazySingleton(() => BibleReferenceParser());
+  sl.registerLazySingleton(() => BibleReferenceParser(resolver: sl()));
 }
 
 void initSplitScreenFeature() {

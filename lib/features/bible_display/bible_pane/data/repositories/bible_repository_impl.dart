@@ -32,7 +32,7 @@ class BibleRepositoryImpl implements BibleRepository {
   }) async {
     try {
       final List<VerseSegment> verses = await localDatasource.getChapter(
-          bibleId, reference.bookOsisId, reference.chapter);
+          bibleId, reference.bookUsfxId, reference.chapter);
       return Right(verses);
     } on NotFoundException catch (e) {
       return Left(
@@ -64,7 +64,7 @@ class BibleRepositoryImpl implements BibleRepository {
   }) async {
     try {
       final verses = await localDatasource.getChapterWithSpans(
-          bibleId, reference.bookOsisId, reference.chapter);
+          bibleId, reference.bookUsfxId, reference.chapter);
       return Right(verses);
     } on NotFoundException catch (e) {
       return Left(

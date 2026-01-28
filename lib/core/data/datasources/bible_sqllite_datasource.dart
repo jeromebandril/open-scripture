@@ -143,7 +143,7 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
     return rows
         .map((r) => BibleMeta(
             id: r.id,
-            extId: r.extId,
+            usfxId: r.usfxId,
             bibleName: r.bibleName,
             abbreviation: r.bibleNameAbbreviation,
             langEngName: r.langEngName,
@@ -349,7 +349,7 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
   Future<void> uninstallBible(String bibleId) async {
     try {
       final deleted = await (db.delete(db.bibles)
-            ..where((b) => b.extId.equals(bibleId)))
+            ..where((b) => b.usfxId.equals(bibleId)))
           .go();
 
       if (deleted == 0) {
@@ -389,7 +389,7 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
           .map((r) => VerseSegment(
                 bibleId: bibleId,
                 ref: BibleRef(
-                  bookOsisId: bookId,
+                  bookUsfxId: bookId,
                   chapter: r.chapterNumber,
                   verseStart: r.verseNumber,
                 ),
@@ -438,7 +438,7 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
         segments.add(VerseSegment(
           bibleId: bibleId,
           ref: BibleRef(
-            bookOsisId: bookId,
+            bookUsfxId: bookId,
             chapter: r.chapterNumber,
             verseStart: r.verseNumber,
           ),
@@ -490,7 +490,7 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
 
       return BibleMeta(
         id: r.id,
-        extId: r.extId,
+        usfxId: r.usfxId,
         bibleName: r.bibleName,
         bibleNameLocal: r.bibleNameLocal,
         abbreviation: r.bibleNameAbbreviation,
@@ -531,7 +531,7 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
 
     final result = rows
         .map((r) => BibleRef(
-            bookOsisId: r.bookOsisId,
+            bookUsfxId: r.bookUsfxId,
             chapter: r.chapterNumber,
             verseStart: r.verseNumber))
         .toList();
@@ -556,22 +556,22 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
       for (final r in capped) {
         parts.add('(?, ?, ?)'); // osis, chapter, verse
         vars.addAll([
-          Variable<String>(r.bookOsisId),
+          Variable<String>(r.bookUsfxId),
           Variable<int>(r.chapter),
           Variable<int>(r.verseStart),
         ]);
       }
 
       final sql = '''
-        WITH ref(bookOsisId, chapterNumber, verseNumber) AS (
+        WITH ref(bookUsfxId, chapterNumber, verseNumber) AS (
           VALUES ${parts.join(',')}
         )
         SELECT 
           s.*,
-          b.osisId AS bookOsisId
+          b.usfxId AS bookusfxId
         FROM ref
         JOIN books AS b
-          ON b.bibleId = ? AND b.osisId = ref.bookOsisId
+          ON b.bibleId = ? AND b.usfxId = ref.bookusfxId
         JOIN verse_segments AS s
           ON s.bookId = b.id
           AND s.chapterNumber = ref.chapterNumber
@@ -589,14 +589,14 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
       ).get();
 
       return rows.map((r) {
-        final bookOsisId = r.read<String>('bookOsisId');
+        final bookusfxId = r.read<String>('bookusfxId');
         final chapterNumber = r.read<int>('chapterNumber');
         final verseNumber = r.read<int>('verseNumber');
 
         return VerseSegment(
           bibleId: bibleId,
           ref: BibleRef(
-            bookOsisId: bookOsisId,
+            bookUsfxId: bookusfxId,
             chapter: chapterNumber,
             verseStart: verseNumber,
           ),

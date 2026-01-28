@@ -22,7 +22,7 @@ const List<PreviewData> previewData = [
       VerseSegment(
         bibleId: 1,
         ref: BibleRef(
-            bookOsisId: 'JHN', chapter: 7, verseStart: 37, verseEnd: null),
+            bookUsfxId: 'JHN', chapter: 7, verseStart: 37, verseEnd: null),
         segmentIndex: 0,
         paragraphStart: false,
         textContent:
@@ -167,7 +167,7 @@ const List<PreviewData> previewData = [
       VerseSegment(
         bibleId: 1,
         ref: BibleRef(
-            bookOsisId: 'JHN', chapter: 7, verseStart: 38, verseEnd: null),
+            bookUsfxId: 'JHN', chapter: 7, verseStart: 38, verseEnd: null),
         segmentIndex: 0,
         paragraphStart: false,
         textContent:
@@ -276,7 +276,7 @@ const List<PreviewData> previewData = [
       VerseSegment(
         bibleId: 1,
         ref: BibleRef(
-            bookOsisId: 'JHN', chapter: 7, verseStart: 39, verseEnd: null),
+            bookUsfxId: 'JHN', chapter: 7, verseStart: 39, verseEnd: null),
         segmentIndex: 0,
         paragraphStart: false,
         textContent:

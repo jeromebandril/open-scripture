@@ -58,7 +58,7 @@ class VerseWidget extends StatelessWidget {
         final ref = context.read<BiblePaneBloc>().state.reference!;
         context.read<BiblePaneBloc>().add(BiblePaneJustChangeRef(
                 ref: ref.copyWith(
-              bookOsisId: reference.bookOsisId,
+              bookOsisId: reference.bookUsfxId,
               chapter: reference.chapter,
               verseStart: reference.verseStart,
               verseEnd: null,

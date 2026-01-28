@@ -3,7 +3,7 @@ import 'package:the_smyrna_bible_v2/core/database/database.dart';
 
 class BibleMeta extends Equatable {
   final int? id;
-  final String extId;
+  final String usfxId;
   final String bibleName;
   final String bibleNameLocal;
   final String abbreviation;
@@ -15,7 +15,7 @@ class BibleMeta extends Equatable {
 
   const BibleMeta({
     this.id,
-    required this.extId,
+    required this.usfxId,
     required this.bibleName,
     required this.bibleNameLocal,
     required this.abbreviation,
@@ -29,7 +29,7 @@ class BibleMeta extends Equatable {
   factory BibleMeta.fromDatabase(Bible b) {
     return BibleMeta(
       id: b.id,
-      extId: b.extId,
+      usfxId: b.usfxId,
       bibleName: b.bibleName,
       bibleNameLocal: b.bibleNameLocal,
       abbreviation: b.bibleNameAbbreviation,
@@ -52,7 +52,7 @@ class BibleMeta extends Equatable {
   }) {
     return BibleMeta(
       id: id ?? this.id,
-      extId: extId ?? this.extId,
+      usfxId: extId ?? this.usfxId,
       bibleName: bibleName ?? this.bibleName,
       abbreviation: abbreviation ?? this.abbreviation,
       langEngName: langEngName ?? this.langEngName,

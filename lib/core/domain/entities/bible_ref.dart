@@ -3,13 +3,13 @@ import 'package:equatable/equatable.dart';
 class BibleRef extends Equatable {
   static const _unset = Object();
 
-  final String bookOsisId;
+  final String bookUsfxId;
   final int chapter;
   final int? verseStart;
   final int? verseEnd;
 
   const BibleRef({
-    required this.bookOsisId,
+    required this.bookUsfxId,
     required this.chapter,
     this.verseStart,
     this.verseEnd,
@@ -22,7 +22,7 @@ class BibleRef extends Equatable {
     Object? verseEnd = _unset,
   }) {
     return BibleRef(
-      bookOsisId: bookOsisId ?? this.bookOsisId,
+      bookUsfxId: bookOsisId ?? this.bookUsfxId,
       chapter: chapter ?? this.chapter,
       verseStart:
           identical(verseStart, _unset) ? this.verseStart : verseStart as int?,
@@ -33,9 +33,9 @@ class BibleRef extends Equatable {
 
   @override
   String toString() {
-    return '$bookOsisId $chapter${verseStart != null ? ':$verseStart' : ''}${verseEnd != null ? '-$verseEnd' : ''}';
+    return '$bookUsfxId $chapter${verseStart != null ? ':$verseStart' : ''}${verseEnd != null ? '-$verseEnd' : ''}';
   }
 
   @override
-  List<Object?> get props => [bookOsisId, chapter, verseStart, verseEnd];
+  List<Object?> get props => [bookUsfxId, chapter, verseStart, verseEnd];
 }
