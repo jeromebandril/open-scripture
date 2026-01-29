@@ -131,7 +131,7 @@ class _BibleViewListState extends State<BibleViewList> {
                     (vEnd != null &&
                         vStart != null &&
                         ref.verseStart! >= vStart &&
-                        ref.verseEnd! <= vEnd);
+                        ref.verseStart! <= vEnd);
 
             return Padding(
               padding: EdgeInsets.only(
