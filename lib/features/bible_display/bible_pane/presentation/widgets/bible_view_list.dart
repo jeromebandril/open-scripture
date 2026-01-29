@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:the_smyrna_bible_v2/core/domain/entities/bible_ref.dart';
@@ -101,7 +100,20 @@ class _BibleViewListState extends State<BibleViewList> {
           itemBuilder: (_, i) {
             // Fixed empty space at the bottom
             if (i == verseRefs.length) {
-              return const SizedBox(height: 200);
+              return SizedBox(
+                height: 200,
+                child: state.isMixed
+                    ? Align(
+                        alignment: AlignmentGeometry.center,
+                        child: Text(
+                          '${state.segments.length} results found',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.outline),
+                        ),
+                      )
+                    : null,
+              );
             }
 
             // Set content

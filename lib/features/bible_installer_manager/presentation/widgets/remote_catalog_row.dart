@@ -39,7 +39,8 @@ class RemoteCatalogRow extends StatelessWidget {
         const VerticalDivider(),
         Expanded(
           flex: 2,
-          child: Text(bibleMeta.bibleName, overflow: TextOverflow.ellipsis),
+          child:
+              Text(bibleMeta.bibleNameLocal, overflow: TextOverflow.ellipsis),
         ),
         const VerticalDivider(),
         Expanded(
@@ -52,12 +53,15 @@ class RemoteCatalogRow extends StatelessWidget {
         const VerticalDivider(),
         Expanded(
           flex: 2,
-          child: isBusy
-              ? _DownloadingProgressBar(bible: bibleMeta)
-              : _DownloadButton(
-                  onPressed: () =>
-                      context.read<DownloadManagerBloc>().add(StartInstall(id)),
-                ),
+          child: bibleMeta.isAlreadyInstalled
+              ? Text('Installed 👍', textAlign: TextAlign.center)
+              : isBusy
+                  ? _DownloadingProgressBar(bible: bibleMeta)
+                  : _DownloadButton(
+                      onPressed: () => context
+                          .read<DownloadManagerBloc>()
+                          .add(StartInstall(id)),
+                    ),
         ),
       ]),
     );

@@ -44,7 +44,7 @@ class BibleManagerRepositoryImpl implements BibleManagerRepository {
 
   @override
   Stream<InstallProgress> downloadAndInstallBible(String bibleId) async* {
-    // return simulateDownloadAndInstall();
+    //return simulateDownloadAndInstall();
 
     // 1) Download phase
     await for (final p in remoteDataSource.downloadBibleFileContent(bibleId)) {

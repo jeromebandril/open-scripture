@@ -72,10 +72,11 @@ class _BibleSelectorBody extends StatelessWidget {
               break;
             }
             body = Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 12,
               children: [
                 SizedBox(
-                  height: state.installedBibles.length * 80,
+                  height: state.installedBibles.length * 85,
                   child: ListView.separated(
                     itemCount: state.installedBibles.length,
                     separatorBuilder: (_, __) => const Divider(height: 0.1),
@@ -96,14 +97,13 @@ class _BibleSelectorBody extends StatelessWidget {
                           style: style,
                         ),
                         trailing: selected ? const Icon(Icons.check) : null,
-                        onTap: () => context
-                            .read<BibleSelectorBloc>()
-                            .add(BibleSelectorSelect(bible.id!)),
+                        onTap: () => context.read<BibleSelectorBloc>().add(
+                              BibleSelectorSelect(bible.id!),
+                            ),
                       );
                     },
                   ),
                 ),
-                const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -121,8 +121,7 @@ class _BibleSelectorBody extends StatelessWidget {
         }
         return Center(
           child: SizedBox(
-            height: 520,
-            width: 300,
+            width: 400,
             child: body,
           ),
         );

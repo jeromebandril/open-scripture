@@ -55,9 +55,11 @@ class BiblePane extends StatelessWidget {
               //
               case BiblePaneStatus.initial:
                 if (state.bibleId == null) {
-                  return BibleSelector(onConfirm: (bibleId) {
-                    bloc.add(BiblePaneOpen(bibleId));
-                  });
+                  return BibleSelector(
+                    onConfirm: (bibleId) {
+                      bloc.add(BiblePaneOpen(bibleId));
+                    },
+                  );
                 }
                 return SizedBox();
               //

@@ -5,6 +5,7 @@ import 'package:the_smyrna_bible_v2/core/presentation/cubit/toolbar_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/widgets/help_widget.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/widgets/titlebar.dart';
 import 'package:the_smyrna_bible_v2/features/b_searchbar/domain/repositories/b_search_intent_type.dart';
+import 'package:the_smyrna_bible_v2/features/bible_importer/presentation/cubit/bible_importer_cubit.dart';
 import 'package:the_smyrna_bible_v2/features/toolbar/presentation/widgets/toolbar.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -153,6 +154,7 @@ class _HomeState extends State<Home> {
     );
     final isFullscreen = context.select((FullscreenCubit f) => f.state);
     final showToolbar = context.select((ToolbarCubit t) => t.state);
+    final screen = MediaQuery.of(context).size;
 
     // ShortcusHost must be at the very root after the MaterialApp
     return ShortcutHost(
@@ -226,7 +228,7 @@ class _HomeState extends State<Home> {
                     //
                     if (enableDynamicSearchbar)
                       Positioned(
-                        top: 20,
+                        top: screen.height * 0.08,
                         right: 0,
                         left: 0,
                         child: Visibility(

@@ -9,7 +9,9 @@ import '../bloc/installed_bibles/installed_bibles_bloc.dart';
 part 'installed_bibles_row.dart';
 
 class InstalledBiblesSection extends StatelessWidget {
-  const InstalledBiblesSection({super.key});
+  const InstalledBiblesSection({super.key, this.onSelect});
+
+  final Function(BibleMeta)? onSelect;
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +26,11 @@ class InstalledBiblesSection extends StatelessWidget {
           itemCount: state.installedBibles.length,
           //separatorBuilder: (_, __) => Divider(),
           itemBuilder: (_, index) {
-            return _InstalledBiblesRow(
-              bibleMeta: state.installedBibles[index],
+            return GestureDetector(
+              onTap: () => onSelect?.call(state.installedBibles[index]),
+              child: _InstalledBiblesRow(
+                bibleMeta: state.installedBibles[index],
+              ),
             );
           },
         );

@@ -34,7 +34,9 @@ class _GroupListState extends State<_GroupList> {
               Text(widget.title),
               IconButton(
                 onPressed: () => setState(() => isExpanded = !isExpanded),
-                icon: const Icon(Icons.arrow_drop_down_circle_sharp),
+                icon: isExpanded
+                    ? const Icon(Icons.arrow_drop_up)
+                    : const Icon(Icons.arrow_drop_down_circle_rounded),
               )
             ],
           ),

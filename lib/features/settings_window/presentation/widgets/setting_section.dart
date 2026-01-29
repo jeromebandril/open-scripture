@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:the_smyrna_bible_v2/core/presentation/widgets/debounce_textfield.dart';
 
 class SettingSection extends StatelessWidget {
   const SettingSection({
@@ -107,6 +108,7 @@ class SettingListSection extends StatelessWidget {
     this.errorPlaceholder,
     this.emptyListPlaceholder,
     this.separatorBuilder,
+    this.onFilter,
   });
 
   final String title;
@@ -117,6 +119,7 @@ class SettingListSection extends StatelessWidget {
   final bool isError;
   final Widget? emptyListPlaceholder;
   final Widget? errorPlaceholder;
+  final Function(String)? onFilter;
 
   Widget _builder() {
     if (isLoading) {
@@ -170,7 +173,8 @@ class SettingListSection extends StatelessWidget {
               ),
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
               width: 250,
-              child: TextField(
+              child: DebouncedTextField(
+                onDebouncedChanged: (String value) => onFilter?.call(value),
                 decoration: InputDecoration(
                   isDense: true,
                   hintText: 'Filter',

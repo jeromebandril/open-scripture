@@ -31,10 +31,13 @@ class _PaneInfoState extends State<PaneInfo> {
         cursor: SystemMouseCursors.click,
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(4),
+              topRight: Radius.circular(4),
+            ),
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
           ),
-          padding: EdgeInsets.symmetric(horizontal: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
           height: 24,
           child: Row(
             children: [
@@ -42,11 +45,11 @@ class _PaneInfoState extends State<PaneInfo> {
               BlocBuilder<SelectedWordCubit, WordInfo?>(
                 builder: (context, wordInfo) {
                   return wordInfo == null
-                      ? SizedBox()
+                      ? const SizedBox()
                       : HoverableContainer(
                           hoveredColor:
                               Theme.of(context).colorScheme.surfaceDim,
-                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
                           child: Tooltip(
                             waitDuration: const Duration(days: 1),
                             key: _tooltipKey,
@@ -78,7 +81,7 @@ class _PaneInfoState extends State<PaneInfo> {
                 }),
                 child: HoverableContainer(
                   hoveredColor: Theme.of(context).colorScheme.surfaceDim,
-                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: Text(
                     bibleMeta == null
                         ? 'Unknown'
