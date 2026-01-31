@@ -202,7 +202,7 @@ class AppThemeBuilder {
 
                 // Borders & dividers
                 outline: Color(0xFF6A6A6A),
-                outlineVariant: Color(0xFF2A2A2A),
+                outlineVariant: Color.fromARGB(255, 69, 69, 69),
 
                 // Feedback
                 error: Color(0xFFCF6679),

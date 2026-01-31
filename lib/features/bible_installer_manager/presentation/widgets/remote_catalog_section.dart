@@ -45,7 +45,9 @@ class _RemoteCatalogSectionState extends State<RemoteCatalogSection> {
         if (filter != null) {
           bib = state.bibles.where((b) {
             return b.bibleName.toLowerCase().contains(filter!) ||
-                b.bibleNameLocal.toLowerCase().contains(filter!);
+                b.bibleNameLocal.toLowerCase().contains(filter!) ||
+                (b.langEngName != null &&
+                    b.langEngName!.toLowerCase().contains(filter!));
           }).toList();
         } else {
           bib = state.bibles;
@@ -65,7 +67,7 @@ class _RemoteCatalogSectionState extends State<RemoteCatalogSection> {
         // Group the language alphabetically
 
         return SettingListSection(
-          title: 'Available Bibles',
+          title: 'Available Bibles  ( ${state.bibles.length} )',
           onFilter: (val) {
             setState(() {
               filter = val.isEmpty ? null : val.toLowerCase();
@@ -78,7 +80,6 @@ class _RemoteCatalogSectionState extends State<RemoteCatalogSection> {
           itemCount: groups.values.length,
           separatorBuilder: (_, __) => Divider(
             height: 1,
-            color: Theme.of(context).colorScheme.outline,
           ),
           itemBuilder: (_, index) {
             final String key = keys.elementAt(index);

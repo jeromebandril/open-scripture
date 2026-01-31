@@ -105,14 +105,16 @@ class BibleViewPresentation extends StatelessWidget {
                     List<InlineSpan> build() {
                       return [
                         for (int i = 0; i < verses.length; i++) ...[
+                          TextSpan(text: '   '),
                           TextSpan(
-                            text: '   ${i + ref.verseStart!} ',
+                            text: '${i + ref.verseStart!}',
                             style: TextStyle(
-                              fontSize: 8,
-                              fontWeight: FontWeight.bold,
-                              color: paneTheme.accentColor,
-                            ),
+                                fontSize: 8,
+                                fontWeight: FontWeight.bold,
+                                color: paneTheme.accentColor,
+                                decoration: TextDecoration.underline),
                           ),
+                          TextSpan(text: ' '),
                           inlineSpans[i],
                         ],
                       ];
