@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/parts/reset_button.dart';
 
 import '../../../../core/utils/colors_util.dart';
 
@@ -11,11 +12,16 @@ class SettingInputColor extends StatefulWidget {
     this.color = Colors.red,
     this.onColorChanged,
     this.isDisabled = false,
+    this.showReset = false,
+    this.onReset,
   });
 
   final Color color;
   final Function(Color)? onColorChanged;
   final bool isDisabled;
+
+  final bool showReset;
+  final Function()? onReset;
 
   @override
   State<SettingInputColor> createState() => _SettingInputColorState();
@@ -113,6 +119,9 @@ class _SettingInputColorState extends State<SettingInputColor> {
       mainAxisAlignment: MainAxisAlignment.end,
       spacing: 8,
       children: [
+        ResetButton(
+          onPress: () => widget.onReset?.call(),
+        ),
         Text('#${ColorsUtil.colorToHex(widget.color)}'),
         CompositedTransformTarget(
           link: layerLink,

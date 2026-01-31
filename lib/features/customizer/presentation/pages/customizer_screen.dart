@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/widgets/parts/verse_widget.dart';
 import 'package:the_smyrna_bible_v2/features/customizer/domain/entities/app_font_weight.dart';
 import 'package:the_smyrna_bible_v2/features/customizer/domain/entities/app_theme.dart';
+import 'package:the_smyrna_bible_v2/features/customizer/domain/entities/bible_pane_theme.dart';
 import 'package:the_smyrna_bible_v2/features/customizer/presentation/widgets/bible_pane_preview.dart';
 import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/setting_input_bool.dart';
 import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/setting.dart';
@@ -37,6 +38,8 @@ class CustomizerScreen extends StatefulWidget {
 }
 
 class _CustomizerScreenState extends State<CustomizerScreen> {
+  final defaultPaneTheme = BiblePaneThemeSettings();
+
   @override
   void dispose() {
     super.dispose();
@@ -77,6 +80,14 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                   label: 'Accent color',
                   description: 'Set accent color for app',
                   child: SettingInputColor(
+                    showReset: defaultPaneTheme.accentColor !=
+                        context.select(
+                            (CustomizerCubit c) => c.state.app.accentColor),
+                    onReset: () {
+                      cubit.updateTheme(
+                          appTheme: (a) => a.copyWith(
+                              accentColor: defaultPaneTheme.accentColor));
+                    },
                     onColorChanged: (c) {
                       cubit.updateTheme(
                           appTheme: (a) => a.copyWith(accentColor: c));
