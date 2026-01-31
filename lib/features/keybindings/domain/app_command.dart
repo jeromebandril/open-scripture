@@ -77,12 +77,12 @@ const Map<AppCommand, AppCommandInfo> appCommandInfo = {
 };
 
 const Map<AppCommand, SingleActivator> appCommandShortcuts = {
-  AppCommand.focusSearch:
-      SingleActivator(LogicalKeyboardKey.keyL, control: true),
-  AppCommand.toggleToolbar:
-      SingleActivator(LogicalKeyboardKey.keyT, control: true),
-  AppCommand.toggleFullscreen:
-      SingleActivator(LogicalKeyboardKey.keyF, control: true),
+  AppCommand.focusSearch: SingleActivator(LogicalKeyboardKey.keyL,
+      control: true, includeRepeats: false),
+  AppCommand.toggleToolbar: SingleActivator(LogicalKeyboardKey.keyT,
+      control: true, includeRepeats: false),
+  AppCommand.toggleFullscreen: SingleActivator(LogicalKeyboardKey.keyF,
+      control: true, includeRepeats: false),
   AppCommand.nextVerse:
       SingleActivator(LogicalKeyboardKey.arrowRight, control: true),
   AppCommand.prevVerse:
@@ -101,14 +101,17 @@ const Map<AppCommand, SingleActivator> appCommandShortcuts = {
     LogicalKeyboardKey.keyB,
     control: true,
     shift: true,
+    includeRepeats: false,
   ),
   AppCommand.switchDisplayMode: SingleActivator(
     LogicalKeyboardKey.keyD,
     control: true,
     shift: true,
+    includeRepeats: false,
   ),
   AppCommand.unfocusSearch: SingleActivator(
     LogicalKeyboardKey.escape,
+    includeRepeats: false,
   ),
   AppCommand.displayChapterOfSelected: SingleActivator(
     LogicalKeyboardKey.enter,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/display_mode_cubit.dart';
+import 'package:the_smyrna_bible_v2/core/presentation/cubit/history_visibility_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/fullscreen_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/toolbar_cubit.dart';
 import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
@@ -61,7 +62,13 @@ class ShortcutHost extends StatelessWidget {
         onInvoke: (intent) {
           switch (intent.command) {
             case AppCommand.focusSearch:
+              if (searchFocusNode.hasFocus) {
+                context.read<HistoryVisibilityCubit>().toggle();
+              } else {
+                context.read<HistoryVisibilityCubit>().set(false);
+              }
               searchFocusNode.requestFocus();
+
               return;
             case AppCommand.toggleToolbar:
               context.read<ToolbarCubit>().toggleVisibility();

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/display_mode_cubit.dart';
+import 'package:the_smyrna_bible_v2/core/presentation/cubit/history_visibility_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/fullscreen_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/toolbar_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/widgets/help_widget.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/widgets/titlebar.dart';
 import 'package:the_smyrna_bible_v2/features/b_searchbar/domain/repositories/b_search_intent_type.dart';
+import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/widgets/parts/history_list_overlay.dart';
 import 'package:the_smyrna_bible_v2/features/bible_importer/presentation/cubit/bible_importer_cubit.dart';
 import 'package:the_smyrna_bible_v2/features/toolbar/presentation/widgets/toolbar.dart';
 import 'package:window_manager/window_manager.dart';
@@ -81,6 +83,7 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             home: MultiBlocProvider(
               providers: [
+                BlocProvider(create: (_) => di.sl<HistoryVisibilityCubit>()),
                 BlocProvider(create: (_) => di.sl<PaneManagerCubit>()),
                 BlocProvider(create: (_) => di.sl<ToolbarCubit>()),
                 BlocProvider(create: (_) => di.sl<DisplayModeCubit>()),
@@ -154,6 +157,7 @@ class _HomeState extends State<Home> {
     );
     final isFullscreen = context.select((FullscreenCubit f) => f.state);
     final showToolbar = context.select((ToolbarCubit t) => t.state);
+    final showHistory = context.select((HistoryVisibilityCubit c) => c.state);
     final screen = MediaQuery.of(context).size;
 
     // ShortcusHost must be at the very root after the MaterialApp
@@ -237,17 +241,41 @@ class _HomeState extends State<Home> {
                           visible: _searchbarHasFocus,
                           child: Align(
                             alignment: Alignment.topCenter,
-                            child: Container(
-                              padding: EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).dividerColor,
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: BSearchbar(
-                                focusNode: _searchbarFocusNode,
-                                onSubmitted: () => _returnFocusToRoot(),
-                                //onEditComplete: () => _returnFocusToRoot(),
-                              ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              spacing: 24,
+                              children: [
+                                // Searchbar
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context).dividerColor,
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: BSearchbar(
+                                    focusNode: _searchbarFocusNode,
+                                    onSubmitted: () => _returnFocusToRoot(),
+                                    //onEditComplete: () => _returnFocusToRoot(),
+                                  ),
+                                ),
+                                // history
+                                Visibility(
+                                  maintainState: true,
+                                  visible: showHistory,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).dividerColor,
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    child: HistoryListOverlay(
+                                      constraints: screen,
+                                      width: 400,
+                                      size: HistoryListSize.big,
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
                           ),
                         ),
