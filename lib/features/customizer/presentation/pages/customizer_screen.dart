@@ -50,10 +50,10 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
       padding: EdgeInsets.fromLTRB(42, 0, 42, 42),
       child: Column(
         children: [
-          TextButton(
-              onPressed: () => cubit.saveTheme(cubit.state),
-              child: Text(
-                  'Save -- sorry you have to manually tap this button, still didn\'t implement async saving')),
+          // TextButton(
+          // onPressed: () => cubit.saveTheme(),
+          // child: Text(
+          //     'Save -- sorry you have to manually tap this button, still didn\'t implement async saving')),
           SettingSection(
             title: 'Global',
             children: [

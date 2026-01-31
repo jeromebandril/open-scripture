@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:the_smyrna_bible_v2/features/customizer/domain/repo/customizer_repo.dart';
@@ -16,6 +18,7 @@ class CustomizerCubit extends Cubit<CustomizerState> {
   }
 
   final CustomizerRepo repo;
+  Timer? _saveDebounce;
 
   void loadTheme() async {
     final eitherFailureOrTheme = await repo.loadTheme();
@@ -26,10 +29,12 @@ class CustomizerCubit extends Cubit<CustomizerState> {
     );
   }
 
-  void saveTheme(CustomizerState theme) async {
-    final eitherFailOrSuccess = await repo.saveTheme(theme);
+  void saveTheme() async {
+    final eitherFailOrSuccess = await repo.saveTheme(state);
 
-    eitherFailOrSuccess.fold((f) => print('errore!'), (_) {});
+    eitherFailOrSuccess.fold((f) => print('errore!'), (_) {
+      print("save succeded");
+    });
   }
 
   void updateTheme({
@@ -40,5 +45,17 @@ class CustomizerCubit extends Cubit<CustomizerState> {
       app: appTheme?.call(state.app),
       pane: paneTheme?.call(state.pane),
     ));
+    _scheduleSave();
+  }
+
+  void _scheduleSave() {
+    _saveDebounce?.cancel();
+    _saveDebounce = Timer(const Duration(seconds: 30), saveTheme);
+  }
+
+  @override
+  Future<void> close() {
+    _saveDebounce?.cancel();
+    return super.close();
   }
 }
