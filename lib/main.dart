@@ -272,6 +272,7 @@ class _HomeState extends State<Home> {
                                       constraints: screen,
                                       width: 400,
                                       size: HistoryListSize.big,
+                                      onSelected: () => _returnFocusToRoot(),
                                     ),
                                   ),
                                 )
