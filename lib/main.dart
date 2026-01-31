@@ -243,7 +243,7 @@ class _HomeState extends State<Home> {
                             alignment: Alignment.topCenter,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
-                              spacing: 24,
+                              spacing: 8,
                               children: [
                                 // Searchbar
                                 Container(
