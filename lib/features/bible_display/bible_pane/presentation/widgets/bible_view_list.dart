@@ -13,8 +13,8 @@ import 'parts/verse_widget.dart';
 class BibleViewList extends StatefulWidget {
   const BibleViewList({
     super.key,
-    required this.segments,
     required this.uniqueId,
+    required this.segments,
   });
 
   final int uniqueId;
@@ -25,23 +25,14 @@ class BibleViewList extends StatefulWidget {
 }
 
 class _BibleViewListState extends State<BibleViewList> {
-  late ItemScrollController _itemScrollController;
+  final ItemScrollController _itemScrollController = ItemScrollController();
   final ItemPositionsListener _itemPositionsListener =
       ItemPositionsListener.create();
 
-  bool _isMounted = false;
+  bool _scrollScheduled = false;
+  BibleRef? _pendingScrollRef;
 
-  @override
-  void initState() {
-    super.initState();
-    _itemScrollController = ItemScrollController();
-
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => _isMounted = context.mounted,
-    );
-  }
-
-  bool _isIndexVisible(int index) {
+  bool _isIndexVisible(int index, Iterable<ItemPosition>? p) {
     final positions = _itemPositionsListener.itemPositions.value;
     return positions.any((p) {
       return p.index == index &&
@@ -50,18 +41,62 @@ class _BibleViewListState extends State<BibleViewList> {
     });
   }
 
-  void _scrollUntilVisible(int index) {
-    if (!_isMounted) return;
-    if (index < 0) return;
-    // Optional guard: only scroll if out of view
-    if (!_isIndexVisible(index)) {
-      if (_itemScrollController.isAttached) {
-        _itemScrollController.scrollTo(
-            index: index,
-            duration: const Duration(milliseconds: 250),
-            curve: Curves.easeInOut,
-            alignment: 0.1);
+  void _scheduleScrollAfterBuild() {
+    if (_scrollScheduled) return;
+    _scrollScheduled = true;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _scrollScheduled = false;
+      if (!mounted) return;
+
+      final target = _pendingScrollRef;
+      if (target == null) return;
+
+      final segmentsByVerse = <BibleRef, List<VerseSegment>>{};
+      for (final s in widget.segments) {
+        final key = s.ref;
+        (segmentsByVerse[key] ??= <VerseSegment>[]).add(s);
       }
+      final refs = segmentsByVerse.keys.toList();
+
+      final index = refs.indexOf(target);
+      if (index < 0) return;
+
+      await _scrollWhenReady(index);
+    });
+  }
+
+  Future<void> _scrollWhenReady(int index) async {
+    // wait up to ~10 frames for attachment + positions
+    for (var i = 0; i < 10; i++) {
+      if (!mounted) return;
+
+      if (_itemScrollController.isAttached &&
+          _itemPositionsListener.itemPositions.value.isNotEmpty) {
+        break;
+      }
+      await Future<void>.delayed(const Duration(milliseconds: 16));
+    }
+
+    if (!mounted || !_itemScrollController.isAttached) return;
+
+    final positions = _itemPositionsListener.itemPositions.value;
+    if (_isIndexVisible(index, positions)) return;
+
+    await _itemScrollController.scrollTo(
+      index: index,
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeInOut,
+      alignment: 0.1,
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant BibleViewList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (!identical(oldWidget.segments, widget.segments)) {
+      _scheduleScrollAfterBuild();
     }
   }
 
@@ -86,8 +121,15 @@ class _BibleViewListState extends State<BibleViewList> {
     return BlocConsumer<BiblePaneBloc, BiblePaneState>(
       listenWhen: (prev, curr) =>
           prev.reference != curr.reference && curr.reference != null,
-      listener: (context, state) =>
-          _scrollUntilVisible(verseRefs.indexOf(state.reference!)),
+      listener: (context, state) {
+        final ref = state.reference;
+        if (ref == null) return;
+
+        _pendingScrollRef = ref.copyWith(verseEnd: null);
+
+        _scheduleScrollAfterBuild();
+      },
+      buildWhen: (prev, curr) => prev.reference != curr.reference,
       builder: (context, state) {
         return ScrollablePositionedList.separated(
           itemScrollController: _itemScrollController,
