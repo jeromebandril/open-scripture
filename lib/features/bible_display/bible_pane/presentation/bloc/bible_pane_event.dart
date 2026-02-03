@@ -58,3 +58,9 @@ class BiblePaneJustChangeRef extends BiblePaneEvent {
 class BiblePaneCloseBible extends BiblePaneEvent {
   const BiblePaneCloseBible();
 }
+
+class BiblePaneSetDisplayMode extends BiblePaneEvent {
+  final DisplayMode dMode;
+
+  const BiblePaneSetDisplayMode(this.dMode);
+}

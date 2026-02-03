@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:the_smyrna_bible_v2/core/domain/entities/verse_segment.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/domain/repositories/bible_repository.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/models/display_mode.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/navigation_bus.dart';
 
 import '../../../../../core/domain/entities/bible_meta.dart';
@@ -24,6 +25,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     on<BiblePaneJustChangeRef>(_onChangeRef);
     on<BiblePaneCloseBible>(_onCloseBible);
     on<BiblePaneDisplayVerses>(_onDisplayVerses);
+    on<BiblePaneSetDisplayMode>(_onChangeDisplayMode);
   }
 
   final BibleRepository repo;
@@ -47,7 +49,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
       )),
       (segments) => emit(state.copyWith(
         status: () => BiblePaneStatus.ready,
-        verseSegments: () => segments,
+        segments: () => segments,
         reference: () => segments.first.ref,
         isMixed: () => true,
       )),
@@ -101,7 +103,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
         emit(state.copyWith(
           status: () => BiblePaneStatus.ready,
           reference: () => event.ref,
-          verseSegments: () => verses,
+          segments: () => verses,
           isMixed: () => false,
         ));
 
@@ -142,5 +144,10 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
       status: () => BiblePaneStatus.initial,
       bibleId: () => null,
     ));
+  }
+
+  FutureOr<void> _onChangeDisplayMode(
+      BiblePaneSetDisplayMode event, Emitter<BiblePaneState> emit) {
+    emit(state.copyWith(dMode: () => event.dMode));
   }
 }

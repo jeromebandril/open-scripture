@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:the_smyrna_bible_v2/core/presentation/cubit/display_mode_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/history_visibility_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/fullscreen_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/toolbar_cubit.dart';
 import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
+import '../../../bible_display/bible_pane/presentation/models/display_mode.dart';
 import '../../../bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
 import '../../domain/app_command.dart';
 import '../models/intents.dart';
@@ -166,12 +166,12 @@ class ShortcutHost extends StatelessWidget {
               return;
 
             case AppCommand.switchDisplayMode:
-              final dmc = context.read<DisplayModeCubit>();
+              final ab = context.read<PaneManagerCubit>().activeBloc();
               final modes = DisplayMode.values;
-              final i = modes.indexOf(dmc.state);
+              final i = modes.indexOf(ab.state.dMode);
               int next = 0;
               if (i < modes.length - 1) next = i + 1;
-              dmc.set(modes[next]);
+              ab.add(BiblePaneSetDisplayMode(modes[next]));
               return;
             case AppCommand.unfocusSearch:
               rootFocusNode.requestFocus();

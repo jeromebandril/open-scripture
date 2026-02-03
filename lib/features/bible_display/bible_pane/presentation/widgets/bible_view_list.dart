@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:the_smyrna_bible_v2/core/domain/entities/bible_ref.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/models/display_mode.dart';
 
 import '../../../../../core/domain/entities/verse_segment.dart';
 import '../../../../customizer/domain/entities/bible_pane_theme.dart';
@@ -92,6 +93,16 @@ class _BibleViewListState extends State<BibleViewList> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _pendingScrollRef =
+        context.read<BiblePaneBloc>().state.reference!.copyWith(verseEnd: null);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scheduleScrollAfterBuild();
+    });
+  }
+
+  @override
   void didUpdateWidget(covariant BibleViewList oldWidget) {
     super.didUpdateWidget(oldWidget);
 
@@ -120,7 +131,7 @@ class _BibleViewListState extends State<BibleViewList> {
 
     return BlocConsumer<BiblePaneBloc, BiblePaneState>(
       listenWhen: (prev, curr) =>
-          prev.reference != curr.reference && curr.reference != null,
+          (prev.reference != curr.reference && curr.reference != null),
       listener: (context, state) {
         final ref = state.reference;
         if (ref == null) return;

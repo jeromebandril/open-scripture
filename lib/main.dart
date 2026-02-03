@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:the_smyrna_bible_v2/core/presentation/cubit/display_mode_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/history_visibility_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/fullscreen_cubit.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/cubit/toolbar_cubit.dart';
@@ -86,7 +85,6 @@ class MyApp extends StatelessWidget {
                 BlocProvider(create: (_) => di.sl<HistoryVisibilityCubit>()),
                 BlocProvider(create: (_) => di.sl<PaneManagerCubit>()),
                 BlocProvider(create: (_) => di.sl<ToolbarCubit>()),
-                BlocProvider(create: (_) => di.sl<DisplayModeCubit>()),
                 BlocProvider(create: (_) => di.sl<FullscreenCubit>()..init()),
                 BlocProvider(create: (_) => di.sl<WindowStackManagerBloc>()),
                 BlocProvider(

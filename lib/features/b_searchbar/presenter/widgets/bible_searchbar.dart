@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:the_smyrna_bible_v2/core/presentation/cubit/display_mode_cubit.dart';
+import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
 
+import '../../../bible_display/bible_pane/presentation/models/display_mode.dart';
 import '../bloc/b_searchbar_bloc.dart';
 import '../models/find_intent.dart';
 
@@ -86,8 +86,9 @@ class _BSearchbarState extends State<BSearchbar> {
 
                         // only list view
                         context
-                            .read<DisplayModeCubit>()
-                            .set(DisplayMode.normal);
+                            .read<PaneManagerCubit>()
+                            .activeBloc()
+                            .add(BiblePaneSetDisplayMode(DisplayMode.normal));
                         context.read<BSearchbarBloc>().add(BSearchbarFind(
                               bibleId: bibleId,
                               query: input,
