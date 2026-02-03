@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:the_smyrna_bible_v2/core/domain/entities/bible_ref.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/models/display_mode.dart';
 
 import '../../../../../core/domain/entities/verse_segment.dart';
 import '../../../../customizer/domain/entities/bible_pane_theme.dart';
@@ -42,7 +41,7 @@ class _BibleViewListState extends State<BibleViewList> {
     });
   }
 
-  void _scheduleScrollAfterBuild() {
+  void _scheduleScrollAfterBuild({useAnimation = true}) {
     if (_scrollScheduled) return;
     _scrollScheduled = true;
 
@@ -63,11 +62,11 @@ class _BibleViewListState extends State<BibleViewList> {
       final index = refs.indexOf(target);
       if (index < 0) return;
 
-      await _scrollWhenReady(index);
+      await _scrollWhenReady(index, useAnimation);
     });
   }
 
-  Future<void> _scrollWhenReady(int index) async {
+  Future<void> _scrollWhenReady(int index, bool useAnimation) async {
     // wait up to ~10 frames for attachment + positions
     for (var i = 0; i < 10; i++) {
       if (!mounted) return;
@@ -84,21 +83,28 @@ class _BibleViewListState extends State<BibleViewList> {
     final positions = _itemPositionsListener.itemPositions.value;
     if (_isIndexVisible(index, positions)) return;
 
-    await _itemScrollController.scrollTo(
-      index: index,
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeInOut,
-      alignment: 0.1,
-    );
+    if (useAnimation) {
+      await _itemScrollController.scrollTo(
+        index: index,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        alignment: 0.1,
+      );
+      return;
+    }
+
+    _itemScrollController.jumpTo(index: index);
   }
 
   @override
   void initState() {
     super.initState();
+
+    // Scrolls to ref after display mode switch (which should remount the widget)
     _pendingScrollRef =
         context.read<BiblePaneBloc>().state.reference!.copyWith(verseEnd: null);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scheduleScrollAfterBuild();
+      _scheduleScrollAfterBuild(useAnimation: false);
     });
   }
 
@@ -106,6 +112,7 @@ class _BibleViewListState extends State<BibleViewList> {
   void didUpdateWidget(covariant BibleViewList oldWidget) {
     super.didUpdateWidget(oldWidget);
 
+    // Scrolls to ref after content segments changes
     if (!identical(oldWidget.segments, widget.segments)) {
       _scheduleScrollAfterBuild();
     }
