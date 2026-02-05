@@ -32,6 +32,6 @@ class BibleViewPresentationTheme
 
 extension BibleViewPresentationThemeX on BibleViewPresentationThemeSettings {
   BibleViewPresentationTheme toExtension() => BibleViewPresentationTheme(
-        textAlignment: textAlignment.toFlutter(),
+        textAlignment: textAlign.toFlutter(),
       );
 }

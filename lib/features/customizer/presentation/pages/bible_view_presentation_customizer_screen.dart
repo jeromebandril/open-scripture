@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/models/display_mode.dart';
-import 'package:open_scripture/features/customizer/domain/entities/app_text_alignment.dart';
+import 'package:open_scripture/features/customizer/domain/entities/app_text_align.dart';
 import 'package:open_scripture/features/customizer/presentation/widgets/bible_pane_preview.dart';
 
 import '../../../settings_window/presentation/widgets/setting.dart';
@@ -42,16 +42,15 @@ class _BibleViewPresentationCustomizerScreenState
                     Setting(
                         label: 'Text alignment',
                         description: 'Select text alignment',
-                        child: SettingInputOption<AppTextAlignment>(
+                        child: SettingInputOption<AppTextAlign>(
                           value: context.select((CustomizerCubit c) =>
-                              c.state.presentTheme.textAlignment),
+                              c.state.presentTheme.textAlign),
                           onChanged: (ta) {
                             cubit.updateTheme(
-                                presentTheme: (p) =>
-                                    p.copyWith(textAlignment: ta));
+                                presentTheme: (p) => p.copyWith(textAlign: ta));
                           },
-                          items: AppTextAlignment.values
-                              .map((ta) => DropdownMenuItem<AppTextAlignment>(
+                          items: AppTextAlign.values
+                              .map((ta) => DropdownMenuItem<AppTextAlign>(
                                   value: ta, child: Text(ta.wire)))
                               .toList(),
                         )),

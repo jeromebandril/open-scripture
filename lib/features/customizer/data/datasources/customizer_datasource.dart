@@ -74,6 +74,7 @@ class CustomizerDatasourceImpl implements CustomizerDatasource {
         }
         return CustomizerState.fromJson(decoded);
       } catch (e) {
+        print(e);
         // Backup the corrupted file for debugging
         final backupPath =
             '${file.path}.corrupt.${DateTime.now().millisecondsSinceEpoch}';
@@ -87,6 +88,7 @@ class CustomizerDatasourceImpl implements CustomizerDatasource {
         return defaults;
       }
     } catch (e) {
+      print(e);
       throw Exception();
     }
   }

@@ -1,33 +1,31 @@
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/features/customizer/domain/entities/app_text_alignment.dart';
+import 'package:open_scripture/features/customizer/domain/entities/app_text_align.dart';
 
 class BibleViewPresentationThemeSettings extends Equatable {
-  final AppTextAlignment textAlignment;
+  final AppTextAlign textAlign;
 
   const BibleViewPresentationThemeSettings({
-    this.textAlignment = AppTextAlignment.left,
+    this.textAlign = AppTextAlign.left,
   });
 
   @override
   List<Object?> get props => [
-        textAlignment,
+        textAlign,
       ];
 
   Map<String, dynamic> toJson() => {
-        'textAlignment': textAlignment.wire,
+        'textAlign': textAlign.wire,
       };
 
-  BibleViewPresentationThemeSettings copyWith(
-      {AppTextAlignment? textAlignment}) {
+  BibleViewPresentationThemeSettings copyWith({AppTextAlign? textAlign}) {
     return BibleViewPresentationThemeSettings(
-      textAlignment: textAlignment ?? this.textAlignment,
+      textAlign: textAlign ?? this.textAlign,
     );
   }
 
   static BibleViewPresentationThemeSettings fromJson(
       Map<String, dynamic> json) {
     return BibleViewPresentationThemeSettings(
-        textAlignment:
-            AppTextAlignmentWire.fromWire(json['textAlign'] as String));
+        textAlign: AppTextAlignWire.fromWire(json['textAlign'] as String));
   }
 }

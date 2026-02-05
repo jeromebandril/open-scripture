@@ -1,12 +1,12 @@
 import 'package:flutter/painting.dart';
-import 'package:open_scripture/features/customizer/domain/entities/app_text_alignment.dart';
+import 'package:open_scripture/features/customizer/domain/entities/app_text_align.dart';
 
-extension AppTextAlignmentFlutter on AppTextAlignment {
+extension AppTextAlignmentFlutter on AppTextAlign {
   TextAlign toFlutter() {
     switch (this) {
-      case AppTextAlignment.left:
+      case AppTextAlign.left:
         return TextAlign.left;
-      case AppTextAlignment.center:
+      case AppTextAlign.center:
         return TextAlign.center;
     }
   }
