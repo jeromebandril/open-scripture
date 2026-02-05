@@ -51,8 +51,7 @@ LazyDatabase _openConnection() {
     // put the database file, called db.sqlite here, into the documents folder
     // for your app.
     final dbFolder = await getApplicationSupportDirectory();
-    final file =
-        File(p.join(dbFolder.path, 'OpenScripure/open_scripture.sqlite'));
+    final file = File(p.join(dbFolder.path, 'data/open_scripture.sqlite'));
 
     return NativeDatabase.createInBackground(file);
   });
