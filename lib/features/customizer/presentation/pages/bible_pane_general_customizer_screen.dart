@@ -246,8 +246,6 @@ class _BiblePaneGeneralCustomizerScreenState
                                 paneTheme: (a) => a.copyWith(
                                     quoteColor: defaultPaneTheme.quoteColor));
                           },
-                          isDisabled: !context.select((CustomizerCubit c) =>
-                              c.state.pane.enableCustomTheme),
                           onColorChanged: (c) {
                             cubit.updateTheme(
                                 paneTheme: (p) => p.copyWith(quoteColor: c));

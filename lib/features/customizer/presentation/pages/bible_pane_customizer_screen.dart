@@ -31,6 +31,19 @@ class _BiblePaneCustomizerScreenState extends State<BiblePaneCustomizerScreen> {
     ];
   }
 
+  String _previewTitle() {
+    switch (_index) {
+      case 0:
+        return 'General';
+      case 1:
+        return 'List';
+      case 2:
+        return 'Presentation';
+      default:
+        return '';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -79,7 +92,7 @@ class _BiblePaneCustomizerScreenState extends State<BiblePaneCustomizerScreen> {
                   spacing: 8,
                   children: [
                     SettingSection(
-                      title: 'Preview',
+                      title: '${_previewTitle()} Preview',
                       children: [
                         Center(
                             child: BiblePanePreview(
