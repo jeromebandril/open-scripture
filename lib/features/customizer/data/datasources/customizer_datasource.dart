@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:the_smyrna_bible_v2/features/customizer/presentation/cubit/customizer_cubit.dart';
+import 'package:open_scripture/features/customizer/presentation/cubit/customizer_cubit.dart';
 
 abstract class CustomizerDatasource {
   /// Saves customizations locally.

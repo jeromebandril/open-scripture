@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/bible_importer/presentation/cubit/bible_importer_cubit.dart';
+import 'package:open_scripture/features/bible_importer/presentation/cubit/bible_importer_cubit.dart';
 
 import '../../../../injection_container.dart';
 

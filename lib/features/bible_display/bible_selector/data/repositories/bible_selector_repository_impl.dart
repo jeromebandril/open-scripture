@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:the_smyrna_bible_v2/core/data/datasources/bible_sqllite_datasource.dart';
-import 'package:the_smyrna_bible_v2/core/domain/entities/bible_meta.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/bible_selector/domain/repositories/bible_selector_repository.dart';
+import 'package:open_scripture/core/data/datasources/bible_sqllite_datasource.dart';
+import 'package:open_scripture/core/domain/entities/bible_meta.dart';
+import 'package:open_scripture/features/bible_display/bible_selector/domain/repositories/bible_selector_repository.dart';
 
 import '../../../../../core/error/failure.dart';
 

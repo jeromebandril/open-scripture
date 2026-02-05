@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:the_smyrna_bible_v2/core/presentation/cubit/history_visibility_cubit.dart';
-import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/widgets/parts/history_list_overlay.dart';
+import 'package:open_scripture/core/presentation/cubit/history_visibility_cubit.dart';
+import 'package:open_scripture/features/b_searchbar/presenter/widgets/parts/history_list_overlay.dart';
 
 class ShowHistoryButton extends StatelessWidget {
   ShowHistoryButton({super.key});

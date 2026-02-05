@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:the_smyrna_bible_v2/core/domain/entities/book_names.dart';
-import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
+import 'package:open_scripture/core/domain/entities/book_names.dart';
+import 'package:open_scripture/features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
+import 'package:open_scripture/features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
 
 import '../../../../injection_container.dart';
 

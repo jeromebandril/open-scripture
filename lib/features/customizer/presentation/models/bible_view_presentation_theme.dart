@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:the_smyrna_bible_v2/features/customizer/domain/entities/bible_pane_presentation_theme_settings.dart';
-import 'package:the_smyrna_bible_v2/features/customizer/presentation/models/app_text_alignment.dart';
+import 'package:open_scripture/features/customizer/domain/entities/bible_pane_presentation_theme_settings.dart';
+import 'package:open_scripture/features/customizer/presentation/models/app_text_alignment.dart';
 
 @immutable
 class BibleViewPresentationTheme

@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:the_smyrna_bible_v2/features/customizer/domain/entities/app_text_alignment.dart';
+import 'package:open_scripture/features/customizer/domain/entities/app_text_alignment.dart';
 
 class BibleViewPresentationThemeSettings extends Equatable {
   final AppTextAlignment textAlignment;

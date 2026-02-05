@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/setting_section.dart';
+import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
 
 import '../../../../core/domain/entities/bible_meta.dart';
 import '../../../../core/presentation/widgets/hoverable_container.dart';

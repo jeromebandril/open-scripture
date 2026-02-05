@@ -1,6 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:the_smyrna_bible_v2/features/customizer/presentation/models/bible_pane_general_theme.dart';
+import 'package:open_scripture/features/customizer/presentation/models/bible_pane_general_theme.dart';
 
 import '../../../../../core/domain/entities/verse_span.dart';
 

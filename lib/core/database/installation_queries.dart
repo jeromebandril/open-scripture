@@ -1,8 +1,8 @@
 import 'package:drift/drift.dart';
-import 'package:the_smyrna_bible_v2/core/domain/entities/book_names.dart';
-import 'package:the_smyrna_bible_v2/core/data/models/segment_key.dart';
-import 'package:the_smyrna_bible_v2/core/data/models/verse_span_model.dart';
-import 'package:the_smyrna_bible_v2/core/domain/entities/verse_segment.dart';
+import 'package:open_scripture/core/domain/entities/book_names.dart';
+import 'package:open_scripture/core/data/models/segment_key.dart';
+import 'package:open_scripture/core/data/models/verse_span_model.dart';
+import 'package:open_scripture/core/domain/entities/verse_segment.dart';
 
 import '../../injection_container.dart';
 import '../domain/entities/bible_meta.dart';

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/cubit/selected_word_cubit.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/widgets/bible_view_list.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/widgets/parts/pane_info.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/widgets/bible_view_presentation.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/bible_selector/presenter/widget/bible_selector.dart';
-import 'package:the_smyrna_bible_v2/features/customizer/presentation/cubit/customizer_cubit.dart';
+import 'package:open_scripture/features/bible_display/bible_pane/presentation/cubit/selected_word_cubit.dart';
+import 'package:open_scripture/features/bible_display/bible_pane/presentation/widgets/bible_view_list.dart';
+import 'package:open_scripture/features/bible_display/bible_pane/presentation/widgets/parts/pane_info.dart';
+import 'package:open_scripture/features/bible_display/bible_pane/presentation/widgets/bible_view_presentation.dart';
+import 'package:open_scripture/features/bible_display/bible_selector/presenter/widget/bible_selector.dart';
+import 'package:open_scripture/features/customizer/presentation/cubit/customizer_cubit.dart';
 
 import '../../../../../core/presentation/widgets/adjustable_text_size.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';

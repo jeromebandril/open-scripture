@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:the_smyrna_bible_v2/core/error/failure.dart';
-import 'package:the_smyrna_bible_v2/features/customizer/data/datasources/customizer_datasource.dart';
-import 'package:the_smyrna_bible_v2/features/customizer/domain/repo/customizer_repo.dart';
+import 'package:open_scripture/core/error/failure.dart';
+import 'package:open_scripture/features/customizer/data/datasources/customizer_datasource.dart';
+import 'package:open_scripture/features/customizer/domain/repo/customizer_repo.dart';
 
 import '../../presentation/cubit/customizer_cubit.dart';
 

@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:the_smyrna_bible_v2/core/database/database.dart';
+import 'package:open_scripture/core/database/database.dart';
 
 class BibleMeta extends Equatable {
   final int? id;

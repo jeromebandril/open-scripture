@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:the_smyrna_bible_v2/core/presentation/cubit/history_visibility_cubit.dart';
-import 'package:the_smyrna_bible_v2/core/presentation/cubit/fullscreen_cubit.dart';
-import 'package:the_smyrna_bible_v2/core/presentation/cubit/toolbar_cubit.dart';
-import 'package:the_smyrna_bible_v2/core/presentation/widgets/help_widget.dart';
-import 'package:the_smyrna_bible_v2/core/presentation/widgets/titlebar.dart';
-import 'package:the_smyrna_bible_v2/features/b_searchbar/domain/repositories/b_search_intent_type.dart';
-import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/widgets/parts/history_list_overlay.dart';
-import 'package:the_smyrna_bible_v2/features/customizer/presentation/models/bible_view_presentation_theme.dart';
-import 'package:the_smyrna_bible_v2/features/customizer/presentation/models/searchbar_position.dart';
-import 'package:the_smyrna_bible_v2/features/toolbar/presentation/widgets/toolbar.dart';
+import 'package:open_scripture/core/presentation/cubit/history_visibility_cubit.dart';
+import 'package:open_scripture/core/presentation/cubit/fullscreen_cubit.dart';
+import 'package:open_scripture/core/presentation/cubit/toolbar_cubit.dart';
+import 'package:open_scripture/core/presentation/widgets/help_widget.dart';
+import 'package:open_scripture/core/presentation/widgets/titlebar.dart';
+import 'package:open_scripture/features/b_searchbar/domain/repositories/b_search_intent_type.dart';
+import 'package:open_scripture/features/b_searchbar/presenter/widgets/parts/history_list_overlay.dart';
+import 'package:open_scripture/features/customizer/presentation/models/bible_view_presentation_theme.dart';
+import 'package:open_scripture/features/customizer/presentation/models/searchbar_position.dart';
+import 'package:open_scripture/features/toolbar/presentation/widgets/toolbar.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

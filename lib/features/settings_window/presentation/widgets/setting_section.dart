@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:the_smyrna_bible_v2/core/presentation/widgets/debounce_textfield.dart';
+import 'package:open_scripture/core/presentation/widgets/debounce_textfield.dart';
 
 class SettingSection extends StatelessWidget {
   const SettingSection({

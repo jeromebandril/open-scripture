@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:the_smyrna_bible_v2/core/domain/entities/verse_segment.dart';
-import 'package:the_smyrna_bible_v2/core/domain/entities/verse_span.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/models/display_mode.dart';
-import 'package:the_smyrna_bible_v2/features/customizer/presentation/models/bible_view_presentation_theme.dart';
+import 'package:open_scripture/core/domain/entities/verse_segment.dart';
+import 'package:open_scripture/core/domain/entities/verse_span.dart';
+import 'package:open_scripture/features/bible_display/bible_pane/presentation/models/display_mode.dart';
+import 'package:open_scripture/features/customizer/presentation/models/bible_view_presentation_theme.dart';
 
 import '../../../../core/domain/entities/bible_ref.dart';
 import '../../../../core/domain/entities/book_names.dart';

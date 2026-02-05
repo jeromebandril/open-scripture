@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:the_smyrna_bible_v2/features/bible_importer/presentation/widget/importer.dart';
-import 'package:the_smyrna_bible_v2/features/customizer/presentation/pages/bible_pane_customizer_screen.dart';
-import 'package:the_smyrna_bible_v2/features/customizer/presentation/pages/global_customizer_screen.dart';
-import 'package:the_smyrna_bible_v2/features/settings_window/presentation/pages/about_setting_page.dart';
+import 'package:open_scripture/features/bible_importer/presentation/widget/importer.dart';
+import 'package:open_scripture/features/customizer/presentation/pages/bible_pane_customizer_screen.dart';
+import 'package:open_scripture/features/customizer/presentation/pages/global_customizer_screen.dart';
+import 'package:open_scripture/features/settings_window/presentation/pages/about_setting_page.dart';
 
 import '../../../bible_installer_manager/presentation/pages/translation_manager.dart';
 import '../../../keybindings/presentation/pages/keybindings_screen.dart';

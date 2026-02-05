@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:the_smyrna_bible_v2/core/presentation/widgets/hoverable_container.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/cubit/selected_word_cubit.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/widgets/parts/active_pane_indicator.dart';
+import 'package:open_scripture/core/presentation/widgets/hoverable_container.dart';
+import 'package:open_scripture/features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
+import 'package:open_scripture/features/bible_display/bible_pane/presentation/cubit/selected_word_cubit.dart';
+import 'package:open_scripture/features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
+import 'package:open_scripture/features/bible_display/split_screen/presenter/widgets/parts/active_pane_indicator.dart';
 
 class PaneInfo extends StatefulWidget {
   const PaneInfo({super.key});

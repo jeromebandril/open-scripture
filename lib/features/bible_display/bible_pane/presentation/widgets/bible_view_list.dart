@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:the_smyrna_bible_v2/core/domain/entities/bible_ref.dart';
+import 'package:open_scripture/core/domain/entities/bible_ref.dart';
 
 import '../../../../../core/domain/entities/verse_segment.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';

@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:the_smyrna_bible_v2/core/utils/osis_parser.dart';
+import 'package:open_scripture/core/utils/osis_parser.dart';
 
 part 'bible_importer_state.dart';
 

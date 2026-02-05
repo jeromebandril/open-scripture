@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:the_smyrna_bible_v2/features/customizer/domain/entities/bible_pane_presentation_theme_settings.dart';
-import 'package:the_smyrna_bible_v2/features/customizer/domain/repo/customizer_repo.dart';
+import 'package:open_scripture/features/customizer/domain/entities/bible_pane_presentation_theme_settings.dart';
+import 'package:open_scripture/features/customizer/domain/repo/customizer_repo.dart';
 
 import '../../domain/entities/app_theme_settings.dart';
 import '../../domain/entities/bible_pane_general_theme_settings.dart';

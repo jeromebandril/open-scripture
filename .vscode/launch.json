@@ -11,18 +11,18 @@
       "type": "dart"
     },
     {
-      "name": "the_smyrna_bible_v2",
+      "name": "open_scripture",
       "request": "launch",
       "type": "dart"
     },
     {
-      "name": "the_smyrna_bible_v2 (profile mode)",
+      "name": "open_scripture (profile mode)",
       "request": "launch",
       "type": "dart",
       "flutterMode": "profile"
     },
     {
-      "name": "the_smyrna_bible_v2 (release mode)",
+      "name": "open_scripture (release mode)",
       "request": "launch",
       "type": "dart",
       "flutterMode": "release"

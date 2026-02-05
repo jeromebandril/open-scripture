@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/bible_installer_manager/presentation/bloc/installed_bibles/installed_bibles_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/customizer/presentation/cubit/customizer_cubit.dart';
+import 'package:open_scripture/features/bible_installer_manager/presentation/bloc/installed_bibles/installed_bibles_bloc.dart';
+import 'package:open_scripture/features/customizer/presentation/cubit/customizer_cubit.dart';
 
 import '../../../../../injection_container.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';

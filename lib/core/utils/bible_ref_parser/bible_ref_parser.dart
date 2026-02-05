@@ -1,4 +1,4 @@
-import 'package:the_smyrna_bible_v2/core/domain/entities/book_names.dart';
+import 'package:open_scripture/core/domain/entities/book_names.dart';
 
 import '../../domain/entities/bible_ref.dart';
 import 'bible_ref_parser_exceptions.dart';

@@ -1,6 +1,6 @@
-import 'package:the_smyrna_bible_v2/core/data/models/segment_key.dart';
-import 'package:the_smyrna_bible_v2/core/data/models/verse_span_model.dart';
-import 'package:the_smyrna_bible_v2/core/domain/entities/bible_ref.dart';
+import 'package:open_scripture/core/data/models/segment_key.dart';
+import 'package:open_scripture/core/data/models/verse_span_model.dart';
+import 'package:open_scripture/core/domain/entities/bible_ref.dart';
 import 'package:xml/xml.dart';
 import 'package:xml/xpath.dart';
 

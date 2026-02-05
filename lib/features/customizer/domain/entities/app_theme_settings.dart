@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:the_smyrna_bible_v2/core/utils/colors_util.dart';
+import 'package:open_scripture/core/utils/colors_util.dart';
 
 import 'searchbar_position.dart';
 
