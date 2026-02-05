@@ -6,6 +6,7 @@ import 'package:the_smyrna_bible_v2/core/presentation/widgets/help_widget.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/widgets/titlebar.dart';
 import 'package:the_smyrna_bible_v2/features/b_searchbar/domain/repositories/b_search_intent_type.dart';
 import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/widgets/parts/history_list_overlay.dart';
+import 'package:the_smyrna_bible_v2/features/customizer/presentation/models/bible_view_presentation_theme.dart';
 import 'package:the_smyrna_bible_v2/features/customizer/presentation/models/searchbar_position.dart';
 import 'package:the_smyrna_bible_v2/features/toolbar/presentation/widgets/toolbar.dart';
 import 'package:window_manager/window_manager.dart';
@@ -58,7 +59,9 @@ class MyApp extends StatelessWidget {
       child: BlocBuilder<CustomizerCubit, CustomizerState>(
         buildWhen: (prev, curr) {
           // Only rebuild MaterialApp when app-wide theme changes.
-          return prev.app != curr.app || prev.pane != curr.pane;
+          return prev.app != curr.app ||
+              prev.pane != curr.pane ||
+              prev.presentTheme != curr.presentTheme;
         },
         builder: (context, state) {
           final builder = const AppThemeBuilder();
@@ -67,11 +70,13 @@ class MyApp extends StatelessWidget {
               .toExtension()
               .copyWith(accentColor: state.app.accentColor);
 
+          final presentTheme = state.presentTheme.toExtension();
+
           final light = builder.buildLight(state.app).copyWith(
-            extensions: <ThemeExtension<dynamic>>[biblePaneTheme],
+            extensions: <ThemeExtension<dynamic>>[biblePaneTheme, presentTheme],
           );
           final dark = builder.buildDark(state.app).copyWith(
-            extensions: <ThemeExtension<dynamic>>[biblePaneTheme],
+            extensions: <ThemeExtension<dynamic>>[biblePaneTheme, presentTheme],
           );
 
           return MaterialApp(

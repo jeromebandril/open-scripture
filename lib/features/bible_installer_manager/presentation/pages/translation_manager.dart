@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_smyrna_bible_v2/core/domain/entities/bible_meta.dart';
+import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/setting_subpage_navigator.dart';
 import 'package:the_smyrna_bible_v2/injection_container.dart';
 
 import '../bloc/download_manager/bloc/download_manager_bloc.dart';
@@ -46,11 +47,11 @@ class _BibleManagerState extends State<_BibleManager> {
 
   @override
   void initState() {
+    super.initState();
     _pages = [
       const RemoteCatalogSection(),
       const InstalledBiblesSection(),
     ];
-    super.initState();
   }
 
   @override
@@ -61,40 +62,19 @@ class _BibleManagerState extends State<_BibleManager> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(8),
+          SettingSubpageNavigator(data: [
+            SettingSubpageNavigatorData(
+              onSelect: () => setState(() => _index = 0),
+              icon: Icon(Icons.install_desktop_rounded),
+              title: 'Download List',
             ),
-            height: 40,
-            child: Row(
-              children: [
-                TextButton(
-                  onPressed: () => setState(() => _index = 0),
-                  style: ButtonStyle(),
-                  child: Row(
-                    spacing: 8,
-                    children: [
-                      Icon(Icons.install_desktop_rounded),
-                      Text('Download list'),
-                    ],
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => setState(() => _index = 1),
-                  child: Row(
-                    spacing: 8,
-                    children: [
-                      Icon(Icons.download_done_rounded),
-                      Text('Installed list'),
-                    ],
-                  ),
-                ),
-              ],
+            SettingSubpageNavigatorData(
+              onSelect: () => setState(() => _index = 1),
+              icon: Icon(Icons.download_done_rounded),
+              title: 'Installed List',
             ),
-          ),
+          ]),
           Expanded(
-            flex: 8,
             child: IndexedStack(
               index: _index,
               children: _pages,

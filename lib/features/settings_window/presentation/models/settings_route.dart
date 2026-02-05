@@ -18,7 +18,7 @@ String routeFor(SettingsSection s) => switch (s) {
 
 final Map<String, SettingsRoute> settingsRoutes = {
   '/appearance/global': SettingsRoute(
-      icon: Icons.palette_rounded,
+      icon: Icons.settings_rounded,
       name: 'Global',
       builder: (_) => const GlobalCustomizerScreen()),
   '/appearance/bibleview': SettingsRoute(
@@ -27,11 +27,11 @@ final Map<String, SettingsRoute> settingsRoutes = {
       builder: (_) => const BiblePaneCustomizerScreen()),
   '/biblemanager/repo': SettingsRoute(
       icon: Icons.menu_book_sharp,
-      name: 'Repository',
+      name: 'Download & Install',
       builder: (_) => const BibleManagerWidget()),
   '/biblemanager/importer': SettingsRoute(
-      icon: Icons.menu_book_sharp,
-      name: 'Importer',
+      icon: Icons.file_download_outlined,
+      name: 'Import',
       builder: (_) => const ImporterWidget()),
   '/shortcuts': SettingsRoute(
       icon: Icons.keyboard,

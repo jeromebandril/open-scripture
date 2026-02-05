@@ -22,11 +22,6 @@ class _GlobalCustomizerScreenState extends State<GlobalCustomizerScreen> {
   final defaultPaneTheme = BiblePaneGeneralThemeSettings();
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final cubit = context.read<CustomizerCubit>();
 

@@ -6,6 +6,7 @@ import '../../../../../core/domain/entities/verse_segment.dart';
 import '../../../../../core/domain/entities/verse_span.dart';
 import '../../../../../injection_container.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
+import '../../../../customizer/presentation/models/bible_view_presentation_theme.dart';
 import '../../../split_screen/presenter/cubit/pane_manager_cubit.dart';
 import '../bloc/bible_pane_bloc.dart';
 import '../rendering/verse_richtext_builder.dart';
@@ -39,6 +40,8 @@ class BibleViewPresentation extends StatelessWidget {
 
     // theming
     final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
+    final presentTheme =
+        Theme.of(context).extension<BibleViewPresentationTheme>()!;
 
     return BlocBuilder<BiblePaneBloc, BiblePaneState>(
       buildWhen: (prev, curr) => prev.reference != curr.reference,
@@ -119,11 +122,14 @@ class BibleViewPresentation extends StatelessWidget {
                       ];
                     }
 
-                    return Text.rich(TextSpan(
-                        style: TextStyle(
-                          fontWeight: paneTheme.textFontWeight,
-                        ),
-                        children: build()));
+                    return Text.rich(
+                      TextSpan(
+                          style: TextStyle(
+                            fontWeight: paneTheme.textFontWeight,
+                          ),
+                          children: build()),
+                      textAlign: presentTheme.textAlignment,
+                    );
                   })
                 ],
               ),
