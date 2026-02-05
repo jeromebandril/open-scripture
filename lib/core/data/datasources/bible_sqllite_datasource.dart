@@ -126,6 +126,9 @@ abstract class BibleLocalDataSource {
   /// - [LocalDataException] for database/query failures
   Future<List<VerseSegment>> getVersesSegments(
       int bibleId, List<BibleRef> refs);
+
+  Future<int> getMaxChapter(int bookId);
+  Future<int> getMaxVerseRange(int bookId, int chapter);
 }
 
 class BibleLocalDatasourceImpl implements BibleLocalDataSource {
@@ -367,9 +370,23 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
   }
 
   @override
-  Future<List<Book>> getBooks(int bibleId) {
-    // TODO: implement getBooks
-    throw UnimplementedError();
+  Future<List<Book>> getBooks(int bibleId) async {
+    try {
+      final result = await db.getBooks(bibleId).get();
+
+      print('books found: ${result.length}');
+
+      return result
+          .map((r) => Book(
+                id: r.id,
+                usfxId: r.usfxId,
+                longName: r.longName!,
+                shortName: r.shortName,
+              ))
+          .toList();
+    } catch (e) {
+      throw Error();
+    }
   }
 
   @override
@@ -609,6 +626,26 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
       }).toList();
     } catch (e) {
       return [];
+    }
+  }
+
+  @override
+  Future<int> getMaxChapter(int bookId) async {
+    try {
+      final result = await db.getMaxChapter(bookId).get();
+      return result.first ?? 0;
+    } catch (e) {
+      throw Error();
+    }
+  }
+
+  @override
+  Future<int> getMaxVerseRange(int bookId, int chapter) async {
+    try {
+      final result = await db.getMaxVerse(bookId, chapter).get();
+      return result.first ?? 0;
+    } catch (e) {
+      throw Error();
     }
   }
 }

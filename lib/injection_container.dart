@@ -21,6 +21,9 @@ import 'package:open_scripture/features/customizer/data/datasources/customizer_d
 import 'package:open_scripture/features/customizer/data/repo/customizer_repo_impl.dart';
 import 'package:open_scripture/features/customizer/domain/repo/customizer_repo.dart';
 import 'package:open_scripture/features/customizer/presentation/cubit/customizer_cubit.dart';
+import 'package:open_scripture/features/three_tap_navigator/data/repository/three_tap_navigator_repository_impl.dart';
+import 'package:open_scripture/features/three_tap_navigator/domain/repository/three_tap_navigator_repository.dart';
+import 'package:open_scripture/features/three_tap_navigator/presentation/cubit/three_tap_navigator_cubit.dart';
 import 'package:open_scripture/features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
 import 'core/domain/entities/book_names.dart';
 import 'core/presentation/cubit/toolbar_cubit.dart';
@@ -55,11 +58,19 @@ Future<void> init() async {
 
   initBibleImporterFeature();
 
+  initThreeTapNavFeature();
+
   // others
   sl.registerLazySingleton(() => NavigationBus());
   sl.registerFactory(() => ToolbarCubit());
   sl.registerFactory(() => FullscreenCubit());
   sl.registerFactory(() => HistoryVisibilityCubit());
+}
+
+void initThreeTapNavFeature() {
+  sl.registerLazySingleton<ThreeTapNavigatorRepository>(
+      () => ThreeTapNavigatorRepositoryImpl(localDataSource: sl()));
+  sl.registerFactory(() => ThreeTapNavigatorCubit(repo: sl()));
 }
 
 void initBibleImporterFeature() {

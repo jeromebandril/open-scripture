@@ -2637,6 +2637,39 @@ abstract class _$AppDb extends GeneratedDatabase {
         ));
   }
 
+  Selectable<Book> getBooks(int bibleId) {
+    return customSelect('SELECT * FROM books WHERE bibleId = ?1 ORDER BY id',
+        variables: [
+          Variable<int>(bibleId)
+        ],
+        readsFrom: {
+          books,
+        }).asyncMap(books.mapFromRow);
+  }
+
+  Selectable<int?> getMaxChapter(int bookId) {
+    return customSelect(
+        'SELECT MAX(chapterNumber) AS chapter_count FROM verse_segments WHERE bookId = ?1',
+        variables: [
+          Variable<int>(bookId)
+        ],
+        readsFrom: {
+          verseSegments,
+        }).map((QueryRow row) => row.readNullable<int>('chapter_count'));
+  }
+
+  Selectable<int?> getMaxVerse(int bookId, int chapter) {
+    return customSelect(
+        'SELECT MAX(verseNumber) AS _c0 FROM verse_segments WHERE bookId = ?1 AND chapterNumber = ?2',
+        variables: [
+          Variable<int>(bookId),
+          Variable<int>(chapter)
+        ],
+        readsFrom: {
+          verseSegments,
+        }).map((QueryRow row) => row.readNullable<int>('_c0'));
+  }
+
   Future<int> clearVerseText(int bibleId) {
     return customUpdate(
       'DELETE FROM verse_text WHERE bibleId = ?1',

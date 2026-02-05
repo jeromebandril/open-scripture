@@ -15,6 +15,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
 import 'features/b_searchbar/presenter/widgets/bible_searchbar.dart';
 import 'features/b_searchbar/presenter/widgets/show_history_button.dart';
+import 'features/three_tap_navigator/presentation/widgets/three_tap_navigator.dart';
 import 'features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
 import 'features/bible_display/bible_pane/presentation/navigation_bus.dart';
 import 'features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
@@ -80,7 +81,7 @@ class MyApp extends StatelessWidget {
           );
 
           return MaterialApp(
-            title: 'Bible App',
+            title: 'Open Scripture',
             themeMode: state.app.mode,
             darkTheme: dark,
             theme: light,
@@ -349,7 +350,7 @@ class _AppHeader extends StatelessWidget {
                   mainAxisAlignment: alignment.toFlutter(),
                   // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // ThreeTapNavigator(),
+                    const ThreeTapNavigatorTrigger(),
                     BSearchbar(
                       focusNode: searchbarFocusNode,
                       onSubmitted: () => returnFocusToRoot(),

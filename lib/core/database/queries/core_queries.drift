@@ -80,4 +80,15 @@ FROM verse_segments AS vs
 JOIN books AS b ON b.id = vs.bookId
 WHERE b.bibleId = :bibleId;
 
+getBooks:
+SELECT * FROM books WHERE bibleId = :bibleId ORDER BY id;
 
+getMaxChapter:
+SELECT MAX(chapterNumber) AS chapter_count 
+FROM verse_segments 
+WHERE bookId = :bookId;
+
+getMaxVerse:
+SELECT MAX(verseNumber) 
+FROM verse_segments 
+WHERE bookId = :bookId AND chapterNumber = :chapter;
