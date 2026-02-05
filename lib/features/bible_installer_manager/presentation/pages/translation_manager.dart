@@ -57,23 +57,28 @@ class _BibleManagerState extends State<_BibleManager> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(42, 8, 42, 42),
+      padding: const EdgeInsets.fromLTRB(42, 0, 42, 42),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SettingSubpageNavigator(data: [
-            SettingSubpageNavigatorData(
-              onSelect: () => setState(() => _index = 0),
-              icon: Icon(Icons.install_desktop_rounded),
-              title: 'Download List',
-            ),
-            SettingSubpageNavigatorData(
-              onSelect: () => setState(() => _index = 1),
-              icon: Icon(Icons.download_done_rounded),
-              title: 'Installed List',
-            ),
-          ]),
+          SettingSubpageNavigator(
+            selectedId: _index,
+            data: [
+              SettingSubpageNavigatorData(
+                id: 0,
+                onSelect: (id) => setState(() => _index = id),
+                icon: Icon(Icons.install_desktop_rounded),
+                title: 'Download List',
+              ),
+              SettingSubpageNavigatorData(
+                id: 1,
+                onSelect: (id) => setState(() => _index = id),
+                icon: Icon(Icons.download_done_rounded),
+                title: 'Installed List',
+              ),
+            ],
+          ),
           Expanded(
             child: IndexedStack(
               index: _index,

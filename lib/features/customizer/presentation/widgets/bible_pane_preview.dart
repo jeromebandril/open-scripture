@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_smyrna_bible_v2/core/domain/entities/verse_segment.dart';
 import 'package:the_smyrna_bible_v2/core/domain/entities/verse_span.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/models/display_mode.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/widgets/bible_view_presentation.dart';
 import 'package:the_smyrna_bible_v2/features/customizer/presentation/models/bible_view_presentation_theme.dart';
 
 import '../../../../core/domain/entities/bible_ref.dart';
@@ -45,7 +44,8 @@ class BiblePanePreview extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (biblePaneTheme.enableHangingRefs)
+              if (biblePaneTheme.enableHangingRefs &&
+                  mode == DisplayMode.normal)
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.only(
@@ -205,7 +205,11 @@ class _BibleViewPresentationPreview extends StatelessWidget {
     final presentTheme =
         Theme.of(context).extension<BibleViewPresentationTheme>()!;
     final ref = verses.first.first.ref.copyWith(verseEnd: 39);
-    print(presentTheme.textAlignment);
+
+    final useCustom = context.select(
+      (CustomizerCubit c) => c.state.pane.enableCustomTheme,
+    );
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -257,6 +261,9 @@ class _BibleViewPresentationPreview extends StatelessWidget {
               TextSpan(
                 style: TextStyle(
                   fontWeight: paneTheme.textFontWeight,
+                  color: useCustom
+                      ? paneTheme.textColor
+                      : Theme.of(context).colorScheme.onSurface,
                 ),
                 children: build(),
               ),

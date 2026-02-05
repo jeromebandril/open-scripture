@@ -51,32 +51,38 @@ class _BiblePaneCustomizerScreenState extends State<BiblePaneCustomizerScreen> {
       child: Column(
         spacing: 8,
         children: [
-          SettingSubpageNavigator(data: [
-            SettingSubpageNavigatorData(
-              onSelect: () => setState(() {
-                _index = 0;
-                _previewMode = DisplayMode.normal;
-              }),
-              icon: Icon(Icons.color_lens_rounded),
-              title: 'General',
-            ),
-            SettingSubpageNavigatorData(
-              onSelect: () => setState(() {
-                _index = 1;
-                _previewMode = DisplayMode.normal;
-              }),
-              icon: Icon(Icons.list),
-              title: 'List view',
-            ),
-            SettingSubpageNavigatorData(
-              onSelect: () => setState(() {
-                _index = 2;
-                _previewMode = DisplayMode.presentation;
-              }),
-              icon: Icon(Icons.screenshot_monitor_rounded),
-              title: 'Presentation view',
-            ),
-          ]),
+          SettingSubpageNavigator(
+            selectedId: _index,
+            data: [
+              SettingSubpageNavigatorData(
+                id: 0,
+                onSelect: (id) => setState(() {
+                  _index = id;
+                  _previewMode = DisplayMode.normal;
+                }),
+                icon: Icon(Icons.color_lens_rounded),
+                title: 'General',
+              ),
+              SettingSubpageNavigatorData(
+                id: 1,
+                onSelect: (id) => setState(() {
+                  _index = id;
+                  _previewMode = DisplayMode.normal;
+                }),
+                icon: Icon(Icons.list),
+                title: 'List view',
+              ),
+              SettingSubpageNavigatorData(
+                id: 2,
+                onSelect: (id) => setState(() {
+                  _index = id;
+                  _previewMode = DisplayMode.presentation;
+                }),
+                icon: Icon(Icons.screenshot_monitor_rounded),
+                title: 'Presentation view',
+              ),
+            ],
+          ),
           Expanded(
             child: Row(spacing: 8, children: [
               Expanded(
