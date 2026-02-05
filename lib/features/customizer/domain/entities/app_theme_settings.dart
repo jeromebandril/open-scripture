@@ -13,6 +13,7 @@ class AppThemeSettings extends Equatable {
   final bool enableAutoColorScheme;
   final SearchbarPosition searchbarPosition;
   final bool enableDynamicSearchbar;
+  final bool enable3TapNavigator;
 
   const AppThemeSettings({
     this.mode = ThemeMode.system,
@@ -21,17 +22,18 @@ class AppThemeSettings extends Equatable {
     this.enableAutoColorScheme = true,
     this.searchbarPosition = SearchbarPosition.left,
     this.enableDynamicSearchbar = false,
+    this.enable3TapNavigator = false,
   });
 
-  AppThemeSettings copyWith({
-    ThemeMode? mode,
-    String? fontFamily,
-    Color? accentColor,
-    bool? enableAutoColorScheme,
-    bool? enableCustomTheme,
-    SearchbarPosition? searchbarPosition,
-    bool? enableDynamicSearchbar,
-  }) {
+  AppThemeSettings copyWith(
+      {ThemeMode? mode,
+      String? fontFamily,
+      Color? accentColor,
+      bool? enableAutoColorScheme,
+      bool? enableCustomTheme,
+      SearchbarPosition? searchbarPosition,
+      bool? enableDynamicSearchbar,
+      bool? enable3TapNavigator}) {
     return AppThemeSettings(
       mode: mode ?? this.mode,
       fontFamily: fontFamily ?? this.fontFamily,
@@ -41,6 +43,7 @@ class AppThemeSettings extends Equatable {
       searchbarPosition: searchbarPosition ?? this.searchbarPosition,
       enableDynamicSearchbar:
           enableDynamicSearchbar ?? this.enableDynamicSearchbar,
+      enable3TapNavigator: enable3TapNavigator ?? this.enable3TapNavigator,
     );
   }
 
@@ -52,6 +55,7 @@ class AppThemeSettings extends Equatable {
         enableAutoColorScheme,
         searchbarPosition,
         enableDynamicSearchbar,
+        enable3TapNavigator,
       ];
 
   Map<String, dynamic> toJson() => {
@@ -59,8 +63,9 @@ class AppThemeSettings extends Equatable {
         'fontFamily': fontFamily,
         'accentColor': ColorsUtil.colorToHex(accentColor),
         'enableAutoColorScheme': enableAutoColorScheme,
-        'searchbarPosition': searchbarPosition.toString(),
+        'searchbarPosition': searchbarPosition.wire,
         'enableDynamicSearchbar': enableDynamicSearchbar,
+        'enable3TapNavigator': enable3TapNavigator,
       };
 
   static AppThemeSettings fromJson(Map<String, dynamic> json) {
@@ -75,23 +80,15 @@ class AppThemeSettings extends Equatable {
       }
     }
 
-    SearchbarPosition parseSearchbarPosition(String? p) {
-      switch (p) {
-        case 'SearchbarPosition.center':
-          return SearchbarPosition.center;
-        default:
-          return SearchbarPosition.left;
-      }
-    }
-
     return AppThemeSettings(
       mode: parseMode(json['mode'] as String),
       fontFamily: json['fontFamily'] as String,
       accentColor: Color(ColorsUtil.parseHex(json['accentColor'] as String)),
       enableAutoColorScheme: json['enableAutoColorScheme'] as bool,
       searchbarPosition:
-          parseSearchbarPosition(json['searchbarPosition'] as String),
+          SearchbarPositionWire.fromWire(json['searchbarPosition'] as String),
       enableDynamicSearchbar: json['enableDynamicSearchbar'] as bool,
+      enable3TapNavigator: json['enable3TapNavigator'] as bool,
     );
   }
 }

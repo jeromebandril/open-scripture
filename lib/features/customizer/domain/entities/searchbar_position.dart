@@ -10,7 +10,7 @@ extension SearchbarPositionWire on SearchbarPosition {
     }
   }
 
-  static fromWire(String value) {
+  static SearchbarPosition fromWire(String value) {
     switch (value) {
       case 'left':
         return SearchbarPosition.left;

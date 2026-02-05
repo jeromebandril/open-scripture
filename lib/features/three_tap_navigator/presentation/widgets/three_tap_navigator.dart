@@ -95,7 +95,9 @@ class _ThreeTapNavigatorTriggerState extends State<ThreeTapNavigatorTrigger> {
                                 color: Theme.of(context).colorScheme.primary,
                                 fontWeight: FontWeight.w500,
                               ),
-                              state.referenceResult.toString(),
+                              state.referenceResult != null
+                                  ? state.referenceResult.toString()
+                                  : '| | |',
                             ),
                           ),
                         ),

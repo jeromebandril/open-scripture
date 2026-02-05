@@ -335,6 +335,9 @@ class _AppHeader extends StatelessWidget {
     final enableDynamicSearchbar = context.select(
       (CustomizerCubit c) => c.state.app.enableDynamicSearchbar,
     );
+    final enable3TapNav = context.select(
+      (CustomizerCubit c) => c.state.app.enable3TapNavigator,
+    );
     //final screen = MediaQuery.of(context)
 
     return Padding(
@@ -350,7 +353,7 @@ class _AppHeader extends StatelessWidget {
                   mainAxisAlignment: alignment.toFlutter(),
                   // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const ThreeTapNavigatorTrigger(),
+                    if (enable3TapNav) const ThreeTapNavigatorTrigger(),
                     BSearchbar(
                       focusNode: searchbarFocusNode,
                       onSubmitted: () => returnFocusToRoot(),

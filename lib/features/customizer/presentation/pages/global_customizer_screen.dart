@@ -123,6 +123,19 @@ class _GlobalCustomizerScreenState extends State<GlobalCustomizerScreen> {
                               a.copyWith(enableDynamicSearchbar: val));
                     },
                   )),
+              Setting(
+                  label: 'Enable 3 Tap Navigator',
+                  description:
+                      'Select book, chapter and verse with consecutive clicks',
+                  child: SettingInputBool(
+                    value: context.select(
+                        (CustomizerCubit c) => c.state.app.enable3TapNavigator),
+                    onChanged: (val) {
+                      cubit.updateTheme(
+                          appTheme: (a) =>
+                              a.copyWith(enable3TapNavigator: val));
+                    },
+                  )),
             ],
           ),
           SettingSection(
