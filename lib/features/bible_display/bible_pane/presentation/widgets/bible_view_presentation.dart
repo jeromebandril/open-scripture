@@ -85,7 +85,7 @@ class BibleViewPresentation extends StatelessWidget {
                               'error',
                         ),
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: paneTheme.selectedRefFontWeight,
                       fontFamily: paneTheme.referenceFont,
                       color: paneTheme.accentColor,
                     ),

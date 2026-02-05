@@ -221,7 +221,7 @@ class _BibleViewPresentationPreview extends StatelessWidget {
                   resolver.resolveBook(ref.bookUsfxId)?.fullName ?? 'error',
                 ),
             style: TextStyle(
-              fontWeight: FontWeight.bold,
+              fontWeight: paneTheme.selectedRefFontWeight,
               fontFamily: paneTheme.referenceFont,
               color: paneTheme.accentColor,
             ),
