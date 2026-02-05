@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_smyrna_bible_v2/core/domain/entities/bible_meta.dart';
-import 'package:the_smyrna_bible_v2/features/bible_importer/presentation/widget/importer.dart';
 import 'package:the_smyrna_bible_v2/injection_container.dart';
 
 import '../bloc/download_manager/bloc/download_manager_bloc.dart';
@@ -50,7 +49,6 @@ class _BibleManagerState extends State<_BibleManager> {
     _pages = [
       const RemoteCatalogSection(),
       const InstalledBiblesSection(),
-      const ImporterWidget(),
     ];
     super.initState();
   }
@@ -92,16 +90,6 @@ class _BibleManagerState extends State<_BibleManager> {
                     ],
                   ),
                 ),
-                TextButton(
-                  onPressed: () => setState(() => _index = 2),
-                  child: Row(
-                    spacing: 8,
-                    children: [
-                      Icon(Icons.file_download_outlined),
-                      Text('Import'),
-                    ],
-                  ),
-                )
               ],
             ),
           ),

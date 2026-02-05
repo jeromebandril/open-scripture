@@ -67,7 +67,7 @@ class _RemoteCatalogSectionState extends State<RemoteCatalogSection> {
         // Group the language alphabetically
 
         return SettingListSection(
-          title: 'Available Bibles  ( ${state.bibles.length} )',
+          title: 'Repository  ( ${state.bibles.length} )',
           onFilter: (val) {
             setState(() {
               filter = val.isEmpty ? null : val.toLowerCase();

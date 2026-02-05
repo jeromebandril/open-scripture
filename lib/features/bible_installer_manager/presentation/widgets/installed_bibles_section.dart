@@ -18,7 +18,7 @@ class InstalledBiblesSection extends StatelessWidget {
     return BlocBuilder<InstalledBiblesBloc, InstalledBiblesState>(
       builder: (context, state) {
         return SettingListSection(
-          title: 'Installed bibles',
+          title: 'Installed',
           isLoading: state.status == InstalledBiblesStatus.loading,
           isError: state.status == InstalledBiblesStatus.error,
           emptyListPlaceholder: Text('No Installed bibles yet'),

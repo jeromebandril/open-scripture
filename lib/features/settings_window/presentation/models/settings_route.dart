@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:the_smyrna_bible_v2/features/bible_importer/presentation/widget/importer.dart';
 import 'package:the_smyrna_bible_v2/features/customizer/presentation/pages/bible_pane_customizer_screen.dart';
 import 'package:the_smyrna_bible_v2/features/customizer/presentation/pages/global_customizer_screen.dart';
 import 'package:the_smyrna_bible_v2/features/settings_window/presentation/pages/about_setting_page.dart';
@@ -10,7 +11,7 @@ enum SettingsSection { appearance, bibleManager, shortcuts, about }
 
 String routeFor(SettingsSection s) => switch (s) {
       SettingsSection.appearance => '/appearance/global',
-      SettingsSection.bibleManager => '/biblemanager',
+      SettingsSection.bibleManager => '/biblemanager/repo',
       SettingsSection.shortcuts => '/shortcuts',
       SettingsSection.about => '/about',
     };
@@ -24,10 +25,14 @@ final Map<String, SettingsRoute> settingsRoutes = {
       icon: Icons.palette_rounded,
       name: 'Bible viewer',
       builder: (_) => const BiblePaneCustomizerScreen()),
-  '/biblemanager': SettingsRoute(
+  '/biblemanager/repo': SettingsRoute(
       icon: Icons.menu_book_sharp,
-      name: 'Bible Manager',
+      name: 'Repository',
       builder: (_) => const BibleManagerWidget()),
+  '/biblemanager/importer': SettingsRoute(
+      icon: Icons.menu_book_sharp,
+      name: 'Importer',
+      builder: (_) => const ImporterWidget()),
   '/shortcuts': SettingsRoute(
       icon: Icons.keyboard,
       name: 'Shortcuts',
