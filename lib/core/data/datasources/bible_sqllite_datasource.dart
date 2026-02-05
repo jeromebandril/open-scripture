@@ -170,7 +170,7 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
       );
 
       // 1) Locate zip (deterministic path)
-      final appSupDir = await getApplicationSupportDirectory();
+      final appSupDir = await getTemporaryDirectory();
       final dir = Directory(p.join(appSupDir.path, bibleId));
       zipFile = File(p.join(dir.path, '$bibleId.zip')); // <-- prefer .zip
 

@@ -50,7 +50,7 @@ LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     // put the database file, called db.sqlite here, into the documents folder
     // for your app.
-    final dbFolder = await getApplicationDocumentsDirectory();
+    final dbFolder = await getApplicationSupportDirectory();
     final file =
         File(p.join(dbFolder.path, 'OpenScripure/open_scripture.sqlite'));
 

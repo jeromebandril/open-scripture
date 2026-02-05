@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parser;
+import 'package:path_provider/path_provider.dart';
 
 import '../../../features/bible_installer_manager/domain/entities/bible_download_progress.dart';
 import '../../constants/constants.dart' as constants;
@@ -54,8 +55,8 @@ class BibleRemoteDataSourceImpl implements BibleRemoteDataSource {
       try {
         final url = '${constants.contentSourceURL}/${bibleId}_usfx.zip';
 
-        final appPath = await constants.getApplicationPath();
-        final directory = Directory('$appPath/$bibleId');
+        final appPath = await getTemporaryDirectory();
+        final directory = Directory('${appPath.path}/$bibleId');
         await directory.create(recursive: true);
 
         final filePath = '${directory.path}/$bibleId.zip';
