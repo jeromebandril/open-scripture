@@ -4,8 +4,8 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:the_smyrna_bible_v2/features/customizer/domain/repo/customizer_repo.dart';
 
-import '../../domain/entities/app_theme.dart';
-import '../../domain/entities/bible_pane_theme.dart';
+import '../../domain/entities/app_theme_settings.dart';
+import '../../domain/entities/bible_pane_general_theme_settings.dart';
 
 part 'customizer_state.dart';
 
@@ -38,7 +38,8 @@ class CustomizerCubit extends Cubit<CustomizerState> {
   }
 
   void updateTheme({
-    BiblePaneThemeSettings Function(BiblePaneThemeSettings)? paneTheme,
+    BiblePaneGeneralThemeSettings Function(BiblePaneGeneralThemeSettings)?
+        paneTheme,
     AppThemeSettings Function(AppThemeSettings)? appTheme,
   }) {
     emit(state.copyWith(

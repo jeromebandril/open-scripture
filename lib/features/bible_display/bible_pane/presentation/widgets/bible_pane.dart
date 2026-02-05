@@ -5,10 +5,10 @@ import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentati
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/widgets/parts/pane_info.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/widgets/bible_view_presentation.dart';
 import 'package:the_smyrna_bible_v2/features/bible_display/bible_selector/presenter/widget/bible_selector.dart';
-import 'package:the_smyrna_bible_v2/features/customizer/domain/entities/bible_pane_theme.dart';
 import 'package:the_smyrna_bible_v2/features/customizer/presentation/cubit/customizer_cubit.dart';
 
 import '../../../../../core/presentation/widgets/adjustable_text_size.dart';
+import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../bloc/bible_pane_bloc.dart';
 import '../models/display_mode.dart';
 
@@ -27,7 +27,7 @@ class BiblePane extends StatelessWidget {
     bool isCustom = context.select(
       (CustomizerCubit c) => c.state.pane.enableCustomTheme,
     );
-    final paneTheme = Theme.of(context).extension<BiblePaneTheme>()!;
+    final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
 
     return DefaultTextStyle(
       style: TextStyle(
@@ -36,6 +36,7 @@ class BiblePane extends StatelessWidget {
             ? paneTheme.textColor
             : Theme.of(context).colorScheme.onSurface,
         fontFamily: isCustom ? paneTheme.textFont : null,
+        height: kTextHeightNone,
       ),
       child: MultiBlocProvider(
         providers: [

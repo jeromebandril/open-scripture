@@ -4,9 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/domain/entities/book_names.dart';
 import '../../../../../core/domain/entities/verse_segment.dart';
 import '../../../../../core/domain/entities/verse_span.dart';
-import '../../../../../core/utils/bible_ref_parser/bible_ref_parser.dart';
 import '../../../../../injection_container.dart';
-import '../../../../customizer/domain/entities/bible_pane_theme.dart';
+import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../../../split_screen/presenter/cubit/pane_manager_cubit.dart';
 import '../bloc/bible_pane_bloc.dart';
 import '../rendering/verse_richtext_builder.dart';
@@ -39,7 +38,7 @@ class BibleViewPresentation extends StatelessWidget {
     final thisPaneIndex = panes.indexWhere((e) => e.id == uniqueId);
 
     // theming
-    final paneTheme = Theme.of(context).extension<BiblePaneTheme>()!;
+    final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
 
     return BlocBuilder<BiblePaneBloc, BiblePaneState>(
       buildWhen: (prev, curr) => prev.reference != curr.reference,

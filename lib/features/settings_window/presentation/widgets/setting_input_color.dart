@@ -119,9 +119,10 @@ class _SettingInputColorState extends State<SettingInputColor> {
       mainAxisAlignment: MainAxisAlignment.end,
       spacing: 8,
       children: [
-        ResetButton(
-          onPress: () => widget.onReset?.call(),
-        ),
+        if (widget.onReset != null && widget.showReset)
+          ResetButton(
+            onPress: () => widget.onReset?.call(),
+          ),
         Text('#${ColorsUtil.colorToHex(widget.color)}'),
         CompositedTransformTarget(
           link: layerLink,

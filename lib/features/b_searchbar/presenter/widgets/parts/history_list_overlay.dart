@@ -94,11 +94,15 @@ class _HistoryItemState extends State<_HistoryItem> {
 
     final resolver = sl<BibleRefResolver>();
 
-    final refString = widget.historyData.ref.toString().replaceFirst(
-          widget.historyData.ref.bookUsfxId,
-          resolver.resolveBook(widget.historyData.ref.bookUsfxId)?.fullName ??
-              'error',
-        );
+    final refString = widget.size == HistoryListSize.small
+        ? widget.historyData.ref.toString()
+        : widget.historyData.ref.toString().replaceFirst(
+              widget.historyData.ref.bookUsfxId,
+              resolver
+                      .resolveBook(widget.historyData.ref.bookUsfxId)
+                      ?.fullName ??
+                  'error',
+            );
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),

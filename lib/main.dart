@@ -6,7 +6,7 @@ import 'package:the_smyrna_bible_v2/core/presentation/widgets/help_widget.dart';
 import 'package:the_smyrna_bible_v2/core/presentation/widgets/titlebar.dart';
 import 'package:the_smyrna_bible_v2/features/b_searchbar/domain/repositories/b_search_intent_type.dart';
 import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/widgets/parts/history_list_overlay.dart';
-import 'package:the_smyrna_bible_v2/features/bible_importer/presentation/cubit/bible_importer_cubit.dart';
+import 'package:the_smyrna_bible_v2/features/customizer/presentation/models/searchbar_position.dart';
 import 'package:the_smyrna_bible_v2/features/toolbar/presentation/widgets/toolbar.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,9 +19,9 @@ import 'features/bible_display/bible_pane/presentation/navigation_bus.dart';
 import 'features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
 import 'features/bible_display/split_screen/presenter/widgets/split_view_container.dart';
 import 'features/bible_installer_manager/presentation/bloc/installed_bibles/installed_bibles_bloc.dart';
-import 'features/customizer/domain/entities/app_theme.dart';
-import 'features/customizer/domain/entities/bible_pane_theme.dart';
+import 'features/customizer/domain/entities/app_theme_settings.dart';
 import 'features/customizer/presentation/cubit/customizer_cubit.dart';
+import 'features/customizer/presentation/models/bible_pane_general_theme.dart';
 import 'features/keybindings/presentation/widget/keybindings_host.dart';
 import 'features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
 import 'features/window_stack_manager/presentation/widgets/window_stack_manager_wrapper.dart';
@@ -325,7 +325,7 @@ class _AppHeader extends StatelessWidget {
     );
     final isFullscreen = context.select((FullscreenCubit c) => c.state);
     final showToolbar = context.select((ToolbarCubit t) => t.state);
-    final paneTheme = Theme.of(context).extension<BiblePaneTheme>()!;
+    final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
     final enableDynamicSearchbar = context.select(
       (CustomizerCubit c) => c.state.app.enableDynamicSearchbar,
     );
@@ -341,9 +341,7 @@ class _AppHeader extends StatelessWidget {
             Stack(
               children: [
                 Row(
-                  mainAxisAlignment: alignment == SearchbarPosition.center
-                      ? MainAxisAlignment.center
-                      : MainAxisAlignment.start,
+                  mainAxisAlignment: alignment.toFlutter(),
                   // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     // ThreeTapNavigator(),
@@ -436,7 +434,7 @@ class _AppHeader extends StatelessWidget {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontFamily: paneTheme.referenceFont,
-                          color: Theme.of(context).colorScheme.primary,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontSize: 42,
                         ),
                       ),

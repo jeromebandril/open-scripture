@@ -4,17 +4,17 @@ class CustomizerState extends Equatable {
   const CustomizerState({
     this.version = 1,
     this.app = const AppThemeSettings(),
-    this.pane = const BiblePaneThemeSettings(),
+    this.pane = const BiblePaneGeneralThemeSettings(),
   });
 
   final int version;
   final AppThemeSettings app;
-  final BiblePaneThemeSettings pane;
+  final BiblePaneGeneralThemeSettings pane;
 
   CustomizerState copyWith({
     int? version,
     AppThemeSettings? app,
-    BiblePaneThemeSettings? pane,
+    BiblePaneGeneralThemeSettings? pane,
   }) {
     return CustomizerState(
       version: version ?? this.version,
@@ -38,7 +38,7 @@ class CustomizerState extends Equatable {
       app: AppThemeSettings.fromJson(
         (json['app'] as Map<String, dynamic>?) ?? const {},
       ),
-      pane: BiblePaneThemeSettings.fromJson(
+      pane: BiblePaneGeneralThemeSettings.fromJson(
         (json['pane'] as Map<String, dynamic>?) ?? const {},
       ),
     );

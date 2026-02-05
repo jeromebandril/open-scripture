@@ -6,8 +6,8 @@ import 'package:the_smyrna_bible_v2/core/domain/entities/verse_span.dart';
 import '../../../../core/domain/entities/bible_ref.dart';
 import '../../../bible_display/bible_pane/presentation/rendering/verse_richtext_builder.dart';
 import '../../../bible_display/bible_pane/presentation/widgets/parts/verse_divider.dart';
-import '../../domain/entities/bible_pane_theme.dart';
 import '../cubit/customizer_cubit.dart';
+import '../models/bible_pane_general_theme.dart';
 
 typedef PreviewData = ({
   int verseNumber,
@@ -437,15 +437,16 @@ class BiblePanePreview extends StatelessWidget {
     final useCustom = context.select(
       (CustomizerCubit c) => c.state.pane.enableCustomTheme,
     );
-    final biblePaneTheme = Theme.of(context).extension<BiblePaneTheme>()!;
+    final biblePaneTheme =
+        Theme.of(context).extension<BiblePaneGeneralTheme>()!;
 
     return Column(
       spacing: 4,
       children: [
-        Text(
-          'Preview',
-          style: TextStyle(fontWeight: FontWeight.w100, fontSize: 12),
-        ),
+        // Text(
+        //   'Preview',
+        //   style: TextStyle(fontWeight: FontWeight.w100, fontSize: 12),
+        // ),
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
@@ -460,8 +461,8 @@ class BiblePanePreview extends StatelessWidget {
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(8),
-                      topRight: Radius.circular(8),
+                      topLeft: Radius.circular(4),
+                      topRight: Radius.circular(4),
                     ),
                   ),
                   padding: const EdgeInsets.only(bottom: 4),
@@ -533,35 +534,30 @@ class _VerseWidgetPreview extends StatelessWidget {
     final useCustom = context.select(
       (CustomizerCubit c) => c.state.pane.enableCustomTheme,
     );
-    final biblePaneTheme = Theme.of(context).extension<BiblePaneTheme>()!;
+    final bTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
 
     final refStyle = TextStyle(
       height: 1.25,
-      fontFamily: biblePaneTheme.referenceFont,
-      fontWeight: isHighlighted
-          ? FontWeight.w800
-          : biblePaneTheme.showFullRefAlways
-              ? FontWeight.w500
-              : FontWeight.bold,
+      fontFamily: bTheme.referenceFont,
+      fontWeight:
+          isHighlighted ? bTheme.selectedRefFontWeight : bTheme.refFontWeight,
       color: isHighlighted
-          ? biblePaneTheme.accentColor
+          ? bTheme.accentColor
           : useCustom
-              ? biblePaneTheme.refColor
+              ? bTheme.refColor
               : Theme.of(context).colorScheme.onSurface,
     );
 
     return Padding(
       padding: EdgeInsets.only(
         bottom: 8,
-        left: biblePaneTheme.widthAdjustmentOffset / 5 +
-            biblePaneTheme.xPadding / 5,
-        right: biblePaneTheme.widthAdjustmentOffset / 5 +
-            biblePaneTheme.xPadding / 5,
+        left: bTheme.widthAdjustmentOffset / 5 + bTheme.xPadding / 5,
+        right: bTheme.widthAdjustmentOffset / 5 + bTheme.xPadding / 5,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (biblePaneTheme.enableHangingRefs)
+          if (bTheme.enableHangingRefs)
             Text(
               '${verseNumber.toString().padLeft(3, ' ')}   ',
               style: refStyle,
@@ -570,15 +566,15 @@ class _VerseWidgetPreview extends StatelessWidget {
             child: SelectableText.rich(TextSpan(
                 style: TextStyle(
                   height: 1.2,
-                  fontWeight: biblePaneTheme.textFontWeight,
+                  fontWeight: bTheme.textFontWeight,
                   color: useCustom
-                      ? biblePaneTheme.textColor
+                      ? bTheme.textColor
                       : Theme.of(context).colorScheme.onSurface,
                 ),
                 children: [
-                  if (!biblePaneTheme.enableHangingRefs)
+                  if (!bTheme.enableHangingRefs)
                     TextSpan(
-                      text: isHighlighted || biblePaneTheme.showFullRefAlways
+                      text: isHighlighted || bTheme.showFullRefAlways
                           ? '${ref.toString()}  '
                           : '$verseNumber  ',
                       style: refStyle,

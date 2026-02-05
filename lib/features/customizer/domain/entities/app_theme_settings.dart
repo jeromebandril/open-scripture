@@ -2,9 +2,9 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:the_smyrna_bible_v2/core/utils/colors_util.dart';
 
-/// App-wide theme settings that affect MaterialApp.
+import 'searchbar_position.dart';
 
-enum SearchbarPosition { left, center }
+/// App-wide theme settings that affect MaterialApp.
 
 class AppThemeSettings extends Equatable {
   final ThemeMode mode;

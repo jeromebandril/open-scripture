@@ -4,7 +4,7 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:the_smyrna_bible_v2/core/domain/entities/bible_ref.dart';
 
 import '../../../../../core/domain/entities/verse_segment.dart';
-import '../../../../customizer/domain/entities/bible_pane_theme.dart';
+import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../../../split_screen/presenter/cubit/pane_manager_cubit.dart';
 import '../bloc/bible_pane_bloc.dart';
 import 'parts/verse_divider.dart';
@@ -93,7 +93,7 @@ class _BibleViewListState extends State<BibleViewList> {
       return;
     }
 
-    _itemScrollController.jumpTo(index: index);
+    _itemScrollController.jumpTo(index: index, alignment: 0.04);
   }
 
   @override
@@ -134,7 +134,7 @@ class _BibleViewListState extends State<BibleViewList> {
     final thisPaneIndex = panes.indexWhere((e) => e.id == widget.uniqueId);
 
     // theming
-    final paneTheme = Theme.of(context).extension<BiblePaneTheme>()!;
+    final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
 
     return BlocConsumer<BiblePaneBloc, BiblePaneState>(
       listenWhen: (prev, curr) =>

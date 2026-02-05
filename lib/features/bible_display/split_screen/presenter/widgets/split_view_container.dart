@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/models/split_pane_data.dart';
-import 'package:the_smyrna_bible_v2/features/customizer/domain/entities/bible_pane_theme.dart';
 
 import '../../../../customizer/presentation/cubit/customizer_cubit.dart';
+import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../../../bible_pane/presentation/widgets/bible_pane.dart';
 import '../cubit/pane_manager_cubit.dart';
 
@@ -32,7 +31,9 @@ class MultipleBiblePanes extends StatelessWidget {
               topRight: Radius.circular(8),
             ),
             color: enableCustom
-                ? Theme.of(context).extension<BiblePaneTheme>()!.backgroundColor
+                ? Theme.of(context)
+                    .extension<BiblePaneGeneralTheme>()!
+                    .backgroundColor
                 : Theme.of(context).colorScheme.surface,
           ),
           child: Row(
