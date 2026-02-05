@@ -71,7 +71,7 @@ class _SettingInputColorState extends State<SettingInputColor> {
       elevation: 10,
       child: Container(
         width: 300,
-        height: 300,
+        height: 280,
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
@@ -80,7 +80,9 @@ class _SettingInputColorState extends State<SettingInputColor> {
         child: ColorPicker(
           pickerColor: widget.color,
           onColorChanged: (color) => selectedColor = color,
+          hexInputBar: true,
           colorPickerWidth: 300,
+          labelTypes: [],
           portraitOnly: true,
           enableAlpha: false,
           pickerAreaHeightPercent: 0.5,
