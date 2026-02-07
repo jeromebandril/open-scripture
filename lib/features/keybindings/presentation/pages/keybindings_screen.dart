@@ -20,6 +20,7 @@ class KeybindingsScreen extends StatelessWidget {
           return Setting(
               label: info.label,
               description: info.description,
+              settingWidth: 250,
               child: Container(
                 alignment: Alignment.centerLeft,
                 height: 40,
