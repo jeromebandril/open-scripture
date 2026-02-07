@@ -28,6 +28,8 @@ class BiblePanePreview extends StatelessWidget {
     final biblePaneTheme =
         Theme.of(context).extension<BiblePaneGeneralTheme>()!;
 
+    final listTheme = Theme.of(context).extension<BibleViewListTheme>()!;
+
     return Column(
       spacing: 4,
       children: [
@@ -38,15 +40,14 @@ class BiblePanePreview extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
-            color: !useCustom || biblePaneTheme.enableHangingRefs
+            color: !useCustom || listTheme.enableHangingRefs
                 ? Theme.of(context).colorScheme.surface
                 : biblePaneTheme.backgroundColor,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (biblePaneTheme.enableHangingRefs &&
-                  mode == DisplayMode.normal)
+              if (listTheme.enableHangingRefs && mode == DisplayMode.normal)
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.only(
@@ -155,7 +156,7 @@ class _VerseWidgetPreview extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (bTheme.enableHangingRefs)
+          if (listTheme.enableHangingRefs)
             Text(
               '${verseNumber.toString().padLeft(3, ' ')}   ',
               style: refStyle,
@@ -170,9 +171,9 @@ class _VerseWidgetPreview extends StatelessWidget {
                       : Theme.of(context).colorScheme.onSurface,
                 ),
                 children: [
-                  if (!bTheme.enableHangingRefs)
+                  if (!listTheme.enableHangingRefs)
                     TextSpan(
-                      text: isHighlighted || bTheme.showFullRefAlways
+                      text: isHighlighted || listTheme.showFullRefAlways
                           ? ref.toString()
                           : '$verseNumber',
                       style: refStyle,

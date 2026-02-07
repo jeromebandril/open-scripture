@@ -45,12 +45,12 @@ class _BibleViewListCustomizerScreenState
                         child: SettingInputBool(
                           value: context.select(
                             (CustomizerCubit c) =>
-                                c.state.pane.showVerseDivider,
+                                c.state.listTheme.showVerseDivider,
                           ),
                           onChanged: (val) {
                             cubit.updateTheme(
-                                paneTheme: (p) =>
-                                    p.copyWith(showVerseDivider: val));
+                                listTheme: (l) =>
+                                    l.copyWith(showVerseDivider: val));
                           },
                         )),
                     Setting(
@@ -60,12 +60,12 @@ class _BibleViewListCustomizerScreenState
                         child: SettingInputBool(
                           value: context.select(
                             (CustomizerCubit c) =>
-                                c.state.pane.showFullRefAlways,
+                                c.state.listTheme.showFullRefAlways,
                           ),
                           onChanged: (val) {
                             cubit.updateTheme(
-                                paneTheme: (p) =>
-                                    p.copyWith(showFullRefAlways: val));
+                                listTheme: (l) =>
+                                    l.copyWith(showFullRefAlways: val));
                           },
                         )),
                     Setting(
@@ -73,11 +73,11 @@ class _BibleViewListCustomizerScreenState
                         description: 'Enables hanging refs',
                         child: SettingInputBool(
                           value: context.select((CustomizerCubit c) =>
-                              c.state.pane.enableHangingRefs),
+                              c.state.listTheme.enableHangingRefs),
                           onChanged: (val) {
                             cubit.updateTheme(
-                                paneTheme: (p) =>
-                                    p.copyWith(enableHangingRefs: val));
+                                listTheme: (l) =>
+                                    l.copyWith(enableHangingRefs: val));
                           },
                         )),
                     Setting(
@@ -98,11 +98,11 @@ class _BibleViewListCustomizerScreenState
                         description: 'How selected verses are rendered',
                         child: SettingInputOption<HighlightRenderMode>(
                           value: context.select((CustomizerCubit c) =>
-                              c.state.pane.highlightRenderMode),
+                              c.state.listTheme.highlightRenderMode),
                           onChanged: (mode) {
                             cubit.updateTheme(
-                                paneTheme: (p) =>
-                                    p.copyWith(highlightRenderMode: mode));
+                                listTheme: (l) =>
+                                    l.copyWith(highlightRenderMode: mode));
                           },
                           items: HighlightRenderMode.values
                               .map((m) => DropdownMenuItem<HighlightRenderMode>(

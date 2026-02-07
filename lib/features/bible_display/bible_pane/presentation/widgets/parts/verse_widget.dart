@@ -68,7 +68,7 @@ class VerseWidget extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (bTheme.enableHangingRefs)
+          if (listTheme.enableHangingRefs)
             Text(
               '${reference.verseStart.toString().padLeft(3, ' ')}   ',
               style: refStyle,
@@ -80,9 +80,9 @@ class VerseWidget extends StatelessWidget {
                   fontWeight: bTheme.textFontWeight,
                 ),
                 children: [
-                  if (!bTheme.enableHangingRefs)
+                  if (!listTheme.enableHangingRefs)
                     TextSpan(
-                      text: isHighlighted || bTheme.showFullRefAlways
+                      text: isHighlighted || listTheme.showFullRefAlways
                           ? reference.toString()
                           : '$verseNumber',
                       style: refStyle,

@@ -344,6 +344,8 @@ class _AppHeader extends StatelessWidget {
     final isFullscreen = context.select((FullscreenCubit c) => c.state);
     final showToolbar = context.select((ToolbarCubit t) => t.state);
     final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
+    final enableHangingRefs =
+        Theme.of(context).extension<BibleViewListTheme>()!.enableHangingRefs;
     final enableDynamicSearchbar = context.select(
       (CustomizerCubit c) => c.state.app.enableDynamicSearchbar,
     );
@@ -435,7 +437,7 @@ class _AppHeader extends StatelessWidget {
           //
           //
           //
-          if (paneTheme.enableHangingRefs)
+          if (enableHangingRefs)
             Builder(builder: (context) {
               final activePaneBloc =
                   context.select((PaneManagerCubit pm) => pm.activeBloc());
