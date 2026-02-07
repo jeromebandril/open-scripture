@@ -32,7 +32,7 @@ class BiblePaneGeneralThemeSettings extends Equatable {
     this.textFontWeight = AppFontWeight.regular,
     this.widthAdjustmentOffset = 0.0,
     this.referenceFont = 'General Sans',
-    this.xPadding = 0.5,
+    this.xPadding = 0.05,
     this.splitscreenGap = 16,
     this.addColor = const Color(0xFF757575),
     this.quoteColor = const Color(0xFFB71C1C),
