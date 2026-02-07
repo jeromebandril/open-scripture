@@ -17,6 +17,7 @@ class BiblePaneGeneralThemeSettings extends Equatable {
   final double xPadding;
   final int splitscreenGap;
   final Color quoteColor;
+  final Color addColor;
   final AppFontWeight selectedRefFontWeight;
   final AppFontWeight refFontWeight;
 
@@ -33,6 +34,7 @@ class BiblePaneGeneralThemeSettings extends Equatable {
     this.referenceFont = 'General Sans',
     this.xPadding = 0.5,
     this.splitscreenGap = 16,
+    this.addColor = const Color(0xFF757575),
     this.quoteColor = const Color(0xFFB71C1C),
     this.selectedRefFontWeight = AppFontWeight.extraBold,
     this.refFontWeight = AppFontWeight.medium,
@@ -52,6 +54,7 @@ class BiblePaneGeneralThemeSettings extends Equatable {
       double? xPadding,
       int? splitscreenGap,
       Color? quoteColor,
+      Color? addColor,
       AppFontWeight? selectedRefFontWeight,
       AppFontWeight? refFontWeight}) {
     return BiblePaneGeneralThemeSettings(
@@ -69,6 +72,7 @@ class BiblePaneGeneralThemeSettings extends Equatable {
       xPadding: xPadding ?? this.xPadding,
       splitscreenGap: splitscreenGap ?? this.splitscreenGap,
       quoteColor: quoteColor ?? this.quoteColor,
+      addColor: addColor ?? this.addColor,
       selectedRefFontWeight:
           selectedRefFontWeight ?? this.selectedRefFontWeight,
       refFontWeight: refFontWeight ?? this.refFontWeight,
@@ -90,6 +94,7 @@ class BiblePaneGeneralThemeSettings extends Equatable {
         xPadding,
         splitscreenGap,
         quoteColor,
+        addColor,
         selectedRefFontWeight,
         refFontWeight,
       ];
@@ -108,6 +113,7 @@ class BiblePaneGeneralThemeSettings extends Equatable {
         'xPadding': xPadding,
         'splitscreenGap': splitscreenGap,
         'quoteColor': ColorsUtil.colorToHex(quoteColor),
+        'addColor': ColorsUtil.colorToHex(addColor),
         'selectedRefFontWeight': selectedRefFontWeight.wire,
         'refFontWeight': refFontWeight.wire,
       };
@@ -129,6 +135,7 @@ class BiblePaneGeneralThemeSettings extends Equatable {
       xPadding: json['xPadding'] as double,
       splitscreenGap: json['splitscreenGap'] as int,
       quoteColor: Color(ColorsUtil.parseHex(json['quoteColor'] as String)),
+      addColor: Color(ColorsUtil.parseHex(json['addColor'] as String)),
       selectedRefFontWeight:
           AppFontWeightWire.fromWire((json['selectedRefFontWeight'] as String)),
       refFontWeight:

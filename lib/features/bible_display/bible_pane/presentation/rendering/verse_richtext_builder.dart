@@ -47,7 +47,7 @@ class VerseSpanBuilder {
           case SpanType.italic:
             style = style.merge(TextStyle(
               fontStyle: FontStyle.italic,
-              color: Theme.of(context).colorScheme.outline,
+              color: bTheme.addColor,
             ));
             break;
           case SpanType.bold:

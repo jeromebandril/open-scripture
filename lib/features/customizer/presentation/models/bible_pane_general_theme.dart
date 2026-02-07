@@ -18,6 +18,7 @@ class BiblePaneGeneralTheme extends ThemeExtension<BiblePaneGeneralTheme> {
   final double xPadding;
   final int splitscreenGap;
   final Color quoteColor;
+  final Color addColor;
   final FontWeight selectedRefFontWeight;
   final FontWeight refFontWeight;
 
@@ -37,6 +38,7 @@ class BiblePaneGeneralTheme extends ThemeExtension<BiblePaneGeneralTheme> {
     required this.quoteColor,
     required this.selectedRefFontWeight,
     required this.refFontWeight,
+    required this.addColor,
   });
 
   @override
@@ -54,6 +56,7 @@ class BiblePaneGeneralTheme extends ThemeExtension<BiblePaneGeneralTheme> {
     double? xPadding,
     int? splitscreenGap,
     Color? quoteColor,
+    Color? addColor,
     FontWeight? selectedRefFontWeight,
     FontWeight? refFontWeight,
   }) {
@@ -75,6 +78,7 @@ class BiblePaneGeneralTheme extends ThemeExtension<BiblePaneGeneralTheme> {
       selectedRefFontWeight:
           selectedRefFontWeight ?? this.selectedRefFontWeight,
       refFontWeight: refFontWeight ?? this.refFontWeight,
+      addColor: addColor ?? this.addColor,
     );
   }
 
@@ -96,6 +100,7 @@ class BiblePaneGeneralTheme extends ThemeExtension<BiblePaneGeneralTheme> {
       xPadding: t < 0.5 ? xPadding : other.xPadding,
       splitscreenGap: t < 0.5 ? splitscreenGap : other.splitscreenGap,
       quoteColor: Color.lerp(quoteColor, other.quoteColor, t)!,
+      addColor: Color.lerp(addColor, other.addColor, t)!,
       selectedRefFontWeight: selectedRefFontWeight,
       refFontWeight: refFontWeight,
     );
@@ -117,6 +122,7 @@ extension BiblePaneThemeSettingsX on BiblePaneGeneralThemeSettings {
         xPadding: xPadding,
         splitscreenGap: splitscreenGap,
         quoteColor: quoteColor,
+        addColor: addColor,
         selectedRefFontWeight: selectedRefFontWeight.toFlutter(),
         refFontWeight: refFontWeight.toFlutter(),
       );

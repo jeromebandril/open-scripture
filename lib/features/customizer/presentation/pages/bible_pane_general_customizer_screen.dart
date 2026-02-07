@@ -254,6 +254,26 @@ class _BiblePaneGeneralCustomizerScreenState
                             (CustomizerCubit c) => c.state.pane.quoteColor,
                           ),
                         )),
+                    Setting(
+                        label: 'Add color',
+                        description: 'Set color for added words',
+                        child: SettingInputColor(
+                          showReset: defaultPaneTheme.quoteColor !=
+                              context.select(
+                                  (CustomizerCubit c) => c.state.pane.addColor),
+                          onReset: () {
+                            cubit.updateTheme(
+                                paneTheme: (a) => a.copyWith(
+                                    addColor: defaultPaneTheme.addColor));
+                          },
+                          onColorChanged: (c) {
+                            cubit.updateTheme(
+                                paneTheme: (p) => p.copyWith(addColor: c));
+                          },
+                          color: context.select(
+                            (CustomizerCubit c) => c.state.pane.addColor,
+                          ),
+                        )),
                   ],
                 ),
                 SettingSection(
