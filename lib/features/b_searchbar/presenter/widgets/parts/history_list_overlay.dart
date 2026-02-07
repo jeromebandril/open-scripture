@@ -53,6 +53,7 @@ class HistoryListOverlay extends StatelessWidget {
                   constraints.height * .2,
                 )),
                 child: Column(
+                  spacing: 8,
                   children: [
                     Expanded(
                       child: state.history.isEmpty
@@ -69,9 +70,10 @@ class HistoryListOverlay extends StatelessWidget {
                               }),
                     ),
                     SizedBox(
-                      height: 40,
+                      height: 25,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         spacing: 8,
                         children: [
                           Text('Press'),

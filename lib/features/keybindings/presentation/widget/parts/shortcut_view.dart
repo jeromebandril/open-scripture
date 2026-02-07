@@ -25,9 +25,11 @@ class ShortcutView extends StatelessWidget {
     }
 
     return Wrap(
-      spacing: 6,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: 2,
       runSpacing: 6,
-      children: tokens.map((t) => Keycap(t)).toList(),
+      children: tokens.expand((t) => [Keycap(t), const Text('+')]).toList()
+        ..removeLast(),
     );
   }
 }
