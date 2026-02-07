@@ -25,7 +25,7 @@ class HelpWidget extends StatelessWidget {
             children: [
               SizedBox(width: 16),
               Expanded(
-                  child: Text('Yo, Need Help?',
+                  child: Text('Help?',
                       style: TextStyle(
                           fontWeight: FontWeight.w600, fontSize: 18))),
               IconButton(
@@ -41,7 +41,7 @@ class HelpWidget extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Stuck in this view? Be ye not worried bretheren:'),
+                Text('If stuck in this view, use:'),
                 SizedBox(height: 24),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -72,7 +72,7 @@ class HelpWidget extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 24),
-                Text('Your welcome my friend 👍')
+                Text('Nice 👍')
               ],
             ),
           )),
