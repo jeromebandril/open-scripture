@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_scripture/features/keybindings/domain/app_command.dart';
+import 'package:open_scripture/features/keybindings/presentation/widget/parts/shortcut_view.dart';
 
 import '../../../../../core/domain/entities/book_names.dart';
 import '../../../../../injection_container.dart';
@@ -20,12 +22,14 @@ class HistoryListOverlay extends StatelessWidget {
     this.onSelected,
     this.width,
     this.size = HistoryListSize.small,
+    this.focusNode,
   });
 
   final Size constraints;
   final double? width;
   final Function()? onSelected;
   final HistoryListSize size;
+  final FocusNode? focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -34,30 +38,53 @@ class HistoryListOverlay extends StatelessWidget {
       builder: (context, state) {
         return BlockSemantics(
           blocking: true,
-          child: Container(
-            width: width ?? 250,
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: ConstrainedBox(
-              constraints: BoxConstraints.loose(Size(
-                constraints.width,
-                constraints.height * .2,
-              )),
-              child: state.history.isEmpty
-                  ? Center(child: Text('Empty history'))
-                  : ListView.builder(
-                      itemCount: state.history.length,
-                      itemBuilder: (_, i) {
-                        return _HistoryItem(
-                          index: i,
-                          historyData: state.history[i],
-                          onPressed: () => onSelected?.call(),
-                          size: size,
-                        );
-                      }),
+          child: Focus(
+            focusNode: focusNode,
+            child: Container(
+              width: width ?? 250,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: ConstrainedBox(
+                constraints: BoxConstraints.loose(Size(
+                  constraints.width,
+                  constraints.height * .2,
+                )),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: state.history.isEmpty
+                          ? Center(child: Text('Empty history'))
+                          : ListView.builder(
+                              itemCount: state.history.length,
+                              itemBuilder: (_, i) {
+                                return _HistoryItem(
+                                  index: i,
+                                  historyData: state.history[i],
+                                  onPressed: () => onSelected?.call(),
+                                  size: size,
+                                );
+                              }),
+                    ),
+                    SizedBox(
+                      height: 40,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        spacing: 8,
+                        children: [
+                          Text('Press'),
+                          ShortcutView(
+                              activator: appCommandShortcuts[
+                                  AppCommand.toggleHistory]),
+                          Text('to close'),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
             ),
           ),
         );

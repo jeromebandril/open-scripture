@@ -128,6 +128,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   late final FocusNode _searchbarFocusNode;
+  late final FocusNode _historyFocusNode;
   late final FocusNode _rootFocusNode;
 
   bool _searchbarHasFocus = false;
@@ -136,6 +137,7 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     _searchbarFocusNode = FocusNode(debugLabel: 'searchbar');
+    _historyFocusNode = FocusNode(debugLabel: 'history');
     _rootFocusNode = FocusNode(debugLabel: 'root');
     _searchbarFocusNode.addListener(_searchbarFocusNodeListener);
   }
@@ -143,6 +145,7 @@ class _HomeState extends State<Home> {
   @override
   void dispose() {
     _searchbarFocusNode.dispose();
+    _historyFocusNode.dispose();
     _rootFocusNode.dispose();
     super.dispose();
   }
@@ -180,6 +183,7 @@ class _HomeState extends State<Home> {
     return ShortcutHost(
       rootFocusNode: _rootFocusNode,
       searchFocusNode: _searchbarFocusNode,
+      historyFocusNode: _historyFocusNode,
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.surface,
         //
@@ -257,42 +261,45 @@ class _HomeState extends State<Home> {
                           visible: _searchbarHasFocus,
                           child: Align(
                             alignment: Alignment.topCenter,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              spacing: 8,
-                              children: [
-                                // Searchbar
-                                Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context).dividerColor,
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  child: BSearchbar(
-                                    focusNode: _searchbarFocusNode,
-                                    onSubmitted: () => _returnFocusToRoot(),
-                                    //onEditComplete: () => _returnFocusToRoot(),
-                                  ),
-                                ),
-                                // history
-                                Visibility(
-                                  maintainState: true,
-                                  visible: showHistory,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context).dividerColor,
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    child: HistoryListOverlay(
-                                      constraints: screen,
-                                      width: 400,
-                                      size: HistoryListSize.big,
-                                      onSelected: () => _returnFocusToRoot(),
-                                    ),
-                                  ),
-                                )
-                              ],
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).dividerColor,
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: BSearchbar(
+                                focusNode: _searchbarFocusNode,
+                                onSubmitted: () => _returnFocusToRoot(),
+                                //onEditComplete: () => _returnFocusToRoot(),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                    if (enableDynamicSearchbar)
+                      Positioned(
+                        top: screen.height * 0.08 + 100,
+                        right: 0,
+                        left: 0,
+                        child: Visibility(
+                          maintainFocusability: true,
+                          maintainState: true,
+                          visible: showHistory,
+                          child: Align(
+                            alignment: Alignment.topCenter,
+                            child: Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).dividerColor,
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: HistoryListOverlay(
+                                constraints: screen,
+                                width: 400,
+                                size: HistoryListSize.big,
+                                onSelected: () => _returnFocusToRoot(),
+                              ),
                             ),
                           ),
                         ),

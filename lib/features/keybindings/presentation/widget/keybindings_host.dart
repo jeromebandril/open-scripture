@@ -48,11 +48,13 @@ class ShortcutHost extends StatelessWidget {
     required this.rootFocusNode,
     required this.child,
     required this.searchFocusNode,
+    required this.historyFocusNode,
   });
 
   final FocusNode rootFocusNode;
   final Widget child;
   final FocusNode searchFocusNode;
+  final FocusNode historyFocusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -62,19 +64,18 @@ class ShortcutHost extends StatelessWidget {
         onInvoke: (intent) {
           switch (intent.command) {
             case AppCommand.focusSearch:
-              if (searchFocusNode.hasFocus) {
-                context.read<HistoryVisibilityCubit>().toggle();
-              } else {
-                context.read<HistoryVisibilityCubit>().set(false);
-              }
               searchFocusNode.requestFocus();
 
+              return;
+            case AppCommand.toggleHistory:
+              context.read<HistoryVisibilityCubit>().toggle();
               return;
             case AppCommand.toggleToolbar:
               context.read<ToolbarCubit>().toggleVisibility();
               return;
             case AppCommand.toggleFullscreen:
               context.read<FullscreenCubit>().toggle();
+              historyFocusNode.requestFocus();
               return;
             case AppCommand.prevVerse:
               final activeBloc = context.read<PaneManagerCubit>().activeBloc();

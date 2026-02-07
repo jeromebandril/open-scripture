@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 enum AppCommand {
   focusSearch,
+  toggleHistory,
   nextVerse,
   prevVerse,
   changeBible,
@@ -33,6 +34,10 @@ const Map<AppCommand, AppCommandInfo> appCommandInfo = {
   AppCommand.focusSearch: AppCommandInfo(
     label: 'Focus Search',
     description: 'Move keyboard focus to the search field.',
+  ),
+  AppCommand.toggleHistory: AppCommandInfo(
+    label: 'Toggle History',
+    description: 'Toggle history view.',
   ),
   AppCommand.nextVerse: AppCommandInfo(
     label: 'Next Verse',
@@ -78,6 +83,8 @@ const Map<AppCommand, AppCommandInfo> appCommandInfo = {
 
 const Map<AppCommand, SingleActivator> appCommandShortcuts = {
   AppCommand.focusSearch: SingleActivator(LogicalKeyboardKey.keyL,
+      control: true, includeRepeats: false),
+  AppCommand.toggleHistory: SingleActivator(LogicalKeyboardKey.keyH,
       control: true, includeRepeats: false),
   AppCommand.toggleToolbar: SingleActivator(LogicalKeyboardKey.keyT,
       control: true, includeRepeats: false),
