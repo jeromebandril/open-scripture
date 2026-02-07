@@ -258,7 +258,7 @@ class _BiblePaneGeneralCustomizerScreenState
                         label: 'Add color',
                         description: 'Set color for added words',
                         child: SettingInputColor(
-                          showReset: defaultPaneTheme.quoteColor !=
+                          showReset: defaultPaneTheme.addColor !=
                               context.select(
                                   (CustomizerCubit c) => c.state.pane.addColor),
                           onReset: () {
