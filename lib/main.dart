@@ -171,8 +171,8 @@ class _HomeState extends State<Home> {
     // final useBackgroundColorAsAppColor = context.select(
     //   (CustomizerCubit c) => c.state.theme.useBackgroundColorAsAppColor,
     // );
-    final enableDynamicSearchbar = context.select(
-      (CustomizerCubit c) => c.state.app.enableDynamicSearchbar,
+    final enableDynamicInterface = context.select(
+      (CustomizerCubit c) => c.state.app.enableDynamicInterface,
     );
     final isFullscreen = context.select((FullscreenCubit f) => f.state);
     final showToolbar = context.select((ToolbarCubit t) => t.state);
@@ -250,7 +250,7 @@ class _HomeState extends State<Home> {
                     //
                     // Dynamic searchbar
                     //
-                    if (enableDynamicSearchbar)
+                    if (enableDynamicInterface)
                       Positioned(
                         top: screen.height * 0.08,
                         right: 0,
@@ -277,7 +277,7 @@ class _HomeState extends State<Home> {
                         ),
                       ),
 
-                    if (enableDynamicSearchbar)
+                    if (enableDynamicInterface)
                       Positioned(
                         top: screen.height * 0.08 + 100,
                         right: 0,
@@ -305,7 +305,7 @@ class _HomeState extends State<Home> {
                         ),
                       ),
 
-                    if (isFullscreen && !showToolbar && enableDynamicSearchbar)
+                    if (isFullscreen && !showToolbar && enableDynamicInterface)
                       Positioned.fill(
                           child: Align(
                               alignment: AlignmentGeometry.topRight,
@@ -353,8 +353,8 @@ class _AppHeader extends StatelessWidget {
     final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
     final enableHangingRefs =
         Theme.of(context).extension<BibleViewListTheme>()!.enableHangingRefs;
-    final enableDynamicSearchbar = context.select(
-      (CustomizerCubit c) => c.state.app.enableDynamicSearchbar,
+    final enableDynamicInterface = context.select(
+      (CustomizerCubit c) => c.state.app.enableDynamicInterface,
     );
     final enable3TapNav = context.select(
       (CustomizerCubit c) => c.state.app.enable3TapNavigator,
@@ -363,11 +363,11 @@ class _AppHeader extends StatelessWidget {
 
     return Padding(
       padding: EdgeInsets.symmetric(
-          horizontal: 12, vertical: enableDynamicSearchbar ? 0 : 8),
+          horizontal: 12, vertical: enableDynamicInterface ? 0 : 8),
       child: Column(
         spacing: 18,
         children: [
-          if (!enableDynamicSearchbar)
+          if (!enableDynamicInterface)
             Stack(
               children: [
                 Row(
@@ -456,7 +456,7 @@ class _AppHeader extends StatelessWidget {
                   builder: (context, state) {
                     return Padding(
                       padding: EdgeInsets.only(
-                        top: enableDynamicSearchbar ? 18 : 0,
+                        top: enableDynamicInterface ? 18 : 0,
                         bottom: 18,
                       ),
                       child: Text(

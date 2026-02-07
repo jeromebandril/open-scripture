@@ -112,15 +112,16 @@ class _GlobalCustomizerScreenState extends State<GlobalCustomizerScreen> {
                         .toList(),
                   )),
               Setting(
-                  label: 'Enable dynamic searchbar',
-                  description: 'Show/Hide searchbar when needed',
+                  label: 'Enable dynamic interface',
+                  description:
+                      'Hide interface by default (increasing the height viewport) and show only its components when needed (using shortcuts)',
                   child: SettingInputBool(
                     value: context.select((CustomizerCubit c) =>
-                        c.state.app.enableDynamicSearchbar),
+                        c.state.app.enableDynamicInterface),
                     onChanged: (val) {
                       cubit.updateTheme(
                           appTheme: (a) =>
-                              a.copyWith(enableDynamicSearchbar: val));
+                              a.copyWith(enableDynamicInterface: val));
                     },
                   )),
               Setting(

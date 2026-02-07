@@ -12,7 +12,7 @@ class AppThemeSettings extends Equatable {
   final Color accentColor;
   final bool enableAutoColorScheme;
   final SearchbarPosition searchbarPosition;
-  final bool enableDynamicSearchbar;
+  final bool enableDynamicInterface;
   final bool enable3TapNavigator;
 
   const AppThemeSettings({
@@ -21,7 +21,7 @@ class AppThemeSettings extends Equatable {
     this.accentColor = Colors.blue,
     this.enableAutoColorScheme = true,
     this.searchbarPosition = SearchbarPosition.left,
-    this.enableDynamicSearchbar = false,
+    this.enableDynamicInterface = false,
     this.enable3TapNavigator = false,
   });
 
@@ -32,7 +32,7 @@ class AppThemeSettings extends Equatable {
       bool? enableAutoColorScheme,
       bool? enableCustomTheme,
       SearchbarPosition? searchbarPosition,
-      bool? enableDynamicSearchbar,
+      bool? enableDynamicInterface,
       bool? enable3TapNavigator}) {
     return AppThemeSettings(
       mode: mode ?? this.mode,
@@ -41,8 +41,8 @@ class AppThemeSettings extends Equatable {
       enableAutoColorScheme:
           enableAutoColorScheme ?? this.enableAutoColorScheme,
       searchbarPosition: searchbarPosition ?? this.searchbarPosition,
-      enableDynamicSearchbar:
-          enableDynamicSearchbar ?? this.enableDynamicSearchbar,
+      enableDynamicInterface:
+          enableDynamicInterface ?? this.enableDynamicInterface,
       enable3TapNavigator: enable3TapNavigator ?? this.enable3TapNavigator,
     );
   }
@@ -54,7 +54,7 @@ class AppThemeSettings extends Equatable {
         accentColor,
         enableAutoColorScheme,
         searchbarPosition,
-        enableDynamicSearchbar,
+        enableDynamicInterface,
         enable3TapNavigator,
       ];
 
@@ -64,7 +64,7 @@ class AppThemeSettings extends Equatable {
         'accentColor': ColorsUtil.colorToHex(accentColor),
         'enableAutoColorScheme': enableAutoColorScheme,
         'searchbarPosition': searchbarPosition.wire,
-        'enableDynamicSearchbar': enableDynamicSearchbar,
+        'enableDynamicInterface': enableDynamicInterface,
         'enable3TapNavigator': enable3TapNavigator,
       };
 
@@ -87,7 +87,7 @@ class AppThemeSettings extends Equatable {
       enableAutoColorScheme: json['enableAutoColorScheme'] as bool,
       searchbarPosition:
           SearchbarPositionWire.fromWire(json['searchbarPosition'] as String),
-      enableDynamicSearchbar: json['enableDynamicSearchbar'] as bool,
+      enableDynamicInterface: json['enableDynamicInterface'] as bool,
       enable3TapNavigator: json['enable3TapNavigator'] as bool,
     );
   }
