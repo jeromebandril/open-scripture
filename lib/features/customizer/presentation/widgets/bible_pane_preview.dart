@@ -13,6 +13,7 @@ import '../../../bible_display/bible_pane/presentation/widgets/parts/verse_divid
 import '../../data/models/preview_data.dart';
 import '../cubit/customizer_cubit.dart';
 import '../models/bible_pane_general_theme.dart';
+import '../models/bible_view_list_theme.dart';
 
 class BiblePanePreview extends StatelessWidget {
   const BiblePanePreview({super.key, required this.mode});
@@ -125,8 +126,15 @@ class _VerseWidgetPreview extends StatelessWidget {
       (CustomizerCubit c) => c.state.pane.enableCustomTheme,
     );
     final bTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
+    final listTheme = Theme.of(context).extension<BibleViewListTheme>()!;
 
     final refStyle = TextStyle(
+      decoration: listTheme.underlineRef,
+      decorationColor: isHighlighted
+          ? bTheme.accentColor
+          : useCustom
+              ? bTheme.refColor
+              : Theme.of(context).colorScheme.onSurface,
       height: 1.25,
       fontFamily: bTheme.referenceFont,
       fontWeight:
@@ -165,10 +173,11 @@ class _VerseWidgetPreview extends StatelessWidget {
                   if (!bTheme.enableHangingRefs)
                     TextSpan(
                       text: isHighlighted || bTheme.showFullRefAlways
-                          ? '${ref.toString()}  '
-                          : '$verseNumber  ',
+                          ? ref.toString()
+                          : '$verseNumber',
                       style: refStyle,
                     ),
+                  TextSpan(text: '  '),
                   VerseSpanBuilder.build(
                     context: context,
                     text: content,

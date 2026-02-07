@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:open_scripture/features/customizer/domain/entities/bible_pane_presentation_theme_settings.dart';
+import 'package:open_scripture/features/customizer/domain/entities/bible_view_list_theme_settings.dart';
 import 'package:open_scripture/features/customizer/domain/repo/customizer_repo.dart';
 
 import '../../domain/entities/app_theme_settings.dart';
@@ -45,11 +46,13 @@ class CustomizerCubit extends Cubit<CustomizerState> {
     BibleViewPresentationThemeSettings Function(
             BibleViewPresentationThemeSettings)?
         presentTheme,
+    BibleViewListThemeSettings Function(BibleViewListThemeSettings)? listTheme,
   }) {
     emit(state.copyWith(
       app: appTheme?.call(state.app),
       pane: paneTheme?.call(state.pane),
       presentationTheme: presentTheme?.call(state.presentTheme),
+      listTheme: listTheme?.call(state.listTheme),
     ));
     _scheduleSave();
   }

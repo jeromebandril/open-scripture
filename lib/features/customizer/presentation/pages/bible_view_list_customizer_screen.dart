@@ -81,6 +81,19 @@ class _BibleViewListCustomizerScreenState
                           },
                         )),
                     Setting(
+                        label: 'Underline all references',
+                        description:
+                            'Put underline decoration on all references',
+                        child: SettingInputBool(
+                          value: context.select((CustomizerCubit c) =>
+                              c.state.listTheme.underlineRef),
+                          onChanged: (val) {
+                            cubit.updateTheme(
+                                listTheme: (p) =>
+                                    p.copyWith(underlineRef: val));
+                          },
+                        )),
+                    Setting(
                         label: 'Selected verses render mode',
                         description: 'How selected verses are rendered',
                         child: SettingInputOption<HighlightRenderMode>(

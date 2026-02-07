@@ -8,6 +8,7 @@ import '../../../../../../core/domain/entities/verse_segment.dart';
 import '../../../../../../core/domain/entities/verse_span.dart';
 import '../../../../../customizer/presentation/cubit/customizer_cubit.dart';
 import '../../../../../customizer/presentation/models/bible_pane_general_theme.dart';
+import '../../../../../customizer/presentation/models/bible_view_list_theme.dart';
 import '../../rendering/verse_richtext_builder.dart';
 
 class VerseWidget extends StatelessWidget {
@@ -33,8 +34,15 @@ class VerseWidget extends StatelessWidget {
       (CustomizerCubit c) => c.state.pane.enableCustomTheme,
     );
     final bTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
+    final listTheme = Theme.of(context).extension<BibleViewListTheme>()!;
 
     final refStyle = TextStyle(
+      decoration: listTheme.underlineRef,
+      decorationColor: isHighlighted
+          ? bTheme.accentColor
+          : useCustom
+              ? bTheme.refColor
+              : Theme.of(context).colorScheme.secondary,
       height: 1.25,
       fontFamily: bTheme.referenceFont,
       fontWeight:
@@ -75,10 +83,11 @@ class VerseWidget extends StatelessWidget {
                   if (!bTheme.enableHangingRefs)
                     TextSpan(
                       text: isHighlighted || bTheme.showFullRefAlways
-                          ? '${reference.toString()}  '
-                          : '$verseNumber  ',
+                          ? reference.toString()
+                          : '$verseNumber',
                       style: refStyle,
                     ),
+                  TextSpan(text: '  '),
                   VerseSpanBuilder.build(
                     context: context,
                     text: content,

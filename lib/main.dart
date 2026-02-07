@@ -6,6 +6,7 @@ import 'package:open_scripture/core/presentation/widgets/help_widget.dart';
 import 'package:open_scripture/core/presentation/widgets/titlebar.dart';
 import 'package:open_scripture/features/b_searchbar/domain/repositories/b_search_intent_type.dart';
 import 'package:open_scripture/features/b_searchbar/presenter/widgets/parts/history_list_overlay.dart';
+import 'package:open_scripture/features/customizer/presentation/models/bible_view_list_theme.dart';
 import 'package:open_scripture/features/customizer/presentation/models/bible_view_presentation_theme.dart';
 import 'package:open_scripture/features/customizer/presentation/models/searchbar_position.dart';
 import 'package:open_scripture/features/toolbar/presentation/widgets/toolbar.dart';
@@ -62,7 +63,8 @@ class MyApp extends StatelessWidget {
           // Only rebuild MaterialApp when app-wide theme changes.
           return prev.app != curr.app ||
               prev.pane != curr.pane ||
-              prev.presentTheme != curr.presentTheme;
+              prev.presentTheme != curr.presentTheme ||
+              prev.listTheme != curr.listTheme;
         },
         builder: (context, state) {
           final builder = const AppThemeBuilder();
@@ -73,11 +75,21 @@ class MyApp extends StatelessWidget {
 
           final presentTheme = state.presentTheme.toExtension();
 
+          final listTheme = state.listTheme.toExtension();
+
           final light = builder.buildLight(state.app).copyWith(
-            extensions: <ThemeExtension<dynamic>>[biblePaneTheme, presentTheme],
+            extensions: <ThemeExtension<dynamic>>[
+              biblePaneTheme,
+              presentTheme,
+              listTheme
+            ],
           );
           final dark = builder.buildDark(state.app).copyWith(
-            extensions: <ThemeExtension<dynamic>>[biblePaneTheme, presentTheme],
+            extensions: <ThemeExtension<dynamic>>[
+              biblePaneTheme,
+              presentTheme,
+              listTheme
+            ],
           );
 
           return MaterialApp(
