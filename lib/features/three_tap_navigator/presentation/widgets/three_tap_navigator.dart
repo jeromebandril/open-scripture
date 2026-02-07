@@ -127,6 +127,7 @@ class _ThreeTapNavigatorOverlay extends StatefulWidget {
 class _ThreeTapNavigatorOverlayState extends State<_ThreeTapNavigatorOverlay> {
   Book? book;
   int? chpt;
+  late final int? bibleId;
 
   int _turn() {
     if (book == null && chpt == null) return 0;
@@ -146,7 +147,7 @@ class _ThreeTapNavigatorOverlayState extends State<_ThreeTapNavigatorOverlay> {
   void initState() {
     super.initState();
 
-    final bibleId = context.read<PaneManagerCubit>().activeBloc().state.bibleId;
+    bibleId = context.read<PaneManagerCubit>().activeBloc().state.bibleId;
     context.read<ThreeTapNavigatorCubit>().loadBooks(bibleId);
   }
 
@@ -155,87 +156,92 @@ class _ThreeTapNavigatorOverlayState extends State<_ThreeTapNavigatorOverlay> {
     int turn = _turn();
     final bloc = context.read<ThreeTapNavigatorCubit>();
 
-    return BlocBuilder<ThreeTapNavigatorCubit, ThreeTapNavigatorState>(
-      builder: (context, state) {
-        return Column(
-          spacing: 14,
-          children: [
-            SizedBox(
-                height: 24,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  spacing: 8,
-                  children: [
-                    TextButton(
-                        onPressed: () => setState(() => book = null),
-                        child: Text(
-                          style: TextStyle(color: _highlightTurn(turn, 0)),
-                          textAlign: TextAlign.center,
-                          'Book',
-                        )),
-                    const Icon(Icons.arrow_forward_ios_rounded, size: 12),
-                    TextButton(
-                        onPressed: () => setState(() => chpt = null),
-                        child: Text(
-                          style: TextStyle(color: _highlightTurn(turn, 1)),
-                          textAlign: TextAlign.center,
-                          'Chapter',
-                        )),
-                    const Icon(Icons.arrow_forward_ios_rounded, size: 12),
-                    TextButton(
-                        onPressed: () {},
-                        child: Text(
-                          style: TextStyle(color: _highlightTurn(turn, 2)),
-                          textAlign: TextAlign.center,
-                          'Verse',
-                        )),
-                  ],
-                )),
-            Expanded(
-              child: Stack(
+    return bibleId == null
+        ? Center(child: Text('Open a bible first'))
+        : BlocBuilder<ThreeTapNavigatorCubit, ThreeTapNavigatorState>(
+            builder: (context, state) {
+              return Column(
+                spacing: 14,
                 children: [
-                  if (turn == 0)
-                    _GridSelector<Book>(
-                      items: state.books
-                          .map((b) =>
-                              _GridSelectorItem(value: b, text: b.usfxId!))
-                          .toList(),
-                      onSelect: (b) {
-                        setState(() => book = b);
-                        bloc.getMaxChapter(b.id!);
-                      },
+                  SizedBox(
+                      height: 24,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        spacing: 8,
+                        children: [
+                          TextButton(
+                              onPressed: () => setState(() => book = null),
+                              child: Text(
+                                style:
+                                    TextStyle(color: _highlightTurn(turn, 0)),
+                                textAlign: TextAlign.center,
+                                'Book',
+                              )),
+                          const Icon(Icons.arrow_forward_ios_rounded, size: 12),
+                          TextButton(
+                              onPressed: () => setState(() => chpt = null),
+                              child: Text(
+                                style:
+                                    TextStyle(color: _highlightTurn(turn, 1)),
+                                textAlign: TextAlign.center,
+                                'Chapter',
+                              )),
+                          const Icon(Icons.arrow_forward_ios_rounded, size: 12),
+                          TextButton(
+                              onPressed: () {},
+                              child: Text(
+                                style:
+                                    TextStyle(color: _highlightTurn(turn, 2)),
+                                textAlign: TextAlign.center,
+                                'Verse',
+                              )),
+                        ],
+                      )),
+                  Expanded(
+                    child: Stack(
+                      children: [
+                        if (turn == 0)
+                          _GridSelector<Book>(
+                            items: state.books
+                                .map((b) => _GridSelectorItem(
+                                    value: b, text: b.usfxId!))
+                                .toList(),
+                            onSelect: (b) {
+                              setState(() => book = b);
+                              bloc.getMaxChapter(b.id!);
+                            },
+                          ),
+                        if (turn == 1)
+                          _GridSelector<int>(
+                            items: List.generate(
+                                state.maxChapter,
+                                (i) => _GridSelectorItem(
+                                    value: i + 1, text: '${i + 1}')),
+                            onSelect: (c) {
+                              setState(() => chpt = c);
+                              bloc.getMaxVerse(book!.id!, c);
+                            },
+                          ),
+                        if (turn == 2)
+                          _GridSelector<int>(
+                            items: List.generate(
+                                state.maxVerse,
+                                (i) => _GridSelectorItem(
+                                    value: i + 1, text: '${i + 1}')),
+                            onSelect: (v) {
+                              context.read<BSearchbarBloc>().add(
+                                  BSearchbarParseIntent(
+                                      '${book!.shortName} $chpt:$v'));
+                              widget.onEnd?.call();
+                            },
+                          )
+                      ],
                     ),
-                  if (turn == 1)
-                    _GridSelector<int>(
-                      items: List.generate(
-                          state.maxChapter,
-                          (i) => _GridSelectorItem(
-                              value: i + 1, text: '${i + 1}')),
-                      onSelect: (c) {
-                        setState(() => chpt = c);
-                        bloc.getMaxVerse(book!.id!, c);
-                      },
-                    ),
-                  if (turn == 2)
-                    _GridSelector<int>(
-                      items: List.generate(
-                          state.maxVerse,
-                          (i) => _GridSelectorItem(
-                              value: i + 1, text: '${i + 1}')),
-                      onSelect: (v) {
-                        context.read<BSearchbarBloc>().add(
-                            BSearchbarParseIntent(
-                                '${book!.shortName} $chpt:$v'));
-                        widget.onEnd?.call();
-                      },
-                    )
+                  ),
                 ],
-              ),
-            ),
-          ],
-        );
-      },
-    );
+              );
+            },
+          );
   }
 }
 
