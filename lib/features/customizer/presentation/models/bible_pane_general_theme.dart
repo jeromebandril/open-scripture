@@ -21,6 +21,7 @@ class BiblePaneGeneralTheme extends ThemeExtension<BiblePaneGeneralTheme> {
   final Color addColor;
   final FontWeight selectedRefFontWeight;
   final FontWeight refFontWeight;
+  final bool underlineStrongWords;
 
   const BiblePaneGeneralTheme({
     required this.textFont,
@@ -39,6 +40,7 @@ class BiblePaneGeneralTheme extends ThemeExtension<BiblePaneGeneralTheme> {
     required this.selectedRefFontWeight,
     required this.refFontWeight,
     required this.addColor,
+    required this.underlineStrongWords,
   });
 
   @override
@@ -59,6 +61,7 @@ class BiblePaneGeneralTheme extends ThemeExtension<BiblePaneGeneralTheme> {
     Color? addColor,
     FontWeight? selectedRefFontWeight,
     FontWeight? refFontWeight,
+    bool? underlineStrongWords,
   }) {
     return BiblePaneGeneralTheme(
       textFont: textFont ?? this.textFont,
@@ -79,6 +82,7 @@ class BiblePaneGeneralTheme extends ThemeExtension<BiblePaneGeneralTheme> {
           selectedRefFontWeight ?? this.selectedRefFontWeight,
       refFontWeight: refFontWeight ?? this.refFontWeight,
       addColor: addColor ?? this.addColor,
+      underlineStrongWords: underlineStrongWords ?? this.underlineStrongWords,
     );
   }
 
@@ -103,6 +107,7 @@ class BiblePaneGeneralTheme extends ThemeExtension<BiblePaneGeneralTheme> {
       addColor: Color.lerp(addColor, other.addColor, t)!,
       selectedRefFontWeight: selectedRefFontWeight,
       refFontWeight: refFontWeight,
+      underlineStrongWords: underlineStrongWords,
     );
   }
 }
@@ -125,5 +130,6 @@ extension BiblePaneThemeSettingsX on BiblePaneGeneralThemeSettings {
         addColor: addColor,
         selectedRefFontWeight: selectedRefFontWeight.toFlutter(),
         refFontWeight: refFontWeight.toFlutter(),
+        underlineStrongWords: underlineStrongWords,
       );
 }

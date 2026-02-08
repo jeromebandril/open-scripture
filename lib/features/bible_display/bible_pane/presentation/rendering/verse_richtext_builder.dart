@@ -60,7 +60,9 @@ class VerseSpanBuilder {
 
           case SpanType.strongWords:
             style = style.merge(TextStyle(
-              decoration: TextDecoration.underline,
+              decoration: bTheme.underlineStrongWords
+                  ? TextDecoration.underline
+                  : TextDecoration.none,
               decorationStyle: TextDecorationStyle.dotted,
               decorationColor:
                   Colors.black26, //Theme.of(context).colorScheme.tertiaryFixed,

@@ -18,6 +18,7 @@ class BiblePaneGeneralThemeSettings extends Equatable {
   final int splitscreenGap;
   final Color quoteColor;
   final Color addColor;
+  final bool underlineStrongWords;
   final AppFontWeight selectedRefFontWeight;
   final AppFontWeight refFontWeight;
 
@@ -38,25 +39,28 @@ class BiblePaneGeneralThemeSettings extends Equatable {
     this.quoteColor = const Color(0xFFB71C1C),
     this.selectedRefFontWeight = AppFontWeight.extraBold,
     this.refFontWeight = AppFontWeight.medium,
+    this.underlineStrongWords = true,
   });
 
-  BiblePaneGeneralThemeSettings copyWith(
-      {String? textFont,
-      double? fontSize,
-      Color? textColor,
-      Color? backgroundColor,
-      Color? accentColor,
-      Color? refColor,
-      bool? enableCustomTheme,
-      AppFontWeight? textFontWeight,
-      double? widthAdjustmentOffset,
-      String? referenceFont,
-      double? xPadding,
-      int? splitscreenGap,
-      Color? quoteColor,
-      Color? addColor,
-      AppFontWeight? selectedRefFontWeight,
-      AppFontWeight? refFontWeight}) {
+  BiblePaneGeneralThemeSettings copyWith({
+    String? textFont,
+    double? fontSize,
+    Color? textColor,
+    Color? backgroundColor,
+    Color? accentColor,
+    Color? refColor,
+    bool? enableCustomTheme,
+    AppFontWeight? textFontWeight,
+    double? widthAdjustmentOffset,
+    String? referenceFont,
+    double? xPadding,
+    int? splitscreenGap,
+    Color? quoteColor,
+    Color? addColor,
+    AppFontWeight? selectedRefFontWeight,
+    AppFontWeight? refFontWeight,
+    bool? underlineStrongWords,
+  }) {
     return BiblePaneGeneralThemeSettings(
       textFont: textFont ?? this.textFont,
       fontSize: fontSize ?? this.fontSize,
@@ -76,6 +80,7 @@ class BiblePaneGeneralThemeSettings extends Equatable {
       selectedRefFontWeight:
           selectedRefFontWeight ?? this.selectedRefFontWeight,
       refFontWeight: refFontWeight ?? this.refFontWeight,
+      underlineStrongWords: underlineStrongWords ?? this.underlineStrongWords,
     );
   }
 
@@ -97,6 +102,7 @@ class BiblePaneGeneralThemeSettings extends Equatable {
         addColor,
         selectedRefFontWeight,
         refFontWeight,
+        underlineStrongWords,
       ];
 
   Map<String, dynamic> toJson() => {
@@ -116,6 +122,7 @@ class BiblePaneGeneralThemeSettings extends Equatable {
         'addColor': ColorsUtil.colorToHex(addColor),
         'selectedRefFontWeight': selectedRefFontWeight.wire,
         'refFontWeight': refFontWeight.wire,
+        'underlineStrongWords': underlineStrongWords,
       };
 
   static BiblePaneGeneralThemeSettings fromJson(Map<String, dynamic> json) {
@@ -140,6 +147,7 @@ class BiblePaneGeneralThemeSettings extends Equatable {
           AppFontWeightWire.fromWire((json['selectedRefFontWeight'] as String)),
       refFontWeight:
           AppFontWeightWire.fromWire((json['refFontWeight'] as String)),
+      underlineStrongWords: (json['underlineStrongWords'] as bool),
     );
   }
 }

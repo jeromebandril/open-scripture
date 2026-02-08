@@ -232,7 +232,7 @@ class _BiblePaneGeneralCustomizerScreenState
                   ],
                 ),
                 SettingSection(
-                  title: 'Specific Render',
+                  title: 'Render options',
                   children: [
                     Setting(
                         label: 'Quote color',
@@ -273,6 +273,19 @@ class _BiblePaneGeneralCustomizerScreenState
                           color: context.select(
                             (CustomizerCubit c) => c.state.pane.addColor,
                           ),
+                        )),
+                    Setting(
+                        label: 'Show underline for strong words',
+                        description:
+                            'Shows a subtle dotted underline for strong words',
+                        child: SettingInputBool(
+                          value: context.select((CustomizerCubit c) =>
+                              c.state.pane.underlineStrongWords),
+                          onChanged: (val) {
+                            cubit.updateTheme(
+                                paneTheme: (p) =>
+                                    p.copyWith(underlineStrongWords: val));
+                          },
                         )),
                   ],
                 ),
