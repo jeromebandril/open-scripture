@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/core/presentation/cubit/history_visibility_cubit.dart';
-import 'package:open_scripture/core/presentation/cubit/fullscreen_cubit.dart';
-import 'package:open_scripture/core/presentation/cubit/toolbar_cubit.dart';
+import 'package:open_scripture/shared/presentation/cubit/history_visibility_cubit.dart';
+import 'package:open_scripture/shared/presentation/cubit/fullscreen_cubit.dart';
+import 'package:open_scripture/shared/presentation/cubit/toolbar_cubit.dart';
 import 'package:open_scripture/features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
 import '../../../bible_display/bible_pane/presentation/models/display_mode.dart';

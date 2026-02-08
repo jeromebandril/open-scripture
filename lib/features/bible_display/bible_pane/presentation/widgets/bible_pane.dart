@@ -7,7 +7,7 @@ import 'package:open_scripture/features/bible_display/bible_pane/presentation/wi
 import 'package:open_scripture/features/bible_display/bible_selector/presenter/widget/bible_selector.dart';
 import 'package:open_scripture/features/customizer/presentation/cubit/customizer_cubit.dart';
 
-import '../../../../../core/presentation/widgets/adjustable_text_size.dart';
+import '../../../../../shared/presentation/widgets/adjustable_text_size.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../bloc/bible_pane_bloc.dart';
 import '../models/display_mode.dart';

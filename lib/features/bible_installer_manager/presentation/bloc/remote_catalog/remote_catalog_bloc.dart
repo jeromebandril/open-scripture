@@ -4,7 +4,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/core/domain/entities/bible_meta.dart';
+import 'package:open_scripture/shared/domain/entities/bible_meta.dart';
 import 'package:open_scripture/features/bible_installer_manager/domain/repositories/bible_manager_repository.dart';
 
 part 'remote_catalog_event.dart';

@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/keybindings/domain/app_command.dart';
 import 'package:open_scripture/features/keybindings/presentation/widget/parts/shortcut_view.dart';
 
-import '../../../../../core/domain/entities/book_names.dart';
+import '../../../../../shared/domain/entities/book_names.dart';
 import '../../../../../injection_container.dart';
 import '../../../../bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
 import '../../../../bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';

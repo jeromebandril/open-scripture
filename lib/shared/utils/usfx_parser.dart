@@ -1,6 +1,6 @@
-import 'package:open_scripture/core/data/models/segment_key.dart';
-import 'package:open_scripture/core/data/models/verse_span_model.dart';
-import 'package:open_scripture/core/domain/entities/bible_ref.dart';
+import 'package:open_scripture/shared/data/models/segment_key.dart';
+import 'package:open_scripture/shared/data/models/verse_span_model.dart';
+import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
 import 'package:xml/xml.dart';
 import 'package:xml/xpath.dart';
 

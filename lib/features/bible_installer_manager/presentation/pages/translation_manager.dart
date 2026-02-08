@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/core/domain/entities/bible_meta.dart';
+import 'package:open_scripture/shared/domain/entities/bible_meta.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_subpage_navigator.dart';
 import 'package:open_scripture/injection_container.dart';
 

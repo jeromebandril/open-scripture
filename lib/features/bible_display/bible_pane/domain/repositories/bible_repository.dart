@@ -1,9 +1,9 @@
 import 'package:fpdart/fpdart.dart';
 
-import '../../../../../core/domain/entities/bible_meta.dart';
-import '../../../../../core/domain/entities/bible_ref.dart';
-import '../../../../../core/domain/entities/verse_segment.dart';
-import '../../../../../core/error/failure.dart';
+import '../../../../../shared/domain/entities/bible_meta.dart';
+import '../../../../../shared/domain/entities/bible_ref.dart';
+import '../../../../../shared/domain/entities/verse_segment.dart';
+import '../../../../../shared/error/failure.dart';
 
 abstract class BibleRepository {
   Future<Either<Failure, BibleMeta>> getBibleMetadata({

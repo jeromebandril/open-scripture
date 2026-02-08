@@ -2,12 +2,12 @@ import 'package:fpdart/fpdart.dart';
 import 'dart:async';
 import 'dart:math';
 
-import '../../../../core/domain/entities/bible_meta.dart';
-import '../../../../core/error/failure.dart';
-import '../../../../core/data/datasources/bible_ebibleorg_datasource.dart';
+import '../../../../shared/domain/entities/bible_meta.dart';
+import '../../../../shared/error/failure.dart';
+import '../../../../shared/data/datasources/bible_ebibleorg_datasource.dart';
 import '../../domain/entities/bible_download_progress.dart';
 import '../../domain/repositories/bible_manager_repository.dart';
-import '../../../../core/data/datasources/bible_sqllite_datasource.dart';
+import '../../../../shared/data/datasources/bible_sqllite_datasource.dart';
 
 // ignore_for_file: constant_identifier_names
 

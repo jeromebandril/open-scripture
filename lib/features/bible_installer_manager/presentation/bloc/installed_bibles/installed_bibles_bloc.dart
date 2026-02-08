@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/core/domain/entities/bible_meta.dart';
+import 'package:open_scripture/shared/domain/entities/bible_meta.dart';
 import 'package:open_scripture/features/bible_installer_manager/domain/repositories/bible_manager_repository.dart';
 
-import '../../../../../core/presentation/notifiers/install_notifier.dart';
+import '../../../../../shared/presentation/notifiers/install_notifier.dart';
 
 part 'installed_bibles_event.dart';
 part 'installed_bibles_state.dart';

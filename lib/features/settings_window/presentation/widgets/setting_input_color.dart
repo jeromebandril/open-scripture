@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/parts/reset_button.dart';
 
-import '../../../../core/utils/colors_util.dart';
+import '../../../../shared/utils/colors_util.dart';
 
 class SettingInputColor extends StatefulWidget {
   const SettingInputColor({

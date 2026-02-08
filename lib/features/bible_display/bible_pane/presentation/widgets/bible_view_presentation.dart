@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../../core/domain/entities/book_names.dart';
-import '../../../../../core/domain/entities/verse_segment.dart';
-import '../../../../../core/domain/entities/verse_span.dart';
+import '../../../../../shared/domain/entities/book_names.dart';
+import '../../../../../shared/domain/entities/verse_segment.dart';
+import '../../../../../shared/domain/entities/verse_span.dart';
 import '../../../../../injection_container.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../../../../customizer/presentation/models/bible_view_presentation_theme.dart';

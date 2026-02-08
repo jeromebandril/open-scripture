@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/core/domain/entities/verse_span.dart';
+import 'package:open_scripture/shared/domain/entities/verse_span.dart';
 
 class SelectedWordCubit extends Cubit<WordInfo?> {
   SelectedWordCubit() : super(null);

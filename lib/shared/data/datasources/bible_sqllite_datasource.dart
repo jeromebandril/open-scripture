@@ -5,11 +5,11 @@ import 'package:drift/drift.dart';
 import 'package:path/path.dart' as p;
 import 'package:archive/archive_io.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:open_scripture/core/data/models/verse_span_model.dart';
-import 'package:open_scripture/core/domain/entities/book.dart';
-import 'package:open_scripture/core/database/installation_queries.dart';
-import 'package:open_scripture/core/domain/entities/bible_ref.dart';
-import 'package:open_scripture/core/utils/usfx_parser.dart';
+import 'package:open_scripture/shared/data/models/verse_span_model.dart';
+import 'package:open_scripture/shared/domain/entities/book.dart';
+import 'package:open_scripture/shared/database/installation_queries.dart';
+import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
+import 'package:open_scripture/shared/utils/usfx_parser.dart';
 import 'package:open_scripture/features/bible_installer_manager/domain/entities/bible_download_progress.dart';
 
 import '../../domain/entities/bible_meta.dart';

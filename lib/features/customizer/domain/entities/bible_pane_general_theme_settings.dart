@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:open_scripture/core/utils/colors_util.dart';
+import 'package:open_scripture/shared/utils/colors_util.dart';
 import 'package:open_scripture/features/customizer/domain/entities/app_font_weight.dart';
 
 class BiblePaneGeneralThemeSettings extends Equatable {

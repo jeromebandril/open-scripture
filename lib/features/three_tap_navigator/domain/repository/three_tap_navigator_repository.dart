@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 
-import '../../../../core/domain/entities/book.dart';
-import '../../../../core/error/failure.dart';
+import '../../../../shared/domain/entities/book.dart';
+import '../../../../shared/error/failure.dart';
 
 abstract class ThreeTapNavigatorRepository {
   Future<Either<Failure, List<Book>>> getBooks({required int bibleId});

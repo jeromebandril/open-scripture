@@ -1,5 +1,5 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:open_scripture/core/error/failure.dart';
+import 'package:open_scripture/shared/error/failure.dart';
 import 'package:open_scripture/features/customizer/data/datasources/customizer_datasource.dart';
 import 'package:open_scripture/features/customizer/domain/repo/customizer_repo.dart';
 

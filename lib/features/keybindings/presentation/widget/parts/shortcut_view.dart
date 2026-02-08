@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../core/utils/keyboard_tokenizer.dart';
+import '../../../../../shared/utils/keyboard_tokenizer.dart';
 import 'keycap.dart';
 
 class ShortcutView extends StatelessWidget {

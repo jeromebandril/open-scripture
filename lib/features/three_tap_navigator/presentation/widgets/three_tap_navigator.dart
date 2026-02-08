@@ -4,7 +4,7 @@ import 'package:open_scripture/features/b_searchbar/presenter/bloc/b_searchbar_b
 import 'package:open_scripture/features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
 import 'package:open_scripture/features/three_tap_navigator/presentation/cubit/three_tap_navigator_cubit.dart';
 
-import '../../../../core/domain/entities/book.dart';
+import '../../../../shared/domain/entities/book.dart';
 import '../../../../injection_container.dart';
 
 class ThreeTapNavigatorTrigger extends StatefulWidget {

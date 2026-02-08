@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:open_scripture/core/presentation/widgets/debounce_textfield.dart';
+import 'package:open_scripture/shared/presentation/widgets/debounce_textfield.dart';
 
 const double settingsSpacing = 8;
 

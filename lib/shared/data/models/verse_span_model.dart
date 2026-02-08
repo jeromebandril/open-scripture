@@ -1,5 +1,5 @@
-import 'package:open_scripture/core/data/models/segment_key.dart';
-import 'package:open_scripture/core/domain/entities/verse_span.dart';
+import 'package:open_scripture/shared/data/models/segment_key.dart';
+import 'package:open_scripture/shared/domain/entities/verse_span.dart';
 
 class VerseSpanModel extends VerseSpan {
   final SegmentKey? key;

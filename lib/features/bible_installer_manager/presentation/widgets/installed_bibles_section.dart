@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
 
-import '../../../../core/domain/entities/bible_meta.dart';
-import '../../../../core/presentation/widgets/hoverable_container.dart';
+import '../../../../shared/domain/entities/bible_meta.dart';
+import '../../../../shared/presentation/widgets/hoverable_container.dart';
 import '../bloc/installed_bibles/installed_bibles_bloc.dart';
 
 part 'installed_bibles_row.dart';

@@ -1,9 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/core/domain/entities/bible_ref.dart';
+import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
 import 'package:open_scripture/features/three_tap_navigator/domain/repository/three_tap_navigator_repository.dart';
 
-import '../../../../core/domain/entities/book.dart';
+import '../../../../shared/domain/entities/book.dart';
 
 part 'three_tap_navigator_state.dart';
 

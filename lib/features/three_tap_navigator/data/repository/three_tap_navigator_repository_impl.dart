@@ -1,9 +1,9 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:open_scripture/core/data/datasources/bible_sqllite_datasource.dart';
+import 'package:open_scripture/shared/data/datasources/bible_sqllite_datasource.dart';
 
-import 'package:open_scripture/core/domain/entities/book.dart';
+import 'package:open_scripture/shared/domain/entities/book.dart';
 
-import 'package:open_scripture/core/error/failure.dart';
+import 'package:open_scripture/shared/error/failure.dart';
 
 import '../../domain/repository/three_tap_navigator_repository.dart';
 

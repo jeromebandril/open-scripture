@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:open_scripture/core/presentation/cubit/history_visibility_cubit.dart';
-import 'package:open_scripture/core/presentation/cubit/fullscreen_cubit.dart';
-import 'package:open_scripture/core/presentation/cubit/toolbar_cubit.dart';
-import 'package:open_scripture/core/presentation/widgets/help_widget.dart';
-import 'package:open_scripture/core/presentation/widgets/titlebar.dart';
+import 'package:open_scripture/shared/presentation/cubit/history_visibility_cubit.dart';
+import 'package:open_scripture/shared/presentation/cubit/fullscreen_cubit.dart';
+import 'package:open_scripture/shared/presentation/cubit/toolbar_cubit.dart';
+import 'package:open_scripture/shared/presentation/widgets/help_widget.dart';
+import 'package:open_scripture/shared/presentation/widgets/titlebar.dart';
 import 'package:open_scripture/features/b_searchbar/domain/repositories/b_search_intent_type.dart';
 import 'package:open_scripture/features/b_searchbar/presenter/widgets/parts/history_list_overlay.dart';
 import 'package:open_scripture/features/customizer/presentation/models/bible_view_list_theme.dart';
