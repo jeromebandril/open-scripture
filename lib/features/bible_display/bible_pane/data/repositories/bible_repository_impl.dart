@@ -98,4 +98,22 @@ class BibleRepositoryImpl implements BibleRepository {
       return Left(NoLocalDataFailure());
     }
   }
+
+  @override
+  Future<Either<Failure, int>> getMaxVerse({
+    required int bibleId,
+    required BibleRef reference,
+  }) async {
+    try {
+      final bookId = await localDatasource.resolveBookNameToId(
+        bibleId,
+        reference.bookUsfxId,
+      );
+
+      return Right(
+          await localDatasource.getMaxVerseRange(bookId, reference.chapter));
+    } catch (e) {
+      return Left(UnexpectedFailure(details: e.toString()));
+    }
+  }
 }

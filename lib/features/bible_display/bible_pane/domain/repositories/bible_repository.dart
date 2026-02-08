@@ -24,4 +24,9 @@ abstract class BibleRepository {
     required int bibleId,
     required BibleRef reference,
   });
+
+  Future<Either<Failure, int>> getMaxVerse({
+    required int bibleId,
+    required BibleRef reference,
+  });
 }

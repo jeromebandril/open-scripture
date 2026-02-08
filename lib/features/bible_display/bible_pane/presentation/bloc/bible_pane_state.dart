@@ -18,6 +18,7 @@ class BiblePaneState extends Equatable {
     this.isMixed = false,
     this.errorMessage,
     this.dMode = DisplayMode.normal,
+    this.maxVerse,
   });
 
   final int paneId;
@@ -29,6 +30,7 @@ class BiblePaneState extends Equatable {
   final bool isMixed;
   final String? errorMessage;
   final DisplayMode dMode;
+  final int? maxVerse;
 
   BiblePaneState copyWith({
     int Function()? paneId,
@@ -40,6 +42,7 @@ class BiblePaneState extends Equatable {
     bool Function()? isMixed,
     String? Function()? errorMessage,
     DisplayMode Function()? dMode,
+    int? Function()? maxVerse,
   }) {
     return BiblePaneState(
       bibleId: bibleId != null ? bibleId() : this.bibleId,
@@ -51,6 +54,7 @@ class BiblePaneState extends Equatable {
       isMixed: isMixed != null ? isMixed() : this.isMixed,
       errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
       dMode: dMode != null ? dMode() : this.dMode,
+      maxVerse: maxVerse != null ? maxVerse() : this.maxVerse,
     );
   }
 
@@ -65,5 +69,6 @@ class BiblePaneState extends Equatable {
         isMixed,
         errorMessage,
         dMode,
+        maxVerse,
       ];
 }

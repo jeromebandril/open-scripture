@@ -11,6 +11,7 @@ part 'database.g.dart';
     'tables/core_tables.drift',
     'tables/verse_fts5.drift',
     'queries/core_queries.drift',
+    'queries/add_queries.drift',
   },
 )
 class AppDb extends _$AppDb {

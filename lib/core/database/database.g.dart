@@ -2516,6 +2516,18 @@ abstract class _$AppDb extends GeneratedDatabase {
       'CREATE INDEX ix_spans_segment ON segment_spans (segmentId, startOffset)');
   late final Index uxLanguagesIso = Index('ux_languages_iso',
       'CREATE UNIQUE INDEX ux_languages_iso ON languages (langIsoCode)');
+  Selectable<int> resolveBookNameToId(int bibleId, String bname) {
+    return customSelect(
+        'SELECT b.id FROM books AS b WHERE b.bibleId = ?1 AND(b.usfxId = ?2 OR shortName = ?2)',
+        variables: [
+          Variable<int>(bibleId),
+          Variable<String>(bname)
+        ],
+        readsFrom: {
+          books,
+        }).map((QueryRow row) => row.read<int>('id'));
+  }
+
   Selectable<GetBiblesResult> getBibles() {
     return customSelect(
         'SELECT b.id, b.usfxId, b.languageId, b.bibleName, b.bibleNameLocal, b.bibleNameAbbreviation, b.originSource, l.langEngName, l.langIsoCode, l.langNativeName FROM bibles AS b JOIN languages AS l ON b.languageId = l.id',

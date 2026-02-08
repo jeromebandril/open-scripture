@@ -99,12 +99,21 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
         reference: () => event.ref,
         errorMessage: () => f.message,
       )),
-      (verses) {
+      (verses) async {
+        final int maxVerse = (await repo.getMaxVerse(
+          reference: event.ref,
+          bibleId: state.bibleId!,
+        ))
+            .getOrElse(
+          (_) => 0,
+        );
+
         emit(state.copyWith(
           status: () => BiblePaneStatus.ready,
           reference: () => event.ref,
           segments: () => verses,
           isMixed: () => false,
+          maxVerse: () => maxVerse,
         ));
 
         _navBus?.emit(NavigationFeedback(

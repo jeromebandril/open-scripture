@@ -129,6 +129,7 @@ abstract class BibleLocalDataSource {
 
   Future<int> getMaxChapter(int bookId);
   Future<int> getMaxVerseRange(int bookId, int chapter);
+  Future<int> resolveBookNameToId(int bibleId, String extId);
 }
 
 class BibleLocalDatasourceImpl implements BibleLocalDataSource {
@@ -644,6 +645,21 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
     try {
       final result = await db.getMaxVerse(bookId, chapter).get();
       return result.first ?? 0;
+    } catch (e) {
+      throw Error();
+    }
+  }
+
+  @override
+  Future<int> resolveBookNameToId(int bibleId, String extId) async {
+    try {
+      final r = await db.resolveBookNameToId(bibleId, extId).get();
+
+      if (r.isEmpty) {
+        throw NotFoundException('Not resolvable book name: $bibleId, $extId');
+      }
+
+      return r.first;
     } catch (e) {
       throw Error();
     }

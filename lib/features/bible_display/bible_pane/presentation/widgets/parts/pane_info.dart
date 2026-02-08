@@ -41,6 +41,13 @@ class _PaneInfoState extends State<PaneInfo> {
           height: 24,
           child: Row(
             children: [
+              BlocSelector<BiblePaneBloc, BiblePaneState, int?>(
+                  selector: (s) => s.maxVerse,
+                  builder: (ctx, maxV) {
+                    return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Text('max vv. ${maxV ?? '?'}'));
+                  }),
               // SELECTED WORD
               BlocBuilder<SelectedWordCubit, WordInfo?>(
                 builder: (context, wordInfo) {
