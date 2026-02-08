@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../features/keybindings/domain/app_command.dart';
 import '../../../features/keybindings/presentation/widget/parts/shortcut_view.dart';
 
+const double shortcutWidth = 200;
+
 class HelpWidget extends StatelessWidget {
   const HelpWidget({super.key, this.onClose});
 
@@ -11,8 +13,8 @@ class HelpWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 300,
-      height: 275,
+      width: 450,
+      height: 315,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
         color: Theme.of(context).colorScheme.surface,
@@ -25,7 +27,7 @@ class HelpWidget extends StatelessWidget {
             children: [
               SizedBox(width: 16),
               Expanded(
-                  child: Text('Help?',
+                  child: const Text('Quick overview',
                       style: TextStyle(
                           fontWeight: FontWeight.w600, fontSize: 18))),
               IconButton(
@@ -37,42 +39,64 @@ class HelpWidget extends StatelessWidget {
           ),
           Expanded(
               child: Container(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('If stuck in this view, use:'),
-                SizedBox(height: 24),
+                const Text(
+                    'Use these main shortcuts to quickly navigate and execute actions:'),
+                const SizedBox(height: 24),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('-  Quickly focus searchbar'),
-                    ShortcutView(
-                        activator: appCommandShortcuts[AppCommand.focusSearch])
+                    const Text('-  Quickly focus searchbar'),
+                    SizedBox(
+                      width: shortcutWidth,
+                      child: ShortcutView(
+                          activator:
+                              appCommandShortcuts[AppCommand.focusSearch]),
+                    )
                   ],
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('-  Toggle fullscren'),
-                    ShortcutView(
-                        activator:
-                            appCommandShortcuts[AppCommand.toggleFullscreen])
+                    const Text('-  Go to next verse'),
+                    SizedBox(
+                      width: shortcutWidth,
+                      child: ShortcutView(
+                          activator: appCommandShortcuts[AppCommand.nextVerse]),
+                    )
                   ],
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('-  Toggle toolbar'),
-                    ShortcutView(
-                        activator:
-                            appCommandShortcuts[AppCommand.toggleToolbar])
+                    const Text('-  Go to previous verse'),
+                    SizedBox(
+                      width: shortcutWidth,
+                      child: ShortcutView(
+                          activator: appCommandShortcuts[AppCommand.prevVerse]),
+                    )
                   ],
                 ),
-                SizedBox(height: 24),
-                Text('Nice 👍')
+                const SizedBox(height: 4),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('-  Change display mode'),
+                    SizedBox(
+                      width: shortcutWidth,
+                      child: ShortcutView(
+                          activator: appCommandShortcuts[
+                              AppCommand.switchDisplayMode]),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 24),
+                const Text('Open [Settings > Shortcuts] for more. Nice 👍'),
               ],
             ),
           )),

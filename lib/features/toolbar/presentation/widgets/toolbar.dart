@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/presentation/widgets/help_widget.dart';
 import '../../../settings_window/presentation/models/settings_route.dart';
 import '../../../settings_window/presentation/pages/settings_window.dart';
 import '../../../window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
@@ -46,7 +47,37 @@ class Toolbar extends StatelessWidget {
                 );
           },
         ),
-        const ToolbarOption('Help'),
+        ToolbarOption(
+          'Shortcuts',
+          onTap: () {
+            context.read<WindowStackManagerBloc>().add(
+                  WindowStackManagerOpen(
+                    SettingsWindow(
+                      initialRoute: SettingsSection.shortcuts,
+                      onClose: () {
+                        context
+                            .read<WindowStackManagerBloc>()
+                            .add(WindowStackManagerClose());
+                      },
+                    ),
+                  ),
+                );
+          },
+        ),
+        ToolbarOption(
+          'Help',
+          onTap: () {
+            context
+                .read<WindowStackManagerBloc>()
+                .add(WindowStackManagerOpen(HelpWidget(
+              onClose: () {
+                context
+                    .read<WindowStackManagerBloc>()
+                    .add(WindowStackManagerClose());
+              },
+            )));
+          },
+        ),
         ToolbarOption(
           'About',
           onTap: () {
