@@ -1,21 +1,19 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:drift/drift.dart';
-import 'package:path/path.dart' as p;
-import 'package:archive/archive_io.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:open_scripture/shared/installer/bible/domain/models/artifact.dart';
 import 'package:open_scripture/shared/data/models/verse_span_model.dart';
 import 'package:open_scripture/shared/domain/entities/book.dart';
 import 'package:open_scripture/shared/database/installation_queries.dart';
 import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
-import 'package:open_scripture/shared/utils/usfx_parser.dart';
 import 'package:open_scripture/features/bible_installer_manager/domain/entities/bible_download_progress.dart';
 
 import '../../domain/entities/bible_meta.dart';
 import '../../database/database.dart' as driftdb;
 import '../../error/exception.dart';
 import '../../domain/entities/verse_segment.dart';
+import '../../installer/bible/import/importer_registry.dart';
+import '../../installer/bible/source/packages/source_package_factory.dart';
 
 abstract class BibleLocalDataSource {
   /// Installs a previously downloaded bible archive into the local store.
@@ -36,7 +34,7 @@ abstract class BibleLocalDataSource {
   /// Errors are surfaced through the stream error channel as an [AppException]
   /// subtype (e.g. InstallFileMissingException, InstallParseException,
   /// InstallDatabaseException).
-  Stream<InstallProgress> installBible(String bibleId);
+  Stream<InstallProgress> installBible(Artifact artifact);
 
   /// Uninstalls an installed bible from the local store.
   ///
@@ -134,8 +132,14 @@ abstract class BibleLocalDataSource {
 
 class BibleLocalDatasourceImpl implements BibleLocalDataSource {
   final driftdb.AppDb db;
+  final SourcePackageFactory sourcePackageFactory;
+  final ImporterRegistry importerRegistry;
 
-  BibleLocalDatasourceImpl({required this.db});
+  BibleLocalDatasourceImpl({
+    required this.db,
+    required this.importerRegistry,
+    required this.sourcePackageFactory,
+  });
 
   /*
   * New Implementation using SQL Lite as main storage system
@@ -163,134 +167,44 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
   }
 
   @override
-  Stream<InstallProgress> installBible(String bibleId) async* {
-    File? zipFile;
+  Stream<InstallProgress> installBible(Artifact artifact) async* {
     try {
       yield const InstallProgress(
         stage: InstallStage.installing,
-        received: 0,
-        total: 5,
-        message: 'Preparing installation...',
+        message: 'Preparing source...',
       );
+      final pkg = await sourcePackageFactory.fromPath(artifact.path);
 
-      // 1) Locate zip (deterministic path)
-      final appSupDir = await getTemporaryDirectory();
-      final dir = Directory(p.join(appSupDir.path, bibleId));
-      zipFile = File(p.join(dir.path, '$bibleId.zip')); // <-- prefer .zip
+      yield const InstallProgress(
+        stage: InstallStage.installing,
+        message: 'Detecting format...',
+      );
+      final importer = await importerRegistry.resolve(pkg);
 
-      if (!await zipFile.exists()) {
-        throw InstallFileMissingException(
-          'Downloaded archive not found at ${zipFile.path}',
+      yield InstallProgress(
+        stage: InstallStage.installing,
+        message: 'Parsing ${importer.formatId}...',
+      );
+      final canonical = await importer.importFrom(pkg);
+
+      if (canonical.hasErrors) {
+        yield InstallProgress(
+          stage: InstallStage.failed,
+          message: 'Import produced errors',
         );
+        return;
       }
 
       yield const InstallProgress(
         stage: InstallStage.installing,
-        received: 1,
-        total: 5,
-        message: 'Reading downloaded file...',
-      );
-
-      late final List<int> zipBytes;
-      try {
-        zipBytes = await zipFile.readAsBytes();
-      } catch (e, st) {
-        throw InstallFileMissingException(
-          'Failed to read archive bytes',
-          cause: e,
-          stackTrace: st,
-        );
-      }
-
-      // 2) Decode zip
-      yield const InstallProgress(
-        stage: InstallStage.installing,
-        received: 2,
-        total: 5,
-        message: 'Opening archive...',
-      );
-
-      late final Archive archive;
-      try {
-        archive = ZipDecoder().decodeBytes(zipBytes);
-      } catch (e, st) {
-        throw InstallZipDecodeException(
-          'Failed to decode ZIP archive',
-          cause: e,
-          stackTrace: st,
-        );
-      }
-
-      String? bibleContent;
-      String? metadataContent;
-
-      for (final file in archive) {
-        if (!file.isFile) continue;
-
-        final name = file.name;
-
-        // archive package exposes content as bytes for files
-        final contentBytes = file.content as List<int>;
-
-        // Identify USFX and metadata robustly
-        if (name.endsWith('_usfx.xml') || name.endsWith('usfx.xml')) {
-          bibleContent = utf8.decode(contentBytes);
-        } else if (name.endsWith('metadata.xml') ||
-            name.endsWith('_metadata.xml')) {
-          metadataContent = utf8.decode(contentBytes);
-        }
-      }
-
-      if (bibleContent == null || bibleContent.trim().isEmpty) {
-        throw InstallArchiveContentException(
-          'Missing metadata XML in archive (expected *metadata.xml)',
-        );
-      }
-      if (metadataContent == null || metadataContent.trim().isEmpty) {
-        throw InstallArchiveContentException(
-          'Missing metadata XML in archive (expected *metadata.xml)',
-        );
-      }
-
-      // 3) Parse
-      yield const InstallProgress(
-        stage: InstallStage.installing,
-        received: 3,
-        total: 5,
-        message: 'Parsing bible content...',
-      );
-
-      late final BibleMeta bible;
-      late final List<Book> books;
-      late final (List<VerseSegment>, List<VerseSpanModel>) verseWithSpans;
-
-      try {
-        final usfxParser = UsfxParser(bibleContent, metadataContent);
-        bible = usfxParser.getBible();
-        books = usfxParser.getBooks();
-        verseWithSpans = usfxParser.getVersesWithSpans();
-      } catch (e, st) {
-        throw InstallParseException(
-          'Failed to parse USFX/metadata into models',
-          cause: e,
-          stackTrace: st,
-        );
-      }
-
-      // 4) Insert into DB (placeholder)
-      yield const InstallProgress(
-        stage: InstallStage.installing,
-        received: 4,
-        total: 5,
         message: 'Writing to database...',
       );
-
       try {
         await db.insertBible(
-          bible,
-          books,
-          verseWithSpans.$1,
-          verseWithSpans.$2,
+          canonical.data.bibleMeta,
+          canonical.data.books,
+          canonical.data.segments,
+          canonical.data.spans as List<VerseSpanModel>,
         );
       } catch (e, st) {
         throw InstallDatabaseException(
@@ -300,45 +214,12 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
         );
       }
 
-      // 5) Cleanup
-      yield const InstallProgress(
-        stage: InstallStage.installing,
-        received: 5,
-        total: 5,
-        message: 'Cleaning up...',
-      );
-
-      try {
-        await zipFile.delete();
-      } catch (e, st) {
-        // Not fatal for correctness, but good to track
-        throw InstallCleanupException(
-          'Install succeeded but cleanup failed (could not delete ZIP)',
-          cause: e,
-          stackTrace: st,
-        );
-      }
-
       yield const InstallProgress(
         stage: InstallStage.done,
-        received: 1,
-        total: 1,
         message: 'Installed',
       );
-    } on AppException catch (e) {
-      // Emit failed progress with message + then end stream.
-      yield InstallProgress(
-        stage: InstallStage.failed,
-        received: 0,
-        total: 0,
-        message: e.message,
-      );
-
-      // throw e;
-
-      return;
     } catch (e) {
-      // Truly unexpected
+      print(e);
       yield const InstallProgress(
         stage: InstallStage.failed,
         received: 0,

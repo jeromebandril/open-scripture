@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parser;
+import 'package:open_scripture/shared/installer/bible/domain/models/artifact.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../../features/bible_installer_manager/domain/entities/bible_download_progress.dart';
@@ -53,13 +54,13 @@ class BibleRemoteDataSourceImpl implements BibleRemoteDataSource {
 
     () async {
       try {
-        final url = '${constants.contentSourceURL}/${bibleId}_usfx.zip';
+        final url = '${constants.contentSourceURL}\\${bibleId}_usfx.zip';
 
         final appPath = await getTemporaryDirectory();
-        final directory = Directory('${appPath.path}/$bibleId');
+        final directory = Directory('${appPath.path}\\$bibleId');
         await directory.create(recursive: true);
 
-        final filePath = '${directory.path}/$bibleId.zip';
+        final filePath = '${directory.path}\\$bibleId.zip';
 
         controller.add(const InstallProgress(
           received: 0,
@@ -85,12 +86,15 @@ class BibleRemoteDataSourceImpl implements BibleRemoteDataSource {
           },
         );
 
-        controller.add(const InstallProgress(
-          received: 1,
-          total: 1,
-          stage: InstallStage.downloadingDone,
-          message: 'Download completed',
-        ));
+        controller.add(InstallProgress(
+            received: 1,
+            total: 1,
+            stage: InstallStage.downloadingDone,
+            message: 'Download completed',
+            artifact: Artifact(
+              path: filePath,
+              displayName: '$bibleId.zip',
+            )));
       } on DioException catch (e, st) {
         // Emit failed progress for UI:
         if (!controller.isClosed) {

@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 enum SpanType {
   bold,
   italic,
+  add,
   underline,
   smallCaps,
   superscript,

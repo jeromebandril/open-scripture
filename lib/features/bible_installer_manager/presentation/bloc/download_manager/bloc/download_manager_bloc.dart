@@ -59,7 +59,7 @@ class DownloadManagerBloc
     emit(state.copyWith(progressByBibleId: next));
 
     if (event.progress.stage == InstallStage.done) {
-      notifier.installed(event.bibleId);
+      notifier.refreshInstalledList();
       _subs.remove(event.bibleId)?.cancel();
     }
     if (event.progress.stage == InstallStage.failed) {

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:open_scripture/shared/installer/bible/domain/models/artifact.dart';
 
 enum InstallStage {
   idle,
@@ -17,11 +18,14 @@ class InstallProgress extends Equatable {
   final int total;
   final String? message;
 
+  final Artifact? artifact;
+
   const InstallProgress({
     required this.stage,
     this.total = 0,
     this.received = 0,
     this.message,
+    this.artifact,
   });
 
   double get fraction => total <= 0 ? 0.0 : received / total;
@@ -44,5 +48,6 @@ class InstallProgress extends Equatable {
         total,
         received,
         message,
+        artifact,
       ];
 }

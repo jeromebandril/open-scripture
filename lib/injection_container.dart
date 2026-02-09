@@ -1,4 +1,6 @@
 import 'package:get_it/get_it.dart';
+import 'package:open_scripture/features/bible_importer/data/repository/bible_importer_repo_impl.dart';
+import 'package:open_scripture/shared/installer/bible/import/importer_registry.dart';
 import 'package:open_scripture/shared/presentation/cubit/history_visibility_cubit.dart';
 import 'package:open_scripture/shared/presentation/cubit/fullscreen_cubit.dart';
 import 'package:open_scripture/shared/utils/bible_ref_parser/bible_ref_parser.dart';
@@ -25,7 +27,10 @@ import 'package:open_scripture/features/three_tap_navigator/data/repository/thre
 import 'package:open_scripture/features/three_tap_navigator/domain/repository/three_tap_navigator_repository.dart';
 import 'package:open_scripture/features/three_tap_navigator/presentation/cubit/three_tap_navigator_cubit.dart';
 import 'package:open_scripture/features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
+import 'features/bible_importer/domain/repository/bible_importer_repo.dart';
 import 'shared/domain/entities/book_names.dart';
+import 'shared/installer/bible/import/formats/usfx_importer.dart';
+import 'shared/installer/bible/source/packages/source_package_factory.dart';
 import 'shared/presentation/cubit/toolbar_cubit.dart';
 import 'features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
 import 'features/bible_display/bible_pane/presentation/navigation_bus.dart';
@@ -43,6 +48,8 @@ Future<void> init() async {
   initDatabase();
 
   initCustomizerFeature();
+
+  initInstaller();
 
   initCore();
 
@@ -74,7 +81,9 @@ void initThreeTapNavFeature() {
 }
 
 void initBibleImporterFeature() {
-  sl.registerFactory(() => BibleImporterCubit());
+  sl.registerLazySingleton<BibleImporterRepo>(
+      () => BibleImporterRepoImpl(localDataSource: sl()));
+  sl.registerFactory(() => BibleImporterCubit(repo: sl(), notifier: sl()));
 }
 
 void initCustomizerFeature() {
@@ -89,10 +98,28 @@ void initCustomizerFeature() {
   );
 }
 
+void initInstaller() {
+  sl.registerLazySingleton<UsfxImporter>(() => UsfxImporter());
+  // sl.registerLazySingleton<OsisImporter>(() => OsisImporter()); // later
+
+  sl.registerLazySingleton<ImporterRegistry>(() => ImporterRegistry([
+        sl<UsfxImporter>(),
+        // sl<OsisImporter>(),
+      ]));
+
+  sl.registerLazySingleton<SourcePackageFactory>(
+    () => const SourcePackageFactory(),
+  );
+}
+
 void initCore() {
   // Data sources
   sl.registerLazySingleton<BibleLocalDataSource>(
-    () => BibleLocalDatasourceImpl(db: sl()),
+    () => BibleLocalDatasourceImpl(
+      db: sl(),
+      importerRegistry: sl(),
+      sourcePackageFactory: sl(),
+    ),
   );
   sl.registerLazySingleton<BibleRemoteDataSource>(
     () => BibleRemoteDataSourceImpl(),

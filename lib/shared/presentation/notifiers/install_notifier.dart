@@ -1,10 +1,10 @@
 import 'dart:async';
 
 class InstallNotifier {
-  final _c = StreamController<String>.broadcast();
-  Stream<String> get stream => _c.stream;
+  final _c = StreamController<void>.broadcast();
+  Stream<void> get stream => _c.stream;
 
-  void installed(String bibleId) => _c.add(bibleId);
+  void refreshInstalledList() => _c.add(null);
 
   Future<void> close() => _c.close();
 }
