@@ -32,6 +32,7 @@ class BibleImporterCubit extends Cubit<BibleImporterState> {
       withData: false,
       withReadStream: false,
       allowMultiple: false,
+      lockParentWindow: true,
     );
 
     final path = result?.files.single.path;
