@@ -14,7 +14,7 @@ class ImporterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(42, 0, 42, 42),
       child: Column(
         children: [

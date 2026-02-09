@@ -130,7 +130,7 @@ class _NavigationButton extends StatelessWidget {
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               SizedBox(width: 16),
-              Text(text),
+              Expanded(child: Text(text, overflow: TextOverflow.ellipsis)),
             ],
           ),
         ),
