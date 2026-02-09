@@ -90,6 +90,7 @@ enum BibleBook {
   wisdom,
   sirach, // Ecclesiasticus
   baruch,
+  epJer,
   firstMaccabees,
   secondMaccabees,
 
@@ -256,6 +257,8 @@ extension BibleBookMeta on BibleBook {
         return 'Sirach';
       case BibleBook.baruch:
         return 'Baruch';
+      case BibleBook.epJer:
+        return 'Letter of Jeremiah';
       case BibleBook.firstMaccabees:
         return '1 Maccabees';
       case BibleBook.secondMaccabees:
@@ -432,13 +435,15 @@ extension BibleBookMeta on BibleBook {
         return 'Sir';
       case BibleBook.baruch:
         return 'Bar';
+      case BibleBook.epJer:
+        return 'EpJer';
       case BibleBook.firstMaccabees:
         return '1Macc';
       case BibleBook.secondMaccabees:
         return '2Macc';
 
       case BibleBook.addEsther:
-        return 'AddEsth';
+        return 'EsthGr';
       case BibleBook.prayerOfAzariah:
         return 'PrAzar';
       case BibleBook.susanna:
@@ -611,6 +616,8 @@ extension BibleBookMeta on BibleBook {
         return 'SIR';
       case BibleBook.baruch:
         return 'BAR';
+      case BibleBook.epJer:
+        return 'LJE';
       case BibleBook.firstMaccabees:
         return '1MA';
       case BibleBook.secondMaccabees:
@@ -890,6 +897,7 @@ class BibleRefResolver {
     if (raw.isEmpty) return null;
 
     final lowerRaw = raw.toLowerCase();
+    print('trying to match ---> $lowerRaw');
 
     // Exact identifiers
     final byUsfx = _byUsfx[lowerRaw];
