@@ -17,6 +17,7 @@ class ImporterWidget extends StatelessWidget {
             return _XmlImportDropZoneUi(
               isDragOver: false,
               isLoading: state.status == BibleImporterStatus.running,
+              errorText: state.errorMessage,
               onChoosePressed: () {
                 context.read<BibleImporterCubit>().pickFile();
               },

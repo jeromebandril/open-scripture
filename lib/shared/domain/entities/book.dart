@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 class Book extends Equatable {
   final int? id;
   final String? usfxId;
+  final String? osisId;
   final String longName;
   final String shortName;
   final String? abbr;
@@ -17,12 +18,14 @@ class Book extends Equatable {
     this.abbr,
     this.bookOrder,
     this.bibleId,
+    this.osisId,
   });
 
   @override
   List<Object?> get props => [
         id,
         usfxId,
+        osisId,
         longName,
         shortName,
         abbr,

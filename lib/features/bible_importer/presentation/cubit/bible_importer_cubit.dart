@@ -62,15 +62,17 @@ class BibleImporterCubit extends Cubit<BibleImporterState> {
 
     _sub = stream.listen(
       (p) {
+        if (p.stage == InstallStage.failed) {
+          emit(state.copyWith(
+            status: BibleImporterStatus.failed,
+            errorMessage: () => p.message,
+          ));
+          return;
+        }
         emit(state.copyWith(
           status: _mapStageToStatus(p.stage),
           progress: p,
-        ));
-      },
-      onError: (e, st) {
-        emit(state.copyWith(
-          status: BibleImporterStatus.failed,
-          errorMessage: e.toString(),
+          errorMessage: () => null,
         ));
       },
       onDone: () {

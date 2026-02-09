@@ -897,7 +897,6 @@ class BibleRefResolver {
     if (raw.isEmpty) return null;
 
     final lowerRaw = raw.toLowerCase();
-    print('trying to match ---> $lowerRaw');
 
     // Exact identifiers
     final byUsfx = _byUsfx[lowerRaw];

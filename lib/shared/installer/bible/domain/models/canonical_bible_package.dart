@@ -1,9 +1,9 @@
 import 'package:equatable/equatable.dart';
+import 'package:open_scripture/shared/data/models/verse_span_model.dart';
 import 'package:open_scripture/shared/domain/entities/bible_meta.dart';
 import 'package:open_scripture/shared/domain/entities/book.dart';
 import 'package:open_scripture/shared/domain/entities/verse_segment.dart';
 
-import '../../../../domain/entities/verse_span.dart';
 import 'payload_issue.dart';
 
 enum BibleSourceFormat { osis, usfx }
@@ -53,7 +53,7 @@ final class CanonicalBibleData extends Equatable {
   final BibleMeta bibleMeta;
   final List<Book> books;
   final List<VerseSegment> segments;
-  final List<VerseSpan> spans;
+  final List<VerseSpanModel> spans;
 
   const CanonicalBibleData({
     required this.books,

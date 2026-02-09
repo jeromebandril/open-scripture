@@ -29,6 +29,7 @@ import 'package:open_scripture/features/three_tap_navigator/presentation/cubit/t
 import 'package:open_scripture/features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
 import 'features/bible_importer/domain/repository/bible_importer_repo.dart';
 import 'shared/domain/entities/book_names.dart';
+import 'shared/installer/bible/import/formats/osis_importer.dart';
 import 'shared/installer/bible/import/formats/usfx_importer.dart';
 import 'shared/installer/bible/source/packages/source_package_factory.dart';
 import 'shared/presentation/cubit/toolbar_cubit.dart';
@@ -42,7 +43,7 @@ final sl = GetIt.instance;
 
 Future<void> init() async {
   sl.registerLazySingleton<BibleRefResolver>(
-    () => BibleRefResolver(versification: Versification.protestant66),
+    () => BibleRefResolver(versification: Versification.allSupported),
   );
 
   initDatabase();
@@ -100,11 +101,11 @@ void initCustomizerFeature() {
 
 void initInstaller() {
   sl.registerLazySingleton<UsfxImporter>(() => UsfxImporter());
-  // sl.registerLazySingleton<OsisImporter>(() => OsisImporter()); // later
+  sl.registerLazySingleton<OsisImporter>(() => OsisImporter()); // later
 
   sl.registerLazySingleton<ImporterRegistry>(() => ImporterRegistry([
         sl<UsfxImporter>(),
-        // sl<OsisImporter>(),
+        sl<OsisImporter>(),
       ]));
 
   sl.registerLazySingleton<SourcePackageFactory>(

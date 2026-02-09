@@ -22,13 +22,13 @@ class BibleImporterState extends Equatable {
 
   BibleImporterState copyWith({
     BibleImporterStatus? status,
-    String? errorMessage,
+    String? Function()? errorMessage,
     InstallProgress? progress,
     String? fileName,
   }) {
     return BibleImporterState(
       status: status ?? this.status,
-      errorMessage: errorMessage ?? this.errorMessage,
+      errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
       progress: progress ?? this.progress,
       fileName: fileName ?? this.fileName,
     );

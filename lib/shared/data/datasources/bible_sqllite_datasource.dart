@@ -204,7 +204,7 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
           canonical.data.bibleMeta,
           canonical.data.books,
           canonical.data.segments,
-          canonical.data.spans as List<VerseSpanModel>,
+          canonical.data.spans,
         );
       } catch (e, st) {
         throw InstallDatabaseException(
@@ -218,15 +218,20 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
         stage: InstallStage.done,
         message: 'Installed',
       );
+    } on InstallDatabaseException catch (e) {
+      yield InstallProgress(
+        stage: InstallStage.failed,
+        received: 0,
+        total: 0,
+        message: e.message,
+      );
     } catch (e) {
-      print(e);
       yield const InstallProgress(
         stage: InstallStage.failed,
         received: 0,
         total: 0,
         message: 'Installation failed (unexpected error)',
       );
-      return;
     }
   }
 
