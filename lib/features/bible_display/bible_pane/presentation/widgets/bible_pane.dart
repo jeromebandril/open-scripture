@@ -43,7 +43,12 @@ class BiblePane extends StatelessWidget {
           BlocProvider.value(value: bloc),
           BlocProvider(create: (_) => SelectedWordCubit()),
         ],
-        child: BlocBuilder<BiblePaneBloc, BiblePaneState>(
+        child: BlocConsumer<BiblePaneBloc, BiblePaneState>(
+          listenWhen: (prev, curr) =>
+              prev.bibleId != curr.bibleId && curr.reference != null,
+          listener: (BuildContext context, BiblePaneState state) {
+            bloc.add(BiblePaneDisplayChapter(ref: state.reference!));
+          },
           buildWhen: (prev, curr) =>
               prev.status != curr.status ||
               prev.errorMessage != curr.errorMessage ||

@@ -17,7 +17,7 @@ import '../../../../../injection_container.dart';
 import '../../../../domain/entities/book_names.dart';
 import '../../source/packages/source_package.dart';
 
-// good luck future me, parsing bible files is a pain
+// good luck future me, parsing bible is a pain
 
 final class OsisImporter implements BibleImporter {
   static const int _canonicalSchemaVersion = 1;
