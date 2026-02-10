@@ -16,6 +16,7 @@ class BiblePaneGeneralThemeSettings extends Equatable {
   final String referenceFont;
   final double xPadding;
   final int splitscreenGap;
+  final bool showSplitscreenDivider;
   final Color quoteColor;
   final Color addColor;
   final bool underlineStrongWords;
@@ -35,6 +36,7 @@ class BiblePaneGeneralThemeSettings extends Equatable {
     this.referenceFont = 'General Sans',
     this.xPadding = 0.05,
     this.splitscreenGap = 16,
+    this.showSplitscreenDivider = true,
     this.addColor = const Color(0xFF757575),
     this.quoteColor = const Color(0xFFB71C1C),
     this.selectedRefFontWeight = AppFontWeight.extraBold,
@@ -55,6 +57,7 @@ class BiblePaneGeneralThemeSettings extends Equatable {
     String? referenceFont,
     double? xPadding,
     int? splitscreenGap,
+    bool? showSplitscreenDivider,
     Color? quoteColor,
     Color? addColor,
     AppFontWeight? selectedRefFontWeight,
@@ -75,6 +78,8 @@ class BiblePaneGeneralThemeSettings extends Equatable {
       referenceFont: referenceFont ?? this.referenceFont,
       xPadding: xPadding ?? this.xPadding,
       splitscreenGap: splitscreenGap ?? this.splitscreenGap,
+      showSplitscreenDivider:
+          showSplitscreenDivider ?? this.showSplitscreenDivider,
       quoteColor: quoteColor ?? this.quoteColor,
       addColor: addColor ?? this.addColor,
       selectedRefFontWeight:
@@ -98,6 +103,7 @@ class BiblePaneGeneralThemeSettings extends Equatable {
         referenceFont,
         xPadding,
         splitscreenGap,
+        showSplitscreenDivider,
         quoteColor,
         addColor,
         selectedRefFontWeight,
@@ -118,6 +124,7 @@ class BiblePaneGeneralThemeSettings extends Equatable {
         'referenceFont': referenceFont,
         'xPadding': xPadding,
         'splitscreenGap': splitscreenGap,
+        'showSplitscreenDivider': showSplitscreenDivider,
         'quoteColor': ColorsUtil.colorToHex(quoteColor),
         'addColor': ColorsUtil.colorToHex(addColor),
         'selectedRefFontWeight': selectedRefFontWeight.wire,
@@ -141,6 +148,7 @@ class BiblePaneGeneralThemeSettings extends Equatable {
           AppFontWeightWire.fromWire((json['textFontWeight'] as String)),
       xPadding: json['xPadding'] as double,
       splitscreenGap: json['splitscreenGap'] as int,
+      showSplitscreenDivider: (json['showSplitscreenDivider'] as bool),
       quoteColor: Color(ColorsUtil.parseHex(json['quoteColor'] as String)),
       addColor: Color(ColorsUtil.parseHex(json['addColor'] as String)),
       selectedRefFontWeight:

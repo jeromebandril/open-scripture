@@ -17,6 +17,7 @@ class BiblePaneGeneralTheme extends ThemeExtension<BiblePaneGeneralTheme> {
   final String referenceFont;
   final double xPadding;
   final int splitscreenGap;
+  final bool showSplitscreenDivider;
   final Color quoteColor;
   final Color addColor;
   final FontWeight selectedRefFontWeight;
@@ -36,6 +37,7 @@ class BiblePaneGeneralTheme extends ThemeExtension<BiblePaneGeneralTheme> {
     required this.referenceFont,
     required this.xPadding,
     required this.splitscreenGap,
+    required this.showSplitscreenDivider,
     required this.quoteColor,
     required this.selectedRefFontWeight,
     required this.refFontWeight,
@@ -57,6 +59,7 @@ class BiblePaneGeneralTheme extends ThemeExtension<BiblePaneGeneralTheme> {
     String? referenceFont,
     double? xPadding,
     int? splitscreenGap,
+    bool? showSplitscreenDivider,
     Color? quoteColor,
     Color? addColor,
     FontWeight? selectedRefFontWeight,
@@ -77,6 +80,8 @@ class BiblePaneGeneralTheme extends ThemeExtension<BiblePaneGeneralTheme> {
       referenceFont: referenceFont ?? this.referenceFont,
       xPadding: xPadding ?? this.xPadding,
       splitscreenGap: splitscreenGap ?? this.splitscreenGap,
+      showSplitscreenDivider:
+          showSplitscreenDivider ?? this.showSplitscreenDivider,
       quoteColor: quoteColor ?? this.quoteColor,
       selectedRefFontWeight:
           selectedRefFontWeight ?? this.selectedRefFontWeight,
@@ -103,6 +108,7 @@ class BiblePaneGeneralTheme extends ThemeExtension<BiblePaneGeneralTheme> {
       referenceFont: t < 0.5 ? referenceFont : other.referenceFont,
       xPadding: t < 0.5 ? xPadding : other.xPadding,
       splitscreenGap: t < 0.5 ? splitscreenGap : other.splitscreenGap,
+      showSplitscreenDivider: showSplitscreenDivider,
       quoteColor: Color.lerp(quoteColor, other.quoteColor, t)!,
       addColor: Color.lerp(addColor, other.addColor, t)!,
       selectedRefFontWeight: selectedRefFontWeight,
@@ -126,6 +132,7 @@ extension BiblePaneThemeSettingsX on BiblePaneGeneralThemeSettings {
         referenceFont: referenceFont,
         xPadding: xPadding,
         splitscreenGap: splitscreenGap,
+        showSplitscreenDivider: showSplitscreenDivider,
         quoteColor: quoteColor,
         addColor: addColor,
         selectedRefFontWeight: selectedRefFontWeight.toFlutter(),

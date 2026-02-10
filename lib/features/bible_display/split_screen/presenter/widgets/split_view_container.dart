@@ -20,6 +20,9 @@ class MultipleBiblePanes extends StatelessWidget {
     final offset = context.select(
       (CustomizerCubit c) => c.state.pane.widthAdjustmentOffset,
     );
+    final showDivider = context.select(
+      (CustomizerCubit c) => c.state.pane.showSplitscreenDivider,
+    );
 
     return BlocBuilder<PaneManagerCubit, PaneManagerState>(
       builder: (context, state) {
@@ -39,18 +42,24 @@ class MultipleBiblePanes extends StatelessWidget {
           child: Row(
             spacing: gap.toDouble(),
             children: [
-              for (final p in state.panes)
+              for (int i = 0; i < state.panes.length; i++) ...[
                 Expanded(
                   child: Listener(
                     behavior: HitTestBehavior.opaque,
-                    onPointerDown: (_) =>
-                        context.read<PaneManagerCubit>().setActive(p.id),
+                    onPointerDown: (_) => context
+                        .read<PaneManagerCubit>()
+                        .setActive(state.panes[i].id),
                     child: BiblePane(
-                      uniqueId: p.id,
-                      bloc: context.read<PaneManagerCubit>().blocFor(p.id),
+                      uniqueId: state.panes[i].id,
+                      bloc: context
+                          .read<PaneManagerCubit>()
+                          .blocFor(state.panes[i].id),
                     ),
                   ),
-                )
+                ),
+                if (i != state.panes.length - 1 && showDivider)
+                  const VerticalDivider(width: 1)
+              ]
             ],
           ),
         );

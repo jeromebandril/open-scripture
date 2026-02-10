@@ -309,6 +309,18 @@ class _BiblePaneGeneralCustomizerScreenState
                                 c.state.pane.splitscreenGap.toString(),
                           ),
                         )),
+                    Setting(
+                        label: 'Show divider',
+                        description: 'Shows a line divider between panes',
+                        child: SettingInputBool(
+                          value: context.select((CustomizerCubit c) =>
+                              c.state.pane.showSplitscreenDivider),
+                          onChanged: (val) {
+                            cubit.updateTheme(
+                                paneTheme: (p) =>
+                                    p.copyWith(showSplitscreenDivider: val));
+                          },
+                        )),
                   ],
                 ),
               ],
