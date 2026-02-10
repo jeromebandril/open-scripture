@@ -95,14 +95,8 @@ const Map<AppCommand, SingleActivator> appCommandShortcuts = {
   AppCommand.prevVerse:
       SingleActivator(LogicalKeyboardKey.arrowLeft, control: true),
   AppCommand.nextPane: SingleActivator(
-    LogicalKeyboardKey.arrowRight,
+    LogicalKeyboardKey.tab,
     control: true,
-    shift: true,
-  ),
-  AppCommand.prevPane: SingleActivator(
-    LogicalKeyboardKey.arrowLeft,
-    control: true,
-    shift: true,
   ),
   AppCommand.changeBible: SingleActivator(
     LogicalKeyboardKey.keyB,
@@ -122,6 +116,14 @@ const Map<AppCommand, SingleActivator> appCommandShortcuts = {
   ),
   AppCommand.displayChapterOfSelected: SingleActivator(
     LogicalKeyboardKey.enter,
+    control: true,
+  ),
+  AppCommand.addParallelPane: SingleActivator(
+    LogicalKeyboardKey.backslash,
+    control: true,
+  ),
+  AppCommand.deleteCurrentPane: SingleActivator(
+    LogicalKeyboardKey.keyW,
     control: true,
   ),
 };

@@ -58,6 +58,8 @@ class ShortcutHost extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final paneManagerCubit = context.read<PaneManagerCubit>();
+
     // Map intent -> action
     final actions = <Type, Action<Intent>>{
       AppCommandIntent: CallbackAction<AppCommandIntent>(
@@ -78,7 +80,7 @@ class ShortcutHost extends StatelessWidget {
               historyFocusNode.requestFocus();
               return;
             case AppCommand.prevVerse:
-              final activeBloc = context.read<PaneManagerCubit>().activeBloc();
+              final activeBloc = paneManagerCubit.activeBloc();
               if (activeBloc.state.reference == null) return;
               final results = context.read<BSearchbarBloc>().state.results;
               //
@@ -108,7 +110,7 @@ class ShortcutHost extends StatelessWidget {
                 ),
               );
             case AppCommand.nextVerse:
-              final activeBloc = context.read<PaneManagerCubit>().activeBloc();
+              final activeBloc = paneManagerCubit.activeBloc();
               if (activeBloc.state.reference == null) return;
               final results = context.read<BSearchbarBloc>().state.results;
               //
@@ -143,31 +145,29 @@ class ShortcutHost extends StatelessWidget {
 
               return;
             case AppCommand.nextPane:
-              final panes = context.read<PaneManagerCubit>().state.panes;
-              final activePaneId =
-                  context.read<PaneManagerCubit>().state.activePaneId;
+              final panes = paneManagerCubit.state.panes;
+              final activePaneId = paneManagerCubit.state.activePaneId;
               final index = panes.indexWhere((p) => p.id == activePaneId);
               final nextIndex = index == panes.length - 1 ? 0 : index + 1;
-              context.read<PaneManagerCubit>().setActive(nextIndex);
+              paneManagerCubit.setActive(nextIndex);
 
               return;
             case AppCommand.prevPane:
-              final panes = context.read<PaneManagerCubit>().state.panes;
-              final activePaneId =
-                  context.read<PaneManagerCubit>().state.activePaneId;
+              final panes = paneManagerCubit.state.panes;
+              final activePaneId = paneManagerCubit.state.activePaneId;
               final index = panes.indexWhere((p) => p.id == activePaneId);
               final nextIndex = index == 0 ? panes.length - 1 : index - 1;
-              context.read<PaneManagerCubit>().setActive(nextIndex);
+              paneManagerCubit.setActive(nextIndex);
 
               return;
 
             case AppCommand.changeBible:
-              final active = context.read<PaneManagerCubit>().activeBloc();
+              final active = paneManagerCubit.activeBloc();
               active.add(BiblePaneCloseBible());
               return;
 
             case AppCommand.switchDisplayMode:
-              final ab = context.read<PaneManagerCubit>().activeBloc();
+              final ab = paneManagerCubit.activeBloc();
               final modes = DisplayMode.values;
               final i = modes.indexOf(ab.state.dMode);
               int next = 0;
@@ -178,7 +178,7 @@ class ShortcutHost extends StatelessWidget {
               rootFocusNode.requestFocus();
               return;
             case AppCommand.displayChapterOfSelected:
-              final activeBloc = context.read<PaneManagerCubit>().activeBloc();
+              final activeBloc = paneManagerCubit.activeBloc();
               if (!activeBloc.state.isMixed) return;
               if (activeBloc.state.reference == null) return;
               activeBloc.add(BiblePaneDisplayChapter(
@@ -186,9 +186,15 @@ class ShortcutHost extends StatelessWidget {
               ));
               rootFocusNode.requestFocus();
               return;
-            default:
+
+            case AppCommand.addParallelPane:
+              paneManagerCubit.splitNewPane();
+              return;
+            case AppCommand.deleteCurrentPane:
+              paneManagerCubit.closePane(paneManagerCubit.state.activePaneId);
               return;
           }
+          return;
         },
       ),
     };
