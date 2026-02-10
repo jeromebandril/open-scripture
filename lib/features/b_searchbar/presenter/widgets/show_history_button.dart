@@ -49,9 +49,7 @@ class ShowHistoryButton extends StatelessWidget {
             );
           },
           child: IconButton(
-              onPressed: () => _controller.isShowing
-                  ? _controller.hide()
-                  : _controller.show(),
+              onPressed: () => context.read<HistoryVisibilityCubit>().toggle(),
               tooltip: 'History',
               icon: const Icon(Icons.history)),
         ),
