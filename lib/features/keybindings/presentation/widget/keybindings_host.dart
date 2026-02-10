@@ -190,7 +190,7 @@ class ShortcutHost extends StatelessWidget {
             case AppCommand.addParallelPane:
               paneManagerCubit.splitNewPane();
               return;
-            case AppCommand.deleteCurrentPane:
+            case AppCommand.closeCurrentPane:
               paneManagerCubit.closePane(paneManagerCubit.state.activePaneId);
               return;
           }

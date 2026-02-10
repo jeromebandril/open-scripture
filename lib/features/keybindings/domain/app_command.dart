@@ -10,7 +10,7 @@ enum AppCommand {
   nextPane,
   prevPane,
   addParallelPane,
-  deleteCurrentPane,
+  closeCurrentPane,
   toggleToolbar,
   toggleFullscreen,
   switchDisplayMode,
@@ -63,7 +63,7 @@ const Map<AppCommand, AppCommandInfo> appCommandInfo = {
     label: 'Add Parallel Pane',
     description: 'Open a new pane alongside the current one.',
   ),
-  AppCommand.deleteCurrentPane: AppCommandInfo(
+  AppCommand.closeCurrentPane: AppCommandInfo(
     label: 'Close Current Pane',
     description: 'Close the currently active pane.',
   ),
@@ -98,6 +98,11 @@ const Map<AppCommand, SingleActivator> appCommandShortcuts = {
     LogicalKeyboardKey.tab,
     control: true,
   ),
+  AppCommand.prevPane: SingleActivator(
+    LogicalKeyboardKey.tab,
+    control: true,
+    shift: true,
+  ),
   AppCommand.changeBible: SingleActivator(
     LogicalKeyboardKey.keyB,
     control: true,
@@ -122,7 +127,7 @@ const Map<AppCommand, SingleActivator> appCommandShortcuts = {
     LogicalKeyboardKey.backslash,
     control: true,
   ),
-  AppCommand.deleteCurrentPane: SingleActivator(
+  AppCommand.closeCurrentPane: SingleActivator(
     LogicalKeyboardKey.keyW,
     control: true,
   ),
