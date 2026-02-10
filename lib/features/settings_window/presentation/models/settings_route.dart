@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:open_scripture/features/bible_importer/presentation/page/importer_page.dart';
 import 'package:open_scripture/features/customizer/presentation/pages/bible_pane_customizer_screen.dart';
 import 'package:open_scripture/features/customizer/presentation/pages/global_customizer_screen.dart';
+import 'package:open_scripture/features/obs_live_overlay/presentation/page/obs_live_overlay_page.dart';
 import 'package:open_scripture/features/settings_window/presentation/pages/about_setting_page.dart';
 
 import '../../../bible_installer_manager/presentation/pages/translation_manager.dart';
@@ -33,6 +34,10 @@ final Map<String, SettingsRoute> settingsRoutes = {
       icon: Icons.file_download_outlined,
       name: 'Import',
       builder: (_) => const ImporterPage()),
+  '/obsliveoverlay': SettingsRoute(
+      icon: Icons.live_tv_rounded,
+      name: 'OBS Live Overlay',
+      builder: (_) => const ObsLiveOverlayPage()),
   '/shortcuts': SettingsRoute(
       icon: Icons.keyboard,
       name: 'Shortcuts',

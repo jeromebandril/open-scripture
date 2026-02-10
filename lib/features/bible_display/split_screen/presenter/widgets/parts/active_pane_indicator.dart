@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
 
+import '../../../../../../shared/presentation/widgets/dot.dart';
+
 class ActivePaneIndicator extends StatelessWidget {
   const ActivePaneIndicator({
     super.key,
@@ -15,32 +17,6 @@ class ActivePaneIndicator extends StatelessWidget {
     return Dot(
       glowing:
           id == context.select((PaneManagerCubit p) => p.state.activePaneId),
-    );
-  }
-}
-
-class Dot extends StatelessWidget {
-  final bool glowing;
-
-  const Dot({
-    super.key,
-    this.glowing = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    double size = glowing ? 12 : 8;
-
-    return Container(
-      margin: const EdgeInsets.only(left: 4, right: 4),
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(size),
-        color: glowing
-            ? Theme.of(context).colorScheme.onSurfaceVariant
-            : Theme.of(context).colorScheme.surfaceContainerHighest,
-      ),
     );
   }
 }

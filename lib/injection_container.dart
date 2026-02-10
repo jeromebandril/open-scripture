@@ -1,8 +1,10 @@
 import 'package:get_it/get_it.dart';
 import 'package:open_scripture/features/bible_importer/data/repository/bible_importer_repo_impl.dart';
+import 'package:open_scripture/features/obs_live_overlay/presentation/cubit/obs_live_overlay_cubit.dart';
 import 'package:open_scripture/shared/installer/bible/import/importer_registry.dart';
 import 'package:open_scripture/shared/presentation/cubit/history_visibility_cubit.dart';
 import 'package:open_scripture/shared/presentation/cubit/fullscreen_cubit.dart';
+import 'package:open_scripture/shared/presentation/notifiers/selected_verse_content_notifier.dart';
 import 'package:open_scripture/shared/utils/bible_ref_parser/bible_ref_parser.dart';
 import 'package:open_scripture/shared/database/database.dart';
 import 'package:open_scripture/features/b_searchbar/data/repositories/b_searchbar_repository_impl.dart';
@@ -28,6 +30,10 @@ import 'package:open_scripture/features/three_tap_navigator/domain/repository/th
 import 'package:open_scripture/features/three_tap_navigator/presentation/cubit/three_tap_navigator_cubit.dart';
 import 'package:open_scripture/features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
 import 'features/bible_importer/domain/repository/bible_importer_repo.dart';
+import 'features/obs_live_overlay/data/datasource/overlay_file_system.dart';
+import 'features/obs_live_overlay/data/datasource/overlay_server_manager.dart';
+import 'features/obs_live_overlay/data/repository/overlay_repository_impl.dart';
+import 'features/obs_live_overlay/domain/repostiory/overlay_repository.dart';
 import 'shared/domain/entities/book_names.dart';
 import 'shared/installer/bible/import/formats/osis_importer.dart';
 import 'shared/installer/bible/import/formats/usfx_importer.dart';
@@ -67,6 +73,8 @@ Future<void> init() async {
   initBibleImporterFeature();
 
   initThreeTapNavFeature();
+
+  initObsLiveOverlayFeature();
 
   // others
   sl.registerLazySingleton(() => NavigationBus());
@@ -194,4 +202,17 @@ void initBibleSelectorFeature() {
   sl.registerLazySingleton<BibleSelectorRepository>(
     () => BibleSelectorRepositoryImpl(localDatasource: sl()),
   );
+}
+
+void initObsLiveOverlayFeature() {
+  sl.registerLazySingleton<ContentOfSelectedVerseNotifier>(
+      () => ContentOfSelectedVerseNotifier());
+  sl.registerLazySingleton<OverlayFilesystem>(() => OverlayFilesystem());
+  sl.registerLazySingleton<OverlayServerManager>(
+      () => OverlayServerManager(fs: sl()));
+
+  sl.registerLazySingleton<OverlayRepository>(
+      () => OverlayRepositoryImpl(mgr: sl()));
+
+  sl.registerFactory(() => ObsLiveOverlayCubit(repo: sl(), notifier: sl()));
 }

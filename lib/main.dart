@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:open_scripture/features/obs_live_overlay/presentation/cubit/obs_live_overlay_cubit.dart';
+import 'package:open_scripture/features/obs_live_overlay/presentation/widgets/obs_live_overlay_indicator.dart';
 import 'package:open_scripture/shared/presentation/cubit/history_visibility_cubit.dart';
 import 'package:open_scripture/shared/presentation/cubit/fullscreen_cubit.dart';
 import 'package:open_scripture/shared/presentation/cubit/toolbar_cubit.dart';
+import 'package:open_scripture/shared/presentation/widgets/dot.dart';
 import 'package:open_scripture/shared/presentation/widgets/help_widget.dart';
 import 'package:open_scripture/shared/presentation/widgets/titlebar.dart';
 import 'package:open_scripture/features/b_searchbar/domain/repositories/b_search_intent_type.dart';
@@ -100,6 +103,7 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             home: MultiBlocProvider(
               providers: [
+                BlocProvider(create: (_) => di.sl<ObsLiveOverlayCubit>()),
                 BlocProvider(create: (_) => di.sl<HistoryVisibilityCubit>()),
                 BlocProvider(create: (_) => di.sl<PaneManagerCubit>()),
                 BlocProvider(create: (_) => di.sl<ToolbarCubit>()),
@@ -276,7 +280,9 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                       ),
-
+                    //
+                    // Dynamic History viewer
+                    //
                     if (enableDynamicInterface)
                       Positioned(
                         top: screen.height * 0.08 + 100,
@@ -304,12 +310,30 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                       ),
-
-                    if (isFullscreen && !showToolbar && enableDynamicInterface)
-                      Positioned.fill(
-                          child: Align(
-                              alignment: AlignmentGeometry.topRight,
-                              child: IconButton(
+                    //
+                    // Top right interface
+                    //
+                    Positioned.fill(
+                        child: Align(
+                      alignment: AlignmentGeometry.topRight,
+                      child: SizedBox(
+                        height: 48,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            //
+                            // OBS Live Overlay
+                            //
+                            if (isFullscreen && enableDynamicInterface)
+                              const ObsLiveOverlayIndicator(),
+                            //
+                            // Help button when all interface is hidden
+                            //
+                            if (isFullscreen &&
+                                !showToolbar &&
+                                enableDynamicInterface)
+                              IconButton(
                                   tooltip: 'Help',
                                   onPressed: () {
                                     context
@@ -322,7 +346,11 @@ class _HomeState extends State<Home> {
                                       },
                                     )));
                                   },
-                                  icon: Icon(Icons.help_outline_rounded)))),
+                                  icon: Icon(Icons.help_outline_rounded)),
+                          ],
+                        ),
+                      ),
+                    )),
                   ],
                 ),
               ),
@@ -419,26 +447,36 @@ class _AppHeader extends StatelessWidget {
                   ],
                 ),
                 //
-                // Show help button to avoid users getting stuck in fullscreen mode with hidden toolbar
+                // Fixed right
                 //
-                if (isFullscreen && !showToolbar)
-                  Positioned.fill(
-                      child: Align(
-                          alignment: AlignmentGeometry.centerRight,
-                          child: IconButton(
-                              tooltip: 'Help',
-                              onPressed: () {
+                Positioned.fill(
+                    child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    //
+                    // Show OBS Live overview status
+                    //
+                    const ObsLiveOverlayIndicator(),
+                    //
+                    // Show help button to avoid users getting stuck in fullscreen mode with hidden toolbar
+                    //
+                    if (isFullscreen && !showToolbar)
+                      IconButton(
+                          tooltip: 'Help',
+                          onPressed: () {
+                            context
+                                .read<WindowStackManagerBloc>()
+                                .add(WindowStackManagerOpen(HelpWidget(
+                              onClose: () {
                                 context
                                     .read<WindowStackManagerBloc>()
-                                    .add(WindowStackManagerOpen(HelpWidget(
-                                  onClose: () {
-                                    context
-                                        .read<WindowStackManagerBloc>()
-                                        .add(WindowStackManagerClose());
-                                  },
-                                )));
+                                    .add(WindowStackManagerClose());
                               },
-                              icon: Icon(Icons.help_outline_rounded)))),
+                            )));
+                          },
+                          icon: Icon(Icons.help_outline_rounded)),
+                  ],
+                )),
               ],
             ),
           //
