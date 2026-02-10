@@ -15,7 +15,7 @@ class ObsLiveOverlayIndicator extends StatelessWidget {
           glowing: state.isRunning,
           overrideGlowingColor: Colors.red,
           tooltipMessage:
-              'OBS Live Overlay ${state.isRunning ? 'running' : 'off'}',
+              'OBS Live Overlay is ${state.isRunning ? 'running' : 'off'}',
         );
       },
     );

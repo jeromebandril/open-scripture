@@ -4,7 +4,6 @@ import 'package:open_scripture/features/obs_live_overlay/presentation/widgets/ob
 import 'package:open_scripture/shared/presentation/cubit/history_visibility_cubit.dart';
 import 'package:open_scripture/shared/presentation/cubit/fullscreen_cubit.dart';
 import 'package:open_scripture/shared/presentation/cubit/toolbar_cubit.dart';
-import 'package:open_scripture/shared/presentation/widgets/dot.dart';
 import 'package:open_scripture/shared/presentation/widgets/help_widget.dart';
 import 'package:open_scripture/shared/presentation/widgets/titlebar.dart';
 import 'package:open_scripture/features/b_searchbar/domain/repositories/b_search_intent_type.dart';
@@ -166,15 +165,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    // final backgroundColor = context.select(
-    //   (CustomizerCubit c) => c.state.theme.backgroundColor,
-    // );
-    // final isCustomTheme = context.select(
-    //   (CustomizerCubit c) => c.state.theme.enableCustomTheme,
-    // );
-    // final useBackgroundColorAsAppColor = context.select(
-    //   (CustomizerCubit c) => c.state.theme.useBackgroundColorAsAppColor,
-    // );
     final enableDynamicInterface = context.select(
       (CustomizerCubit c) => c.state.app.enableDynamicInterface,
     );
@@ -333,20 +323,7 @@ class _HomeState extends State<Home> {
                             if (isFullscreen &&
                                 !showToolbar &&
                                 enableDynamicInterface)
-                              IconButton(
-                                  tooltip: 'Help',
-                                  onPressed: () {
-                                    context
-                                        .read<WindowStackManagerBloc>()
-                                        .add(WindowStackManagerOpen(HelpWidget(
-                                      onClose: () {
-                                        context
-                                            .read<WindowStackManagerBloc>()
-                                            .add(WindowStackManagerClose());
-                                      },
-                                    )));
-                                  },
-                                  icon: Icon(Icons.help_outline_rounded)),
+                              const HelpTriggerBtn(),
                           ],
                         ),
                       ),
@@ -409,41 +386,6 @@ class _AppHeader extends StatelessWidget {
                       //onEditComplete: () => _returnFocusToRoot(),
                     ),
                     ShowHistoryButton(),
-                    // SplitscreenControls(),
-                    // BlocBuilder<FullscreenCubit, bool>(
-                    //   builder: (context, isFullscreen) {
-                    //     return IconButton(
-                    //       onPressed: () =>
-                    //           context.read<FullscreenCubit>().toggle(),
-                    //       tooltip: isFullscreen
-                    //           ? 'Exit fullscreen'
-                    //           : 'Enter fullscreen',
-                    //       icon: isFullscreen
-                    //           ? const Icon(Icons.fullscreen_exit)
-                    //           : const Icon(Icons.fullscreen),
-                    //     );
-                    //   },
-                    // ),
-                    // BlocBuilder<DisplayModeCubit, DisplayMode>(
-                    //   builder: (context, dm) {
-                    //     return IconButton(
-                    //         tooltip: dm == DisplayMode.presentation
-                    //             ? 'Exit presentation mode'
-                    //             : 'Enter presentation mode',
-                    //         onPressed: () {
-                    //           if (dm == DisplayMode.presentation) {
-                    //             context
-                    //                 .read<DisplayModeCubit>()
-                    //                 .set(DisplayMode.normal);
-                    //           } else {
-                    //             context
-                    //                 .read<DisplayModeCubit>()
-                    //                 .set(DisplayMode.presentation);
-                    //           }
-                    //         },
-                    //         icon: Icon(Icons.fit_screen_rounded));
-                    //   },
-                    // ),
                   ],
                 ),
                 //
@@ -460,21 +402,7 @@ class _AppHeader extends StatelessWidget {
                     //
                     // Show help button to avoid users getting stuck in fullscreen mode with hidden toolbar
                     //
-                    if (isFullscreen && !showToolbar)
-                      IconButton(
-                          tooltip: 'Help',
-                          onPressed: () {
-                            context
-                                .read<WindowStackManagerBloc>()
-                                .add(WindowStackManagerOpen(HelpWidget(
-                              onClose: () {
-                                context
-                                    .read<WindowStackManagerBloc>()
-                                    .add(WindowStackManagerClose());
-                              },
-                            )));
-                          },
-                          icon: Icon(Icons.help_outline_rounded)),
+                    if (isFullscreen && !showToolbar) const HelpTriggerBtn(),
                   ],
                 )),
               ],

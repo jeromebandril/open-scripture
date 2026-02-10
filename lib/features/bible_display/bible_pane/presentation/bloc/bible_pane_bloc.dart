@@ -139,7 +139,8 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
   }
 
   void _sendTextToObsLiveOverlay(List<VerseSegment> segments, BibleRef ref) {
-    if (_overlayNotifier == null) return;
+    if (_overlayNotifier == null || segments.isEmpty) return;
+
     final selVerse =
         segments.where((s) => s.ref.verseStart == ref.verseStart).toList();
 

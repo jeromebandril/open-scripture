@@ -15,6 +15,7 @@ class ObsLiveOverlayCubit extends Cubit<ObsLiveOverlayState> {
     required ContentOfSelectedVerseNotifier notifier,
   }) : super(ObsLiveOverlayState.initial()) {
     _sub = notifier.stream.listen((snapshot) {
+      if (!repo.isRunning) return;
       setSnapshot(snapshot);
     });
   }

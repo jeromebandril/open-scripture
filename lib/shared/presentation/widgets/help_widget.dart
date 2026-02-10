@@ -1,7 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../features/keybindings/domain/app_command.dart';
 import '../../../features/keybindings/presentation/widget/parts/shortcut_view.dart';
+import '../../../features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
+
+class HelpTriggerBtn extends StatelessWidget {
+  const HelpTriggerBtn({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+        tooltip: 'Help',
+        onPressed: () {
+          context
+              .read<WindowStackManagerBloc>()
+              .add(WindowStackManagerOpen(HelpWidget(
+            onClose: () {
+              context
+                  .read<WindowStackManagerBloc>()
+                  .add(WindowStackManagerClose());
+            },
+          )));
+        },
+        icon: Icon(Icons.help_outline_rounded));
+  }
+}
 
 const double shortcutWidth = 200;
 
