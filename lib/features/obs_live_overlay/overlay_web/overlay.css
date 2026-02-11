@@ -37,3 +37,9 @@ body {
   font-size: 28px;
   background: rgba(0, 0, 0, 0.90);
 }
+
+.row {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}

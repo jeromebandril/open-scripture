@@ -18,20 +18,17 @@ class Dot extends StatelessWidget {
   Widget build(BuildContext context) {
     double size = glowing ? 12 : 8;
 
-    return Tooltip(
-      message: tooltipMessage,
-      child: Container(
-        margin: const EdgeInsets.only(left: 4, right: 4),
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(size),
-          color: glowing
-              ? overrideGlowingColor ??
-                  Theme.of(context).colorScheme.onSurfaceVariant
-              : overrideColor ??
-                  Theme.of(context).colorScheme.surfaceContainerHighest,
-        ),
+    return Container(
+      margin: const EdgeInsets.only(left: 4, right: 4),
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(size),
+        color: glowing
+            ? overrideGlowingColor ??
+                Theme.of(context).colorScheme.onSurfaceVariant
+            : overrideColor ??
+                Theme.of(context).colorScheme.surfaceContainerHighest,
       ),
     );
   }

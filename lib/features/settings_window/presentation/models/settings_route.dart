@@ -36,7 +36,7 @@ final Map<String, SettingsRoute> settingsRoutes = {
       builder: (_) => const ImporterPage()),
   '/obsliveoverlay': SettingsRoute(
       icon: Icons.live_tv_rounded,
-      name: 'OBS Live Overlay',
+      name: 'OBS Live Overlay (beta)',
       builder: (_) => const ObsLiveOverlayPage()),
   '/shortcuts': SettingsRoute(
       icon: Icons.keyboard,

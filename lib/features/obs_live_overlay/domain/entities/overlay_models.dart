@@ -20,6 +20,7 @@ class OverlaySnapshot extends Equatable {
       };
 
   static OverlaySnapshot initial() => const OverlaySnapshot(items: {
+        'bible': OverlayItem(text: '', visible: false),
         'ref': OverlayItem(text: '', visible: false),
         'content': OverlayItem(text: '', visible: false),
       });

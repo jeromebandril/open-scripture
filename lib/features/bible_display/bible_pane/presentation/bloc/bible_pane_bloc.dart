@@ -141,14 +141,16 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
   void _sendTextToObsLiveOverlay(List<VerseSegment> segments, BibleRef ref) {
     if (_overlayNotifier == null || segments.isEmpty) return;
 
-    final selVerse =
-        segments.where((s) => s.ref.verseStart == ref.verseStart).toList();
-
-    String content = selVerse.map((s) => s.textContent).join(' ');
     String refStr = ref.toString().replaceAll(
           ref.bookUsfxId,
           _resolver.resolveBook(ref.bookUsfxId)!.fullName,
         );
+
+    //String? bibleName = state.bibleMeta?.abbreviation;
+
+    final selVerse =
+        segments.where((s) => s.ref.verseStart == ref.verseStart).toList();
+    String content = selVerse.map((s) => s.textContent).join(' ');
 
     final snapshot = OverlaySnapshot(items: {
       'ref': OverlayItem(text: refStr, visible: true),

@@ -7,9 +7,6 @@ import '../datasource/overlay_server_manager.dart';
 class OverlayRepositoryImpl implements OverlayRepository {
   final OverlayServerManager mgr;
 
-  late final String _controllerToken;
-  late final int _port;
-
   OverlayRepositoryImpl({required this.mgr});
 
   @override
@@ -17,9 +14,7 @@ class OverlayRepositoryImpl implements OverlayRepository {
 
   @override
   Future<void> start({int port = 17890, required String controllerToken}) {
-    _port = port;
-    _controllerToken = controllerToken;
-    return mgr.start(port: _port, controllerToken: _controllerToken);
+    return mgr.start(port: port, controllerToken: controllerToken);
   }
 
   @override

@@ -41,6 +41,7 @@ class ObsLiveOverlayCubit extends Cubit<ObsLiveOverlayState> {
         snapshot: repo.snapshot,
       ));
     } catch (e) {
+      print(e);
       emit(state.copyWith(
           busy: false, error: e.toString(), isRunning: repo.isRunning));
     }

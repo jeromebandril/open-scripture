@@ -22,7 +22,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
           return Column(
             children: [
               SettingSection(
-                title: 'OBS Live Overlay preferences',
+                title: 'OBS Live Overlay preferences (beta)',
                 children: [
                   Setting(
                       label: 'Enable OBS Live Overlay',
@@ -36,7 +36,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                   Setting(
                       label: 'URL',
                       description:
-                          'Copy this link and paste it into OBS Web source',
+                          'Copy this link and paste it into OBS Web source scene or preview in a browser',
                       settingWidth: 300,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
