@@ -63,6 +63,7 @@ class _AdjustableTextSizeState extends State<AdjustableTextSize> {
 
     return Listener(
       onPointerSignal: _onPointerSignal,
+      onPointerPanZoomUpdate: _onPointerPanZoomUpdate,
       child: NotificationListener<ScrollNotification>(
         onNotification: (n) => isControlPressed,
         child: GestureDetector(
@@ -70,7 +71,6 @@ class _AdjustableTextSizeState extends State<AdjustableTextSize> {
           onTap: () {
             _focusNode.requestFocus();
           },
-          onScaleUpdate: _onScaleUpdate,
           child: Focus(
             focusNode: _focusNode,
             //onKeyEvent: _onKeyEvent,
@@ -88,9 +88,14 @@ class _AdjustableTextSizeState extends State<AdjustableTextSize> {
   }
 
   /// To handle trackpad zoom gestures
-  void _onScaleUpdate(ScaleUpdateDetails details) {
-    if (details.scale == 1) return;
-    details.scale > 1 ? _zoom(1) : _zoom(-1);
+  void _onPointerPanZoomUpdate(PointerPanZoomUpdateEvent event) {
+    if (event.scale == 1) return;
+
+    if (event.scale > 1)  {
+      _zoom(1);
+    } else {
+      _zoom(-1);
+    } 
   }
 
   // HardwareKeyboard.instance.isControlPressed instead
@@ -127,7 +132,7 @@ class _AdjustableTextSizeState extends State<AdjustableTextSize> {
         lowerLimit,
         highestLimit,
       );
-      if (widget.onZoom != null) widget.onZoom!(textScaleFactor);
+      widget.onZoom?.call(textScaleFactor);
     });
   }
 }
