@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:open_scripture/features/keybindings/domain/app_command.dart';
-import 'package:open_scripture/features/keybindings/presentation/widget/parts/shortcut_view.dart';
+import 'package:open_scripture/features/shortcuts/domain/app_command.dart';
+import 'package:open_scripture/features/shortcuts/presentation/widget/parts/shortcut_view.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
 

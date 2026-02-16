@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../features/keybindings/domain/app_command.dart';
-import '../../../features/keybindings/presentation/widget/parts/shortcut_view.dart';
+import '../../../features/shortcuts/domain/app_command.dart';
+import '../../../features/shortcuts/presentation/widget/parts/shortcut_view.dart';
 import '../../../features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
 
 class HelpTriggerBtn extends StatelessWidget {

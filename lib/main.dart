@@ -27,7 +27,7 @@ import 'features/bible_installer_manager/presentation/bloc/installed_bibles/inst
 import 'features/customizer/domain/entities/app_theme_settings.dart';
 import 'features/customizer/presentation/cubit/customizer_cubit.dart';
 import 'features/customizer/presentation/models/bible_pane_general_theme.dart';
-import 'features/keybindings/presentation/widget/keybindings_host.dart';
+import 'features/shortcuts/presentation/widget/keybindings_host.dart';
 import 'features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
 import 'features/window_stack_manager/presentation/widgets/window_stack_manager_wrapper.dart';
 import 'injection_container.dart' as di;

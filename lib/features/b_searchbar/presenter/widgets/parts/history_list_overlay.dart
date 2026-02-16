@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/features/keybindings/domain/app_command.dart';
-import 'package:open_scripture/features/keybindings/presentation/widget/parts/shortcut_view.dart';
+import 'package:open_scripture/features/shortcuts/domain/app_command.dart';
+import 'package:open_scripture/features/shortcuts/presentation/widget/parts/shortcut_view.dart';
 
 import '../../../../../shared/domain/entities/book_names.dart';
 import '../../../../../injection_container.dart';

@@ -10,6 +10,9 @@
 .svn/
 migrate_working_dir/
 
+# Synchthing (for synchinging with macOS in VM)
+.stfolder/
+
 # IntelliJ related
 *.iml
 *.ipr

@@ -6,7 +6,7 @@ import 'package:open_scripture/features/obs_live_overlay/presentation/page/obs_l
 import 'package:open_scripture/features/settings_window/presentation/pages/about_setting_page.dart';
 
 import '../../../bible_installer_manager/presentation/pages/translation_manager.dart';
-import '../../../keybindings/presentation/pages/keybindings_screen.dart';
+import '../../../shortcuts/presentation/pages/keybindings_screen.dart';
 
 enum SettingsSection { appearance, bibleManager, shortcuts, about }
 
