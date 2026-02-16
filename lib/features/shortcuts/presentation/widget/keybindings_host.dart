@@ -149,7 +149,7 @@ class ShortcutHost extends StatelessWidget {
               final activePaneId = paneManagerCubit.state.activePaneId;
               final index = panes.indexWhere((p) => p.id == activePaneId);
               final nextIndex = index == panes.length - 1 ? 0 : index + 1;
-              paneManagerCubit.setActive(nextIndex);
+              paneManagerCubit.setActive(panes[nextIndex].id);
 
               return;
             case AppCommand.prevPane:
@@ -157,7 +157,7 @@ class ShortcutHost extends StatelessWidget {
               final activePaneId = paneManagerCubit.state.activePaneId;
               final index = panes.indexWhere((p) => p.id == activePaneId);
               final nextIndex = index == 0 ? panes.length - 1 : index - 1;
-              paneManagerCubit.setActive(nextIndex);
+              paneManagerCubit.setActive(panes[nextIndex].id);
 
               return;
 
