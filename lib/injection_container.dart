@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:open_scripture/features/bible_importer/data/repository/bible_importer_repo_impl.dart';
 import 'package:open_scripture/features/obs_live_overlay/presentation/cubit/obs_live_overlay_cubit.dart';
+import 'package:open_scripture/features/text_scaler/cubit/text_scaler_cubit.dart';
 import 'package:open_scripture/shared/installer/bible/import/importer_registry.dart';
 import 'package:open_scripture/shared/presentation/cubit/history_visibility_cubit.dart';
 import 'package:open_scripture/shared/presentation/cubit/fullscreen_cubit.dart';
@@ -75,6 +76,8 @@ Future<void> init() async {
   initThreeTapNavFeature();
 
   initObsLiveOverlayFeature();
+
+  sl.registerFactory(() => TextScalerCubit());
 
   // others
   sl.registerLazySingleton(() => NavigationBus());

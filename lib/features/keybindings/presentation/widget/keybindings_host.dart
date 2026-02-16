@@ -42,7 +42,7 @@ Map<ShortcutActivator, Intent> buildShortcutIntentMap(
   return result;
 }
 
-class ShortcutHost extends StatefulWidget {
+class ShortcutHost extends StatelessWidget {
   const ShortcutHost({
     super.key,
     required this.rootFocusNode,
@@ -57,29 +57,6 @@ class ShortcutHost extends StatefulWidget {
   final FocusNode historyFocusNode;
 
   @override
-  State<ShortcutHost> createState() => _ShortcutHostState();
-}
-
-class _ShortcutHostState extends State<ShortcutHost> {
-
-  @override
-  void initState() {
-    super.initState();
-    FocusManager.instance.addListener(_logFocus);
-  }
-
-  void _logFocus() {
-    final pf = FocusManager.instance.primaryFocus;
-    debugPrint('primaryFocus changed: $pf / ${pf?.debugLabel}');
-  }
-
-  @override
-  void dispose() {
-    FocusManager.instance.removeListener(_logFocus);
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final paneManagerCubit = context.read<PaneManagerCubit>();
 
@@ -89,7 +66,7 @@ class _ShortcutHostState extends State<ShortcutHost> {
         onInvoke: (intent) {
           switch (intent.command) {
             case AppCommand.focusSearch:
-              widget.searchFocusNode.requestFocus();
+              searchFocusNode.requestFocus();
 
               return;
             case AppCommand.toggleHistory:
@@ -100,7 +77,7 @@ class _ShortcutHostState extends State<ShortcutHost> {
               return;
             case AppCommand.toggleFullscreen:
               context.read<FullscreenCubit>().toggle();
-              widget.historyFocusNode.requestFocus();
+              historyFocusNode.requestFocus();
               return;
             case AppCommand.prevVerse:
               final activeBloc = paneManagerCubit.activeBloc();
@@ -198,7 +175,7 @@ class _ShortcutHostState extends State<ShortcutHost> {
               ab.add(BiblePaneSetDisplayMode(modes[next]));
               return;
             case AppCommand.unfocusSearch:
-              widget.rootFocusNode.requestFocus();
+              rootFocusNode.requestFocus();
               return;
             case AppCommand.displayChapterOfSelected:
               final activeBloc = paneManagerCubit.activeBloc();
@@ -207,7 +184,7 @@ class _ShortcutHostState extends State<ShortcutHost> {
               activeBloc.add(BiblePaneDisplayChapter(
                 ref: activeBloc.state.reference!,
               ));
-              widget.rootFocusNode.requestFocus();
+              rootFocusNode.requestFocus();
               return;
 
             case AppCommand.addParallelPane:
@@ -233,7 +210,7 @@ class _ShortcutHostState extends State<ShortcutHost> {
         // If focus is already within this subtree, you can skip.
         // Minimal safe rule: ensure we always have a focus anchor.
         //if (!rootFocusNode.hasFocus) {
-        widget.rootFocusNode.requestFocus();
+        rootFocusNode.requestFocus();
         //}
       },
       child: Actions(
@@ -241,9 +218,9 @@ class _ShortcutHostState extends State<ShortcutHost> {
         child: Shortcuts(
           shortcuts: buildShortcutIntentMap(appCommandShortcuts),
           child: Focus(
-            focusNode: widget.rootFocusNode,
+            focusNode: rootFocusNode,
             autofocus: true,
-            child: widget.child,
+            child: child,
           ),
         ),
       ),

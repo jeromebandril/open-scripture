@@ -6,8 +6,10 @@ import 'package:open_scripture/features/bible_display/bible_pane/presentation/wi
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/widgets/bible_view_presentation.dart';
 import 'package:open_scripture/features/bible_display/bible_selector/presenter/widget/bible_selector.dart';
 import 'package:open_scripture/features/customizer/presentation/cubit/customizer_cubit.dart';
+import 'package:open_scripture/features/text_scaler/cubit/text_scaler_cubit.dart';
 
-import '../../../../../shared/presentation/widgets/adjustable_text_size.dart';
+import '../../../../../injection_container.dart';
+import '../../../../text_scaler/presentation/widgets/text_scaler_host.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../bloc/bible_pane_bloc.dart';
 import '../models/display_mode.dart';
@@ -42,6 +44,7 @@ class BiblePane extends StatelessWidget {
         providers: [
           BlocProvider.value(value: bloc),
           BlocProvider(create: (_) => SelectedWordCubit()),
+          BlocProvider(create: (_) => sl<TextScalerCubit>()),
         ],
         child: BlocConsumer<BiblePaneBloc, BiblePaneState>(
           listenWhen: (prev, curr) =>
@@ -91,7 +94,8 @@ class BiblePane extends StatelessWidget {
                     // MAIN VIEW
                     //
                     Positioned.fill(
-                      child: AdjustableTextSize(
+                      child: TextScalerHost(
+                        textScalerCubit: context.read<TextScalerCubit>(),
                         initialiSize: 14,
                         child: BlocSelector<BiblePaneBloc, BiblePaneState,
                             DisplayMode>(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_scripture/features/text_scaler/cubit/text_scaler_cubit.dart';
 import 'package:open_scripture/shared/presentation/widgets/hoverable_container.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/cubit/selected_word_cubit.dart';
@@ -41,6 +42,14 @@ class _PaneInfoState extends State<PaneInfo> {
           height: 24,
           child: Row(
             children: [
+              BlocBuilder<TextScalerCubit, TextScalerState>(
+                builder: (context, state) {
+                  return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child:
+                          Text('${state.textScaleFactor.toStringAsFixed(2)}x'));
+                },
+              ),
               BlocSelector<BiblePaneBloc, BiblePaneState, int?>(
                   selector: (s) => s.maxVerse,
                   builder: (ctx, maxV) {
