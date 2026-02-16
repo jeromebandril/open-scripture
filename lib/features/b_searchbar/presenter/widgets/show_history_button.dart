@@ -35,7 +35,7 @@ class ShowHistoryButton extends StatelessWidget {
                   child: GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onTap: () {
-                      _controller.hide();
+                      context.read<HistoryVisibilityCubit>().toggle();
                     },
                   ),
                 ),
