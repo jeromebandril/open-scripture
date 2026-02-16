@@ -154,8 +154,7 @@ class _GlobalCustomizerScreenState extends State<GlobalCustomizerScreen> {
                               p.copyWith(widthAdjustmentOffset: n.toDouble()));
                     },
                     value: context.select(
-                      (CustomizerCubit c) =>
-                          c.state.pane.widthAdjustmentOffset.toString(),
+                      (CustomizerCubit c) => c.state.pane.widthAdjustmentOffset,
                     ),
                   )),
             ],

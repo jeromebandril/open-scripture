@@ -145,7 +145,7 @@ class _BiblePaneGeneralCustomizerScreenState
                           },
                           value: context.select(
                             (CustomizerCubit c) =>
-                                (c.state.pane.xPadding * 100).toString(),
+                                (c.state.pane.xPadding * 100),
                           ),
                         )),
                   ],
@@ -305,8 +305,7 @@ class _BiblePaneGeneralCustomizerScreenState
                                     p.copyWith(splitscreenGap: n.toInt()));
                           },
                           value: context.select(
-                            (CustomizerCubit c) =>
-                                c.state.pane.splitscreenGap.toString(),
+                            (CustomizerCubit c) => c.state.pane.splitscreenGap,
                           ),
                         )),
                     Setting(

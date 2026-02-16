@@ -11,7 +11,7 @@ class SettingInputNumber extends StatefulWidget {
     this.min = 0,
   });
 
-  final String? value;
+  final num? value;
   final IconData? suffixIcon;
   final Function(num)? onSubmitted;
   final int? max;
@@ -29,7 +29,8 @@ class _SettingInputNumberState extends State<SettingInputNumber> {
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController()..text = widget.value ?? '';
+    _controller = TextEditingController()
+      ..text = widget.value?.toString() ?? '';
     _controller.addListener(_sanityCheck);
   }
 
