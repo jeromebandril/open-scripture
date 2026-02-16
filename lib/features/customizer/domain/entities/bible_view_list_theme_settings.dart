@@ -10,9 +10,9 @@ class BibleViewListThemeSettings extends Equatable {
   final HighlightRenderMode highlightRenderMode;
 
   const BibleViewListThemeSettings({
-    this.underlineRef = false,
+    this.underlineRef = true,
     this.showVerseDivider = false,
-    this.showFullRefAlways = false,
+    this.showFullRefAlways = true,
     this.enableHangingRefs = false,
     this.highlightRenderMode = HighlightRenderMode.fullRefWithColor,
   });
