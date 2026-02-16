@@ -20,10 +20,10 @@ class FullscreenCubit extends Cubit<bool> {
     try {
       final isFs = await windowManager.isFullScreen();
 
-      if (!isFs && await windowManager.isMaximized()) {
-        await windowManager.unmaximize();
-        await Future.delayed(const Duration(milliseconds: 60));
-      }
+      // if (!isFs && await windowManager.isMaximized()) {
+      //   await windowManager.unmaximize();
+      //   await Future.delayed(const Duration(milliseconds: 60));
+      // }
 
       await windowManager.setFullScreen(!isFs);
 
