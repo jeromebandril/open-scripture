@@ -46,8 +46,18 @@ class _PaneInfoState extends State<PaneInfo> {
                 builder: (context, state) {
                   return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child:
-                          Text('${state.textScaleFactor.toStringAsFixed(2)}x'));
+                      child: Row(
+                        spacing: 4,
+                        children: [
+                          Icon(
+                            Icons.zoom_in,
+                            size: 14,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                          Text('${state.textScaleFactor.toStringAsFixed(2)}x'),
+                        ],
+                      ));
                 },
               ),
               BlocSelector<BiblePaneBloc, BiblePaneState, int?>(

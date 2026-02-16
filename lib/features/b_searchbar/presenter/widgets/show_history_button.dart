@@ -51,7 +51,11 @@ class ShowHistoryButton extends StatelessWidget {
           child: IconButton(
               onPressed: () => context.read<HistoryVisibilityCubit>().toggle(),
               tooltip: 'History',
-              icon: const Icon(Icons.history)),
+              visualDensity: VisualDensity.compact,
+              icon: const Icon(
+                Icons.history,
+                size: 20,
+              )),
         ),
       ),
     );

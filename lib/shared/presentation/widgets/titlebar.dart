@@ -2,66 +2,93 @@ import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
 class Titlebar extends StatelessWidget {
-  const Titlebar({super.key, this.child});
+  const Titlebar({
+    super.key,
+    this.showButtons = true,
+    this.showMenuBar = true,
+    this.showLogo = true,
+    this.toolbar,
+    this.menuBar,
+  });
 
-  final Widget? child;
+  final bool showButtons;
+  final bool showMenuBar;
+  final bool showLogo;
+  final Widget? menuBar;
+  final Widget? toolbar;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Theme.of(context).colorScheme.surfaceContainerHighest,
-      height: 35,
-      child: Row(
-        spacing: 8,
+      height: 38,
+      child: Stack(
         children: [
-          //
-          // Logo + toolbar
-          //
-          SizedBox(width: 2),
-          DragToMoveArea(
-            child: Image.asset(
-              'assets/icon/icon.png',
-              width: 24,
-              height: 24,
-              filterQuality: FilterQuality.medium,
+          Positioned.fill(
+            child: Row(
+              spacing: 8,
+              children: [
+                //
+                // Logo + toolbar
+                //
+                if (showLogo || showMenuBar) SizedBox(width: 2),
+                if (showLogo)
+                  DragToMoveArea(
+                    child: Image.asset(
+                      'assets/icon/icon.png',
+                      width: 24,
+                      height: 24,
+                      filterQuality: FilterQuality.medium,
+                    ),
+                  ),
+                if (menuBar != null && showMenuBar || toolbar == null) menuBar!,
+                //
+                // Space in between and draggable
+                //
+                Expanded(
+                  child: DragToMoveArea(
+                    child: Container(
+                      height: 40,
+                      color: Colors.transparent,
+                    ),
+                  ),
+                ),
+                //
+                // Window buttons
+                //
+                if (showButtons)
+                  _WindowButton(
+                    icon: Icons.minimize_rounded,
+                    onPressed: () => windowManager.minimize(),
+                  ),
+                if (showButtons)
+                  _WindowButton(
+                    icon: Icons.crop_square_rounded,
+                    onPressed: () async {
+                      if (await windowManager.isMaximized()) {
+                        windowManager.restore();
+                      } else {
+                        windowManager.maximize();
+                      }
+                    },
+                  ),
+                if (showButtons)
+                  _WindowButton(
+                    icon: Icons.close_rounded,
+                    hoverColor: const Color.fromARGB(255, 228, 68, 56),
+                    onPressed: () => windowManager.close(),
+                  ),
+              ],
             ),
           ),
-
-          if (child != null) child!,
-          //
-          // Space in between and draggable
-          //
-          Expanded(
-            child: DragToMoveArea(
+          if (toolbar != null)
+            Positioned.fill(
               child: Container(
-                height: 40,
-                color: Colors.transparent,
+                alignment: Alignment.center,
+                margin: EdgeInsets.symmetric(vertical: 3),
+                child: toolbar!,
               ),
             ),
-          ),
-          //
-          // Window buttons
-          //
-          _WindowButton(
-            icon: Icons.minimize_rounded,
-            onPressed: () => windowManager.minimize(),
-          ),
-          _WindowButton(
-            icon: Icons.crop_square_rounded,
-            onPressed: () async {
-              if (await windowManager.isMaximized()) {
-                windowManager.restore();
-              } else {
-                windowManager.maximize();
-              }
-            },
-          ),
-
-          _WindowButton(
-            icon: Icons.close_rounded,
-            hoverColor: const Color.fromARGB(255, 228, 68, 56),
-            onPressed: () => windowManager.close(),
-          ),
         ],
       ),
     );

@@ -4,8 +4,8 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:open_scripture/features/obs_live_overlay/domain/repostiory/overlay_repository.dart';
 
-import '../../../../shared/presentation/notifiers/selected_verse_content_notifier.dart';
-import '../../domain/entities/overlay_models.dart';
+import '../../../../../shared/presentation/notifiers/selected_verse_content_notifier.dart';
+import '../../../domain/entities/overlay_models.dart';
 
 part 'obs_live_overaly_state.dart';
 
@@ -31,17 +31,16 @@ class ObsLiveOverlayCubit extends Cubit<ObsLiveOverlayState> {
         Timer(const Duration(seconds: 30), () => setSnapshot(emptySnapshot));
   }
 
-  Future<void> startServer() async {
+  Future<void> startServer(int port) async {
     emit(state.copyWith(busy: true, error: null));
     try {
-      await repo.start(port: 17890, controllerToken: '123456');
+      await repo.start(port: port, controllerToken: '123456');
       emit(state.copyWith(
         busy: false,
         isRunning: repo.isRunning,
         snapshot: repo.snapshot,
       ));
     } catch (e) {
-      print(e);
       emit(state.copyWith(
           busy: false, error: e.toString(), isRunning: repo.isRunning));
     }

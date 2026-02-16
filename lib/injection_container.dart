@@ -1,6 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:open_scripture/features/bible_importer/data/repository/bible_importer_repo_impl.dart';
-import 'package:open_scripture/features/obs_live_overlay/presentation/cubit/obs_live_overlay_cubit.dart';
+import 'package:open_scripture/features/obs_live_overlay/presentation/cubit/obs_overlay/obs_live_overlay_cubit.dart';
 import 'package:open_scripture/features/text_scaler/cubit/text_scaler_cubit.dart';
 import 'package:open_scripture/shared/installer/bible/import/importer_registry.dart';
 import 'package:open_scripture/shared/presentation/cubit/history_visibility_cubit.dart';
@@ -35,6 +35,7 @@ import 'features/obs_live_overlay/data/datasource/overlay_file_system.dart';
 import 'features/obs_live_overlay/data/datasource/overlay_server_manager.dart';
 import 'features/obs_live_overlay/data/repository/overlay_repository_impl.dart';
 import 'features/obs_live_overlay/domain/repostiory/overlay_repository.dart';
+import 'features/obs_live_overlay/presentation/cubit/cubit/obs_live_overlay_settings_cubit.dart';
 import 'shared/domain/entities/book_names.dart';
 import 'shared/installer/bible/import/formats/osis_importer.dart';
 import 'shared/installer/bible/import/formats/usfx_importer.dart';
@@ -218,4 +219,5 @@ void initObsLiveOverlayFeature() {
       () => OverlayRepositoryImpl(mgr: sl()));
 
   sl.registerFactory(() => ObsLiveOverlayCubit(repo: sl(), notifier: sl()));
+  sl.registerFactory(() => ObsLiveOverlaySettingsCubit());
 }

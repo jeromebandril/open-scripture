@@ -173,11 +173,11 @@ class _HistoryItemState extends State<_HistoryItem> {
                                 fontSize: 12,
                                 color: Theme.of(context).colorScheme.onSurface,
                                 fontWeight: FontWeight.w400,
-                                fontFamily: 'monospace'),
+                                fontFamily: 'IBM Plex Mono'),
                           ),
                           Text(
                             refString,
-                            style: const TextStyle(fontFamily: 'monospace'),
+                            style: const TextStyle(fontFamily: 'IBM Plex Mono'),
                           ),
                         ],
                       ),

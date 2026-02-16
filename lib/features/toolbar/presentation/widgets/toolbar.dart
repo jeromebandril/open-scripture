@@ -6,95 +6,110 @@ import '../../../settings_window/presentation/models/settings_route.dart';
 import '../../../settings_window/presentation/pages/settings_window.dart';
 import '../../../window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
 
-class Toolbar extends StatelessWidget {
-  const Toolbar({super.key});
+const breakPoints = [
+  600,
+  800,
+  900,
+  1000,
+  1100,
+];
+
+class MyMenuBar extends StatelessWidget {
+  const MyMenuBar({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return SizedBox(
       child: Row(children: [
-        ToolbarOption(
-          'Bible',
-          onTap: () {
-            context.read<WindowStackManagerBloc>().add(
-                  WindowStackManagerOpen(
-                    SettingsWindow(
-                      initialRoute: SettingsSection.bibleManager,
-                      onClose: () {
-                        context
-                            .read<WindowStackManagerBloc>()
-                            .add(WindowStackManagerClose());
-                      },
+        if (screenWidth > breakPoints[0])
+          ToolbarOption(
+            'Bible',
+            onTap: () {
+              context.read<WindowStackManagerBloc>().add(
+                    WindowStackManagerOpen(
+                      SettingsWindow(
+                        initialRoute: SettingsSection.bibleManager,
+                        onClose: () {
+                          context
+                              .read<WindowStackManagerBloc>()
+                              .add(WindowStackManagerClose());
+                        },
+                      ),
                     ),
-                  ),
-                );
-          },
-        ),
-        ToolbarOption(
-          'Settings',
-          onTap: () {
-            context.read<WindowStackManagerBloc>().add(
-                  WindowStackManagerOpen(
-                    SettingsWindow(
-                      initialRoute: SettingsSection.appearance,
-                      onClose: () {
-                        context
-                            .read<WindowStackManagerBloc>()
-                            .add(WindowStackManagerClose());
-                      },
+                  );
+            },
+          ),
+        if (screenWidth > breakPoints[1])
+          ToolbarOption(
+            'Settings',
+            onTap: () {
+              context.read<WindowStackManagerBloc>().add(
+                    WindowStackManagerOpen(
+                      SettingsWindow(
+                        initialRoute: SettingsSection.appearance,
+                        onClose: () {
+                          context
+                              .read<WindowStackManagerBloc>()
+                              .add(WindowStackManagerClose());
+                        },
+                      ),
                     ),
-                  ),
-                );
-          },
-        ),
-        ToolbarOption(
-          'Shortcuts',
-          onTap: () {
-            context.read<WindowStackManagerBloc>().add(
-                  WindowStackManagerOpen(
-                    SettingsWindow(
-                      initialRoute: SettingsSection.shortcuts,
-                      onClose: () {
-                        context
-                            .read<WindowStackManagerBloc>()
-                            .add(WindowStackManagerClose());
-                      },
+                  );
+            },
+          ),
+        if (screenWidth > breakPoints[2])
+          ToolbarOption(
+            'Shortcuts',
+            onTap: () {
+              context.read<WindowStackManagerBloc>().add(
+                    WindowStackManagerOpen(
+                      SettingsWindow(
+                        initialRoute: SettingsSection.shortcuts,
+                        onClose: () {
+                          context
+                              .read<WindowStackManagerBloc>()
+                              .add(WindowStackManagerClose());
+                        },
+                      ),
                     ),
-                  ),
-                );
-          },
-        ),
-        ToolbarOption(
-          'Help',
-          onTap: () {
-            context
-                .read<WindowStackManagerBloc>()
-                .add(WindowStackManagerOpen(HelpWidget(
-              onClose: () {
-                context
-                    .read<WindowStackManagerBloc>()
-                    .add(WindowStackManagerClose());
-              },
-            )));
-          },
-        ),
-        ToolbarOption(
-          'About',
-          onTap: () {
-            context.read<WindowStackManagerBloc>().add(
-                  WindowStackManagerOpen(
-                    SettingsWindow(
-                      initialRoute: SettingsSection.about,
-                      onClose: () {
-                        context
-                            .read<WindowStackManagerBloc>()
-                            .add(WindowStackManagerClose());
-                      },
+                  );
+            },
+          ),
+        if (screenWidth > breakPoints[3])
+          ToolbarOption(
+            'Help',
+            onTap: () {
+              context
+                  .read<WindowStackManagerBloc>()
+                  .add(WindowStackManagerOpen(HelpWidget(
+                onClose: () {
+                  context
+                      .read<WindowStackManagerBloc>()
+                      .add(WindowStackManagerClose());
+                },
+              )));
+            },
+          ),
+        if (screenWidth > breakPoints[4])
+          ToolbarOption(
+            'About',
+            onTap: () {
+              context.read<WindowStackManagerBloc>().add(
+                    WindowStackManagerOpen(
+                      SettingsWindow(
+                        initialRoute: SettingsSection.about,
+                        onClose: () {
+                          context
+                              .read<WindowStackManagerBloc>()
+                              .add(WindowStackManagerClose());
+                        },
+                      ),
                     ),
-                  ),
-                );
-          },
-        ),
+                  );
+            },
+          ),
       ]),
     );
   }

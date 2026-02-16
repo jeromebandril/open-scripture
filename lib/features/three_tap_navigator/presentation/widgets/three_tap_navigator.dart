@@ -76,23 +76,25 @@ class _ThreeTapNavigatorTriggerState extends State<ThreeTapNavigatorTrigger> {
                 child: OverlayPortal.overlayChildLayoutBuilder(
                   controller: _controller,
                   overlayChildBuilder: _buildOverlay,
-                  child: Card(
+                  child: Material(
+                    borderRadius: BorderRadius.circular(8),
                     clipBehavior: Clip.hardEdge,
                     surfaceTintColor: Theme.of(context)
                         .colorScheme
                         .primary
                         .withValues(alpha: 0.1),
                     child: InkWell(
+                      splashFactory: NoSplash.splashFactory,
                       onTap: () => _controller.show(),
                       mouseCursor: SystemMouseCursors.click,
                       child: SizedBox(
                         width: 100,
-                        height: 48,
                         child: Center(
                           child: MouseRegion(
                             child: Text(
                               style: TextStyle(
                                 color: Theme.of(context).colorScheme.primary,
+                                fontFamily: 'IBM Plex Mono',
                                 fontWeight: FontWeight.w500,
                               ),
                               state.referenceResult != null

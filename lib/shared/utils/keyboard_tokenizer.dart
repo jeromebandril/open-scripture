@@ -41,10 +41,6 @@ String _modifierLabel(ModifierKey key) {
 }
 
 String _keyLabel(LogicalKeyboardKey key) {
-  // Letters/digits are usually good via keyLabel.
-  final label = key.keyLabel;
-  if (label.isNotEmpty) return label.length == 1 ? label.toUpperCase() : label;
-
   // Common special keys
   if (key == LogicalKeyboardKey.escape) return 'Esc';
   if (key == LogicalKeyboardKey.enter) return 'Enter';
@@ -57,6 +53,10 @@ String _keyLabel(LogicalKeyboardKey key) {
   if (key == LogicalKeyboardKey.arrowDown) return '↓';
   if (key == LogicalKeyboardKey.arrowLeft) return '←';
   if (key == LogicalKeyboardKey.arrowRight) return '→';
+
+  // Letters/digits are usually good via keyLabel.
+  final label = key.keyLabel;
+  if (label.isNotEmpty) return label.length == 1 ? label.toUpperCase() : label;
 
   // F-keys often have empty keyLabel; derive from debugName when possible.
   final dn = key.debugName ?? '';

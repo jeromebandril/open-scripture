@@ -4,14 +4,12 @@ class Dot extends StatelessWidget {
   final bool glowing;
   final Color? overrideGlowingColor;
   final Color? overrideColor;
-  final String? tooltipMessage;
 
   const Dot({
     super.key,
     this.glowing = false,
     this.overrideGlowingColor,
     this.overrideColor,
-    this.tooltipMessage,
   });
 
   @override

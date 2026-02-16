@@ -13,7 +13,7 @@ class OverlayRepositoryImpl implements OverlayRepository {
   bool get isRunning => mgr.isRunning;
 
   @override
-  Future<void> start({int port = 17890, required String controllerToken}) {
+  Future<void> start({required int port, required String controllerToken}) {
     return mgr.start(port: port, controllerToken: controllerToken);
   }
 

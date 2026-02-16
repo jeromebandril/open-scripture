@@ -4,7 +4,7 @@ abstract class OverlayRepository {
   OverlaySnapshot get snapshot;
   bool get isRunning;
 
-  Future<void> start({int port = 17890, required String controllerToken});
+  Future<void> start({required int port, required String controllerToken});
   Future<void> stop();
 
   void setText({required OverlayId id, required String text});

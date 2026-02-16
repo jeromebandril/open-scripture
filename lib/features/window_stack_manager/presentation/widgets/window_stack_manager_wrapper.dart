@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/features/obs_live_overlay/presentation/cubit/obs_live_overlay_cubit.dart';
+import 'package:open_scripture/features/obs_live_overlay/presentation/cubit/obs_overlay/obs_live_overlay_cubit.dart';
 import 'package:open_scripture/features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
+
+import '../../../obs_live_overlay/presentation/cubit/cubit/obs_live_overlay_settings_cubit.dart';
 
 // dev notes: old version was to keep a map of id -> Widget, but I opted
 // to build and destroy the window every time it opens/closes, so I can
@@ -47,8 +49,12 @@ class _WindowStackManagerWrapperState extends State<WindowStackManagerWrapper> {
 
     _entry = OverlayEntry(
       builder: (overlayContext) {
-        return BlocProvider.value(
-          value: context.read<ObsLiveOverlayCubit>(),
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider.value(value: context.read<ObsLiveOverlayCubit>()),
+            BlocProvider.value(
+                value: context.read<ObsLiveOverlaySettingsCubit>()),
+          ],
           child: Stack(
             children: [
               const ModalBarrier(dismissible: false, color: Color(0x99000000)),
