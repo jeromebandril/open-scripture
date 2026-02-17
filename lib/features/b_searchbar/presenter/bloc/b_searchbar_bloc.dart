@@ -85,7 +85,9 @@ class BSearchbarBloc extends Bloc<BSearchbarEvent, BSearchbarState> {
         (f) => emit(state.copyWith(
           intentType: () => BSearchIntentType.gotoReference,
           status: () => BSearchbarStatus.error,
-          errorMessage: () => f.details,
+          errorMessage: () => event.query.toLowerCase() == "jerome"
+              ? "Pogi!" // easter egg
+              : f.details,
         )),
         (ref) => emit(state.copyWith(
           intentType: () => BSearchIntentType.gotoReference,
