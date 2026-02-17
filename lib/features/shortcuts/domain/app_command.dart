@@ -6,6 +6,8 @@ enum AppCommand {
   toggleHistory,
   nextVerse,
   prevVerse,
+  addNextVerseToSelection,
+  removeVerseFromSelection,
   changeBible,
   nextPane,
   prevPane,
@@ -59,6 +61,14 @@ const Map<AppCommand, AppCommandInfo> appCommandInfo = {
     label: 'Previous Pane',
     description: 'Move focus to the previous pane.',
   ),
+  AppCommand.addNextVerseToSelection: AppCommandInfo(
+    label: 'Add next verse to selection',
+    description: 'Increase end verse by 1',
+  ),
+  AppCommand.removeVerseFromSelection: AppCommandInfo(
+    label: 'Remove verse from selection',
+    description: 'Decrease end verse by 1',
+  ),
   AppCommand.addParallelPane: AppCommandInfo(
     label: 'Add Parallel Pane',
     description: 'Open a new pane alongside the current one.',
@@ -94,6 +104,12 @@ const Map<AppCommand, SingleActivator> appCommandShortcuts = {
       SingleActivator(LogicalKeyboardKey.arrowRight, control: true),
   AppCommand.prevVerse:
       SingleActivator(LogicalKeyboardKey.arrowLeft, control: true),
+  AppCommand.removeVerseFromSelection:
+      SingleActivator(LogicalKeyboardKey.arrowLeft, control: true, shift: true),
+  AppCommand.addNextVerseToSelection: SingleActivator(
+      LogicalKeyboardKey.arrowRight,
+      control: true,
+      shift: true),
   AppCommand.nextPane: SingleActivator(
     LogicalKeyboardKey.tab,
     control: true,

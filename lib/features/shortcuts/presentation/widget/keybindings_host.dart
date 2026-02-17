@@ -118,10 +118,10 @@ class ShortcutHost extends StatelessWidget {
               //
               if (results.isEmpty) {
                 final ref = activeBloc.state.reference!;
-                // TODO: add to state the number of verses
-                // currently relying on last segment verse number (if it is ordered)
-                if (ref.verseStart ==
-                    activeBloc.state.segments.last.ref.verseStart) return;
+                final last = activeBloc.state.maxVerse ??
+                    activeBloc.state.segments.last.ref.verseStart ??
+                    0;
+                if (ref.verseStart! >= last) return;
 
                 activeBloc.add(
                   BiblePaneJustChangeRef(
@@ -143,6 +143,46 @@ class ShortcutHost extends StatelessWidget {
                 ),
               );
 
+              return;
+            case AppCommand.addNextVerseToSelection:
+              final activeBloc = paneManagerCubit.activeBloc();
+              if (activeBloc.state.reference == null) return;
+              final results = context.read<BSearchbarBloc>().state.results;
+
+              if (results.isEmpty) {
+                final ref = activeBloc.state.reference!;
+                final last = activeBloc.state.maxVerse ??
+                    activeBloc.state.segments.last.ref.verseStart ??
+                    0;
+                if (ref.verseEnd == last) return;
+
+                activeBloc.add(
+                  BiblePaneJustChangeRef(
+                      ref: ref.copyWith(
+                    verseEnd: (ref.verseEnd ?? ref.verseStart!) + 1,
+                  )),
+                );
+                return;
+              }
+              return;
+            case AppCommand.removeVerseFromSelection:
+              final activeBloc = paneManagerCubit.activeBloc();
+              if (activeBloc.state.reference == null) return;
+              final results = context.read<BSearchbarBloc>().state.results;
+              if (results.isEmpty) {
+                final ref = activeBloc.state.reference!;
+                if (ref.verseEnd == 1 || ref.verseEnd == null) return;
+
+                activeBloc.add(
+                  BiblePaneJustChangeRef(
+                      ref: ref.copyWith(
+                    verseEnd: ref.verseStart == ref.verseEnd! - 1
+                        ? null
+                        : ref.verseEnd! - 1,
+                  )),
+                );
+                return;
+              }
               return;
             case AppCommand.nextPane:
               final panes = paneManagerCubit.state.panes;

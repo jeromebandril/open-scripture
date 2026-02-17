@@ -271,10 +271,12 @@ class _HomeState extends State<Home> {
                           child: Align(
                             alignment: Alignment.topCenter,
                             child: Container(
-                              padding: const EdgeInsets.all(8),
+                              padding: const EdgeInsets.all(4),
                               decoration: BoxDecoration(
-                                color: Theme.of(context).dividerColor,
-                                borderRadius: BorderRadius.circular(16),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerHighest,
+                                borderRadius: BorderRadius.circular(12),
                               ),
                               child: BSearchbar(
                                 height: 48,
