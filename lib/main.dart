@@ -27,7 +27,7 @@ import 'features/bible_installer_manager/presentation/bloc/installed_bibles/inst
 import 'features/customizer/domain/entities/app_theme_settings.dart';
 import 'features/customizer/presentation/cubit/customizer_cubit.dart';
 import 'features/customizer/presentation/models/bible_pane_general_theme.dart';
-import 'features/shortcuts/presentation/widget/keybindings_host.dart';
+import 'features/shortcuts/presentation/widget/shortcuts_host.dart';
 import 'features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
 import 'features/window_stack_manager/presentation/widgets/window_stack_manager_wrapper.dart';
 import 'injection_container.dart' as di;
@@ -40,6 +40,7 @@ void main() async {
 
   WindowOptions windowOptions = WindowOptions(
     size: Size(1000, 600),
+    minimumSize: Size(300, 200),
     center: true,
     backgroundColor: Colors.transparent,
     skipTaskbar: false,
@@ -176,7 +177,7 @@ class _HomeState extends State<Home> {
     final screen = MediaQuery.of(context).size;
 
     // ShortcusHost must be at the very root after the MaterialApp
-    return ShortcutHost(
+    return ShortcutsHost(
       rootFocusNode: _rootFocusNode,
       searchFocusNode: _searchbarFocusNode,
       historyFocusNode: _historyFocusNode,
@@ -199,7 +200,7 @@ class _HomeState extends State<Home> {
                           message:
                               'Menu bar is hidden, press  CTRL+T  to toggle',
                           child: Icon(
-                            Icons.remove_red_eye_rounded,
+                            Icons.visibility_off_outlined,
                             size: 20,
                             color:
                                 Theme.of(context).colorScheme.onSurfaceVariant,

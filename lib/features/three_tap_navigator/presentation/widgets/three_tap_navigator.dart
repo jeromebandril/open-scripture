@@ -6,6 +6,7 @@ import 'package:open_scripture/features/three_tap_navigator/presentation/cubit/t
 
 import '../../../../shared/domain/entities/book.dart';
 import '../../../../injection_container.dart';
+import '../../../../shared/domain/entities/book_names.dart';
 
 class ThreeTapNavigatorTrigger extends StatefulWidget {
   const ThreeTapNavigatorTrigger({super.key});
@@ -99,7 +100,7 @@ class _ThreeTapNavigatorTriggerState extends State<ThreeTapNavigatorTrigger> {
                               ),
                               state.referenceResult != null
                                   ? state.referenceResult.toString()
-                                  : '| | |',
+                                  : '-',
                             ),
                           ),
                         ),
@@ -157,6 +158,7 @@ class _ThreeTapNavigatorOverlayState extends State<_ThreeTapNavigatorOverlay> {
   Widget build(BuildContext context) {
     int turn = _turn();
     final bloc = context.read<ThreeTapNavigatorCubit>();
+    final resolver = sl<BibleRefResolver>();
 
     return bibleId == null
         ? Center(child: Text('Open a bible first'))
@@ -172,12 +174,15 @@ class _ThreeTapNavigatorOverlayState extends State<_ThreeTapNavigatorOverlay> {
                         spacing: 8,
                         children: [
                           TextButton(
-                              onPressed: () => setState(() => book = null),
+                              onPressed: () => setState(() {
+                                    book = null;
+                                    chpt = null;
+                                  }),
                               child: Text(
                                 style:
                                     TextStyle(color: _highlightTurn(turn, 0)),
                                 textAlign: TextAlign.center,
-                                'Book',
+                                book?.shortName ?? 'Book',
                               )),
                           const Icon(Icons.arrow_forward_ios_rounded, size: 12),
                           TextButton(
@@ -186,7 +191,7 @@ class _ThreeTapNavigatorOverlayState extends State<_ThreeTapNavigatorOverlay> {
                                 style:
                                     TextStyle(color: _highlightTurn(turn, 1)),
                                 textAlign: TextAlign.center,
-                                'Chapter',
+                                'Chapter ${chpt ?? ''}',
                               )),
                           const Icon(Icons.arrow_forward_ios_rounded, size: 12),
                           TextButton(
@@ -195,7 +200,7 @@ class _ThreeTapNavigatorOverlayState extends State<_ThreeTapNavigatorOverlay> {
                                 style:
                                     TextStyle(color: _highlightTurn(turn, 2)),
                                 textAlign: TextAlign.center,
-                                'Verse',
+                                'Verse ',
                               )),
                         ],
                       )),
@@ -206,7 +211,26 @@ class _ThreeTapNavigatorOverlayState extends State<_ThreeTapNavigatorOverlay> {
                           _GridSelector<Book>(
                             items: state.books
                                 .map((b) => _GridSelectorItem(
-                                    value: b, text: b.usfxId!))
+                                      value: b,
+                                      text: b.usfxId!,
+                                      color: () {
+                                        final t = resolver.getGroup(b.usfxId!);
+
+                                        if (t == 'OT') {
+                                          return Theme.of(context)
+                                              .colorScheme
+                                              .tertiary;
+                                        } else if (t == 'NT') {
+                                          return Theme.of(context)
+                                              .colorScheme
+                                              .primary;
+                                        } else {
+                                          return Theme.of(context)
+                                              .colorScheme
+                                              .onSurfaceVariant;
+                                        }
+                                      }.call(),
+                                    ))
                                 .toList(),
                             onSelect: (b) {
                               setState(() => book = b);
@@ -233,7 +257,7 @@ class _ThreeTapNavigatorOverlayState extends State<_ThreeTapNavigatorOverlay> {
                             onSelect: (v) {
                               context.read<BSearchbarBloc>().add(
                                   BSearchbarParseIntent(
-                                      '${book!.shortName} $chpt:$v'));
+                                      '${book!.usfxId} $chpt:$v'));
                               widget.onEnd?.call();
                             },
                           )
@@ -250,8 +274,9 @@ class _ThreeTapNavigatorOverlayState extends State<_ThreeTapNavigatorOverlay> {
 class _GridSelectorItem<T> {
   final T value;
   final String text;
+  final Color? color;
 
-  _GridSelectorItem({required this.value, required this.text});
+  _GridSelectorItem({required this.value, required this.text, this.color});
 }
 
 class _GridSelector<T> extends StatelessWidget {
@@ -276,6 +301,11 @@ class _GridSelector<T> extends StatelessWidget {
       itemBuilder: (context, index) {
         return GridTile(
           child: TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor:
+                  items[index].color ?? Theme.of(context).colorScheme.primary,
+              padding: EdgeInsets.zero,
+            ),
             onPressed: () => onSelect?.call(items[index].value),
             child: Text(
               items[index].text,

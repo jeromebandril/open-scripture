@@ -6,7 +6,7 @@ import 'package:open_scripture/features/obs_live_overlay/presentation/page/obs_l
 import 'package:open_scripture/features/settings_window/presentation/pages/about_setting_page.dart';
 
 import '../../../bible_installer_manager/presentation/pages/translation_manager.dart';
-import '../../../shortcuts/presentation/pages/keybindings_screen.dart';
+import '../../../shortcuts/presentation/pages/shortcuts_screen.dart';
 
 enum SettingsSection { appearance, bibleManager, shortcuts, about }
 
@@ -41,7 +41,7 @@ final Map<String, SettingsRoute> settingsRoutes = {
   '/shortcuts': SettingsRoute(
       icon: Icons.keyboard,
       name: 'Shortcuts',
-      builder: (_) => const KeybindingsScreen()),
+      builder: (_) => const ShortcutsScreen()),
   '/about': SettingsRoute(
       icon: Icons.info_outline,
       name: 'About',

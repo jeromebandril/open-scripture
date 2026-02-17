@@ -109,6 +109,103 @@ enum BibleBook {
   psalm151,
 }
 
+// group old testamnet, new testament, deuterocanonical books, additions, wider apocrypha
+extension BibleBookGroup on BibleBook {
+  String get testament {
+    switch (this) {
+      case BibleBook.genesis:
+      case BibleBook.exodus:
+      case BibleBook.leviticus:
+      case BibleBook.numbers:
+      case BibleBook.deuteronomy:
+      case BibleBook.joshua:
+      case BibleBook.judges:
+      case BibleBook.ruth:
+      case BibleBook.firstSamuel:
+      case BibleBook.secondSamuel:
+      case BibleBook.firstKings:
+      case BibleBook.secondKings:
+      case BibleBook.firstChronicles:
+      case BibleBook.secondChronicles:
+      case BibleBook.ezra:
+      case BibleBook.nehemiah:
+      case BibleBook.esther:
+      case BibleBook.job:
+      case BibleBook.psalms:
+      case BibleBook.proverbs:
+      case BibleBook.ecclesiastes:
+      case BibleBook.songOfSongs:
+      case BibleBook.isaiah:
+      case BibleBook.jeremiah:
+      case BibleBook.lamentations:
+      case BibleBook.ezekiel:
+      case BibleBook.daniel:
+      case BibleBook.hosea:
+      case BibleBook.joel:
+      case BibleBook.amos:
+      case BibleBook.obadiah:
+      case BibleBook.jonah:
+      case BibleBook.micah:
+      case BibleBook.nahum:
+      case BibleBook.habakkuk:
+      case BibleBook.zephaniah:
+      case BibleBook.haggai:
+      case BibleBook.zechariah:
+      case BibleBook.malachi:
+        return 'OT';
+      case BibleBook.matthew:
+      case BibleBook.mark:
+      case BibleBook.luke:
+      case BibleBook.john:
+      case BibleBook.acts:
+      case BibleBook.romans:
+      case BibleBook.firstCorinthians:
+      case BibleBook.secondCorinthians:
+      case BibleBook.galatians:
+      case BibleBook.ephesians:
+      case BibleBook.philippians:
+      case BibleBook.colossians:
+      case BibleBook.firstThessalonians:
+      case BibleBook.secondThessalonians:
+      case BibleBook.firstTimothy:
+      case BibleBook.secondTimothy:
+      case BibleBook.titus:
+      case BibleBook.philemon:
+      case BibleBook.hebrews:
+      case BibleBook.james:
+      case BibleBook.firstPeter:
+      case BibleBook.secondPeter:
+      case BibleBook.firstJohn:
+      case BibleBook.secondJohn:
+      case BibleBook.thirdJohn:
+      case BibleBook.jude:
+      case BibleBook.revelation:
+        return 'NT';
+      case BibleBook.tobit:
+      case BibleBook.judith:
+      case BibleBook.wisdom:
+      case BibleBook.sirach:
+      case BibleBook.baruch:
+      case BibleBook.epJer:
+      case BibleBook.firstMaccabees:
+      case BibleBook.secondMaccabees:
+        return 'Deuterocanon';
+      case BibleBook.addEsther:
+      case BibleBook.prayerOfAzariah:
+      case BibleBook.susanna:
+      case BibleBook.belAndTheDragon:
+        return 'Additions';
+      case BibleBook.firstEsdras:
+      case BibleBook.secondEsdras:
+      case BibleBook.thirdMaccabees:
+      case BibleBook.fourthMaccabees:
+      case BibleBook.prayerOfManasseh:
+      case BibleBook.psalm151:
+        return 'Wider Apocrypha';
+    }
+  }
+}
+
 extension BibleBookMeta on BibleBook {
   /// English display name
   String get fullName {
@@ -911,6 +1008,11 @@ class BibleRefResolver {
 
     // Prefix key (fast O(1))
     return _prefixIndex[n];
+  }
+
+  String getGroup(String input) {
+    final book = resolveBook(input);
+    return book?.testament ?? 'Unknown';
   }
 
   /// Convenience: resolve to USFX ID (e.g., "Gene" -> "GEN").

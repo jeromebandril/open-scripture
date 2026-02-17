@@ -25,60 +25,8 @@ class Titlebar extends StatelessWidget {
       child: Stack(
         children: [
           Positioned.fill(
-            child: Row(
-              spacing: 8,
-              children: [
-                //
-                // Logo + toolbar
-                //
-                if (showLogo || showMenuBar) SizedBox(width: 2),
-                if (showLogo)
-                  DragToMoveArea(
-                    child: Image.asset(
-                      'assets/icon/icon.png',
-                      width: 24,
-                      height: 24,
-                      filterQuality: FilterQuality.medium,
-                    ),
-                  ),
-                if (menuBar != null && showMenuBar || toolbar == null) menuBar!,
-                //
-                // Space in between and draggable
-                //
-                Expanded(
-                  child: DragToMoveArea(
-                    child: Container(
-                      height: 40,
-                      color: Colors.transparent,
-                    ),
-                  ),
-                ),
-                //
-                // Window buttons
-                //
-                if (showButtons)
-                  _WindowButton(
-                    icon: Icons.minimize_rounded,
-                    onPressed: () => windowManager.minimize(),
-                  ),
-                if (showButtons)
-                  _WindowButton(
-                    icon: Icons.crop_square_rounded,
-                    onPressed: () async {
-                      if (await windowManager.isMaximized()) {
-                        windowManager.restore();
-                      } else {
-                        windowManager.maximize();
-                      }
-                    },
-                  ),
-                if (showButtons)
-                  _WindowButton(
-                    icon: Icons.close_rounded,
-                    hoverColor: const Color.fromARGB(255, 228, 68, 56),
-                    onPressed: () => windowManager.close(),
-                  ),
-              ],
+            child: DragToMoveArea(
+              child: SizedBox(height: 38),
             ),
           ),
           if (toolbar != null)
@@ -89,6 +37,67 @@ class Titlebar extends StatelessWidget {
                 child: toolbar!,
               ),
             ),
+          Positioned.fill(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                //
+                // Logo + Menubar
+                //
+                Row(
+                  children: [
+                    if (showLogo)
+                      DragToMoveArea(
+                        child: Container(
+                          height: double.infinity,
+                          width: 24 + 16, // icon width + spacing
+                          alignment: Alignment.center,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest,
+                          child: Image.asset(
+                            'assets/icon/icon.png',
+                            width: 24,
+                            height: 24,
+                            filterQuality: FilterQuality.medium,
+                          ),
+                        ),
+                      ),
+                    if (!showLogo && showMenuBar) SizedBox(width: 8),
+                    if (menuBar != null && showMenuBar || toolbar == null)
+                      menuBar!,
+                  ],
+                ),
+                //
+                // Window buttons
+                //
+                if (showButtons)
+                  Row(
+                    children: [
+                      _WindowButton(
+                        icon: Icons.minimize_rounded,
+                        onPressed: () => windowManager.minimize(),
+                      ),
+                      _WindowButton(
+                        icon: Icons.crop_square_rounded,
+                        onPressed: () async {
+                          if (await windowManager.isMaximized()) {
+                            windowManager.restore();
+                          } else {
+                            windowManager.maximize();
+                          }
+                        },
+                      ),
+                      _WindowButton(
+                        icon: Icons.close_rounded,
+                        hoverColor: const Color.fromARGB(255, 228, 68, 56),
+                        onPressed: () => windowManager.close(),
+                      ),
+                    ],
+                  )
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -111,11 +120,13 @@ class _WindowButton extends StatelessWidget {
     return IconButton(
       splashRadius: 16,
       style: IconButton.styleFrom(
-        fixedSize: const Size(40, 40),
+        splashFactory: NoSplash.splashFactory,
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+        //fixedSize: const Size(40, 40),
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.zero, // square
         ),
-        hoverColor: hoverColor ?? Colors.grey.shade400,
+        hoverColor: hoverColor ?? Colors.black26,
       ),
       icon: Icon(icon, size: 16),
       onPressed: onPressed,

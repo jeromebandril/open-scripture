@@ -41,6 +41,12 @@ class AppCommandDispatcher {
     handler();
   }
 
+  bool get _isTyping {
+    return searchFocusNode.hasFocus;
+  }
+
+  int? _bibleId;
+
   late final Map<AppCommand, CommandHandler> _handlers = {
     AppCommand.focusSearch: () => searchFocusNode.requestFocus(),
     AppCommand.unfocusSearch: () => rootFocusNode.requestFocus(),
@@ -58,7 +64,17 @@ class AppCommandDispatcher {
     AppCommand.removeVerseFromSelection: () => _extendSelection(-1),
     AppCommand.changeBible: () {
       final bloc = paneManagerCubit.activeBloc();
+
+      // undo/redo behavior: if the current pane has a bible, close it. otherwise, reopen the last closed bible.
+      if (_bibleId != null && bloc.state.bibleId == null) {
+        bloc.add(BiblePaneOpen(_bibleId!));
+        _bibleId = null;
+        return;
+      }
+
+      _bibleId = bloc.state.bibleId;
       bloc.add(BiblePaneCloseBible());
+      //bibleSelectorBloc.add(BibleSelectorSelect(_bibleId!));
     },
     AppCommand.switchDisplayMode: () => _cycleDisplayMode(),
     AppCommand.displayChapterOfSelected: () => _displayChapterOfSelected(),
@@ -87,6 +103,7 @@ class AppCommandDispatcher {
   }
 
   void _moveVerse(int delta) {
+    if (_isTyping) return;
     _withActiveRef<void>((bloc, ref) {
       final results = searchbarBloc.state.results;
 

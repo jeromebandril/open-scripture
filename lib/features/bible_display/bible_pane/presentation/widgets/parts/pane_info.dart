@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_scripture/features/customizer/presentation/cubit/customizer_cubit.dart';
 import 'package:open_scripture/features/text_scaler/cubit/text_scaler_cubit.dart';
 import 'package:open_scripture/shared/presentation/widgets/hoverable_container.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
@@ -24,6 +25,9 @@ class _PaneInfoState extends State<PaneInfo> {
     final bibleMeta = context.select((BiblePaneBloc b) => b.state.bibleMeta);
     final pl = context.select((PaneManagerCubit b) => b.state.panes.length);
     final paneId = context.select((BiblePaneBloc b) => b.state.paneId);
+    final enableStrongWords = context.select(
+      (CustomizerCubit c) => c.state.pane.underlineStrongWords,
+    );
 
     return DefaultTextStyle(
       style: TextStyle(
@@ -68,37 +72,38 @@ class _PaneInfoState extends State<PaneInfo> {
                         child: Text('max vv. ${maxV ?? '?'}'));
                   }),
               // SELECTED WORD
-              BlocBuilder<SelectedWordCubit, WordInfo?>(
-                builder: (context, wordInfo) {
-                  return wordInfo == null
-                      ? const SizedBox()
-                      : HoverableContainer(
-                          hoveredColor:
-                              Theme.of(context).colorScheme.surfaceDim,
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          child: Tooltip(
-                            waitDuration: const Duration(days: 1),
-                            key: _tooltipKey,
-                            message: 'copied to clipboard !',
-                            triggerMode: TooltipTriggerMode.manual,
-                            showDuration: const Duration(seconds: 2),
-                            exitDuration: const Duration(seconds: 2),
-                            ignorePointer: true,
-                            enableTapToDismiss: false,
-                            child: InkWell(
-                              onTap: () {
-                                Clipboard.setData(ClipboardData(
-                                    text: wordInfo.span.payload ?? ''));
-                                _tooltipKey.currentState
-                                    ?.ensureTooltipVisible();
-                              },
-                              child: Text(
-                                  '${wordInfo.text} ~ ${wordInfo.span.payload}'),
+              if (enableStrongWords)
+                BlocBuilder<SelectedWordCubit, WordInfo?>(
+                  builder: (context, wordInfo) {
+                    return wordInfo == null
+                        ? const SizedBox()
+                        : HoverableContainer(
+                            hoveredColor:
+                                Theme.of(context).colorScheme.surfaceDim,
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Tooltip(
+                              waitDuration: const Duration(days: 1),
+                              key: _tooltipKey,
+                              message: 'copied to clipboard !',
+                              triggerMode: TooltipTriggerMode.manual,
+                              showDuration: const Duration(seconds: 2),
+                              exitDuration: const Duration(seconds: 2),
+                              ignorePointer: true,
+                              enableTapToDismiss: false,
+                              child: InkWell(
+                                onTap: () {
+                                  Clipboard.setData(ClipboardData(
+                                      text: wordInfo.span.payload ?? ''));
+                                  _tooltipKey.currentState
+                                      ?.ensureTooltipVisible();
+                                },
+                                child: Text(
+                                    '${wordInfo.text} ~ ${wordInfo.span.payload}'),
+                              ),
                             ),
-                          ),
-                        );
-                },
-              ),
+                          );
+                  },
+                ),
 
               // BIBLE METADATA
               GestureDetector(

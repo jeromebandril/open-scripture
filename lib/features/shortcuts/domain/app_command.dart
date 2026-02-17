@@ -60,11 +60,11 @@ const Map<AppCommand, AppCommandInfo> appCommandInfo = {
   ),
   AppCommand.addNextVerseToSelection: AppCommandInfo(
     label: 'Add next verse to selection',
-    description: 'Increase end verse by 1',
+    description: 'Extend verse selection',
   ),
   AppCommand.removeVerseFromSelection: AppCommandInfo(
     label: 'Remove verse from selection',
-    description: 'Decrease end verse by 1',
+    description: 'Reduce verse selection',
   ),
   AppCommand.addParallelPane: AppCommandInfo(
     label: 'Add Parallel Pane',

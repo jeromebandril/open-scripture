@@ -19,6 +19,7 @@ class MyMenuBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('Rebuilding MyMenuBar');
     final screenWidth = MediaQuery.of(context).size.width;
 
     return SizedBox(
