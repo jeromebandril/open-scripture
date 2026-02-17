@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:open_scripture/features/shortcuts/domain/app_command.dart';
-import 'package:open_scripture/features/shortcuts/presentation/widget/parts/shortcut_view.dart';
+import 'package:open_scripture/features/shortcuts/presentation/widget/shortcut_view.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
 
-class KeybindingsScreen extends StatelessWidget {
-  const KeybindingsScreen({super.key});
+import '../models/app_command_shortcuts.dart';
+
+class ShortcutsScreen extends StatelessWidget {
+  const ShortcutsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
