@@ -45,19 +45,6 @@ class _WindowStackManagerWrapperState extends State<WindowStackManagerWrapper> {
     _focusNodes.clear();
   }
 
-  void _ensureBarrier() {
-    if (_barrierEntry != null) return;
-
-    _barrierEntry = OverlayEntry(
-      builder: (_) => const ModalBarrier(
-        dismissible: false,
-        color: Color(0x99000000),
-      ),
-    );
-
-    Overlay.of(context, rootOverlay: true).insert(_barrierEntry!);
-  }
-
   OverlayEntry _buildEntry({
     required WidgetBuilder builder,
     required FocusScopeNode focusNode,
@@ -97,12 +84,18 @@ class _WindowStackManagerWrapperState extends State<WindowStackManagerWrapper> {
   void _syncToWindows(List<WidgetBuilder> windows) {
     final overlay = Overlay.of(context, rootOverlay: true);
 
+    // ensure barrier
+    _barrierEntry ??= OverlayEntry(
+      builder: (_) => ModalBarrier(
+        dismissible: false,
+        color: Color(0x99000000),
+      ),
+    );
+
     if (windows.isEmpty) {
       _removeAll();
       return;
     }
-
-    _ensureBarrier();
 
     // POP
     while (_entries.length > windows.length) {
@@ -126,13 +119,12 @@ class _WindowStackManagerWrapperState extends State<WindowStackManagerWrapper> {
       overlay.insert(entry); // inserted after previous -> on top
     }
 
-    // Ensure barrier is below all windows
-    _barrierEntry?.remove();
+    // Place barrier below the last entry
+    final top = _entries.last;
+    top.remove();
+    if (_barrierEntry!.mounted) _barrierEntry!.remove();
     overlay.insert(_barrierEntry!);
-    for (final e in _entries) {
-      e.remove();
-      overlay.insert(e);
-    }
+    overlay.insert(top);
 
     // Focus top-most
     WidgetsBinding.instance.addPostFrameCallback((_) {
