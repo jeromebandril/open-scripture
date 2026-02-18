@@ -16,13 +16,17 @@ class WindowStackManagerBloc
     WindowStackManagerOpen event,
     Emitter<WindowStackManagerState> emit,
   ) async {
-    emit(WindowStackManagerState(window: (_) => event.window));
+    emit(WindowStackManagerState(
+      windows: [...state.windows, (_) => event.window],
+    ));
   }
 
   Future<void> _onClose(
     WindowStackManagerClose event,
     Emitter<WindowStackManagerState> emit,
   ) async {
-    emit(const WindowStackManagerState());
+    emit(WindowStackManagerState(
+      windows: state.windows.sublist(0, state.windows.length - 1),
+    ));
   }
 }

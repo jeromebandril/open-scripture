@@ -3,10 +3,10 @@ part of 'window_stack_manager_bloc.dart';
 typedef WindowBuilder = Widget Function(BuildContext context);
 
 class WindowStackManagerState extends Equatable {
-  const WindowStackManagerState({this.window});
+  const WindowStackManagerState({this.windows = const []});
 
-  final WidgetBuilder? window;
+  final List<WidgetBuilder> windows;
 
   @override
-  List<Object?> get props => [window];
+  List<Object?> get props => [windows];
 }
