@@ -17,9 +17,7 @@ class BibleManagerWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (_) => sl<InstalledBiblesBloc>()..add(InstalledBiblesLoad()),
-        ),
+        BlocProvider.value(value: context.read<InstalledBiblesBloc>()),
         BlocProvider(
           create: (_) => sl<RemoteCatalogBloc>()
             ..add(RemoteCatalogSubscriptionRequested()),

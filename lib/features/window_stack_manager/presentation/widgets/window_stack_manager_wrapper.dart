@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_scripture/features/bible_installer_manager/presentation/bloc/installed_bibles/installed_bibles_bloc.dart';
 import 'package:open_scripture/features/obs_live_overlay/presentation/cubit/obs_overlay/obs_live_overlay_cubit.dart';
 import 'package:open_scripture/features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
 
@@ -51,9 +52,11 @@ class _WindowStackManagerWrapperState extends State<WindowStackManagerWrapper> {
       builder: (overlayContext) {
         return MultiBlocProvider(
           providers: [
+            BlocProvider.value(value: context.read<WindowStackManagerBloc>()),
             BlocProvider.value(value: context.read<ObsLiveOverlayCubit>()),
             BlocProvider.value(
                 value: context.read<ObsLiveOverlaySettingsCubit>()),
+            BlocProvider.value(value: context.read<InstalledBiblesBloc>()),
           ],
           child: Stack(
             children: [
