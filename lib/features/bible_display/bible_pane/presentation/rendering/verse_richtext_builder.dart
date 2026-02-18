@@ -1,7 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:open_scripture/features/customizer/presentation/models/bible_pane_general_theme.dart';
 
-import '../../../../../core/domain/entities/verse_span.dart';
+import '../../../../../shared/domain/entities/verse_span.dart';
 
 const strongWordBold = 'H0430';
 
@@ -13,6 +14,8 @@ class VerseSpanBuilder {
     required void Function(VerseSpan span, String slice)? onWordTap,
     required BuildContext context,
   }) {
+    final bTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
+
     baseStyle ??= const TextStyle();
 
     if (spans.isEmpty) {
@@ -44,7 +47,7 @@ class VerseSpanBuilder {
           case SpanType.italic:
             style = style.merge(TextStyle(
               fontStyle: FontStyle.italic,
-              color: Theme.of(context).colorScheme.outline,
+              color: bTheme.addColor,
             ));
             break;
           case SpanType.bold:
@@ -52,12 +55,14 @@ class VerseSpanBuilder {
             break;
           case SpanType.wordOfJesus:
             // "small caps" isn't directly supported everywhere; approximate
-            style = style.merge(TextStyle(color: Colors.red[900]));
+            style = style.merge(TextStyle(color: bTheme.quoteColor));
             break;
 
           case SpanType.strongWords:
             style = style.merge(TextStyle(
-              decoration: TextDecoration.underline,
+              decoration: bTheme.underlineStrongWords
+                  ? TextDecoration.underline
+                  : TextDecoration.none,
               decorationStyle: TextDecorationStyle.dotted,
               decorationColor:
                   Colors.black26, //Theme.of(context).colorScheme.tertiaryFixed,

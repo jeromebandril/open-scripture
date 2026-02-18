@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../../core/domain/entities/book_names.dart';
-import '../../../../../core/domain/entities/verse_segment.dart';
-import '../../../../../core/domain/entities/verse_span.dart';
-import '../../../../../core/utils/bible_ref_parser/bible_ref_parser.dart';
+import '../../../../../shared/domain/entities/book_names.dart';
+import '../../../../../shared/domain/entities/verse_segment.dart';
+import '../../../../../shared/domain/entities/verse_span.dart';
 import '../../../../../injection_container.dart';
-import '../../../../customizer/domain/entities/bible_pane_theme.dart';
+import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
+import '../../../../customizer/presentation/models/bible_view_presentation_theme.dart';
 import '../../../split_screen/presenter/cubit/pane_manager_cubit.dart';
 import '../bloc/bible_pane_bloc.dart';
 import '../rendering/verse_richtext_builder.dart';
@@ -39,7 +39,9 @@ class BibleViewPresentation extends StatelessWidget {
     final thisPaneIndex = panes.indexWhere((e) => e.id == uniqueId);
 
     // theming
-    final paneTheme = Theme.of(context).extension<BiblePaneTheme>()!;
+    final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
+    final presentTheme =
+        Theme.of(context).extension<BibleViewPresentationTheme>()!;
 
     return BlocBuilder<BiblePaneBloc, BiblePaneState>(
       buildWhen: (prev, curr) => prev.reference != curr.reference,
@@ -83,7 +85,7 @@ class BibleViewPresentation extends StatelessWidget {
                               'error',
                         ),
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: paneTheme.selectedRefFontWeight,
                       fontFamily: paneTheme.referenceFont,
                       color: paneTheme.accentColor,
                     ),
@@ -105,24 +107,29 @@ class BibleViewPresentation extends StatelessWidget {
                     List<InlineSpan> build() {
                       return [
                         for (int i = 0; i < verses.length; i++) ...[
+                          TextSpan(text: '   '),
                           TextSpan(
-                            text: '   ${i + ref.verseStart!} ',
+                            text: '${i + ref.verseStart!}',
                             style: TextStyle(
-                              fontSize: 8,
-                              fontWeight: FontWeight.bold,
-                              color: paneTheme.accentColor,
-                            ),
+                                fontSize: 8,
+                                fontWeight: FontWeight.bold,
+                                color: paneTheme.accentColor,
+                                decoration: TextDecoration.underline),
                           ),
+                          TextSpan(text: ' '),
                           inlineSpans[i],
                         ],
                       ];
                     }
 
-                    return Text.rich(TextSpan(
-                        style: TextStyle(
-                          fontWeight: paneTheme.textFontWeight,
-                        ),
-                        children: build()));
+                    return Text.rich(
+                      TextSpan(
+                          style: TextStyle(
+                            fontWeight: paneTheme.textFontWeight,
+                          ),
+                          children: build()),
+                      textAlign: presentTheme.textAlignment,
+                    );
                   })
                 ],
               ),

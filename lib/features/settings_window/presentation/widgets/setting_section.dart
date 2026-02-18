@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:the_smyrna_bible_v2/core/presentation/widgets/debounce_textfield.dart';
+import 'package:open_scripture/shared/presentation/widgets/debounce_textfield.dart';
+
+const double settingsSpacing = 8;
 
 class SettingSection extends StatelessWidget {
   const SettingSection({
@@ -26,7 +28,10 @@ class SettingSection extends StatelessWidget {
 
   List<Widget> _withDividers(
     List<Widget> children, {
-    Widget divider = const Divider(),
+    Widget divider = const Padding(
+      padding: EdgeInsets.symmetric(vertical: settingsSpacing),
+      child: Divider(),
+    ),
   }) {
     if (children.isEmpty) return const [];
     return [
@@ -66,7 +71,10 @@ class SettingSection extends StatelessWidget {
               if (itemBuilder != null)
                 Expanded(
                   child: ListView.separated(
-                    separatorBuilder: (_, __) => Divider(),
+                    separatorBuilder: (_, __) => const Padding(
+                      padding: EdgeInsets.symmetric(vertical: settingsSpacing),
+                      child: Divider(),
+                    ),
                     shrinkWrap: true,
                     itemCount: itemCount!,
                     itemBuilder: itemBuilder!,

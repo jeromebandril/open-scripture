@@ -2,8 +2,9 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:open_scripture/features/settings_window/presentation/widgets/parts/reset_button.dart';
 
-import '../../../../core/utils/colors_util.dart';
+import '../../../../shared/utils/colors_util.dart';
 
 class SettingInputColor extends StatefulWidget {
   const SettingInputColor({
@@ -11,11 +12,16 @@ class SettingInputColor extends StatefulWidget {
     this.color = Colors.red,
     this.onColorChanged,
     this.isDisabled = false,
+    this.showReset = false,
+    this.onReset,
   });
 
   final Color color;
   final Function(Color)? onColorChanged;
   final bool isDisabled;
+
+  final bool showReset;
+  final Function()? onReset;
 
   @override
   State<SettingInputColor> createState() => _SettingInputColorState();
@@ -65,7 +71,7 @@ class _SettingInputColorState extends State<SettingInputColor> {
       elevation: 10,
       child: Container(
         width: 300,
-        height: 300,
+        height: 280,
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
@@ -74,7 +80,9 @@ class _SettingInputColorState extends State<SettingInputColor> {
         child: ColorPicker(
           pickerColor: widget.color,
           onColorChanged: (color) => selectedColor = color,
+          hexInputBar: true,
           colorPickerWidth: 300,
+          labelTypes: [],
           portraitOnly: true,
           enableAlpha: false,
           pickerAreaHeightPercent: 0.5,
@@ -113,6 +121,10 @@ class _SettingInputColorState extends State<SettingInputColor> {
       mainAxisAlignment: MainAxisAlignment.end,
       spacing: 8,
       children: [
+        if (widget.onReset != null && widget.showReset)
+          ResetButton(
+            onPress: () => widget.onReset?.call(),
+          ),
         Text('#${ColorsUtil.colorToHex(widget.color)}'),
         CompositedTransformTarget(
           link: layerLink,

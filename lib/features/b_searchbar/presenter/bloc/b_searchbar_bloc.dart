@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:the_smyrna_bible_v2/features/b_searchbar/domain/repositories/b_search_intent_type.dart';
-import 'package:the_smyrna_bible_v2/features/b_searchbar/presenter/models/history_data.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/navigation_bus.dart';
+import 'package:open_scripture/features/b_searchbar/domain/repositories/b_search_intent_type.dart';
+import 'package:open_scripture/features/b_searchbar/presenter/models/history_data.dart';
+import 'package:open_scripture/features/bible_display/bible_pane/presentation/navigation_bus.dart';
 
-import '../../../../core/domain/entities/bible_ref.dart';
+import '../../../../shared/domain/entities/bible_ref.dart';
 import '../../domain/repositories/b_searchbar_repository.dart';
 
 part 'b_searchbar_event.dart';
@@ -85,7 +85,9 @@ class BSearchbarBloc extends Bloc<BSearchbarEvent, BSearchbarState> {
         (f) => emit(state.copyWith(
           intentType: () => BSearchIntentType.gotoReference,
           status: () => BSearchbarStatus.error,
-          errorMessage: () => f.details,
+          errorMessage: () => event.query.toLowerCase() == "jerome"
+              ? "Pogi!" // easter egg
+              : f.details,
         )),
         (ref) => emit(state.copyWith(
           intentType: () => BSearchIntentType.gotoReference,

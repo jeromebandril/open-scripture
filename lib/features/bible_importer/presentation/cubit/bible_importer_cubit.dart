@@ -1,32 +1,101 @@
-import 'dart:convert';
+import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:the_smyrna_bible_v2/core/utils/osis_parser.dart';
+import 'package:open_scripture/features/bible_importer/domain/repository/bible_importer_repo.dart';
+
+import '../../../../shared/presentation/notifiers/install_notifier.dart';
+import '../../../bible_installer_manager/domain/entities/bible_download_progress.dart';
 
 part 'bible_importer_state.dart';
 
 class BibleImporterCubit extends Cubit<BibleImporterState> {
-  BibleImporterCubit() : super(BibleImporterInitial());
+  BibleImporterCubit({required this.repo, required this.notifier})
+      : super(BibleImporterState());
 
-  void pickFile() async {
+  final BibleImporterRepo repo;
+
+  final InstallNotifier notifier;
+  StreamSubscription<InstallProgress>? _sub;
+
+  @override
+  Future<void> close() async {
+    await _sub?.cancel();
+    return super.close();
+  }
+
+  Future<void> pickFile() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['xml'],
-      withData: true,
+      allowedExtensions: ['zip', 'xml'],
+      withData: false,
+      withReadStream: false,
+      allowMultiple: false,
+      lockParentWindow: true,
     );
 
-    if (result == null) return; // user canceled
+    final path = result?.files.single.path;
+    final name = result?.files.single.name; // safer than result.names.single
 
-    final file = result.files.single;
-    final bytes = file.bytes;
-    final name = file.name;
+    if (path == null) {
+      emit(state.copyWith(status: BibleImporterStatus.initial));
+      return;
+    }
 
-    if (bytes == null) return;
+    // Cancel any ongoing install
+    await _sub?.cancel();
 
-    final content = utf8.decode(bytes);
+    emit(state.copyWith(
+      status: BibleImporterStatus.running,
+      fileName: name,
+      progress: const InstallProgress(
+        stage: InstallStage.installing,
+        message: 'Starting...',
+      ),
+    ));
 
-    OsisParser(content);
+    final stream = repo.importAndInstallFromPath(
+      path,
+      displayName: name ?? _basename(path),
+    );
+
+    _sub = stream.listen(
+      (p) {
+        if (p.stage == InstallStage.failed) {
+          emit(state.copyWith(
+            status: BibleImporterStatus.failed,
+            errorMessage: () => p.message,
+          ));
+          return;
+        }
+        emit(state.copyWith(
+          status: _mapStageToStatus(p.stage),
+          progress: p,
+          errorMessage: () => null,
+        ));
+      },
+      onDone: () {
+        // If repo always emits done, you may not need this.
+        if (state.progress?.stage != InstallStage.done) {
+          emit(state.copyWith(status: BibleImporterStatus.succeed));
+        }
+        notifier.refreshInstalledList();
+      },
+      cancelOnError: false,
+    );
   }
+
+  BibleImporterStatus _mapStageToStatus(InstallStage stage) {
+    switch (stage) {
+      case InstallStage.failed:
+        return BibleImporterStatus.failed;
+      case InstallStage.done:
+        return BibleImporterStatus.succeed;
+      default:
+        return BibleImporterStatus.running;
+    }
+  }
+
+  String _basename(String path) => path.split(RegExp(r'[\\/]+')).last;
 }

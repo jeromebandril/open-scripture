@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 
-import '../../../../core/domain/entities/bible_meta.dart';
-import '../../../../core/error/failure.dart';
+import '../../../../shared/domain/entities/bible_meta.dart';
+import '../../../../shared/error/failure.dart';
 import '../entities/bible_download_progress.dart';
 
 abstract class BibleManagerRepository {

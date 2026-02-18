@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/bible_importer/presentation/cubit/bible_importer_cubit.dart';
+import 'package:open_scripture/features/bible_importer/presentation/cubit/bible_importer_cubit.dart';
 
 import '../../../../injection_container.dart';
 
@@ -16,7 +16,8 @@ class ImporterWidget extends StatelessWidget {
           builder: (context, state) {
             return _XmlImportDropZoneUi(
               isDragOver: false,
-              isLoading: false,
+              isLoading: state.status == BibleImporterStatus.running,
+              errorText: state.errorMessage,
               onChoosePressed: () {
                 context.read<BibleImporterCubit>().pickFile();
               },
@@ -35,7 +36,7 @@ class _XmlImportDropZoneUi extends StatelessWidget {
     required this.isLoading,
     this.fileName,
     this.errorText,
-    this.hintText = 'Drop an XML file here, or click to choose',
+    this.hintText = 'Drop an a file here, or click to choose',
     this.height = 180,
     this.onChoosePressed,
     this.onTap,
@@ -129,7 +130,7 @@ class _XmlImportDropZoneUi extends StatelessWidget {
                     TextButton.icon(
                       onPressed: isLoading ? null : onChoosePressed,
                       icon: const Icon(Icons.folder_open),
-                      label: const Text('Choose XML file'),
+                      label: const Text('Choose a ZIP or XML file'),
                     ),
                   ],
                 ),

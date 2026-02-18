@@ -1,11 +1,11 @@
 import 'package:fpdart/fpdart.dart';
 
-import '../../../../../core/data/datasources/bible_sqllite_datasource.dart';
-import '../../../../../core/domain/entities/bible_meta.dart';
-import '../../../../../core/domain/entities/bible_ref.dart';
-import '../../../../../core/domain/entities/verse_segment.dart';
-import '../../../../../core/error/exception.dart';
-import '../../../../../core/error/failure.dart';
+import '../../../../../shared/data/datasources/bible_sqllite_datasource.dart';
+import '../../../../../shared/domain/entities/bible_meta.dart';
+import '../../../../../shared/domain/entities/bible_ref.dart';
+import '../../../../../shared/domain/entities/verse_segment.dart';
+import '../../../../../shared/error/exception.dart';
+import '../../../../../shared/error/failure.dart';
 import '../../domain/repositories/bible_repository.dart';
 
 class BibleRepositoryImpl implements BibleRepository {
@@ -96,6 +96,24 @@ class BibleRepositoryImpl implements BibleRepository {
       return Right(await localDatasource.getBible(bibleId));
     } catch (e) {
       return Left(NoLocalDataFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, int>> getMaxVerse({
+    required int bibleId,
+    required BibleRef reference,
+  }) async {
+    try {
+      final bookId = await localDatasource.resolveBookNameToId(
+        bibleId,
+        reference.bookUsfxId,
+      );
+
+      return Right(
+          await localDatasource.getMaxVerseRange(bookId, reference.chapter));
+    } catch (e) {
+      return Left(UnexpectedFailure(details: e.toString()));
     }
   }
 }

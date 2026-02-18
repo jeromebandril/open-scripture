@@ -9,13 +9,15 @@ class SettingInputNumber extends StatefulWidget {
     this.onSubmitted,
     this.max,
     this.min = 0,
+    this.isDisabled = false,
   });
 
-  final String? value;
+  final num? value;
   final IconData? suffixIcon;
   final Function(num)? onSubmitted;
   final int? max;
   final int? min;
+  final bool isDisabled;
 
   @override
   State<SettingInputNumber> createState() => _SettingInputNumberState();
@@ -29,7 +31,8 @@ class _SettingInputNumberState extends State<SettingInputNumber> {
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController()..text = widget.value ?? '';
+    _controller = TextEditingController()
+      ..text = widget.value?.toString() ?? '';
     _controller.addListener(_sanityCheck);
   }
 
@@ -77,6 +80,7 @@ class _SettingInputNumberState extends State<SettingInputNumber> {
     return SizedBox(
       height: 35,
       child: TextField(
+        enabled: !widget.isDisabled,
         textAlign: TextAlign.end,
         controller: _controller,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],

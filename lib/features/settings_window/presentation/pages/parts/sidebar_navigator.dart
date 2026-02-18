@@ -14,8 +14,18 @@ class SidebarNavigator extends StatelessWidget {
     required this.onSelectRoute,
   });
 
+  String _titleForGroup(String key) => switch (key) {
+        'appearance' => 'Appearance',
+        'biblemanager' => 'Bible Manager',
+        'shortcuts' => 'Shortcuts',
+        'about' => 'About',
+        _ => key,
+      };
+
   @override
   Widget build(BuildContext context) {
+    final groups = groupedSettingsRoutes(settingsRoutes);
+
     return Flexible(
       flex: 1,
       child: Container(
@@ -31,7 +41,7 @@ class SidebarNavigator extends StatelessWidget {
               padding: EdgeInsets.only(left: 12),
               child: Text(
                 'Settings',
-                style: TextStyle(fontWeight: FontWeight.normal),
+                style: TextStyle(fontWeight: FontWeight.w600),
               ),
             ),
             SizedBox(
@@ -40,16 +50,39 @@ class SidebarNavigator extends StatelessWidget {
             //
             // All navigation buttons
             //
-            ...settingsRoutes.entries.map((r) {
-              final isSelected = r.key == selectedRoute;
-              return _NavigationButton(
-                r.value.name,
-                icon: r.value.icon,
-                route: r.key,
-                isSelected: isSelected,
-                onTap: () => onSelectRoute(r.key),
+            ...groups.entries.expand((g) sync* {
+              // Group header
+              yield Padding(
+                padding: const EdgeInsets.only(left: 12, top: 12, bottom: 6),
+                child: Text(
+                  _titleForGroup(g.key),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
               );
-            }),
+
+              // Group items
+              yield Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(4),
+                    color:
+                        Theme.of(context).colorScheme.surfaceContainerHighest,
+                  ),
+                  child: Column(
+                    children: [
+                      for (final r in g.value)
+                        _NavigationButton(
+                          r.value.name,
+                          icon: r.value.icon,
+                          route: r.key,
+                          isSelected: r.key == selectedRoute,
+                          onTap: () => onSelectRoute(r.key),
+                        )
+                    ],
+                  ));
+            })
           ],
         ),
       ),
@@ -79,7 +112,7 @@ class _NavigationButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(4),
       ),
       color: isSelected
-          ? Theme.of(context).colorScheme.surface
+          ? Theme.of(context).colorScheme.primaryContainer
           : Colors.transparent,
       child: InkWell(
         splashFactory: NoSplash.splashFactory,
@@ -97,7 +130,7 @@ class _NavigationButton extends StatelessWidget {
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               SizedBox(width: 16),
-              Text(text),
+              Expanded(child: Text(text, overflow: TextOverflow.ellipsis)),
             ],
           ),
         ),

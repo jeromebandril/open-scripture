@@ -38,7 +38,7 @@ class RemoteCatalogRow extends StatelessWidget {
                 Text(bibleMeta.abbreviation, overflow: TextOverflow.ellipsis)),
         const VerticalDivider(),
         Expanded(
-          flex: 2,
+          flex: 3,
           child:
               Text(bibleMeta.bibleNameLocal, overflow: TextOverflow.ellipsis),
         ),

@@ -5,12 +5,14 @@ class Setting extends StatelessWidget {
     required this.label,
     required this.description,
     required this.child,
+    this.settingWidth = 200,
     super.key,
   });
 
   final String label;
   final String description;
   final Widget child;
+  final double settingWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +29,11 @@ class Setting extends StatelessWidget {
             ],
           ),
         ),
-        Container(alignment: Alignment.centerRight, width: 200, child: child)
+        Container(
+          alignment: Alignment.centerRight,
+          width: settingWidth,
+          child: child,
+        )
       ],
     );
   }

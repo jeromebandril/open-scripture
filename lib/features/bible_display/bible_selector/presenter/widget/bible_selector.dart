@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/bible_installer_manager/presentation/bloc/installed_bibles/installed_bibles_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/customizer/domain/entities/bible_pane_theme.dart';
-import 'package:the_smyrna_bible_v2/features/customizer/presentation/cubit/customizer_cubit.dart';
+import 'package:open_scripture/features/bible_installer_manager/presentation/bloc/installed_bibles/installed_bibles_bloc.dart';
+import 'package:open_scripture/features/customizer/presentation/cubit/customizer_cubit.dart';
 
 import '../../../../../injection_container.dart';
+import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../bloc/bloc/bible_selector_bloc.dart';
 
 class BibleSelector extends StatelessWidget {
@@ -38,7 +38,7 @@ class _BibleSelectorBody extends StatelessWidget {
     final useCustom = context.select(
       (CustomizerCubit b) => b.state.pane.enableCustomTheme,
     );
-    final paneTheme = Theme.of(context).extension<BiblePaneTheme>()!;
+    final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
 
     return BlocBuilder<InstalledBiblesBloc, InstalledBiblesState>(
       builder: (context, state) {

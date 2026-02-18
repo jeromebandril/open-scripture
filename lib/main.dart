@@ -1,27 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:the_smyrna_bible_v2/core/presentation/cubit/display_mode_cubit.dart';
-import 'package:the_smyrna_bible_v2/core/presentation/cubit/fullscreen_cubit.dart';
-import 'package:the_smyrna_bible_v2/core/presentation/cubit/toolbar_cubit.dart';
-import 'package:the_smyrna_bible_v2/core/presentation/widgets/help_widget.dart';
-import 'package:the_smyrna_bible_v2/core/presentation/widgets/titlebar.dart';
-import 'package:the_smyrna_bible_v2/features/b_searchbar/domain/repositories/b_search_intent_type.dart';
-import 'package:the_smyrna_bible_v2/features/bible_importer/presentation/cubit/bible_importer_cubit.dart';
-import 'package:the_smyrna_bible_v2/features/toolbar/presentation/widgets/toolbar.dart';
+import 'package:open_scripture/features/obs_live_overlay/presentation/cubit/obs_overlay/obs_live_overlay_cubit.dart';
+import 'package:open_scripture/features/obs_live_overlay/presentation/widgets/obs_live_overlay_indicator.dart';
+import 'package:open_scripture/shared/presentation/cubit/history_visibility_cubit.dart';
+import 'package:open_scripture/shared/presentation/cubit/fullscreen_cubit.dart';
+import 'package:open_scripture/shared/presentation/cubit/toolbar_cubit.dart';
+import 'package:open_scripture/shared/presentation/widgets/help_widget.dart';
+import 'package:open_scripture/shared/presentation/widgets/titlebar.dart';
+import 'package:open_scripture/features/b_searchbar/domain/repositories/b_search_intent_type.dart';
+import 'package:open_scripture/features/b_searchbar/presenter/widgets/parts/history_list_overlay.dart';
+import 'package:open_scripture/features/customizer/presentation/models/bible_view_list_theme.dart';
+import 'package:open_scripture/features/customizer/presentation/models/bible_view_presentation_theme.dart';
+import 'package:open_scripture/features/toolbar/presentation/widgets/toolbar.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
 import 'features/b_searchbar/presenter/widgets/bible_searchbar.dart';
 import 'features/b_searchbar/presenter/widgets/show_history_button.dart';
+import 'features/obs_live_overlay/presentation/cubit/cubit/obs_live_overlay_settings_cubit.dart';
+import 'features/three_tap_navigator/presentation/widgets/three_tap_navigator.dart';
 import 'features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
 import 'features/bible_display/bible_pane/presentation/navigation_bus.dart';
 import 'features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
 import 'features/bible_display/split_screen/presenter/widgets/split_view_container.dart';
 import 'features/bible_installer_manager/presentation/bloc/installed_bibles/installed_bibles_bloc.dart';
-import 'features/customizer/domain/entities/app_theme.dart';
-import 'features/customizer/domain/entities/bible_pane_theme.dart';
+import 'features/customizer/domain/entities/app_theme_settings.dart';
 import 'features/customizer/presentation/cubit/customizer_cubit.dart';
-import 'features/keybindings/presentation/widget/keybindings_host.dart';
+import 'features/customizer/presentation/models/bible_pane_general_theme.dart';
+import 'features/shortcuts/presentation/widget/shortcuts_host.dart';
 import 'features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
 import 'features/window_stack_manager/presentation/widgets/window_stack_manager_wrapper.dart';
 import 'injection_container.dart' as di;
@@ -34,6 +40,7 @@ void main() async {
 
   WindowOptions windowOptions = WindowOptions(
     size: Size(1000, 600),
+    minimumSize: Size(300, 200),
     center: true,
     backgroundColor: Colors.transparent,
     skipTaskbar: false,
@@ -57,7 +64,10 @@ class MyApp extends StatelessWidget {
       child: BlocBuilder<CustomizerCubit, CustomizerState>(
         buildWhen: (prev, curr) {
           // Only rebuild MaterialApp when app-wide theme changes.
-          return prev.app != curr.app || prev.pane != curr.pane;
+          return prev.app != curr.app ||
+              prev.pane != curr.pane ||
+              prev.presentTheme != curr.presentTheme ||
+              prev.listTheme != curr.listTheme;
         },
         builder: (context, state) {
           final builder = const AppThemeBuilder();
@@ -66,24 +76,39 @@ class MyApp extends StatelessWidget {
               .toExtension()
               .copyWith(accentColor: state.app.accentColor);
 
+          final presentTheme = state.presentTheme.toExtension();
+
+          final listTheme = state.listTheme.toExtension();
+
           final light = builder.buildLight(state.app).copyWith(
-            extensions: <ThemeExtension<dynamic>>[biblePaneTheme],
+            extensions: <ThemeExtension<dynamic>>[
+              biblePaneTheme,
+              presentTheme,
+              listTheme
+            ],
           );
           final dark = builder.buildDark(state.app).copyWith(
-            extensions: <ThemeExtension<dynamic>>[biblePaneTheme],
+            extensions: <ThemeExtension<dynamic>>[
+              biblePaneTheme,
+              presentTheme,
+              listTheme
+            ],
           );
 
           return MaterialApp(
-            title: 'Bible App',
+            title: 'Open Scripture',
             themeMode: state.app.mode,
             darkTheme: dark,
             theme: light,
             debugShowCheckedModeBanner: false,
             home: MultiBlocProvider(
               providers: [
+                BlocProvider(create: (_) => di.sl<ObsLiveOverlayCubit>()),
+                BlocProvider(
+                    create: (_) => di.sl<ObsLiveOverlaySettingsCubit>()),
+                BlocProvider(create: (_) => di.sl<HistoryVisibilityCubit>()),
                 BlocProvider(create: (_) => di.sl<PaneManagerCubit>()),
                 BlocProvider(create: (_) => di.sl<ToolbarCubit>()),
-                BlocProvider(create: (_) => di.sl<DisplayModeCubit>()),
                 BlocProvider(create: (_) => di.sl<FullscreenCubit>()..init()),
                 BlocProvider(create: (_) => di.sl<WindowStackManagerBloc>()),
                 BlocProvider(
@@ -109,6 +134,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   late final FocusNode _searchbarFocusNode;
+  late final FocusNode _historyFocusNode;
   late final FocusNode _rootFocusNode;
 
   bool _searchbarHasFocus = false;
@@ -117,6 +143,7 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     _searchbarFocusNode = FocusNode(debugLabel: 'searchbar');
+    _historyFocusNode = FocusNode(debugLabel: 'history');
     _rootFocusNode = FocusNode(debugLabel: 'root');
     _searchbarFocusNode.addListener(_searchbarFocusNodeListener);
   }
@@ -124,6 +151,7 @@ class _HomeState extends State<Home> {
   @override
   void dispose() {
     _searchbarFocusNode.dispose();
+    _historyFocusNode.dispose();
     _rootFocusNode.dispose();
     super.dispose();
   }
@@ -140,26 +168,19 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    // final backgroundColor = context.select(
-    //   (CustomizerCubit c) => c.state.theme.backgroundColor,
-    // );
-    // final isCustomTheme = context.select(
-    //   (CustomizerCubit c) => c.state.theme.enableCustomTheme,
-    // );
-    // final useBackgroundColorAsAppColor = context.select(
-    //   (CustomizerCubit c) => c.state.theme.useBackgroundColorAsAppColor,
-    // );
-    final enableDynamicSearchbar = context.select(
-      (CustomizerCubit c) => c.state.app.enableDynamicSearchbar,
+    final enableDynamicInterface = context.select(
+      (CustomizerCubit c) => c.state.app.enableDynamicInterface,
     );
     final isFullscreen = context.select((FullscreenCubit f) => f.state);
-    final showToolbar = context.select((ToolbarCubit t) => t.state);
+    final showMenuBar = context.select((ToolbarCubit t) => t.state);
+    final showHistory = context.select((HistoryVisibilityCubit c) => c.state);
     final screen = MediaQuery.of(context).size;
 
     // ShortcusHost must be at the very root after the MaterialApp
-    return ShortcutHost(
+    return ShortcutsHost(
       rootFocusNode: _rootFocusNode,
       searchFocusNode: _searchbarFocusNode,
+      historyFocusNode: _historyFocusNode,
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.surface,
         //
@@ -169,20 +190,33 @@ class _HomeState extends State<Home> {
         body: WindowStackManagerWrapper(
           child: Column(
             children: [
-              if (!isFullscreen) const Titlebar(child: Toolbar()),
-              if (isFullscreen && showToolbar) const Toolbar(),
               //
               // Simulated classic desktop toolbar
               //
-              //
-              // HEADER
-              // separated just to be organized,
-              // pass here all required parameters
-              //
-              _AppHeader(
-                searchbarFocusNode: _searchbarFocusNode,
-                returnFocusToRoot: _returnFocusToRoot,
-              ),
+              if (showMenuBar || !isFullscreen || !enableDynamicInterface)
+                Titlebar(
+                  menuBar: !showMenuBar && isFullscreen
+                      ? Tooltip(
+                          message:
+                              'Menu bar is hidden, press  CTRL+T  to toggle',
+                          child: Icon(
+                            Icons.visibility_off_outlined,
+                            size: 20,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                        )
+                      : const MyMenuBar(),
+                  toolbar: enableDynamicInterface
+                      ? null
+                      : _AppHeader(
+                          searchbarFocusNode: _searchbarFocusNode,
+                          returnFocusToRoot: _returnFocusToRoot,
+                        ),
+                  showLogo: !isFullscreen,
+                  showButtons: !isFullscreen,
+                  showMenuBar: true,
+                ),
               //
               // BIBLE PANES
               //
@@ -226,7 +260,7 @@ class _HomeState extends State<Home> {
                     //
                     // Dynamic searchbar
                     //
-                    if (enableDynamicSearchbar)
+                    if (enableDynamicInterface)
                       Positioned(
                         top: screen.height * 0.08,
                         right: 0,
@@ -238,12 +272,15 @@ class _HomeState extends State<Home> {
                           child: Align(
                             alignment: Alignment.topCenter,
                             child: Container(
-                              padding: EdgeInsets.all(8),
+                              padding: const EdgeInsets.all(4),
                               decoration: BoxDecoration(
-                                color: Theme.of(context).dividerColor,
-                                borderRadius: BorderRadius.circular(16),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerHighest,
+                                borderRadius: BorderRadius.circular(12),
                               ),
                               child: BSearchbar(
+                                height: 48,
                                 focusNode: _searchbarFocusNode,
                                 onSubmitted: () => _returnFocusToRoot(),
                                 //onEditComplete: () => _returnFocusToRoot(),
@@ -252,25 +289,64 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                       ),
-
-                    if (isFullscreen && !showToolbar && enableDynamicSearchbar)
-                      Positioned.fill(
+                    //
+                    // Dynamic History viewer
+                    //
+                    if (enableDynamicInterface)
+                      Positioned(
+                        top: screen.height * 0.08 + 100,
+                        right: 0,
+                        left: 0,
+                        child: Visibility(
+                          maintainFocusability: true,
+                          maintainState: true,
+                          visible: showHistory,
                           child: Align(
-                              alignment: AlignmentGeometry.topRight,
-                              child: IconButton(
-                                  tooltip: 'Help',
-                                  onPressed: () {
-                                    context
-                                        .read<WindowStackManagerBloc>()
-                                        .add(WindowStackManagerOpen(HelpWidget(
-                                      onClose: () {
-                                        context
-                                            .read<WindowStackManagerBloc>()
-                                            .add(WindowStackManagerClose());
-                                      },
-                                    )));
-                                  },
-                                  icon: Icon(Icons.help_outline_rounded)))),
+                            alignment: Alignment.topCenter,
+                            child: Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).dividerColor,
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: HistoryListOverlay(
+                                constraints: screen,
+                                width: 400,
+                                size: HistoryListSize.big,
+                                onSelected: () => _returnFocusToRoot(),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    //
+                    // Top right interface
+                    //
+                    Positioned.fill(
+                        child: Align(
+                      alignment: AlignmentGeometry.topRight,
+                      child: SizedBox(
+                        height: 48,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            //
+                            // OBS Live Overlay
+                            //
+                            if (isFullscreen && enableDynamicInterface)
+                              const ObsLiveOverlayIndicator(),
+                            //
+                            // Help button when all interface is hidden
+                            //
+                            if (isFullscreen &&
+                                !showMenuBar &&
+                                enableDynamicInterface)
+                              const HelpTriggerBtn(),
+                          ],
+                        ),
+                      ),
+                    )),
                   ],
                 ),
               ),
@@ -293,133 +369,64 @@ class _AppHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final alignment = context.select(
-      (CustomizerCubit c) => c.state.app.searchbarPosition,
+    // final alignment = context.select(
+    //   (CustomizerCubit c) => c.state.app.searchbarPosition,
+    // );
+    // final isFullscreen = context.select((FullscreenCubit c) => c.state);
+    // final showToolbar = context.select((ToolbarCubit t) => t.state);
+    // final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
+    // final enableHangingRefs =
+    //     Theme.of(context).extension<BibleViewListTheme>()!.enableHangingRefs;
+    final enable3TapNav = context.select(
+      (CustomizerCubit c) => c.state.app.enable3TapNavigator,
     );
-    final isFullscreen = context.select((FullscreenCubit c) => c.state);
-    final showToolbar = context.select((ToolbarCubit t) => t.state);
-    final paneTheme = Theme.of(context).extension<BiblePaneTheme>()!;
-    final enableDynamicSearchbar = context.select(
-      (CustomizerCubit c) => c.state.app.enableDynamicSearchbar,
-    );
-    //final screen = MediaQuery.of(context)
 
-    return Padding(
-      padding: EdgeInsets.symmetric(
-          horizontal: 12, vertical: enableDynamicSearchbar ? 0 : 8),
-      child: Column(
-        spacing: 18,
-        children: [
-          if (!enableDynamicSearchbar)
-            Stack(
-              children: [
-                Row(
-                  mainAxisAlignment: alignment == SearchbarPosition.center
-                      ? MainAxisAlignment.center
-                      : MainAxisAlignment.start,
-                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // ThreeTapNavigator(),
-                    BSearchbar(
-                      focusNode: searchbarFocusNode,
-                      onSubmitted: () => returnFocusToRoot(),
-                      //onEditComplete: () => _returnFocusToRoot(),
-                    ),
-                    ShowHistoryButton(),
-                    // SplitscreenControls(),
-                    // BlocBuilder<FullscreenCubit, bool>(
-                    //   builder: (context, isFullscreen) {
-                    //     return IconButton(
-                    //       onPressed: () =>
-                    //           context.read<FullscreenCubit>().toggle(),
-                    //       tooltip: isFullscreen
-                    //           ? 'Exit fullscreen'
-                    //           : 'Enter fullscreen',
-                    //       icon: isFullscreen
-                    //           ? const Icon(Icons.fullscreen_exit)
-                    //           : const Icon(Icons.fullscreen),
-                    //     );
-                    //   },
-                    // ),
-                    // BlocBuilder<DisplayModeCubit, DisplayMode>(
-                    //   builder: (context, dm) {
-                    //     return IconButton(
-                    //         tooltip: dm == DisplayMode.presentation
-                    //             ? 'Exit presentation mode'
-                    //             : 'Enter presentation mode',
-                    //         onPressed: () {
-                    //           if (dm == DisplayMode.presentation) {
-                    //             context
-                    //                 .read<DisplayModeCubit>()
-                    //                 .set(DisplayMode.normal);
-                    //           } else {
-                    //             context
-                    //                 .read<DisplayModeCubit>()
-                    //                 .set(DisplayMode.presentation);
-                    //           }
-                    //         },
-                    //         icon: Icon(Icons.fit_screen_rounded));
-                    //   },
-                    // ),
-                  ],
-                ),
-                //
-                // Show help button to avoid users getting stuck in fullscreen mode with hidden toolbar
-                //
-                if (isFullscreen && !showToolbar)
-                  Positioned.fill(
-                      child: Align(
-                          alignment: AlignmentGeometry.centerRight,
-                          child: IconButton(
-                              tooltip: 'Help',
-                              onPressed: () {
-                                context
-                                    .read<WindowStackManagerBloc>()
-                                    .add(WindowStackManagerOpen(HelpWidget(
-                                  onClose: () {
-                                    context
-                                        .read<WindowStackManagerBloc>()
-                                        .add(WindowStackManagerClose());
-                                  },
-                                )));
-                              },
-                              icon: Icon(Icons.help_outline_rounded)))),
-              ],
-            ),
-          //
-          //
-          //
-          if (paneTheme.enableHangingRefs)
-            Builder(builder: (context) {
-              final activePaneBloc =
-                  context.select((PaneManagerCubit pm) => pm.activeBloc());
-
-              return BlocProvider.value(
-                value: activePaneBloc,
-                child: BlocBuilder<BiblePaneBloc, BiblePaneState>(
-                  buildWhen: (prev, curr) => prev.reference != curr.reference,
-                  builder: (context, state) {
-                    return Padding(
-                      padding: EdgeInsets.only(
-                        top: enableDynamicSearchbar ? 18 : 0,
-                        bottom: 18,
-                      ),
-                      child: Text(
-                        state.reference.toString(),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontFamily: paneTheme.referenceFont,
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: 42,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              );
-            })
-        ],
-      ),
+    return Row(
+      spacing: 4,
+      mainAxisAlignment: MainAxisAlignment.center,
+      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        if (enable3TapNav) const ThreeTapNavigatorTrigger(),
+        BSearchbar(
+          focusNode: searchbarFocusNode,
+          onSubmitted: () => returnFocusToRoot(),
+          //onEditComplete: () => _returnFocusToRoot(),
+        ),
+        ShowHistoryButton(),
+        const ObsLiveOverlayIndicator(),
+      ],
     );
   }
 }
+
+
+        //
+        // if (enableHangingRefs)
+        //   Builder(builder: (context) {
+        //     final activePaneBloc =
+        //         context.select((PaneManagerCubit pm) => pm.activeBloc());
+
+        //     return BlocProvider.value(
+        //       value: activePaneBloc,
+        //       child: BlocBuilder<BiblePaneBloc, BiblePaneState>(
+        //         buildWhen: (prev, curr) => prev.reference != curr.reference,
+        //         builder: (context, state) {
+        //           return Padding(
+        //             padding: EdgeInsets.only(
+        //               top: enableDynamicInterface ? 18 : 0,
+        //               bottom: 18,
+        //             ),
+        //             child: Text(
+        //               state.reference.toString(),
+        //               style: TextStyle(
+        //                 fontWeight: FontWeight.bold,
+        //                 fontFamily: paneTheme.referenceFont,
+        //                 color: Theme.of(context).colorScheme.onSurface,
+        //                 fontSize: 42,
+        //               ),
+        //             ),
+        //           );
+        //         },
+        //       ),
+        //     );
+        //   })

@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:the_smyrna_bible_v2/features/customizer/domain/repo/customizer_repo.dart';
+import 'package:open_scripture/features/customizer/domain/entities/bible_pane_presentation_theme_settings.dart';
+import 'package:open_scripture/features/customizer/domain/entities/bible_view_list_theme_settings.dart';
+import 'package:open_scripture/features/customizer/domain/repo/customizer_repo.dart';
 
-import '../../domain/entities/app_theme.dart';
-import '../../domain/entities/bible_pane_theme.dart';
+import '../../domain/entities/app_theme_settings.dart';
+import '../../domain/entities/bible_pane_general_theme_settings.dart';
 
 part 'customizer_state.dart';
 
@@ -16,6 +20,7 @@ class CustomizerCubit extends Cubit<CustomizerState> {
   }
 
   final CustomizerRepo repo;
+  Timer? _saveDebounce;
 
   void loadTheme() async {
     final eitherFailureOrTheme = await repo.loadTheme();
@@ -26,19 +31,40 @@ class CustomizerCubit extends Cubit<CustomizerState> {
     );
   }
 
-  void saveTheme(CustomizerState theme) async {
-    final eitherFailOrSuccess = await repo.saveTheme(theme);
+  void saveTheme() async {
+    final eitherFailOrSuccess = await repo.saveTheme(state);
 
-    eitherFailOrSuccess.fold((f) => print('errore!'), (_) {});
+    eitherFailOrSuccess.fold((f) => print('errore!'), (_) {
+      print("save succeded");
+    });
   }
 
   void updateTheme({
-    BiblePaneThemeSettings Function(BiblePaneThemeSettings)? paneTheme,
+    BiblePaneGeneralThemeSettings Function(BiblePaneGeneralThemeSettings)?
+        paneTheme,
     AppThemeSettings Function(AppThemeSettings)? appTheme,
+    BibleViewPresentationThemeSettings Function(
+            BibleViewPresentationThemeSettings)?
+        presentTheme,
+    BibleViewListThemeSettings Function(BibleViewListThemeSettings)? listTheme,
   }) {
     emit(state.copyWith(
       app: appTheme?.call(state.app),
       pane: paneTheme?.call(state.pane),
+      presentationTheme: presentTheme?.call(state.presentTheme),
+      listTheme: listTheme?.call(state.listTheme),
     ));
+    _scheduleSave();
+  }
+
+  void _scheduleSave() {
+    _saveDebounce?.cancel();
+    _saveDebounce = Timer(const Duration(seconds: 30), saveTheme);
+  }
+
+  @override
+  Future<void> close() {
+    _saveDebounce?.cancel();
+    return super.close();
   }
 }

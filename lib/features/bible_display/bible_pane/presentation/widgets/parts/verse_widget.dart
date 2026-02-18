@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/cubit/selected_word_cubit.dart';
+import 'package:open_scripture/features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
+import 'package:open_scripture/features/bible_display/bible_pane/presentation/cubit/selected_word_cubit.dart';
 
-import '../../../../../../core/domain/entities/bible_ref.dart';
-import '../../../../../../core/domain/entities/verse_segment.dart';
-import '../../../../../../core/domain/entities/verse_span.dart';
-import '../../../../../customizer/domain/entities/bible_pane_theme.dart';
+import '../../../../../../shared/domain/entities/bible_ref.dart';
+import '../../../../../../shared/domain/entities/verse_segment.dart';
+import '../../../../../../shared/domain/entities/verse_span.dart';
 import '../../../../../customizer/presentation/cubit/customizer_cubit.dart';
+import '../../../../../customizer/presentation/models/bible_pane_general_theme.dart';
+import '../../../../../customizer/presentation/models/bible_view_list_theme.dart';
 import '../../rendering/verse_richtext_builder.dart';
-
-enum HighlightRenderMode {
-  fullRefWithColor;
-}
 
 class VerseWidget extends StatelessWidget {
   final BibleRef reference;
@@ -36,20 +33,24 @@ class VerseWidget extends StatelessWidget {
     final useCustom = context.select(
       (CustomizerCubit c) => c.state.pane.enableCustomTheme,
     );
-    final biblePaneTheme = Theme.of(context).extension<BiblePaneTheme>()!;
+    final bTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
+    final listTheme = Theme.of(context).extension<BibleViewListTheme>()!;
 
     final refStyle = TextStyle(
-      height: 1.25,
-      fontFamily: biblePaneTheme.referenceFont,
-      fontWeight: isHighlighted
-          ? FontWeight.w800
-          : biblePaneTheme.showFullRefAlways
-              ? FontWeight.w500
-              : FontWeight.bold,
-      color: isHighlighted
-          ? biblePaneTheme.accentColor
+      decoration: listTheme.underlineRef,
+      decorationColor: isHighlighted
+          ? bTheme.accentColor
           : useCustom
-              ? biblePaneTheme.refColor
+              ? bTheme.refColor
+              : Theme.of(context).colorScheme.secondary,
+      height: 1.25,
+      fontFamily: bTheme.referenceFont,
+      fontWeight:
+          isHighlighted ? bTheme.selectedRefFontWeight : bTheme.refFontWeight,
+      color: isHighlighted
+          ? bTheme.accentColor
+          : useCustom
+              ? bTheme.refColor
               : Theme.of(context).colorScheme.secondary,
     );
 
@@ -67,25 +68,26 @@ class VerseWidget extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (biblePaneTheme.enableHangingRefs)
+          if (listTheme.enableHangingRefs)
             Text(
-              '${reference.toString().padLeft(3, ' ')}   ',
+              '${reference.verseStart.toString().padLeft(3, ' ')}   ',
               style: refStyle,
             ),
           Expanded(
             child: SelectableText.rich(TextSpan(
                 style: TextStyle(
                   height: 1.25,
-                  fontWeight: biblePaneTheme.textFontWeight,
+                  fontWeight: bTheme.textFontWeight,
                 ),
                 children: [
-                  if (!biblePaneTheme.enableHangingRefs)
+                  if (!listTheme.enableHangingRefs)
                     TextSpan(
-                      text: isHighlighted || biblePaneTheme.showFullRefAlways
-                          ? '${reference.toString()}  '
-                          : '$verseNumber  ',
+                      text: isHighlighted || listTheme.showFullRefAlways
+                          ? reference.toString()
+                          : '$verseNumber',
                       style: refStyle,
                     ),
+                  TextSpan(text: '  '),
                   VerseSpanBuilder.build(
                     context: context,
                     text: content,

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/models/split_pane_data.dart';
-import 'package:the_smyrna_bible_v2/features/customizer/domain/entities/bible_pane_theme.dart';
 
 import '../../../../customizer/presentation/cubit/customizer_cubit.dart';
+import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../../../bible_pane/presentation/widgets/bible_pane.dart';
 import '../cubit/pane_manager_cubit.dart';
 
@@ -21,6 +20,9 @@ class MultipleBiblePanes extends StatelessWidget {
     final offset = context.select(
       (CustomizerCubit c) => c.state.pane.widthAdjustmentOffset,
     );
+    final showDivider = context.select(
+      (CustomizerCubit c) => c.state.pane.showSplitscreenDivider,
+    );
 
     return BlocBuilder<PaneManagerCubit, PaneManagerState>(
       builder: (context, state) {
@@ -32,24 +34,32 @@ class MultipleBiblePanes extends StatelessWidget {
               topRight: Radius.circular(8),
             ),
             color: enableCustom
-                ? Theme.of(context).extension<BiblePaneTheme>()!.backgroundColor
+                ? Theme.of(context)
+                    .extension<BiblePaneGeneralTheme>()!
+                    .backgroundColor
                 : Theme.of(context).colorScheme.surface,
           ),
           child: Row(
             spacing: gap.toDouble(),
             children: [
-              for (final p in state.panes)
+              for (int i = 0; i < state.panes.length; i++) ...[
                 Expanded(
                   child: Listener(
                     behavior: HitTestBehavior.opaque,
-                    onPointerDown: (_) =>
-                        context.read<PaneManagerCubit>().setActive(p.id),
+                    onPointerDown: (_) => context
+                        .read<PaneManagerCubit>()
+                        .setActive(state.panes[i].id),
                     child: BiblePane(
-                      uniqueId: p.id,
-                      bloc: context.read<PaneManagerCubit>().blocFor(p.id),
+                      uniqueId: state.panes[i].id,
+                      bloc: context
+                          .read<PaneManagerCubit>()
+                          .blocFor(state.panes[i].id),
                     ),
                   ),
-                )
+                ),
+                if (i != state.panes.length - 1 && showDivider)
+                  const VerticalDivider(width: 1)
+              ]
             ],
           ),
         );

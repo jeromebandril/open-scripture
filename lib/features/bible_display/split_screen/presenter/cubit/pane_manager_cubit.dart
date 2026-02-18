@@ -1,7 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/bible_pane/presentation/navigation_bus.dart';
-import 'package:the_smyrna_bible_v2/injection_container.dart';
+import 'package:open_scripture/features/bible_display/bible_pane/presentation/navigation_bus.dart';
+import 'package:open_scripture/injection_container.dart';
+import 'package:open_scripture/shared/presentation/notifiers/selected_verse_content_notifier.dart';
 
 import '../../../bible_pane/domain/repositories/bible_repository.dart';
 import '../../../bible_pane/presentation/bloc/bible_pane_bloc.dart';
@@ -80,7 +81,11 @@ class PaneManagerCubit extends Cubit<PaneManagerState> {
     _blocs.putIfAbsent(
       paneId,
       () => BiblePaneBloc(
-          paneId: paneId, repo: _repo, navBus: sl<NavigationBus>()),
+        paneId: paneId,
+        repo: _repo,
+        navBus: sl<NavigationBus>(),
+        notifier: sl<ContentOfSelectedVerseNotifier>(),
+      ),
     );
   }
 

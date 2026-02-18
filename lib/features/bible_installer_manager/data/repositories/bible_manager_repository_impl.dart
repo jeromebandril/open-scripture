@@ -1,13 +1,14 @@
 import 'package:fpdart/fpdart.dart';
+import 'package:open_scripture/shared/installer/bible/domain/models/artifact.dart';
 import 'dart:async';
 import 'dart:math';
 
-import '../../../../core/domain/entities/bible_meta.dart';
-import '../../../../core/error/failure.dart';
-import '../../../../core/data/datasources/bible_ebibleorg_datasource.dart';
+import '../../../../shared/domain/entities/bible_meta.dart';
+import '../../../../shared/error/failure.dart';
+import '../../../../shared/data/datasources/bible_ebibleorg_datasource.dart';
 import '../../domain/entities/bible_download_progress.dart';
 import '../../domain/repositories/bible_manager_repository.dart';
-import '../../../../core/data/datasources/bible_sqllite_datasource.dart';
+import '../../../../shared/data/datasources/bible_sqllite_datasource.dart';
 
 // ignore_for_file: constant_identifier_names
 
@@ -39,32 +40,45 @@ class BibleManagerRepositoryImpl implements BibleManagerRepository {
 
   @override
   Stream<InstallProgress> installBible(String bibleId) {
-    return localDataSource.installBible(bibleId);
+    throw UnimplementedError();
+    //return localDataSource.installBible(bibleId);
   }
 
   @override
   Stream<InstallProgress> downloadAndInstallBible(String bibleId) async* {
     //return simulateDownloadAndInstall();
 
+    Artifact? artifact;
+
     // 1) Download phase
     await for (final p in remoteDataSource.downloadBibleFileContent(bibleId)) {
       yield p;
 
-      // Stop immediately on failure
       if (p.stage == InstallStage.failed) return;
 
-      // When download is done, break and start install
-      if (p.stage == InstallStage.downloadingDone) break;
+      if (p.stage == InstallStage.downloadingDone) {
+        artifact = p.artifact;
+        break;
+      }
     }
 
+    if (artifact == null) {
+      yield const InstallProgress(
+        stage: InstallStage.failed,
+        message: 'Download completed but no artifact was produced.',
+      );
+      return;
+    }
+
+    print(artifact);
+
     // 2) Install phase
-    await for (final p in localDataSource.installBible(bibleId)) {
+    await for (final p in localDataSource.installBible(artifact)) {
       yield p;
       if (p.stage == InstallStage.failed) return;
       if (p.stage == InstallStage.done) return;
     }
 
-    // If installer doesn't explicitly emit done, you can emit it here.
     yield const InstallProgress(stage: InstallStage.done);
   }
 

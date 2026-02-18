@@ -1,10 +1,10 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/settings_window/presentation/widgets/setting_section.dart';
+import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
 
-import '../../../../core/domain/entities/bible_meta.dart';
-import '../../../../core/presentation/widgets/hoverable_container.dart';
+import '../../../../shared/domain/entities/bible_meta.dart';
+import '../../../../shared/presentation/widgets/hoverable_container.dart';
 import '../../domain/entities/bible_download_progress.dart';
 import '../bloc/download_manager/bloc/download_manager_bloc.dart';
 import '../bloc/installed_bibles/installed_bibles_bloc.dart';
@@ -45,7 +45,9 @@ class _RemoteCatalogSectionState extends State<RemoteCatalogSection> {
         if (filter != null) {
           bib = state.bibles.where((b) {
             return b.bibleName.toLowerCase().contains(filter!) ||
-                b.bibleNameLocal.toLowerCase().contains(filter!);
+                b.bibleNameLocal.toLowerCase().contains(filter!) ||
+                (b.langEngName != null &&
+                    b.langEngName!.toLowerCase().contains(filter!));
           }).toList();
         } else {
           bib = state.bibles;
@@ -65,7 +67,7 @@ class _RemoteCatalogSectionState extends State<RemoteCatalogSection> {
         // Group the language alphabetically
 
         return SettingListSection(
-          title: 'Available Bibles',
+          title: 'Repository  ( ${state.bibles.length} )',
           onFilter: (val) {
             setState(() {
               filter = val.isEmpty ? null : val.toLowerCase();
@@ -78,7 +80,6 @@ class _RemoteCatalogSectionState extends State<RemoteCatalogSection> {
           itemCount: groups.values.length,
           separatorBuilder: (_, __) => Divider(
             height: 1,
-            color: Theme.of(context).colorScheme.outline,
           ),
           itemBuilder: (_, index) {
             final String key = keys.elementAt(index);

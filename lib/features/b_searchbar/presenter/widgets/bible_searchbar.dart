@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:the_smyrna_bible_v2/core/presentation/cubit/display_mode_cubit.dart';
-import 'package:the_smyrna_bible_v2/features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
+import 'package:open_scripture/features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
+import 'package:open_scripture/features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
 
+import '../../../bible_display/bible_pane/presentation/models/display_mode.dart';
 import '../bloc/b_searchbar_bloc.dart';
 import '../models/find_intent.dart';
 
@@ -14,12 +14,16 @@ class BSearchbar extends StatefulWidget {
     this.focusNode,
     this.onSubmitted,
     this.onEditComplete,
+    this.height = 42,
+    this.isDense = false,
     super.key,
   });
 
   final FocusNode? focusNode;
   final Function()? onSubmitted;
   final Function()? onEditComplete;
+  final double height;
+  final bool isDense;
 
   @override
   State<BSearchbar> createState() => _BSearchbarState();
@@ -40,98 +44,107 @@ class _BSearchbarState extends State<BSearchbar> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: SizedBox(
-        width: 400,
-        height: 48,
-        child: Stack(
-          children: [
-            //
-            // Searchbar
-            //
-            Positioned.fill(
-              right: 28,
-              child: Shortcuts(
-                shortcuts: {
-                  const DollarActivator(): const FindIntent(),
+    return SizedBox(
+      width: 280,
+      height: widget.height,
+      child: Stack(
+        children: [
+          //
+          // Searchbar
+          //
+          Positioned.fill(
+            child: Shortcuts(
+              shortcuts: {
+                const DollarActivator(): const FindIntent(),
+              },
+              child: Actions(
+                actions: {
+                  FindIntent: CallbackAction<FindIntent>(
+                    onInvoke: (intent) {
+                      setState(() => _findMode = true);
+                      return;
+                    },
+                  ),
                 },
-                child: Actions(
-                  actions: {
-                    FindIntent: CallbackAction<FindIntent>(
-                      onInvoke: (intent) {
-                        setState(() => _findMode = true);
-                        return;
-                      },
-                    ),
+                child: TextField(
+                  focusNode: widget.focusNode,
+                  onChanged: (key) {},
+                  onEditingComplete: () {
+                    if (widget.onEditComplete != null) {
+                      widget.onEditComplete!();
+                    }
                   },
-                  child: TextField(
-                    focusNode: widget.focusNode,
-                    onChanged: (key) {},
-                    onEditingComplete: () {
-                      if (widget.onEditComplete != null) {
-                        widget.onEditComplete!();
-                      }
-                    },
-                    onSubmitted: (input) {
-                      if (widget.onSubmitted != null) widget.onSubmitted!();
+                  onSubmitted: (input) {
+                    if (widget.onSubmitted != null) widget.onSubmitted!();
 
-                      if (_findMode) {
-                        final bibleId = context
-                            .read<PaneManagerCubit>()
-                            .activeBloc()
-                            .state
-                            .bibleId;
+                    if (_findMode) {
+                      final bibleId = context
+                          .read<PaneManagerCubit>()
+                          .activeBloc()
+                          .state
+                          .bibleId;
 
-                        if (bibleId == null) return;
+                      if (bibleId == null) return;
 
-                        // only list view
-                        context
-                            .read<DisplayModeCubit>()
-                            .set(DisplayMode.normal);
-                        context.read<BSearchbarBloc>().add(BSearchbarFind(
-                              bibleId: bibleId,
-                              query: input,
-                            ));
+                      // only list view
+                      context
+                          .read<PaneManagerCubit>()
+                          .activeBloc()
+                          .add(BiblePaneSetDisplayMode(DisplayMode.normal));
+                      context.read<BSearchbarBloc>().add(BSearchbarFind(
+                            bibleId: bibleId,
+                            query: input,
+                          ));
 
-                        return;
-                      }
+                      return;
+                    }
 
-                      BlocProvider.of<BSearchbarBloc>(context)
-                          .add(BSearchbarParseIntent(input));
-                    },
-                    decoration: InputDecoration(
-                      prefixText: !_findMode ? null : '   find:   ',
-                      prefixIcon:
-                          !_findMode ? Icon(Icons.search, size: 20) : null,
-                      contentPadding: const EdgeInsets.only(right: 8),
-                      hintText: !_findMode ? 'Search reference' : null,
-                      border: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.transparent),
-                      ),
-                      hoverColor: Colors.transparent,
-                      focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.transparent),
-                      ),
-                      enabledBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.transparent),
-                      ),
+                    BlocProvider.of<BSearchbarBloc>(context)
+                        .add(BSearchbarParseIntent(input));
+                  },
+                  decoration: InputDecoration(
+                    isDense: widget.isDense,
+                    prefixText: !_findMode ? null : '   find:   ',
+                    prefixIcon: !_findMode
+                        ? Icon(
+                            Icons.search,
+                            size: 18,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          )
+                        : null,
+                    contentPadding: const EdgeInsets.only(right: 36),
+                    hintText: !_findMode ? 'Search reference' : null,
+                    filled: true,
+                    fillColor:
+                        Theme.of(context).colorScheme.surfaceContainerHigh,
+                    border: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                    ),
+                    hoverColor: Colors.transparent,
+                    // focusedBorder: const OutlineInputBorder(
+                    //   borderSide: BorderSide(color: Colors.transparent),
+                    // ),
+                    enabledBorder: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                      borderSide: BorderSide(color: Colors.transparent),
                     ),
                   ),
                 ),
               ),
             ),
-            //
-            // Error notifier
-            //
-            Positioned.fill(
-              right: 10,
-              child: Container(
-                alignment: AlignmentDirectional.centerEnd,
-                child: _ErrorNotifier(),
-              ),
+          ),
+          //
+          // Error notifier
+          //
+          Positioned.fill(
+            right: 10,
+            child: Container(
+              alignment: AlignmentDirectional.centerEnd,
+              child: _ErrorNotifier(),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -201,6 +214,7 @@ class _ErrorNotifierState extends State<_ErrorNotifier> {
           message: state.errorMessage ?? 'error',
           child: const Icon(
             Icons.error_outline_rounded,
+            size: 20,
             color: Color.fromARGB(200, 140, 140, 140),
           ),
         );

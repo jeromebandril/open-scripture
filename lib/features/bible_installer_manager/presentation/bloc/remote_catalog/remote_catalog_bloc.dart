@@ -4,8 +4,8 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:the_smyrna_bible_v2/core/domain/entities/bible_meta.dart';
-import 'package:the_smyrna_bible_v2/features/bible_installer_manager/domain/repositories/bible_manager_repository.dart';
+import 'package:open_scripture/shared/domain/entities/bible_meta.dart';
+import 'package:open_scripture/features/bible_installer_manager/domain/repositories/bible_manager_repository.dart';
 
 part 'remote_catalog_event.dart';
 part 'remote_catalog_state.dart';

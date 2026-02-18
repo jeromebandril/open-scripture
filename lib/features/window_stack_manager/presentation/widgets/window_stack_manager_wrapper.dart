@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:the_smyrna_bible_v2/features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
+import 'package:open_scripture/features/obs_live_overlay/presentation/cubit/obs_overlay/obs_live_overlay_cubit.dart';
+import 'package:open_scripture/features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
+
+import '../../../obs_live_overlay/presentation/cubit/cubit/obs_live_overlay_settings_cubit.dart';
 
 // dev notes: old version was to keep a map of id -> Widget, but I opted
 // to build and destroy the window every time it opens/closes, so I can
@@ -46,33 +49,38 @@ class _WindowStackManagerWrapperState extends State<WindowStackManagerWrapper> {
 
     _entry = OverlayEntry(
       builder: (overlayContext) {
-        return Stack(
-          children: [
-            const ModalBarrier(dismissible: false, color: Color(0x99000000)),
-            BlockSemantics(
-              blocking: true,
-              child: FocusScope(
-                node: _windowFocusScope,
-                child: Center(
-                  child: Material(
-                    type: MaterialType.transparency,
-                    elevation: 24,
-                    borderRadius: BorderRadius.circular(12),
-                    child: Container(
-                        margin: EdgeInsets.all(24),
-                        child:
-                            builder(overlayContext)), // builds ONLY when opened
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider.value(value: context.read<ObsLiveOverlayCubit>()),
+            BlocProvider.value(
+                value: context.read<ObsLiveOverlaySettingsCubit>()),
+          ],
+          child: Stack(
+            children: [
+              const ModalBarrier(dismissible: false, color: Color(0x99000000)),
+              BlockSemantics(
+                blocking: true,
+                child: FocusScope(
+                  node: _windowFocusScope,
+                  child: Center(
+                    child: Material(
+                      type: MaterialType.transparency,
+                      elevation: 24,
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                          margin: EdgeInsets.all(24),
+                          child: builder(overlayContext)),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );
 
-    final overlay = Navigator.of(context, rootNavigator: true).overlay!;
-    overlay.insert(_entry!);
+    Overlay.of(context, rootOverlay: true).insert(_entry!);
 
     // ensure focus is moved after insertion
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -83,7 +91,7 @@ class _WindowStackManagerWrapperState extends State<WindowStackManagerWrapper> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<WindowStackManagerBloc, WindowStackManagerState>(
-      listener: (dContext, state) {
+      listener: (_, state) {
         final builder = state.window;
         if (builder != null) {
           _showEntry(builder);
