@@ -19,7 +19,6 @@ class MyMenuBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('Rebuilding MyMenuBar');
     final screenWidth = MediaQuery.of(context).size.width;
 
     return SizedBox(
@@ -31,13 +30,7 @@ class MyMenuBar extends StatelessWidget {
               context.read<WindowStackManagerBloc>().add(
                     WindowStackManagerOpen(
                       SettingsWindow(
-                        initialRoute: SettingsSection.bibleManager,
-                        onClose: () {
-                          context
-                              .read<WindowStackManagerBloc>()
-                              .add(WindowStackManagerClose());
-                        },
-                      ),
+                          initialRoute: SettingsSection.bibleManager),
                     ),
                   );
             },
@@ -50,11 +43,6 @@ class MyMenuBar extends StatelessWidget {
                     WindowStackManagerOpen(
                       SettingsWindow(
                         initialRoute: SettingsSection.appearance,
-                        onClose: () {
-                          context
-                              .read<WindowStackManagerBloc>()
-                              .add(WindowStackManagerClose());
-                        },
                       ),
                     ),
                   );
@@ -68,11 +56,6 @@ class MyMenuBar extends StatelessWidget {
                     WindowStackManagerOpen(
                       SettingsWindow(
                         initialRoute: SettingsSection.shortcuts,
-                        onClose: () {
-                          context
-                              .read<WindowStackManagerBloc>()
-                              .add(WindowStackManagerClose());
-                        },
                       ),
                     ),
                   );
@@ -84,13 +67,7 @@ class MyMenuBar extends StatelessWidget {
             onTap: () {
               context
                   .read<WindowStackManagerBloc>()
-                  .add(WindowStackManagerOpen(HelpWidget(
-                onClose: () {
-                  context
-                      .read<WindowStackManagerBloc>()
-                      .add(WindowStackManagerClose());
-                },
-              )));
+                  .add(WindowStackManagerOpen(HelpWindow()));
             },
           ),
         if (screenWidth > breakPoints[4])
@@ -101,11 +78,6 @@ class MyMenuBar extends StatelessWidget {
                     WindowStackManagerOpen(
                       SettingsWindow(
                         initialRoute: SettingsSection.about,
-                        onClose: () {
-                          context
-                              .read<WindowStackManagerBloc>()
-                              .add(WindowStackManagerClose());
-                        },
                       ),
                     ),
                   );

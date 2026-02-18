@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
 import '../models/settings_route.dart';
 import 'parts/sidebar_navigator.dart';
 
@@ -56,7 +58,9 @@ class _SettingsWindowState extends State<SettingsWindow> {
           Expanded(
             flex: 4,
             child: _SettingRouteLayout(
-              onClose: widget.onClose,
+              onClose: () => context
+                  .read<WindowStackManagerBloc>()
+                  .add(WindowStackManagerClose()),
               child: Navigator(
                 key: _navKey,
                 initialRoute: routeFor(widget.initialRoute),
