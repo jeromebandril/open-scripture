@@ -45,22 +45,16 @@ extension BibleInstallQueries on db.AppDb {
     List<VerseSpanModel> verseSpans,
   ) async {
     return transaction(() async {
-      print('DB ▶ inserting bible meta');
       // 1) Insert language + bible metadata, get bibleId
       final bibleId = await insertBibleMetadataOnly(meta);
 
       // 2) Insert books
-      print('DB ▶ inserting books (${bookList.length})');
       await insertBooksOnly(bibleId, bookList);
-      print('DB ▶ building book map');
       final bookMap = await _getBookIdMap(bibleId);
 
       // 3) Insert verse segments with spans
-      print('DB ▶ inserting verse segments (${verseSegments.length}) '
-          'and spans (${verseSpans.length})');
       await insertVerseSegmentsWithSpans(
           verseSegments, verseSpans, bookMap, bibleId);
-      print('DB ▶ Import into Database finished');
       return bibleId;
     });
   }
@@ -161,16 +155,12 @@ extension BibleInstallQueries on db.AppDb {
     int bibleId,
   ) async {
     await transaction(() async {
-      print('DB ▶ Call hepler start');
       await insertVerseSegmentsOnly(segments, bookMap);
-      print('DB ▶ Helper call ended');
 
       // Insert verse text for fts5 search
       await populateVerseText(bibleId);
 
-      print('DB ▶ Check and skip because spans length = ${spans.length}');
       if (spans.isEmpty) return;
-      print('why am i here?');
 
       final rows = await getSegmentsByBibleId(bibleId).get();
 

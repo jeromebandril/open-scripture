@@ -16,7 +16,7 @@ class HelpTriggerBtn extends StatelessWidget {
         onPressed: () {
           context
               .read<WindowStackManagerBloc>()
-              .add(WindowStackManagerOpen(HelpWidget(
+              .add(WindowStackManagerOpen(HelpWindow(
             onClose: () {
               context
                   .read<WindowStackManagerBloc>()
@@ -30,8 +30,8 @@ class HelpTriggerBtn extends StatelessWidget {
 
 const double shortcutWidth = 200;
 
-class HelpWidget extends StatelessWidget {
-  const HelpWidget({super.key, this.onClose});
+class HelpWindow extends StatelessWidget {
+  const HelpWindow({super.key, this.onClose});
 
   final Function()? onClose;
 
@@ -57,6 +57,9 @@ class HelpWidget extends StatelessWidget {
                           fontWeight: FontWeight.w600, fontSize: 18))),
               IconButton(
                   onPressed: () {
+                    context
+                        .read<WindowStackManagerBloc>()
+                        .add(WindowStackManagerClose());
                     onClose?.call();
                   },
                   icon: Icon(Icons.close)),
