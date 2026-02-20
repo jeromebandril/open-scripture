@@ -71,11 +71,12 @@ class SettingSection extends StatelessWidget {
               if (itemBuilder != null)
                 Expanded(
                   child: ListView.separated(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
                     separatorBuilder: (_, __) => const Padding(
                       padding: EdgeInsets.symmetric(vertical: settingsSpacing),
                       child: Divider(),
                     ),
-                    shrinkWrap: true,
                     itemCount: itemCount!,
                     itemBuilder: itemBuilder!,
                   ),

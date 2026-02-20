@@ -117,6 +117,17 @@ class _DownloadingProgressBarState extends State<_DownloadingProgressBar> {
     return BlocBuilder<DownloadManagerBloc, DownloadManagerState>(
         builder: (context, state) {
       final progress = state.progressByBibleId[widget.bible.abbreviation]!;
+      final text = switch (progress.stage) {
+        InstallStage.downloading =>
+          '${(progress.fraction * 100).toStringAsFixed(1)}%',
+        InstallStage.installing => 'Installing...',
+        InstallStage.paused =>
+          'Paused ${(progress.fraction * 100).toStringAsFixed(1)}%',
+        InstallStage.failed => 'Failed',
+        InstallStage.done => 'Done',
+        _ => '',
+      };
+
       return Row(children: [
         IconButton(
           onPressed: () {},
@@ -143,10 +154,10 @@ class _DownloadingProgressBarState extends State<_DownloadingProgressBar> {
                   : progress.fraction,
             ),
             Text(
-              "${progress.received}/${progress.total}",
+              text,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                  fontSize: 12, color: Theme.of(context).colorScheme.onPrimary),
+                  fontSize: 12, color: Theme.of(context).colorScheme.primary),
             ),
           ],
         )),

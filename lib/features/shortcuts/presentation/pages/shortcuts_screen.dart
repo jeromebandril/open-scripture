@@ -15,6 +15,7 @@ class ShortcutsScreen extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(42, 0, 42, 42),
       child: SettingSection.builder(
         title: 'Shortcuts',
+
         itemCount: AppCommand.values.length -
             2, // TODO: make a better way to implement private global shortcuts
         itemBuilder: (_, i) {

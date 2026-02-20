@@ -35,9 +35,12 @@ import 'package:open_scripture/features/window_stack_manager/presentation/bloc/w
 import 'features/bible_importer/domain/repository/bible_importer_repo.dart';
 import 'features/obs_live_overlay/data/datasource/overlay_file_system.dart';
 import 'features/obs_live_overlay/data/datasource/overlay_server_manager.dart';
+import 'features/obs_live_overlay/data/datasource/overlay_settings_datasource.dart';
 import 'features/obs_live_overlay/data/repository/overlay_repository_impl.dart';
+import 'features/obs_live_overlay/data/repository/overlay_settings_repo_impl.dart';
+import 'features/obs_live_overlay/domain/entities/overlay_settings.dart';
 import 'features/obs_live_overlay/domain/repostiory/overlay_repository.dart';
-import 'features/obs_live_overlay/presentation/cubit/cubit/obs_live_overlay_settings_cubit.dart';
+import 'features/obs_live_overlay/presentation/cubit/obs_overlay_settinsg/obs_live_overlay_settings_cubit.dart';
 import 'shared/domain/entities/book_names.dart';
 import 'shared/installer/bible/import/formats/osis_importer.dart';
 import 'shared/installer/bible/import/formats/usfx_importer.dart';
@@ -212,15 +215,22 @@ void initBibleSelectorFeature() {
 }
 
 void initObsLiveOverlayFeature() {
+  // Settings
+  sl.registerLazySingleton<SettingsDatasource<OverlaySettings>>(
+    () => OverlaySettingsDatasourceImpl(),
+  );
+  sl.registerLazySingleton<SettingsRepository<OverlaySettings>>(
+    () => OverlaySettingsRepoImpl(localDatasource: sl()),
+  );
+  sl.registerFactory(() => ObsLiveOverlaySettingsCubit(repo: sl()));
+
+  // Server host
   sl.registerLazySingleton<ContentOfSelectedVerseNotifier>(
       () => ContentOfSelectedVerseNotifier());
   sl.registerLazySingleton<OverlayFilesystem>(() => OverlayFilesystem());
   sl.registerLazySingleton<OverlayServerManager>(
       () => OverlayServerManager(fs: sl()));
-
   sl.registerLazySingleton<OverlayRepository>(
       () => OverlayRepositoryImpl(mgr: sl()));
-
   sl.registerFactory(() => ObsLiveOverlayCubit(repo: sl(), notifier: sl()));
-  sl.registerFactory(() => ObsLiveOverlaySettingsCubit());
 }

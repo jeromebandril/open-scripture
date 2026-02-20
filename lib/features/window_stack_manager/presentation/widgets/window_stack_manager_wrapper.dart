@@ -4,7 +4,7 @@ import 'package:open_scripture/features/bible_installer_manager/presentation/blo
 import 'package:open_scripture/features/obs_live_overlay/presentation/cubit/obs_overlay/obs_live_overlay_cubit.dart';
 import 'package:open_scripture/features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
 
-import '../../../obs_live_overlay/presentation/cubit/cubit/obs_live_overlay_settings_cubit.dart';
+import '../../../obs_live_overlay/presentation/cubit/obs_overlay_settinsg/obs_live_overlay_settings_cubit.dart';
 
 class WindowStackManagerWrapper extends StatefulWidget {
   final Widget child;

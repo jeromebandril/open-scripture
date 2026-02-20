@@ -29,7 +29,7 @@ import '../models/app_command_shortcuts.dart';
 //   super.dispose();
 // }
 
-class ShortcutsHost extends StatelessWidget {
+class ShortcutsHost extends StatefulWidget {
   const ShortcutsHost({
     super.key,
     required this.rootFocusNode,
@@ -44,6 +44,32 @@ class ShortcutsHost extends StatelessWidget {
   final FocusNode historyFocusNode;
 
   @override
+  State<ShortcutsHost> createState() => _ShortcutsHostState();
+}
+
+class _ShortcutsHostState extends State<ShortcutsHost> {
+  final FocusScopeNode _scopeNode =
+      FocusScopeNode(debugLabel: 'app_shortcuts_scope');
+
+  @override
+  void initState() {
+    super.initState();
+
+    FocusManager.instance.addListener(() {
+      final p = FocusManager.instance.primaryFocus;
+      debugPrint('PRIMARY: ${p?.debugLabel}  '
+          'root.hasFocus=${widget.rootFocusNode.hasFocus} '
+          'root.hasPrimary=${widget.rootFocusNode.hasPrimaryFocus}');
+    });
+  }
+
+  @override
+  void dispose() {
+    _scopeNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final dispatcher = AppCommandDispatcher(
       paneManagerCubit: context.read<PaneManagerCubit>(),
@@ -51,9 +77,9 @@ class ShortcutsHost extends StatelessWidget {
       historyVisibilityCubit: context.read<HistoryVisibilityCubit>(),
       toolbarCubit: context.read<ToolbarCubit>(),
       fullscreenCubit: context.read<FullscreenCubit>(),
-      rootFocusNode: rootFocusNode,
-      searchFocusNode: searchFocusNode,
-      historyFocusNode: historyFocusNode,
+      rootFocusNode: widget.rootFocusNode,
+      searchFocusNode: widget.searchFocusNode,
+      historyFocusNode: widget.historyFocusNode,
     );
 
     final actions = <Type, Action<Intent>>{
@@ -66,7 +92,7 @@ class ShortcutsHost extends StatelessWidget {
     };
 
     return GestureDetector(
-      behavior: HitTestBehavior.deferToChild,
+      behavior: HitTestBehavior.translucent,
       onTap: () {
         // final primary = FocusManager.instance.primaryFocus;
         // If the user is currently editing text, do not steal focus.
@@ -76,17 +102,17 @@ class ShortcutsHost extends StatelessWidget {
         // If focus is already within this subtree, you can skip.
         // Minimal safe rule: ensure we always have a focus anchor.
         //if (!rootFocusNode.hasFocus) {
-        rootFocusNode.requestFocus();
+        widget.rootFocusNode.requestFocus();
         //}
       },
-      child: Actions(
-        actions: actions,
-        child: Shortcuts(
-          shortcuts: buildShortcutIntentMap(appCommandShortcuts),
+      child: Shortcuts(
+        shortcuts: buildShortcutIntentMap(appCommandShortcuts),
+        child: Actions(
+          actions: actions,
           child: Focus(
-            focusNode: rootFocusNode,
+            focusNode: widget.rootFocusNode,
             autofocus: true,
-            child: child,
+            child: widget.child,
           ),
         ),
       ),

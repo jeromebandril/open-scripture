@@ -17,7 +17,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
 import 'features/b_searchbar/presenter/widgets/bible_searchbar.dart';
 import 'features/b_searchbar/presenter/widgets/show_history_button.dart';
-import 'features/obs_live_overlay/presentation/cubit/cubit/obs_live_overlay_settings_cubit.dart';
+import 'features/obs_live_overlay/presentation/cubit/obs_overlay_settinsg/obs_live_overlay_settings_cubit.dart';
 import 'features/three_tap_navigator/presentation/widgets/three_tap_navigator.dart';
 import 'features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
 import 'features/bible_display/bible_pane/presentation/navigation_bus.dart';

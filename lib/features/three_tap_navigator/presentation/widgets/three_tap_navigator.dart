@@ -89,19 +89,24 @@ class _ThreeTapNavigatorTriggerState extends State<ThreeTapNavigatorTrigger> {
                       onTap: () => _controller.show(),
                       mouseCursor: SystemMouseCursors.click,
                       child: SizedBox(
-                        width: 100,
+                        width: 48,
                         child: Center(
                           child: MouseRegion(
-                            child: Text(
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                                fontFamily: 'IBM Plex Mono',
-                                fontWeight: FontWeight.w500,
-                              ),
-                              state.referenceResult != null
-                                  ? state.referenceResult.toString()
-                                  : '-',
+                            child: Icon(
+                              Icons.menu_book_sharp,
+                              size: 16,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
+                            // Text(
+                            //   style: TextStyle(
+                            //     color: Theme.of(context).colorScheme.primary,
+                            //     fontFamily: 'IBM Plex Mono',
+                            //     fontWeight: FontWeight.w500,
+                            //   ),
+                            //   state.referenceResult != null
+                            //       ? state.referenceResult.toString()
+                            //       : '-',
+                            // ),
                           ),
                         ),
                       ),
