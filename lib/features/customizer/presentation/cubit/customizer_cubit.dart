@@ -4,7 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:open_scripture/features/customizer/domain/entities/bible_pane_presentation_theme_settings.dart';
 import 'package:open_scripture/features/customizer/domain/entities/bible_view_list_theme_settings.dart';
-import 'package:open_scripture/features/customizer/domain/repo/customizer_repo.dart';
+import 'package:open_scripture/shared/domain/repositories/settings_repository.dart';
 
 import '../../domain/entities/app_theme_settings.dart';
 import '../../domain/entities/bible_pane_general_theme_settings.dart';
@@ -19,12 +19,11 @@ class CustomizerCubit extends Cubit<CustomizerState> {
     loadTheme();
   }
 
-  final CustomizerRepo repo;
+  final SettingsRepository<CustomizerState> repo;
   Timer? _saveDebounce;
 
   void loadTheme() async {
-    final eitherFailureOrTheme = await repo.loadTheme();
-
+    final eitherFailureOrTheme = await repo.loadSettings();
     eitherFailureOrTheme.fold(
       (f) => print('no theme found'),
       (theme) => emit(theme),
@@ -32,7 +31,7 @@ class CustomizerCubit extends Cubit<CustomizerState> {
   }
 
   void saveTheme() async {
-    final eitherFailOrSuccess = await repo.saveTheme(state);
+    final eitherFailOrSuccess = await repo.saveSettings(state);
 
     eitherFailOrSuccess.fold((f) => print('errore!'), (_) {
       print("save succeded");

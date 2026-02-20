@@ -4,6 +4,7 @@ import 'package:open_scripture/features/bible_display/bible_pane/presentation/mo
 import 'package:open_scripture/features/customizer/domain/entities/app_font_weight.dart';
 import 'package:open_scripture/features/customizer/domain/entities/bible_pane_general_theme_settings.dart';
 import 'package:open_scripture/features/customizer/presentation/widgets/bible_pane_preview.dart';
+import 'package:open_scripture/features/font_loader/presentation/widgets/font_loader_selector.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_bool.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_color.dart';
@@ -203,15 +204,24 @@ class _BiblePaneGeneralCustomizerScreenState
                     Setting(
                         label: 'Text Font',
                         description: 'Set font for the verse text',
-                        child: SettingInputText(
-                          prefixIcon: Icons.text_fields_rounded,
-                          onSubmitted: (font) {
-                            cubit.updateTheme(
-                                paneTheme: (p) => p.copyWith(textFont: font));
-                          },
-                          value: context.select(
-                            (CustomizerCubit c) => c.state.pane.textFont,
-                          ),
+                        child: Row(
+                          spacing: 4,
+                          children: [
+                            FontLoaderSelector(),
+                            Expanded(
+                              child: SettingInputText(
+                                prefixIcon: Icons.text_fields_rounded,
+                                onSubmitted: (font) {
+                                  cubit.updateTheme(
+                                      paneTheme: (p) =>
+                                          p.copyWith(textFont: font));
+                                },
+                                value: context.select(
+                                  (CustomizerCubit c) => c.state.pane.textFont,
+                                ),
+                              ),
+                            ),
+                          ],
                         )),
                     Setting(
                         label: 'Text Font Weight',

@@ -69,7 +69,7 @@ class _BiblePaneCustomizerScreenState extends State<BiblePaneCustomizerScreen> {
                   _index = id;
                   _previewMode = DisplayMode.normal;
                 }),
-                icon: Icon(Icons.list),
+                icon: const Icon(Icons.list),
                 title: 'List view',
               ),
               SettingSubpageNavigatorData(
@@ -78,7 +78,7 @@ class _BiblePaneCustomizerScreenState extends State<BiblePaneCustomizerScreen> {
                   _index = id;
                   _previewMode = DisplayMode.presentation;
                 }),
-                icon: Icon(Icons.screenshot_monitor_rounded),
+                icon: const Icon(Icons.screenshot_monitor_rounded),
                 title: 'Presentation view',
               ),
             ],
@@ -99,31 +99,27 @@ class _BiblePaneCustomizerScreenState extends State<BiblePaneCustomizerScreen> {
                   children: [
                     SettingSection(
                       title: '${_previewTitle()} Preview',
-                      children: [
-                        Center(
-                            child: BiblePanePreview(
-                          mode: _previewMode,
-                        )),
-                      ],
+                      children: [BiblePanePreview(mode: _previewMode)],
                     ),
                     if (_index == 0)
                       Container(
-                        padding: EdgeInsets.only(left: 32),
+                        padding: const EdgeInsets.only(left: 32),
                         child: Row(
                           children: [
-                            Text('modes: '),
+                            const Text('modes: '),
                             IconButton(
                                 tooltip: 'List',
                                 onPressed: () => setState(() {
                                       _previewMode = DisplayMode.normal;
                                     }),
-                                icon: Icon(Icons.list)),
+                                icon: const Icon(Icons.list)),
                             IconButton(
                                 tooltip: 'Presentation',
                                 onPressed: () => setState(() {
                                       _previewMode = DisplayMode.presentation;
                                     }),
-                                icon: Icon(Icons.screenshot_monitor_rounded))
+                                icon: const Icon(
+                                    Icons.screenshot_monitor_rounded))
                           ],
                         ),
                       )

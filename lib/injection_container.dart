@@ -4,6 +4,7 @@ import 'package:open_scripture/features/font_loader/presentation/cubit/font_load
 import 'package:open_scripture/features/obs_live_overlay/presentation/cubit/obs_overlay/obs_live_overlay_cubit.dart';
 import 'package:open_scripture/features/text_scaler/cubit/text_scaler_cubit.dart';
 import 'package:open_scripture/shared/data/datasources/settings_datasource.dart';
+import 'package:open_scripture/shared/domain/repositories/settings_repository.dart';
 import 'package:open_scripture/shared/installer/bible/import/importer_registry.dart';
 import 'package:open_scripture/shared/presentation/cubit/history_visibility_cubit.dart';
 import 'package:open_scripture/shared/presentation/cubit/fullscreen_cubit.dart';
@@ -26,7 +27,6 @@ import 'package:open_scripture/features/bible_installer_manager/domain/repositor
 import 'package:open_scripture/features/bible_installer_manager/presentation/bloc/installed_bibles/installed_bibles_bloc.dart';
 import 'package:open_scripture/features/customizer/data/datasources/customizer_datasource.dart';
 import 'package:open_scripture/features/customizer/data/repo/customizer_repo_impl.dart';
-import 'package:open_scripture/features/customizer/domain/repo/customizer_repo.dart';
 import 'package:open_scripture/features/customizer/presentation/cubit/customizer_cubit.dart';
 import 'package:open_scripture/features/three_tap_navigator/data/repository/three_tap_navigator_repository_impl.dart';
 import 'package:open_scripture/features/three_tap_navigator/domain/repository/three_tap_navigator_repository.dart';
@@ -106,7 +106,7 @@ void initCustomizerFeature() {
   sl.registerLazySingleton<SettingsDatasource<CustomizerState>>(
     () => CustomizerDatasourceImpl(),
   );
-  sl.registerLazySingleton<CustomizerRepo>(
+  sl.registerLazySingleton<SettingsRepository<CustomizerState>>(
     () => CustomizerRepoImpl(localDatasource: sl()),
   );
   sl.registerFactory(
