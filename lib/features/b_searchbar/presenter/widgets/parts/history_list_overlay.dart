@@ -159,7 +159,7 @@ class _HistoryItemState extends State<_HistoryItem> {
                   Expanded(
                     child: TextButton(
                       onPressed: () {
-                        context.read<PaneManagerCubit>().activeBloc().add(
+                        context.read<PaneManagerCubit>().activePane().bloc.add(
                               BiblePaneDisplayChapter(
                                   ref: widget.historyData.ref),
                             );

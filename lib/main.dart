@@ -251,7 +251,8 @@ class _HomeState extends State<Home> {
 
                           context
                               .read<PaneManagerCubit>()
-                              .activeBloc()
+                              .activePane()
+                              .bloc
                               .add(event);
                         },
                         child: MultipleBiblePanes(),

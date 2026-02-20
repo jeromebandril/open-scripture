@@ -51,9 +51,9 @@ class MultipleBiblePanes extends StatelessWidget {
                         .setActive(state.panes[i].id),
                     child: BiblePane(
                       uniqueId: state.panes[i].id,
-                      bloc: context
+                      blocComponents: context
                           .read<PaneManagerCubit>()
-                          .blocFor(state.panes[i].id),
+                          .paneBlocsFor(state.panes[i].id),
                     ),
                   ),
                 ),

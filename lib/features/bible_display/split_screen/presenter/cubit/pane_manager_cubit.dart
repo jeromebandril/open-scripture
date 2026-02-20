@@ -4,8 +4,10 @@ import 'package:open_scripture/features/bible_display/bible_pane/presentation/na
 import 'package:open_scripture/injection_container.dart';
 import 'package:open_scripture/shared/presentation/notifiers/selected_verse_content_notifier.dart';
 
+import '../../../../text_scaler/cubit/text_scaler_cubit.dart';
 import '../../../bible_pane/domain/repositories/bible_repository.dart';
 import '../../../bible_pane/presentation/bloc/bible_pane_bloc.dart';
+import '../../../bible_selector/presenter/bloc/bloc/bible_selector_bloc.dart';
 import '../models/split_pane_data.dart';
 
 part 'pane_manager_state.dart';
@@ -27,10 +29,10 @@ class PaneManagerCubit extends Cubit<PaneManagerState> {
   final BibleRepository _repo;
 
   // Registry: NOT in state
-  final Map<int, BiblePaneBloc> _blocs = {};
+  final Map<int, PaneBlocComponents> _blocs = {};
 
-  BiblePaneBloc blocFor(int paneId) => _blocs[paneId]!;
-  BiblePaneBloc activeBloc() => blocFor(state.activePaneId);
+  PaneBlocComponents paneBlocsFor(int paneId) => _blocs[paneId]!;
+  PaneBlocComponents activePane() => paneBlocsFor(state.activePaneId);
 
   void setActive(int paneId) {
     if (paneId == state.activePaneId) return;
@@ -80,11 +82,15 @@ class PaneManagerCubit extends Cubit<PaneManagerState> {
   void _ensureBloc(int paneId) {
     _blocs.putIfAbsent(
       paneId,
-      () => BiblePaneBloc(
-        paneId: paneId,
-        repo: _repo,
-        navBus: sl<NavigationBus>(),
-        notifier: sl<ContentOfSelectedVerseNotifier>(),
+      () => PaneBlocComponents(
+        bloc: BiblePaneBloc(
+          paneId: paneId,
+          repo: _repo,
+          navBus: sl<NavigationBus>(),
+          notifier: sl<ContentOfSelectedVerseNotifier>(),
+        ),
+        textScalerCubit: sl<TextScalerCubit>(),
+        bibleSelectorCubit: sl<BibleSelectorBloc>(),
       ),
     );
   }

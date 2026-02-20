@@ -4,23 +4,22 @@ import 'package:open_scripture/features/bible_display/bible_pane/presentation/cu
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/widgets/bible_view_list.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/widgets/parts/pane_info.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/widgets/bible_view_presentation.dart';
-import 'package:open_scripture/features/bible_display/bible_selector/presenter/widget/bible_selector.dart';
+import 'package:open_scripture/features/bible_display/split_screen/presenter/models/split_pane_data.dart';
 import 'package:open_scripture/features/customizer/presentation/cubit/customizer_cubit.dart';
-import 'package:open_scripture/features/text_scaler/cubit/text_scaler_cubit.dart';
 
-import '../../../../../injection_container.dart';
 import '../../../../text_scaler/presentation/widgets/text_scaler_host.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
+import '../../../bible_selector/presenter/widget/bible_selector.dart';
 import '../bloc/bible_pane_bloc.dart';
 import '../models/display_mode.dart';
 
 class BiblePane extends StatelessWidget {
   final int uniqueId;
-  final BiblePaneBloc bloc;
+  final PaneBlocComponents blocComponents;
 
   const BiblePane({
     required this.uniqueId,
-    required this.bloc,
+    required this.blocComponents,
     super.key,
   });
 
@@ -42,15 +41,17 @@ class BiblePane extends StatelessWidget {
       ),
       child: MultiBlocProvider(
         providers: [
-          BlocProvider.value(value: bloc),
+          BlocProvider.value(value: blocComponents.bloc),
+          BlocProvider.value(value: blocComponents.textScalerCubit),
+          BlocProvider.value(value: blocComponents.bibleSelectorCubit),
           BlocProvider(create: (_) => SelectedWordCubit()),
-          BlocProvider(create: (_) => sl<TextScalerCubit>()),
         ],
         child: BlocConsumer<BiblePaneBloc, BiblePaneState>(
           listenWhen: (prev, curr) =>
               prev.bibleId != curr.bibleId && curr.reference != null,
           listener: (BuildContext context, BiblePaneState state) {
-            bloc.add(BiblePaneDisplayChapter(ref: state.reference!));
+            blocComponents.bloc
+                .add(BiblePaneDisplayChapter(ref: state.reference!));
           },
           buildWhen: (prev, curr) =>
               prev.status != curr.status ||
@@ -64,8 +65,9 @@ class BiblePane extends StatelessWidget {
               case BiblePaneStatus.initial:
                 if (state.bibleId == null) {
                   return BibleSelector(
+                    bloc: blocComponents.bibleSelectorCubit,
                     onConfirm: (bibleId) {
-                      bloc.add(BiblePaneOpen(bibleId));
+                      blocComponents.bloc.add(BiblePaneOpen(bibleId));
                     },
                   );
                 }
@@ -95,7 +97,7 @@ class BiblePane extends StatelessWidget {
                     //
                     Positioned.fill(
                       child: TextScalerHost(
-                        textScalerCubit: context.read<TextScalerCubit>(),
+                        textScalerCubit: blocComponents.textScalerCubit,
                         initialiSize: 14,
                         child: BlocSelector<BiblePaneBloc, BiblePaneState,
                             DisplayMode>(

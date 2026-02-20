@@ -9,17 +9,14 @@ import '../bloc/bloc/bible_selector_bloc.dart';
 
 class BibleSelector extends StatelessWidget {
   final void Function(int selectedBibleId) onConfirm;
+  final BibleSelectorBloc? bloc;
 
-  const BibleSelector({required this.onConfirm, super.key});
+  const BibleSelector({required this.onConfirm, this.bloc, super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) {
-        final bloc = sl<BibleSelectorBloc>(); // or BibleListBloc(repo: sl())
-        bloc.add(BibleSelectorInit());
-        return bloc;
-      },
+    return BlocProvider.value(
+      value: bloc ?? sl<BibleSelectorBloc>(),
       child: _BibleSelectorBody(onConfirm: onConfirm),
     );
   }

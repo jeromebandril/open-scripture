@@ -150,7 +150,7 @@ class _ThreeTapNavigatorOverlayState extends State<_ThreeTapNavigatorOverlay> {
   void initState() {
     super.initState();
 
-    bibleId = context.read<PaneManagerCubit>().activeBloc().state.bibleId;
+    bibleId = context.read<PaneManagerCubit>().activePane().bloc.state.bibleId;
     context.read<ThreeTapNavigatorCubit>().loadBooks(bibleId);
   }
 

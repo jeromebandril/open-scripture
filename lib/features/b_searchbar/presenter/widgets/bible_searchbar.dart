@@ -80,7 +80,8 @@ class _BSearchbarState extends State<BSearchbar> {
                     if (_findMode) {
                       final bibleId = context
                           .read<PaneManagerCubit>()
-                          .activeBloc()
+                          .activePane()
+                          .bloc
                           .state
                           .bibleId;
 
@@ -89,7 +90,8 @@ class _BSearchbarState extends State<BSearchbar> {
                       // only list view
                       context
                           .read<PaneManagerCubit>()
-                          .activeBloc()
+                          .activePane()
+                          .bloc
                           .add(BiblePaneSetDisplayMode(DisplayMode.normal));
                       context.read<BSearchbarBloc>().add(BSearchbarFind(
                             bibleId: bibleId,
