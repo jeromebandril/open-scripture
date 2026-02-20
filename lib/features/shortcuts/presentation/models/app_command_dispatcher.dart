@@ -63,18 +63,17 @@ class AppCommandDispatcher {
     AppCommand.addNextVerseToSelection: () => _extendSelection(1),
     AppCommand.removeVerseFromSelection: () => _extendSelection(-1),
     AppCommand.changeBible: () {
-      final bloc = paneManagerCubit.activeBloc();
+      final pane = paneManagerCubit.activePane();
 
       // undo/redo behavior: if the current pane has a bible, close it. otherwise, reopen the last closed bible.
-      if (_bibleId != null && bloc.state.bibleId == null) {
-        bloc.add(BiblePaneOpen(_bibleId!));
+      if (_bibleId != null && pane.bloc.state.bibleId == null) {
+        pane.bloc.add(BiblePaneOpen(_bibleId!));
         _bibleId = null;
         return;
       }
 
-      _bibleId = bloc.state.bibleId;
-      bloc.add(BiblePaneCloseBible());
-      //bibleSelectorBloc.add(BibleSelectorSelect(_bibleId!));
+      _bibleId = pane.bloc.state.bibleId;
+      pane.bloc.add(BiblePaneCloseBible());
     },
     AppCommand.switchDisplayMode: () => _cycleDisplayMode(),
     AppCommand.displayChapterOfSelected: () => _displayChapterOfSelected(),
@@ -84,7 +83,7 @@ class AppCommandDispatcher {
   };
 
   T? _withActiveRef<T>(T Function(BiblePaneBloc bloc, BibleRef ref) fn) {
-    final bloc = paneManagerCubit.activeBloc();
+    final bloc = paneManagerCubit.activePane().bloc;
     final ref = bloc.state.reference;
     if (ref == null) return null;
     return fn(bloc, ref);
@@ -166,7 +165,7 @@ class AppCommandDispatcher {
   }
 
   void _cycleDisplayMode() {
-    final bloc = paneManagerCubit.activeBloc();
+    final bloc = paneManagerCubit.activePane().bloc;
     final modes = DisplayMode.values;
     final i = modes.indexOf(bloc.state.dMode);
     final next = (i < modes.length - 1) ? i + 1 : 0;
@@ -174,7 +173,7 @@ class AppCommandDispatcher {
   }
 
   void _displayChapterOfSelected() {
-    final bloc = paneManagerCubit.activeBloc();
+    final bloc = paneManagerCubit.activePane().bloc;
     if (!bloc.state.isMixed) return;
 
     final ref = bloc.state.reference;
