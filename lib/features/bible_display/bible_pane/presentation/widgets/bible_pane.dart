@@ -58,84 +58,70 @@ class BiblePane extends StatelessWidget {
               prev.errorMessage != curr.errorMessage ||
               prev.segments != curr.segments,
           builder: (context, state) {
-            switch (state.status) {
+            final Widget widget = switch (state.status) {
               //
               // INITIAL
-              //
-              case BiblePaneStatus.initial:
-                if (state.bibleId == null) {
-                  return BibleSelector(
-                    bloc: blocComponents.bibleSelectorCubit,
-                    onConfirm: (bibleId) {
-                      blocComponents.bloc.add(BiblePaneOpen(bibleId));
-                    },
-                  );
-                }
-                return SizedBox();
+              BiblePaneStatus.initial => BibleSelector(
+                  bloc: blocComponents.bibleSelectorCubit,
+                  onConfirm: (bibleId) {
+                    blocComponents.bloc.add(BiblePaneOpen(bibleId));
+                  },
+                ),
               //
               // LOADING SCREEN
-              //
-              case BiblePaneStatus.loading:
-                return Center(child: CircularProgressIndicator());
+              BiblePaneStatus.loading =>
+                Center(child: CircularProgressIndicator()),
               //
               // ERROR SCREEN
-              //
-              case BiblePaneStatus.error:
-                return Center(child: Text(state.errorMessage ?? 'Error'));
+              BiblePaneStatus.error =>
+                Center(child: Text(state.errorMessage ?? 'Error')),
               //
               // READY SCREEN
-              //
-              case BiblePaneStatus.ready:
-                if (state.segments.isEmpty) {
-                  return Center(child: Text("Ready :)"));
-                }
+              BiblePaneStatus.ready => state.segments.isEmpty
+                  ? Center(child: Text("Ready :)"))
+                  : TextScalerHost(
+                      textScalerCubit: blocComponents.textScalerCubit,
+                      initialiSize: 14,
+                      child: BlocSelector<BiblePaneBloc, BiblePaneState,
+                          DisplayMode>(
+                        selector: (s) => s.dMode,
+                        builder: (context, dMode) {
+                          return dMode == DisplayMode.presentation
+                              //
+                              // Presentation mode
+                              //
+                              ? BibleViewPresentation(
+                                  uniqueId: uniqueId,
+                                  segments: state.segments,
+                                )
+                              //
+                              // Normal mode
+                              //
+                              : BibleViewList(
+                                  uniqueId: uniqueId,
+                                  segments: state.segments,
+                                );
+                        },
+                      ),
+                    ),
+            };
 
-                return Stack(
-                  children: [
-                    //
-                    // MAIN VIEW
-                    //
-                    Positioned.fill(
-                      child: TextScalerHost(
-                        textScalerCubit: blocComponents.textScalerCubit,
-                        initialiSize: 14,
-                        child: BlocSelector<BiblePaneBloc, BiblePaneState,
-                            DisplayMode>(
-                          selector: (s) => s.dMode,
-                          builder: (context, dMode) {
-                            return dMode == DisplayMode.presentation
-                                //
-                                // Presentation mode
-                                //
-                                ? BibleViewPresentation(
-                                    uniqueId: uniqueId,
-                                    segments: state.segments,
-                                  )
-                                //
-                                // Normal mode
-                                //
-                                : BibleViewList(
-                                    uniqueId: uniqueId,
-                                    segments: state.segments,
-                                  );
-                          },
-                        ),
-                      ),
-                    ),
-                    //
-                    // PANE STATUS INFO
-                    //
-                    DefaultTextStyle(
-                      style: TextStyle(inherit: false),
-                      child: Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: PaneInfo(),
-                      ),
-                    ),
-                  ],
-                );
-            }
+            return Stack(
+              children: [
+                Positioned.fill(child: widget),
+                //
+                // PANE STATUS INFO
+                //
+                DefaultTextStyle(
+                  style: TextStyle(inherit: false),
+                  child: Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: PaneInfo(),
+                  ),
+                ),
+              ],
+            );
           },
         ),
       ),
