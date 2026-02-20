@@ -13,6 +13,8 @@ enum AppCommand {
   toggleToolbar,
   toggleFullscreen,
   switchDisplayMode,
+  zoomIn,
+  zoomOut,
   // private shortcuts
   // do not show as shortcut in the app
   unfocusSearch,
@@ -85,5 +87,13 @@ const Map<AppCommand, AppCommandInfo> appCommandInfo = {
   AppCommand.switchDisplayMode: AppCommandInfo(
     label: 'Switch Display Mode',
     description: 'Switch bible view render type',
+  ),
+  AppCommand.zoomIn: AppCommandInfo(
+    label: 'Zoom In',
+    description: 'Increase the zoom level of the current view.',
+  ),
+  AppCommand.zoomOut: AppCommandInfo(
+    label: 'Zoom Out',
+    description: 'Decrease the zoom level of the current view.',
   ),
 };

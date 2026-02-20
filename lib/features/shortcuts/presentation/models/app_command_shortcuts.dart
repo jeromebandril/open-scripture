@@ -91,4 +91,12 @@ const Map<AppCommand, SingleActivator> appCommandShortcuts = {
     LogicalKeyboardKey.keyW,
     control: true,
   ),
+  AppCommand.zoomIn: SingleActivator(
+    LogicalKeyboardKey.equal,
+    control: true,
+  ),
+  AppCommand.zoomOut: SingleActivator(
+    LogicalKeyboardKey.minus,
+    control: true,
+  ),
 };

@@ -82,6 +82,10 @@ class AppCommandDispatcher {
     AppCommand.addParallelPane: () => paneManagerCubit.splitNewPane(),
     AppCommand.closeCurrentPane: () =>
         paneManagerCubit.closePane(paneManagerCubit.state.activePaneId),
+    AppCommand.zoomIn: () =>
+        paneManagerCubit.activePane().textScalerCubit.zoomIn(),
+    AppCommand.zoomOut: () =>
+        paneManagerCubit.activePane().textScalerCubit.zoomOut(),
   };
 
   T? _withActiveRef<T>(T Function(BiblePaneBloc bloc, BibleRef ref) fn) {
