@@ -28,7 +28,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
             return Column(
               children: [
                 SettingSection(
-                  title: 'OBS Live Overlay (beta) $enableFeature',
+                  title: 'OBS Live Overlay (beta)',
                   children: [
                     Text(
                         'When activated, a red circle will appear on the upper-right corner of the app'),
