@@ -1,7 +1,9 @@
 import 'package:get_it/get_it.dart';
 import 'package:open_scripture/features/bible_importer/data/repository/bible_importer_repo_impl.dart';
+import 'package:open_scripture/features/font_loader/presentation/cubit/font_loader_cubit.dart';
 import 'package:open_scripture/features/obs_live_overlay/presentation/cubit/obs_overlay/obs_live_overlay_cubit.dart';
 import 'package:open_scripture/features/text_scaler/cubit/text_scaler_cubit.dart';
+import 'package:open_scripture/shared/data/datasources/settings_datasource.dart';
 import 'package:open_scripture/shared/installer/bible/import/importer_registry.dart';
 import 'package:open_scripture/shared/presentation/cubit/history_visibility_cubit.dart';
 import 'package:open_scripture/shared/presentation/cubit/fullscreen_cubit.dart';
@@ -84,6 +86,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => NavigationBus());
   sl.registerFactory(() => ToolbarCubit());
   sl.registerFactory(() => FullscreenCubit());
+  sl.registerFactory(() => FontLoaderCubit());
   sl.registerFactory(() => HistoryVisibilityCubit());
 }
 
@@ -100,7 +103,7 @@ void initBibleImporterFeature() {
 }
 
 void initCustomizerFeature() {
-  sl.registerLazySingleton<CustomizerDatasource>(
+  sl.registerLazySingleton<SettingsDatasource<CustomizerState>>(
     () => CustomizerDatasourceImpl(),
   );
   sl.registerLazySingleton<CustomizerRepo>(
