@@ -8,7 +8,7 @@ import 'package:open_scripture/features/settings_window/presentation/widgets/set
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_number.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
 
-import '../cubit/cubit/obs_live_overlay_settings_cubit.dart';
+import '../cubit/obs_overlay_settinsg/obs_live_overlay_settings_cubit.dart';
 
 class ObsLiveOverlayPage extends StatelessWidget {
   const ObsLiveOverlayPage({super.key});
@@ -23,10 +23,40 @@ class ObsLiveOverlayPage extends StatelessWidget {
           buildWhen: (curr, prev) =>
               curr.isRunning != prev.isRunning || curr.busy != prev.busy,
           builder: (ctx, state) {
+            final enableFeature = ctx.select((ObsLiveOverlaySettingsCubit c) =>
+                c.state.settings.enableFeature);
             return Column(
               children: [
                 SettingSection(
-                  title: 'OBS Live Overlay preferences (beta)',
+                  title: 'OBS Live Overlay (beta) $enableFeature',
+                  children: [
+                    Text(
+                        'When activated, a red circle will appear on the upper-right corner of the app'),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const ObsLiveOverlayIndicator(),
+                        TextButton(
+                          onPressed: state.busy || !enableFeature
+                              ? null
+                              : () => state.isRunning
+                                  ? ctx.read<ObsLiveOverlayCubit>().stopServer()
+                                  : ctx.read<ObsLiveOverlayCubit>().startServer(
+                                      ctx
+                                          .read<ObsLiveOverlaySettingsCubit>()
+                                          .state
+                                          .settings
+                                          .port),
+                          child: state.isRunning
+                              ? const Text('Turn OBS Live Overlay Off')
+                              : const Text('Turn OBS Live Overlay On'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                SettingSection(
+                  title: 'Preferences',
                   children: [
                     Setting(
                         label: 'Enable OBS Live Overlay',
@@ -34,12 +64,44 @@ class ObsLiveOverlayPage extends StatelessWidget {
                             'Host a web page that OBS can listen to display as overlay graphic',
                         child: SettingInputBool(
                           isDisabled: state.isRunning || state.busy,
-                          value: ctx.select((ObsLiveOverlaySettingsCubit c) =>
-                              c.state.enableFeature),
+                          value: enableFeature,
                           onChanged: (val) {
                             ctx
                                 .read<ObsLiveOverlaySettingsCubit>()
-                                .setEnabled(val);
+                                .updateSettings((settings) =>
+                                    settings.copyWith(enableFeature: val));
+                          },
+                        )),
+                    Setting(
+                        // Not implemented yet, just a placeholder for now
+                        label: 'Enable auto start',
+                        description:
+                            'Automatically start the OBS Live Overlay when the app starts',
+                        child: SettingInputBool(
+                          isDisabled: false, //state.isRunning || state.busy,
+                          value: false,
+                          // ctx.select((ObsLiveOverlaySettingsCubit c) =>
+                          //     c.state.settings.enableAutoStart),
+                          onChanged: (val) {
+                            // ctx
+                            //     .read<ObsLiveOverlaySettingsCubit>()
+                            //     .updateSettings((settings) =>
+                            //         settings.copyWith(enableAutoStart: val));
+                          },
+                        )),
+                    Setting(
+                        label: 'Enable manual control',
+                        description:
+                            'Decide if to pass the selected verse to the overlay manually',
+                        child: SettingInputBool(
+                          isDisabled: state.isRunning || state.busy,
+                          value: ctx.select((ObsLiveOverlaySettingsCubit c) =>
+                              c.state.settings.enableManualControl),
+                          onChanged: (val) {
+                            ctx
+                                .read<ObsLiveOverlaySettingsCubit>()
+                                .updateSettings((settings) => settings.copyWith(
+                                    enableManualControl: val));
                           },
                         )),
                     Setting(
@@ -49,12 +111,13 @@ class ObsLiveOverlayPage extends StatelessWidget {
                           isDisabled: state.isRunning || state.busy,
                           min: 49152,
                           max: 65535,
-                          value: ctx.select(
-                              (ObsLiveOverlaySettingsCubit c) => c.state.port),
+                          value: ctx.select((ObsLiveOverlaySettingsCubit c) =>
+                              c.state.settings.port),
                           onSubmitted: (p) {
                             ctx
                                 .read<ObsLiveOverlaySettingsCubit>()
-                                .setPort(p.toInt());
+                                .updateSettings((settings) =>
+                                    settings.copyWith(port: p.toInt()));
                           },
                         )),
                     Setting(
@@ -80,33 +143,6 @@ class ObsLiveOverlayPage extends StatelessWidget {
                             ],
                           );
                         }))
-                  ],
-                ),
-                SettingSection(
-                  title: '',
-                  children: [
-                    Text(
-                        'When activated, a red circle will appear on the upper-right corner of the app'),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const ObsLiveOverlayIndicator(),
-                        TextButton(
-                          onPressed: () => state.busy
-                              ? null
-                              : state.isRunning
-                                  ? ctx.read<ObsLiveOverlayCubit>().stopServer()
-                                  : ctx.read<ObsLiveOverlayCubit>().startServer(
-                                      ctx
-                                          .read<ObsLiveOverlaySettingsCubit>()
-                                          .state
-                                          .port),
-                          child: state.isRunning
-                              ? const Text('Turn OBS Live Overlay Off')
-                              : const Text('Turn OBS Live Overlay On'),
-                        ),
-                      ],
-                    ),
                   ],
                 ),
               ],
