@@ -1,23 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:open_scripture/shared/data/datasources/settings_datasource.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:open_scripture/features/customizer/presentation/cubit/customizer_cubit.dart';
 
-abstract class CustomizerDatasource {
-  /// Saves customizations locally.
-  ///
-  /// Throws a [InstallationException] if it fails
-  Future<void> saveTheme(CustomizerState theme);
-
-  /// Load customizations.
-  ///
-  /// Throws a [InstallationException] if it fails
-  Future<CustomizerState> loadTheme();
-}
-
-class CustomizerDatasourceImpl implements CustomizerDatasource {
+class CustomizerDatasourceImpl implements SettingsDatasource<CustomizerState> {
   const CustomizerDatasourceImpl({this.fileName = 'settings.json'});
 
   final String fileName;
@@ -32,7 +21,7 @@ class CustomizerDatasourceImpl implements CustomizerDatasource {
   }
 
   @override
-  Future<void> saveTheme(CustomizerState theme) async {
+  Future<void> saveSettings(CustomizerState theme) async {
     try {
       final file = await _settingsFile();
       final tmp = File('${file.path}.tmp');
@@ -56,13 +45,13 @@ class CustomizerDatasourceImpl implements CustomizerDatasource {
   /// Load settings. If missing, returns defaults and writes them once.
   /// If corrupted, renames the bad file and returns defaults.
   @override
-  Future<CustomizerState> loadTheme() async {
+  Future<CustomizerState> loadSettings() async {
     try {
       final file = await _settingsFile();
 
       if (!await file.exists()) {
         const defaults = CustomizerState();
-        await saveTheme(defaults);
+        await saveSettings(defaults);
         return defaults;
       }
 
@@ -84,7 +73,7 @@ class CustomizerDatasourceImpl implements CustomizerDatasource {
           // If rename fails (e.g., permissions), ignore and proceed with defaults
         }
         const defaults = CustomizerState();
-        await saveTheme(defaults);
+        await saveSettings(defaults);
         return defaults;
       }
     } catch (e) {
