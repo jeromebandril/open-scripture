@@ -7,7 +7,7 @@ import 'package:open_scripture/features/obs_live_overlay/domain/repostiory/overl
 import '../../../../../shared/presentation/notifiers/selected_verse_content_notifier.dart';
 import '../../../domain/entities/overlay_models.dart';
 
-part 'obs_live_overaly_state.dart';
+part 'obs_live_overlay_state.dart';
 
 class ObsLiveOverlayCubit extends Cubit<ObsLiveOverlayState> {
   ObsLiveOverlayCubit({
