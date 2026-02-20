@@ -2,28 +2,17 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:open_scripture/shared/data/datasources/settings_datasource.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
 import 'package:open_scripture/features/customizer/presentation/cubit/customizer_cubit.dart';
 
-class CustomizerDatasourceImpl implements SettingsDatasource<CustomizerState> {
-  const CustomizerDatasourceImpl({this.fileName = 'settings.json'});
+class CustomizerDatasourceImpl extends SettingsDatasource<CustomizerState> {
+  CustomizerDatasourceImpl({this.fileName = 'settings.json'});
 
   final String fileName;
-
-  Future<File> _settingsFile() async {
-    final dir = await getApplicationSupportDirectory();
-    final settingsDir = Directory(p.join(dir.path, 'settings'));
-    if (!await settingsDir.exists()) {
-      await settingsDir.create(recursive: true);
-    }
-    return File(p.join(settingsDir.path, fileName));
-  }
 
   @override
   Future<void> saveSettings(CustomizerState theme) async {
     try {
-      final file = await _settingsFile();
+      final file = await settingsFile(fileName: fileName);
       final tmp = File('${file.path}.tmp');
 
       final jsonString =
@@ -47,7 +36,7 @@ class CustomizerDatasourceImpl implements SettingsDatasource<CustomizerState> {
   @override
   Future<CustomizerState> loadSettings() async {
     try {
-      final file = await _settingsFile();
+      final file = await settingsFile(fileName: fileName);
 
       if (!await file.exists()) {
         const defaults = CustomizerState();
