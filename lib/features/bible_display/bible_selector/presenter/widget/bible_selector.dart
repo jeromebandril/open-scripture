@@ -7,7 +7,7 @@ import 'package:open_scripture/features/customizer/presentation/cubit/customizer
 
 import '../../../../../injection_container.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
-import '../bloc/bloc/bible_selector_bloc.dart';
+import '../bloc/bible_selector_bloc.dart';
 
 class BibleSelector extends StatelessWidget {
   final void Function(int selectedBibleId) onConfirm;
