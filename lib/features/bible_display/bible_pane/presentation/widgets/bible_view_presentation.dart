@@ -64,7 +64,9 @@ class BibleViewPresentation extends StatelessWidget {
             )
             .toList();
 
-        return Center(
+        return Container(
+          alignment: Alignment.center,
+          color: Colors.transparent,
           child: SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.only(
