@@ -14,7 +14,7 @@ import 'package:open_scripture/shared/database/database.dart';
 import 'package:open_scripture/features/b_searchbar/data/repositories/b_searchbar_repository_impl.dart';
 import 'package:open_scripture/features/b_searchbar/domain/repositories/b_searchbar_repository.dart';
 import 'package:open_scripture/features/bible_display/bible_selector/data/repositories/bible_selector_repository_impl.dart';
-import 'package:open_scripture/features/bible_display/bible_selector/presenter/bloc/bloc/bible_selector_bloc.dart';
+import 'package:open_scripture/features/bible_display/bible_selector/presenter/bloc/bible_selector_bloc.dart';
 import 'package:open_scripture/features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
 import 'package:open_scripture/features/bible_importer/presentation/cubit/bible_importer_cubit.dart';
 import 'package:open_scripture/features/bible_installer_manager/presentation/bloc/download_manager/bloc/download_manager_bloc.dart';
