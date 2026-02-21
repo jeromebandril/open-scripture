@@ -6,7 +6,10 @@ import 'package:open_scripture/features/bible_display/bible_pane/presentation/wi
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/widgets/bible_view_presentation.dart';
 import 'package:open_scripture/features/bible_display/split_screen/presenter/models/split_pane_data.dart';
 import 'package:open_scripture/features/customizer/presentation/cubit/customizer_cubit.dart';
+import 'package:open_scripture/features/shortcuts/presentation/models/app_command_shortcuts.dart';
+import 'package:open_scripture/features/shortcuts/presentation/widget/shortcut_view.dart';
 
+import '../../../../shortcuts/domain/app_command.dart';
 import '../../../../text_scaler/presentation/widgets/text_scaler_host.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../../../bible_selector/presenter/widget/bible_selector.dart';
@@ -78,7 +81,25 @@ class BiblePane extends StatelessWidget {
               //
               // READY SCREEN
               BiblePaneStatus.ready => state.segments.isEmpty
-                  ? Center(child: Text("Ready :)"))
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      spacing: 16,
+                      children: [
+                        Text("Ready :)", style: TextStyle(fontSize: 18)),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          spacing: 8,
+                          children: [
+                            Text('Press '),
+                            ShortcutView(
+                                activator: appCommandShortcuts[
+                                    AppCommand.changeBible]),
+                            Text('to change bible '),
+                          ],
+                        ),
+                        Text('( Go to <Help> for the main shortcuts list )'),
+                      ],
+                    )
                   : TextScalerHost(
                       textScalerCubit: blocComponents.textScalerCubit,
                       initialiSize: 14,
