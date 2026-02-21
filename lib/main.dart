@@ -10,7 +10,7 @@ import 'package:open_scripture/features/b_searchbar/domain/repositories/b_search
 import 'package:open_scripture/features/b_searchbar/presenter/widgets/parts/history_list_overlay.dart';
 import 'package:open_scripture/features/customizer/presentation/models/bible_view_list_theme.dart';
 import 'package:open_scripture/features/customizer/presentation/models/bible_view_presentation_theme.dart';
-import 'package:open_scripture/features/toolbar/presentation/widgets/toolbar.dart';
+import 'package:open_scripture/features/menubar/presentation/widgets/menubar.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
