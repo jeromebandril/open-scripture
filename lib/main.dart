@@ -182,7 +182,7 @@ class _HomeState extends State<Home> {
       searchFocusNode: _searchbarFocusNode,
       historyFocusNode: _historyFocusNode,
       child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.surface,
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
         //
         // Manages the stacks of windosw that may occur when opening
         // popups or secondary pages in the form of a window (e.g. settings menu)

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../shared/presentation/cubit/fullscreen_cubit.dart';
+import '../../../../../shared/presentation/cubit/toolbar_cubit.dart';
 import '../../../../customizer/presentation/cubit/customizer_cubit.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../../../bible_pane/presentation/widgets/bible_pane.dart';
@@ -23,16 +25,20 @@ class MultipleBiblePanes extends StatelessWidget {
     final showDivider = context.select(
       (CustomizerCubit c) => c.state.pane.showSplitscreenDivider,
     );
+    final isFullscreen = context.select((FullscreenCubit f) => f.state);
+    final showMenuBar = context.select((ToolbarCubit t) => t.state);
 
     return BlocBuilder<PaneManagerCubit, PaneManagerState>(
       builder: (context, state) {
         return Container(
           padding: EdgeInsets.fromLTRB(12 + offset, 0, 12 + offset, 0),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(8),
-              topRight: Radius.circular(8),
-            ),
+            borderRadius: isFullscreen && !showMenuBar
+                ? null
+                : const BorderRadius.only(
+                    topLeft: Radius.circular(8),
+                    topRight: Radius.circular(8),
+                  ),
             color: enableCustom
                 ? Theme.of(context)
                     .extension<BiblePaneGeneralTheme>()!
