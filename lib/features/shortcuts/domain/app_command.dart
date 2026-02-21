@@ -102,4 +102,8 @@ const Map<AppCommand, AppCommandInfo> appCommandInfo = {
     label: 'Swap active pane with the next one',
     description: 'Swap the position of the active pane with the next one.',
   ),
+  AppCommand.movePaneToLeft: AppCommandInfo(
+    label: 'Swap active pane with the previous one',
+    description: 'Swap the position of the active pane with the previous one.',
+  ),
 };
