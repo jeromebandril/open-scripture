@@ -37,6 +37,8 @@ class BibleSelectorBloc extends Bloc<BibleSelectorEvent, BibleSelectorState> {
           ));
         } else {
           emit(state.copyWith(
+            selectedBibleId:
+                state.selectedBibleId == null ? () => bibles.first.id : null,
             status: () => BibleSelectorStatus.ready,
           ));
         }

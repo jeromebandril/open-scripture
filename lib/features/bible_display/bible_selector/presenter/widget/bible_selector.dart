@@ -18,7 +18,8 @@ class BibleSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-      value: bloc ?? sl<BibleSelectorBloc>(),
+      value: bloc ?? sl<BibleSelectorBloc>()
+        ..add(BibleSelectorInit()),
       child: _BibleSelectorBody(onConfirm: onConfirm),
     );
   }
@@ -123,6 +124,7 @@ class _BibleSelectorBody extends StatelessWidget {
                       onPressed: selectedId == null
                           ? null
                           : () => onConfirm(selectedId),
+                      autofocus: true,
                       child: SizedBox(
                         width: 80,
                         child: Row(

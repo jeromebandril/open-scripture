@@ -19,7 +19,7 @@ class BibleSelectorState extends Equatable {
 
   BibleSelectorState copyWith({
     BibleSelectorStatus Function()? status,
-    int Function()? selectedBibleId,
+    int? Function()? selectedBibleId,
     String Function()? errorMessage,
   }) {
     return BibleSelectorState(
