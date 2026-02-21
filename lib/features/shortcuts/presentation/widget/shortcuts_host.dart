@@ -9,26 +9,6 @@ import '../models/app_command_dispatcher.dart';
 import '../models/app_command_intent.dart';
 import '../models/app_command_shortcuts.dart';
 
-// Convert to stateful widget and uncomment the following lines
-// to debug the focus scope
-//
-// @override
-// void initState() {
-//   super.initState();
-//   FocusManager.instance.addListener(_logFocus);
-// }
-
-// void _logFocus() {
-//   final pf = FocusManager.instance.primaryFocus;
-//   debugPrint('primaryFocus changed: $pf / ${pf?.debugLabel}');
-// }
-
-// @override
-// void dispose() {
-//   FocusManager.instance.removeListener(_logFocus);
-//   super.dispose();
-// }
-
 class ShortcutsHost extends StatefulWidget {
   const ShortcutsHost({
     super.key,
@@ -51,17 +31,17 @@ class _ShortcutsHostState extends State<ShortcutsHost> {
   final FocusScopeNode _scopeNode =
       FocusScopeNode(debugLabel: 'app_shortcuts_scope');
 
-  @override
-  void initState() {
-    super.initState();
+  // @override
+  // void initState() {
+  //   super.initState();
 
-    FocusManager.instance.addListener(() {
-      final p = FocusManager.instance.primaryFocus;
-      debugPrint('PRIMARY: ${p?.debugLabel}  '
-          'root.hasFocus=${widget.rootFocusNode.hasFocus} '
-          'root.hasPrimary=${widget.rootFocusNode.hasPrimaryFocus}');
-    });
-  }
+  //   FocusManager.instance.addListener(() {
+  //     final p = FocusManager.instance.primaryFocus;
+  //     debugPrint('PRIMARY: ${p?.debugLabel}  '
+  //         'root.hasFocus=${widget.rootFocusNode.hasFocus} '
+  //         'root.hasPrimary=${widget.rootFocusNode.hasPrimaryFocus}');
+  //   });
+  // }
 
   @override
   void dispose() {
