@@ -87,6 +87,10 @@ class AppCommandDispatcher {
         paneManagerCubit.activePane().textScalerCubit.zoomIn(),
     AppCommand.zoomOut: () =>
         paneManagerCubit.activePane().textScalerCubit.zoomOut(),
+    AppCommand.movePaneToRight: () => paneManagerCubit.swapPanesWithDelta(
+        paneManagerCubit.state.activePaneId, 1),
+    AppCommand.movePaneToLeft: () => paneManagerCubit.swapPanesWithDelta(
+        paneManagerCubit.state.activePaneId, -1),
   };
 
   T? _withActiveRef<T>(T Function(BiblePaneBloc bloc, BibleRef ref) fn) {

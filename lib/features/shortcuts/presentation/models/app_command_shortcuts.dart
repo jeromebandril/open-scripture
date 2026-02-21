@@ -99,4 +99,14 @@ const Map<AppCommand, SingleActivator> appCommandShortcuts = {
     LogicalKeyboardKey.minus,
     control: true,
   ),
+  AppCommand.movePaneToRight: SingleActivator(
+    LogicalKeyboardKey.arrowRight,
+    control: true,
+    alt: true,
+  ),
+  AppCommand.movePaneToLeft: SingleActivator(
+    LogicalKeyboardKey.arrowLeft,
+    control: true,
+    alt: true,
+  ),
 };

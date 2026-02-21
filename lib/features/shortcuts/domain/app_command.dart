@@ -10,6 +10,8 @@ enum AppCommand {
   prevPane,
   addParallelPane,
   closeCurrentPane,
+  movePaneToRight,
+  movePaneToLeft,
   toggleToolbar,
   toggleFullscreen,
   switchDisplayMode,
@@ -95,5 +97,9 @@ const Map<AppCommand, AppCommandInfo> appCommandInfo = {
   AppCommand.zoomOut: AppCommandInfo(
     label: 'Zoom Out',
     description: 'Decrease the zoom level of the current view.',
+  ),
+  AppCommand.movePaneToRight: AppCommandInfo(
+    label: 'Swap active pane with the next one',
+    description: 'Swap the position of the active pane with the next one.',
   ),
 };

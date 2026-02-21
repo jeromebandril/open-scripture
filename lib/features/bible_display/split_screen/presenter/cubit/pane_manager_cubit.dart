@@ -66,6 +66,25 @@ class PaneManagerCubit extends Cubit<PaneManagerState> {
     emit(PaneManagerState(panes: nextPanes, activePaneId: nextActive));
   }
 
+  int _wrapIndex(int index, int length) {
+    if (index < 0) return index + length;
+    if (index >= length) return index - length;
+    return index;
+  }
+
+  void swapPanesWithDelta(int paneId, int delta) {
+    final panes = [...state.panes];
+    final index = panes.indexWhere((p) => p.id == paneId);
+    if (index == -1) return;
+
+    final swapWithIndex = _wrapIndex(index + delta, panes.length);
+    final tmp = panes[index];
+    panes[index] = panes[swapWithIndex];
+    panes[swapWithIndex] = tmp;
+
+    emit(PaneManagerState(panes: panes, activePaneId: state.activePaneId));
+  }
+
   void swapPanes(int aId, int bId) {
     final panes = [...state.panes];
     final ia = panes.indexWhere((p) => p.id == aId);
