@@ -46,7 +46,7 @@ class AppCommandDispatcher {
     return searchFocusNode.hasFocus;
   }
 
-  int? _bibleId;
+  int? _prevBibleId;
 
   late final Map<AppCommand, CommandHandler> _handlers = {
     AppCommand.focusSearch: () => searchFocusNode.requestFocus(),
@@ -67,15 +67,16 @@ class AppCommandDispatcher {
       final pane = paneManagerCubit.activePane();
 
       // undo/redo behavior: if the current pane has a bible, close it. otherwise, reopen the last closed bible.
-      if (_bibleId != null && pane.bloc.state.bibleId == null) {
-        pane.bloc.add(BiblePaneOpen(_bibleId!));
-        _bibleId = null;
+      if (_prevBibleId != null && pane.bloc.state.bibleId == null) {
+        pane.bloc.add(BiblePaneOpen(_prevBibleId!));
+        _prevBibleId = null;
         return;
       }
 
-      _bibleId = pane.bloc.state.bibleId;
+      _prevBibleId = pane.bloc.state.bibleId;
+      if (_prevBibleId == null) return;
       pane.bloc.add(BiblePaneCloseBible());
-      pane.bibleSelectorCubit.add(BibleSelectorSelect(_bibleId!));
+      pane.bibleSelectorCubit.add(BibleSelectorSelect(_prevBibleId!));
     },
     AppCommand.switchDisplayMode: () => _cycleDisplayMode(),
     AppCommand.displayChapterOfSelected: () => _displayChapterOfSelected(),
