@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/bible_installer_manager/presentation/bloc/installed_bibles/installed_bibles_bloc.dart';
@@ -36,6 +38,7 @@ class _BibleSelectorBody extends StatelessWidget {
       (CustomizerCubit b) => b.state.pane.enableCustomTheme,
     );
     final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
+    final height = MediaQuery.sizeOf(context).height;
 
     return BlocBuilder<InstalledBiblesBloc, InstalledBiblesState>(
       builder: (context, state) {
@@ -70,13 +73,23 @@ class _BibleSelectorBody extends StatelessWidget {
             }
             body = Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 12,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(' Select a bible',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w900,
+                      color: useCustom
+                          ? paneTheme.textColor
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
+                    )),
+                SizedBox(height: 18),
                 SizedBox(
-                  height: state.installedBibles.length * 85,
+                  height:
+                      min(height * 0.5, state.installedBibles.length * 72.0),
                   child: ListView.separated(
                     itemCount: state.installedBibles.length,
-                    separatorBuilder: (_, __) => const Divider(height: 0.1),
+                    separatorBuilder: (_, __) => const Divider(height: 0.05),
                     itemBuilder: (context, index) {
                       final bible = state.installedBibles[index];
                       final selected = bible.id == selectedId;
@@ -101,26 +114,36 @@ class _BibleSelectorBody extends StatelessWidget {
                     },
                   ),
                 ),
+                SizedBox(height: 18),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
+                  spacing: 8,
                   children: [
                     ElevatedButton(
                       onPressed: selectedId == null
                           ? null
                           : () => onConfirm(selectedId),
-                      child: const Text('Confirm'),
+                      child: SizedBox(
+                        width: 80,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          spacing: 4,
+                          children: [
+                            const Text('Confirm'),
+                            const Icon(Icons.arrow_forward_rounded)
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
+                SizedBox(height: 42),
               ],
             );
             break;
         }
         return Center(
-          child: SizedBox(
-            width: 400,
-            child: body,
-          ),
+          child: SizedBox(width: 400, child: body),
         );
       },
     );
