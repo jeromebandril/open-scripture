@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/features/bible_display/bible_selector/presenter/bloc/bloc/bible_selector_bloc.dart';
+import 'package:open_scripture/features/bible_display/bible_selector/presenter/bloc/bible_selector_bloc.dart';
 import 'package:open_scripture/features/text_scaler/cubit/text_scaler_cubit.dart';
 
 import '../../../../../shared/domain/entities/bible_ref.dart';

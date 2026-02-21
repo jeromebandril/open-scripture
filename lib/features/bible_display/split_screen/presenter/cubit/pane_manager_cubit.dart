@@ -7,7 +7,7 @@ import 'package:open_scripture/shared/presentation/notifiers/selected_verse_cont
 import '../../../../text_scaler/cubit/text_scaler_cubit.dart';
 import '../../../bible_pane/domain/repositories/bible_repository.dart';
 import '../../../bible_pane/presentation/bloc/bible_pane_bloc.dart';
-import '../../../bible_selector/presenter/bloc/bloc/bible_selector_bloc.dart';
+import '../../../bible_selector/presenter/bloc/bible_selector_bloc.dart';
 import '../models/split_pane_data.dart';
 
 part 'pane_manager_state.dart';
