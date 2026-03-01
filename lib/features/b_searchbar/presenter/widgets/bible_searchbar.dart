@@ -68,6 +68,7 @@ class _BSearchbarState extends State<BSearchbar> {
                 },
                 child: TextField(
                   focusNode: widget.focusNode,
+                  selectAllOnFocus: true,
                   onChanged: (key) {},
                   onEditingComplete: () {
                     if (widget.onEditComplete != null) {
