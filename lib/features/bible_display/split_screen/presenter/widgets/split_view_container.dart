@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_scripture/features/bible_display/split_screen/presenter/models/split_pane_data.dart';
 
 import '../../../../../shared/presentation/cubit/fullscreen_cubit.dart';
 import '../../../../../shared/presentation/cubit/toolbar_cubit.dart';
@@ -28,8 +29,10 @@ class MultipleBiblePanes extends StatelessWidget {
     final isFullscreen = context.select((FullscreenCubit f) => f.state);
     final showMenuBar = context.select((ToolbarCubit t) => t.state);
 
-    return BlocBuilder<PaneManagerCubit, PaneManagerState>(
-      builder: (context, state) {
+    return BlocSelector<PaneManagerCubit, PaneManagerState,
+        List<PaneDescriptor>>(
+      selector: (PaneManagerState state) => state.panes,
+      builder: (context, panes) {
         return Container(
           padding: EdgeInsets.fromLTRB(12 + offset, 0, 12 + offset, 0),
           decoration: BoxDecoration(
@@ -48,22 +51,21 @@ class MultipleBiblePanes extends StatelessWidget {
           child: Row(
             spacing: gap.toDouble(),
             children: [
-              for (int i = 0; i < state.panes.length; i++) ...[
+              for (int i = 0; i < panes.length; i++) ...[
                 Expanded(
                   child: Listener(
-                    behavior: HitTestBehavior.opaque,
-                    onPointerDown: (_) => context
-                        .read<PaneManagerCubit>()
-                        .setActive(state.panes[i].id),
+                    behavior: HitTestBehavior.translucent,
+                    onPointerDown: (_) =>
+                        context.read<PaneManagerCubit>().setActive(panes[i].id),
                     child: BiblePane(
-                      uniqueId: state.panes[i].id,
+                      uniqueId: panes[i].id,
                       blocComponents: context
                           .read<PaneManagerCubit>()
-                          .paneBlocsFor(state.panes[i].id),
+                          .paneBlocsFor(panes[i].id),
                     ),
                   ),
                 ),
-                if (i != state.panes.length - 1 && showDivider)
+                if (i != panes.length - 1 && showDivider)
                   const VerticalDivider(width: 1)
               ]
             ],
