@@ -58,7 +58,7 @@ class BibleViewPresentation extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                spacing: 16,
+                spacing: 32,
                 children: [
                   //
                   // Reference title
@@ -133,28 +133,26 @@ class BibleViewPresentation extends StatelessWidget {
                           ));
                     });
 
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 32,
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      spacing: 64,
                       children: views.entries
                           .map(
-                            (e) => Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  if (views.entries.length != 1)
-                                    Text(
-                                      '(${e.key})',
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                          fontSize: 8),
-                                    ),
-                                  e.value,
-                                ],
-                              ),
+                            (e) => Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                if (views.entries.length != 1)
+                                  Text(
+                                    '(${e.key})',
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                        fontSize: 8),
+                                  ),
+                                e.value,
+                              ],
                             ),
                           )
                           .toList(),
