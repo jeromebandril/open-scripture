@@ -155,7 +155,17 @@ class _ThreeTapNavigatorOverlayState extends State<_ThreeTapNavigatorOverlay> {
   void initState() {
     super.initState();
 
-    bibleId = context.read<PaneManagerCubit>().activePane().bloc.state.bibleId;
+    // here there is a temporary fix for parallel views where
+    // I set the books from the first opened bible
+    //TODO: Make an union of books from all bibles
+    bibleId = context
+        .read<PaneManagerCubit>()
+        .activePane()
+        .bloc
+        .state
+        .openedBiblesIds
+        .first;
+
     context.read<ThreeTapNavigatorCubit>().loadBooks(bibleId);
   }
 

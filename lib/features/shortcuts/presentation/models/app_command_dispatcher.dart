@@ -46,7 +46,7 @@ class AppCommandDispatcher {
     return searchFocusNode.hasFocus;
   }
 
-  int? _prevBibleId;
+  List<int> _prevBibleId = [];
 
   late final Map<AppCommand, CommandHandler> _handlers = {
     AppCommand.focusSearch: () => searchFocusNode.requestFocus(),
@@ -67,16 +67,17 @@ class AppCommandDispatcher {
       final pane = paneManagerCubit.activePane();
 
       // undo/redo behavior: if the current pane has a bible, close it. otherwise, reopen the last closed bible.
-      if (_prevBibleId != null && pane.bloc.state.bibleId == null) {
-        pane.bloc.add(BiblePaneOpen(_prevBibleId!));
-        _prevBibleId = null;
+      if (_prevBibleId.isNotEmpty && pane.bloc.state.openedBiblesIds.isEmpty) {
+        pane.bloc.add(BiblePaneOpen(_prevBibleId));
+        _prevBibleId = [];
         return;
       }
 
-      _prevBibleId = pane.bloc.state.bibleId;
-      if (_prevBibleId == null) return;
-      pane.bloc.add(BiblePaneCloseBible());
-      pane.bibleSelectorCubit.add(BibleSelectorSelect(_prevBibleId!));
+      _prevBibleId = pane.bloc.state.openedBiblesIds;
+      if (_prevBibleId.isEmpty) return;
+      pane.bloc.add(BiblePaneChooseBibles());
+      pane.bibleSelectorCubit
+          .add(BibleSelectorSetSelected(selectedBibleIds: _prevBibleId));
     },
     AppCommand.switchDisplayMode: () => _cycleDisplayMode(),
     AppCommand.displayChapterOfSelected: () => _displayChapterOfSelected(),
@@ -128,22 +129,14 @@ class AppCommandDispatcher {
       }
 
       // Otherwise, move inside the current chapter bounds.
-      final verseStart = ref.verseStart ?? 1;
-      final last =
-          bloc.state.maxVerse ?? bloc.state.segments.last.ref.verseStart ?? 0;
-
-      final candidate = verseStart + delta;
-      if (candidate < 1) return;
-      if (candidate > last) return;
-
-      bloc.add(
-        BiblePaneJustChangeRef(
-          ref: ref.copyWith(
-            verseStart: candidate,
-            verseEnd: null,
-          ),
-        ),
-      );
+      final a = bloc.state.unionRefs.toList();
+      final iCurr = a.indexOf(ref.copyWith(verseEnd: null));
+      if (iCurr != -1 && iCurr + delta < a.length && iCurr + delta >= 0) {
+        final next = a[iCurr + delta];
+        bloc.add(
+          BiblePaneJustChangeRef(ref: next),
+        );
+      }
     });
   }
 
@@ -153,7 +146,7 @@ class AppCommandDispatcher {
       if (results.isNotEmpty) return; // keep your current behavior
 
       final last =
-          bloc.state.maxVerse ?? bloc.state.segments.last.ref.verseStart ?? 0;
+          bloc.state.verseCount ?? bloc.state.unionRefs.last.verseStart ?? 0;
 
       final start = ref.verseStart ?? 1;
       final end = ref.verseEnd ?? start;

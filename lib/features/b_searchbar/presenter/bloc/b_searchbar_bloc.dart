@@ -41,7 +41,7 @@ class BSearchbarBloc extends Bloc<BSearchbarEvent, BSearchbarState> {
     Emitter<BSearchbarState> emit,
   ) async {
     final eitherFailureOrResults = await repo.find(
-      bibleId: event.bibleId,
+      bibleIds: event.bibleIds,
       match: event.query,
     );
 

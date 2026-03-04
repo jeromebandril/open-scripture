@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_scripture/features/bible_display/bible_pane/presentation/models/parallel_bible_config.dart';
 
 import '../../../../../shared/domain/entities/book_names.dart';
-import '../../../../../shared/domain/entities/verse_segment.dart';
 import '../../../../../shared/domain/entities/verse_span.dart';
 import '../../../../../injection_container.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
@@ -15,23 +15,16 @@ class BibleViewPresentation extends StatelessWidget {
   const BibleViewPresentation({
     super.key,
     required this.uniqueId,
-    required this.segments,
+    required this.content,
   });
 
   final int uniqueId;
-  final List<VerseSegment> segments;
+  final ParallelBibleConfig content;
 
   @override
   Widget build(BuildContext context) {
     final resolver = sl<BibleRefResolver>();
     // This is the ordered list for that versification/canon
-
-    // group segments by verse
-    final segmentsByVerse = <int, List<VerseSegment>>{};
-    for (final s in segments) {
-      final key = s.ref.verseStart; // assuming int
-      (segmentsByVerse[key!] ??= <VerseSegment>[]).add(s);
-    }
 
     // Set padding
     final screen = MediaQuery.of(context).size;
@@ -46,23 +39,9 @@ class BibleViewPresentation extends StatelessWidget {
     return BlocBuilder<BiblePaneBloc, BiblePaneState>(
       buildWhen: (prev, curr) => prev.reference != curr.reference,
       builder: (context, state) {
-        final ref = state.reference!;
+        if (state.reference == null) return SizedBox();
         // Set content
-        final vn = state.reference?.verseStart ?? 1;
-        final ve = state.reference?.verseEnd ?? vn;
-        final List<List<VerseSegment>> verses = [];
-
-        for (var i = vn; i <= ve; i++) {
-          if (segmentsByVerse[i] != null) {
-            verses.add(segmentsByVerse[i]!);
-          }
-        }
-
-        final spans = verses
-            .map(
-              (v) => v.expand((s) => s.spans).toList(),
-            )
-            .toList();
+        final ref = state.reference!;
 
         return Container(
           alignment: Alignment.center,
@@ -79,7 +58,11 @@ class BibleViewPresentation extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
+                spacing: 16,
                 children: [
+                  //
+                  // Reference title
+                  //
                   Text(
                     ref.toString().replaceFirst(
                           ref.bookUsfxId,
@@ -92,45 +75,89 @@ class BibleViewPresentation extends StatelessWidget {
                       color: paneTheme.accentColor,
                     ),
                   ),
+                  //
+                  // Build content here
+                  //
                   Builder(builder: (context) {
-                    List<InlineSpan> inlineSpans = [];
-                    for (int i = 0; i < verses.length; i++) {
-                      String content =
-                          verses[i].map((e) => e.textContent).join();
+                    final rangeToDisplay = content.getRefsInRange(ref);
 
-                      inlineSpans.add(VerseSpanBuilder.build(
-                        context: context,
-                        text: content,
-                        spans: spans[i],
-                        onWordTap: (VerseSpan span, String slice) {},
-                      ));
-                    }
-                    // add verse number before each verse
-                    List<InlineSpan> build() {
-                      return [
-                        for (int i = 0; i < verses.length; i++) ...[
-                          TextSpan(text: '   '),
-                          TextSpan(
-                            text: '${i + ref.verseStart!}',
-                            style: TextStyle(
-                                fontSize: 8,
-                                fontWeight: FontWeight.bold,
-                                color: paneTheme.accentColor,
-                                decoration: TextDecoration.underline),
-                          ),
-                          TextSpan(text: ' '),
-                          inlineSpans[i],
-                        ],
-                      ];
-                    }
+                    // for each bible translation
+                    final views = content.asMap.map((key, value) {
+                      List<InlineSpan> verseInlineSpan = [];
+                      final verses = value.verses!.entries
+                          .where((e) => rangeToDisplay.contains(e.key))
+                          .toList();
 
-                    return Text.rich(
-                      TextSpan(
-                          style: TextStyle(
-                            fontWeight: paneTheme.textFontWeight,
-                          ),
-                          children: build()),
-                      textAlign: presentTheme.textAlignment,
+                      // compose the full verse from segments
+                      // by joining the text content
+                      // and grouping the spans into one List
+                      for (final v in verses) {
+                        final spans =
+                            v.value.segments.expand((s) => s.spans).toList();
+                        verseInlineSpan.add(VerseSpanBuilder.build(
+                          context: context,
+                          text: v.value.text,
+                          spans: spans,
+                          onWordTap: (VerseSpan span, String slice) {},
+                        ));
+                      }
+
+                      // add verse number before each verse
+                      List<InlineSpan> build() {
+                        return [
+                          for (int i = 0; i < rangeToDisplay.length; i++) ...[
+                            TextSpan(text: '   '),
+                            TextSpan(
+                              text: '${rangeToDisplay[i].verseStart!}',
+                              style: TextStyle(
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.bold,
+                                  color: paneTheme.accentColor,
+                                  decoration: TextDecoration.underline),
+                            ),
+                            TextSpan(text: ' '),
+                            verseInlineSpan[i],
+                          ],
+                        ];
+                      }
+
+                      return MapEntry(
+                          '${value.meta.bibleName} - ${value.meta.langNativeName}',
+                          Text.rich(
+                            TextSpan(
+                                style: TextStyle(
+                                  fontWeight: paneTheme.textFontWeight,
+                                ),
+                                children: build()),
+                            textAlign: presentTheme.textAlignment,
+                          ));
+                    });
+
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 32,
+                      children: views.entries
+                          .map(
+                            (e) => Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  if (views.entries.length != 1)
+                                    Text(
+                                      '(${e.key})',
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          fontSize: 8),
+                                    ),
+                                  e.value,
+                                ],
+                              ),
+                            ),
+                          )
+                          .toList(),
                     );
                   })
                 ],

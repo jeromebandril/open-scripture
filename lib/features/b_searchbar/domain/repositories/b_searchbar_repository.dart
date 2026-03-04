@@ -7,7 +7,7 @@ abstract class BSearchbarRepository {
   Future<Either<Failure, BibleRef>> getParseIntent(String query);
 
   Future<Either<Failure, List<BibleRef>>> find({
-    required int bibleId,
+    required List<int> bibleIds,
     required String match,
   });
 }

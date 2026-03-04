@@ -8,12 +8,12 @@ sealed class BiblePaneEvent extends Equatable {
 }
 
 class BiblePaneOpen extends BiblePaneEvent {
-  final int bibleId;
+  final List<int> bibleIds;
 
-  const BiblePaneOpen(this.bibleId);
+  const BiblePaneOpen(this.bibleIds);
 
   @override
-  List<Object> get props => [bibleId];
+  List<Object> get props => [bibleIds];
 }
 
 class BiblePaneDisplayVerses extends BiblePaneEvent {
@@ -55,8 +55,8 @@ class BiblePaneJustChangeRef extends BiblePaneEvent {
   List<Object?> get props => [ref, saveHistory, source];
 }
 
-class BiblePaneCloseBible extends BiblePaneEvent {
-  const BiblePaneCloseBible();
+class BiblePaneChooseBibles extends BiblePaneEvent {
+  const BiblePaneChooseBibles();
 }
 
 class BiblePaneSetDisplayMode extends BiblePaneEvent {
@@ -64,3 +64,7 @@ class BiblePaneSetDisplayMode extends BiblePaneEvent {
 
   const BiblePaneSetDisplayMode(this.dMode);
 }
+
+class BiblePaneAddParallel extends BiblePaneEvent {}
+
+class BiblePaneRemoveParallel extends BiblePaneEvent {}

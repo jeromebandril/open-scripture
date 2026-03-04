@@ -79,14 +79,14 @@ class _BSearchbarState extends State<BSearchbar> {
                     if (widget.onSubmitted != null) widget.onSubmitted!();
 
                     if (_findMode) {
-                      final bibleId = context
+                      final bibleIds = context
                           .read<PaneManagerCubit>()
                           .activePane()
                           .bloc
                           .state
-                          .bibleId;
+                          .openedBiblesIds;
 
-                      if (bibleId == null) return;
+                      if (bibleIds.isEmpty) return;
 
                       // only list view
                       context
@@ -95,7 +95,7 @@ class _BSearchbarState extends State<BSearchbar> {
                           .bloc
                           .add(BiblePaneSetDisplayMode(DisplayMode.normal));
                       context.read<BSearchbarBloc>().add(BSearchbarFind(
-                            bibleId: bibleId,
+                            bibleIds: bibleIds,
                             query: input,
                           ));
 

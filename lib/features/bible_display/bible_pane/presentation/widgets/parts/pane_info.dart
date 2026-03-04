@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/customizer/presentation/cubit/customizer_cubit.dart';
 import 'package:open_scripture/features/text_scaler/cubit/text_scaler_cubit.dart';
+import 'package:open_scripture/shared/domain/entities/bible_meta.dart';
 import 'package:open_scripture/shared/presentation/widgets/hoverable_container.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/cubit/selected_word_cubit.dart';
@@ -22,7 +23,6 @@ class _PaneInfoState extends State<PaneInfo> {
 
   @override
   Widget build(BuildContext context) {
-    final bibleMeta = context.select((BiblePaneBloc b) => b.state.bibleMeta);
     final pl = context.select((PaneManagerCubit b) => b.state.panes.length);
     final paneId = context.select((BiblePaneBloc b) => b.state.paneId);
     final enableStrongWords = context.select(
@@ -65,11 +65,11 @@ class _PaneInfoState extends State<PaneInfo> {
                 },
               ),
               BlocSelector<BiblePaneBloc, BiblePaneState, int?>(
-                  selector: (s) => s.maxVerse,
-                  builder: (ctx, maxV) {
+                  selector: (s) => s.verseCount,
+                  builder: (ctx, vCount) {
                     return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Text('max vv. ${maxV ?? '?'}'));
+                        child: Text('v. count ${vCount ?? '?'}'));
                   }),
               // SELECTED WORD
               if (enableStrongWords)
@@ -113,12 +113,23 @@ class _PaneInfoState extends State<PaneInfo> {
                 child: HoverableContainer(
                   hoveredColor: Theme.of(context).colorScheme.surfaceDim,
                   padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Text(
-                    bibleMeta == null
-                        ? 'Unknown'
-                        : isExpanded
-                            ? '${bibleMeta.usfxId} — ${bibleMeta.bibleNameLocal} — ${bibleMeta.langEngName}'
-                            : bibleMeta.abbreviation,
+                  child: BlocSelector<BiblePaneBloc, BiblePaneState,
+                      List<BibleMeta>>(
+                    selector: (state) =>
+                        state.content.asMap.values.map((v) => v.meta).toList(),
+                    builder: (context, metas) {
+                      late final String text;
+                      if (metas.isEmpty) text = '...';
+                      if (metas.length > 1) {
+                        text = metas.map((m) => m.abbreviation).join('  |  ');
+                      }
+                      if (metas.length == 1) {
+                        text = isExpanded
+                            ? '${metas.first.usfxId} — ${metas.first.bibleNameLocal} — ${metas.first.langEngName}'
+                            : metas.first.abbreviation;
+                      }
+                      return Text(text);
+                    },
                   ),
                 ),
               ),

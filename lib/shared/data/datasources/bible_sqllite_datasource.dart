@@ -109,13 +109,14 @@ abstract class BibleLocalDataSource {
   /// - [LocalDataException] for database/query failures
   Future<List<Book>> getBooks(int bibleId);
 
-  /// Search a string within the given bible
+  /// Search a string within the given bibles
   /// and returns a List of bible references
   ///
   /// Throws:
   /// - [NotFoundException] if the range yields no verses
   /// - [LocalDataException] for database/query failures
-  Future<List<BibleRef>> searchVerses(int bibleId, String matchingString);
+  Future<List<BibleRef>> searchVerses(
+      List<int> bibleIds, String matchingString);
 
   /// Get verse segments from a List of bible references
   ///
@@ -418,7 +419,10 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
 
   @override
   Future<List<BibleRef>> searchVerses(
-      int bibleId, String matchingString) async {
+      List<int> bibleIds, String matchingString) async {
+    // TODO: support multiple bibleIds
+    final bibleId =
+        bibleIds.first; // temp, for making the errors disappear and compile
     print('******************************');
     print('source: $bibleId');
     print('finding: $matchingString');

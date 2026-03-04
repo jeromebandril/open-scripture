@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_scripture/features/bible_display/bible_pane/presentation/models/parallel_bible_config.dart';
+import 'package:open_scripture/shared/domain/entities/verse.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
 
-import '../../../../../shared/domain/entities/verse_segment.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../../../split_screen/presenter/cubit/pane_manager_cubit.dart';
 import '../bloc/bible_pane_bloc.dart';
@@ -14,11 +15,11 @@ class BibleViewList extends StatefulWidget {
   const BibleViewList({
     super.key,
     required this.uniqueId,
-    required this.segments,
+    required this.content,
   });
 
   final int uniqueId;
-  final List<VerseSegment> segments;
+  final ParallelBibleConfig content;
 
   @override
   State<BibleViewList> createState() => _BibleViewListState();
@@ -41,7 +42,10 @@ class _BibleViewListState extends State<BibleViewList> {
     });
   }
 
-  void _scheduleScrollAfterBuild({useAnimation = true}) {
+  void _scheduleScrollAfterBuild({
+    required List<BibleRef> items,
+    useAnimation = true,
+  }) {
     if (_scrollScheduled) return;
     _scrollScheduled = true;
 
@@ -52,14 +56,7 @@ class _BibleViewListState extends State<BibleViewList> {
       final target = _pendingScrollRef;
       if (target == null) return;
 
-      final segmentsByVerse = <BibleRef, List<VerseSegment>>{};
-      for (final s in widget.segments) {
-        final key = s.ref;
-        (segmentsByVerse[key] ??= <VerseSegment>[]).add(s);
-      }
-      final refs = segmentsByVerse.keys.toList();
-
-      final index = refs.indexOf(target);
+      final index = items.indexOf(target);
       if (index < 0) return;
 
       await _scrollWhenReady(index, useAnimation);
@@ -101,11 +98,11 @@ class _BibleViewListState extends State<BibleViewList> {
     super.initState();
 
     // Scrolls to ref after display mode switch (which should remount the widget)
-    _pendingScrollRef =
-        context.read<BiblePaneBloc>().state.reference!.copyWith(verseEnd: null);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scheduleScrollAfterBuild(useAnimation: false);
-    });
+    // _pendingScrollRef =
+    //     context.read<BiblePaneBloc>().state.reference!.copyWith(verseEnd: null);
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _scheduleScrollAfterBuild(useAnimation: false);
+    // });
   }
 
   @override
@@ -113,28 +110,22 @@ class _BibleViewListState extends State<BibleViewList> {
     super.didUpdateWidget(oldWidget);
 
     // Scrolls to ref after content segments changes
-    if (!identical(oldWidget.segments, widget.segments)) {
-      _scheduleScrollAfterBuild();
+    if (!identical(oldWidget.content, widget.content)) {
+      final a = context.read<BiblePaneBloc>().state.unionRefs;
+      _scheduleScrollAfterBuild(items: a.toList());
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // group segments by verse
-    final segmentsByVerse = <BibleRef, List<VerseSegment>>{};
-    for (final s in widget.segments) {
-      final key = s.ref;
-      (segmentsByVerse[key] ??= <VerseSegment>[]).add(s);
-    }
-    final verseRefs = segmentsByVerse.keys.toList(); //..sort();
-
     // Set padding
     final screen = MediaQuery.of(context).size;
     final panes = context.read<PaneManagerCubit>().state.panes;
     final thisPaneIndex = panes.indexWhere((e) => e.id == widget.uniqueId);
-
     // theming
     final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
+
+    final unionContent = widget.content.computeUnion();
 
     return BlocConsumer<BiblePaneBloc, BiblePaneState>(
       listenWhen: (prev, curr) =>
@@ -145,28 +136,28 @@ class _BibleViewListState extends State<BibleViewList> {
 
         _pendingScrollRef = ref.copyWith(verseEnd: null);
 
-        _scheduleScrollAfterBuild();
+        _scheduleScrollAfterBuild(items: state.unionRefs.toList());
       },
       buildWhen: (prev, curr) => prev.reference != curr.reference,
       builder: (context, state) {
         return ScrollablePositionedList.separated(
           itemScrollController: _itemScrollController,
           itemPositionsListener: _itemPositionsListener,
-          itemCount: verseRefs.length + 1,
+          itemCount: unionContent.length + 1,
           padding: EdgeInsets.only(top: 16),
           separatorBuilder: (ctx, _) {
-            return VerseDivider();
+            return const VerseDivider();
           },
           itemBuilder: (_, i) {
             // Fixed empty space at the bottom
-            if (i == verseRefs.length) {
+            if (i == unionContent.length) {
               return SizedBox(
                 height: 200,
                 child: state.isMixed
                     ? Align(
                         alignment: AlignmentGeometry.center,
                         child: Text(
-                          '${state.segments.length} results found',
+                          '${state.content.asMap.length} results found',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               color: Theme.of(context).colorScheme.outline),
@@ -177,9 +168,10 @@ class _BibleViewListState extends State<BibleViewList> {
             }
 
             // Set content
-            final ref = verseRefs[i];
-            final segments = segmentsByVerse[ref]!;
-            final spans = segments.expand((s) => s.spans).toList();
+            final ref = unionContent.elementAt(i);
+            final verses =
+                widget.content.asMap.values.map((v) => v.verses?[ref]).toList();
+
             // Selected verse
             final vStart = state.reference?.verseStart;
             final vEnd = state.reference?.verseEnd;
@@ -201,16 +193,67 @@ class _BibleViewListState extends State<BibleViewList> {
                     ? screen.width * paneTheme.xPadding
                     : 0,
               ),
-              child: VerseWidget(
-                reference: ref,
-                segments: segments,
-                spans: spans,
+              child: _ParallelView(
+                ref: ref,
                 isHighlighted: isHighlighted,
+                verses: verses,
               ),
             );
           },
         );
       },
+    );
+  }
+}
+
+class _ParallelView extends StatelessWidget {
+  const _ParallelView({
+    required this.verses,
+    this.isHighlighted = false,
+    required this.ref,
+  });
+
+  final BibleRef ref;
+  final List<Verse?> verses;
+  final bool isHighlighted;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      spacing: 28,
+      // Here is the parallel view
+      children: [
+        ...verses.map((v) {
+          if (v == null) return SizedBox();
+
+          final spans = v.segments.expand((s) => s.spans).toList();
+
+          final verseWidget = VerseWidget(
+            reference: ref,
+            segments: v.segments,
+            spans: spans,
+            isHighlighted: isHighlighted,
+          );
+
+          // if (isHighlighted && verses.length > 1) {
+          //   return Expanded(
+          //     child: Column(
+          //       children: [
+          //         SizedBox(
+          //           height: 40,
+          //           child: Text(),
+          //         ),
+          //         verseWidget,
+          //       ],
+          //     ),
+          //   );
+          // }
+
+          return Expanded(child: verseWidget);
+        }),
+      ],
     );
   }
 }

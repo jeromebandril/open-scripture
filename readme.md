@@ -5,7 +5,7 @@ It offers:
 
 - High customization
 - List and Presentation view
-- Split screen with different translations
+- Splitscreen and parallel view with different translations
 - Clean interface with less clutter
 - Shortcuts
 - Live overlay graphic for OBS

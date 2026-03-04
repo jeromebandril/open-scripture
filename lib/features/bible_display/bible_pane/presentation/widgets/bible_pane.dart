@@ -51,23 +51,23 @@ class BiblePane extends StatelessWidget {
         ],
         child: BlocConsumer<BiblePaneBloc, BiblePaneState>(
           listenWhen: (prev, curr) =>
-              prev.bibleId != curr.bibleId && curr.reference != null,
+              prev.content != curr.content && curr.reference != null,
           listener: (BuildContext context, BiblePaneState state) {
-            blocComponents.bloc
-                .add(BiblePaneDisplayChapter(ref: state.reference!));
+            // blocComponents.bloc
+            //     .add(BiblePaneDisplayChapter(ref: state.reference!));
           },
           buildWhen: (prev, curr) =>
               prev.status != curr.status ||
               prev.errorMessage != curr.errorMessage ||
-              prev.segments != curr.segments,
+              prev.content != curr.content,
           builder: (context, state) {
             final Widget widget = switch (state.status) {
               //
               // INITIAL
-              BiblePaneStatus.initial => BibleSelector(
+              BiblePaneStatus.selectBibles => BibleSelector(
                   bloc: blocComponents.bibleSelectorCubit,
-                  onConfirm: (bibleId) {
-                    blocComponents.bloc.add(BiblePaneOpen(bibleId));
+                  onConfirm: (bibleIds) {
+                    blocComponents.bloc.add(BiblePaneOpen(bibleIds));
                   },
                 ),
               //
@@ -80,7 +80,7 @@ class BiblePane extends StatelessWidget {
                 Center(child: Text(state.errorMessage ?? 'Error')),
               //
               // READY SCREEN
-              BiblePaneStatus.ready => state.segments.isEmpty
+              BiblePaneStatus.ready => state.content.isContentEmpty
                   ? Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       spacing: 16,
@@ -113,14 +113,14 @@ class BiblePane extends StatelessWidget {
                               //
                               ? BibleViewPresentation(
                                   uniqueId: uniqueId,
-                                  segments: state.segments,
+                                  content: state.content,
                                 )
                               //
                               // Normal mode
                               //
                               : BibleViewList(
                                   uniqueId: uniqueId,
-                                  segments: state.segments,
+                                  content: state.content,
                                 );
                         },
                       ),

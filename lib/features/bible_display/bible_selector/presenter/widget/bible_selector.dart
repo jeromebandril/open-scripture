@@ -10,7 +10,7 @@ import '../../../../customizer/presentation/models/bible_pane_general_theme.dart
 import '../bloc/bible_selector_bloc.dart';
 
 class BibleSelector extends StatelessWidget {
-  final void Function(int selectedBibleId) onConfirm;
+  final void Function(List<int> selectedBibleId) onConfirm;
   final BibleSelectorBloc? bloc;
 
   const BibleSelector({required this.onConfirm, this.bloc, super.key});
@@ -26,15 +26,16 @@ class BibleSelector extends StatelessWidget {
 }
 
 class _BibleSelectorBody extends StatelessWidget {
-  final void Function(int selectedBibleId) onConfirm;
+  final void Function(List<int> selectedBibleId) onConfirm;
 
   const _BibleSelectorBody({required this.onConfirm});
 
   @override
   Widget build(BuildContext context) {
-    final selectedId = context.select(
-      (BibleSelectorBloc b) => b.state.selectedBibleId,
+    final selectedIds = context.select(
+      (BibleSelectorBloc b) => b.state.selectedBibleIds,
     );
+
     final useCustom = context.select(
       (CustomizerCubit b) => b.state.pane.enableCustomTheme,
     );
@@ -93,7 +94,7 @@ class _BibleSelectorBody extends StatelessWidget {
                     separatorBuilder: (_, __) => const Divider(height: 0.05),
                     itemBuilder: (context, index) {
                       final bible = state.installedBibles[index];
-                      final selected = bible.id == selectedId;
+                      final selected = selectedIds.contains(bible.id);
                       final style = TextStyle(
                         color: useCustom
                             ? paneTheme.textColor
@@ -121,9 +122,9 @@ class _BibleSelectorBody extends StatelessWidget {
                   spacing: 8,
                   children: [
                     ElevatedButton(
-                      onPressed: selectedId == null
+                      onPressed: selectedIds.isEmpty
                           ? null
-                          : () => onConfirm(selectedId),
+                          : () => onConfirm(selectedIds),
                       autofocus: true,
                       child: SizedBox(
                         width: 80,

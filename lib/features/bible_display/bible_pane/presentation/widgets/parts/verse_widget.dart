@@ -56,14 +56,8 @@ class VerseWidget extends StatelessWidget {
 
     return Listener(
       onPointerDown: (_) {
-        final ref = context.read<BiblePaneBloc>().state.reference!;
-        context.read<BiblePaneBloc>().add(BiblePaneJustChangeRef(
-                ref: ref.copyWith(
-              bookOsisId: reference.bookUsfxId,
-              chapter: reference.chapter,
-              verseStart: reference.verseStart,
-              verseEnd: null,
-            )));
+        context.read<BiblePaneBloc>().add(
+            BiblePaneJustChangeRef(ref: reference.copyWith(verseEnd: null)));
       },
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,

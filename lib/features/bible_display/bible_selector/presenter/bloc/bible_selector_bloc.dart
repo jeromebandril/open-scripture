@@ -15,6 +15,7 @@ class BibleSelectorBloc extends Bloc<BibleSelectorEvent, BibleSelectorState> {
   }) : super(const BibleSelectorState()) {
     on<BibleSelectorInit>(_loadInstalledBibles);
     on<BibleSelectorSelect>(_onBibleSelectorSelect);
+    on<BibleSelectorSetSelected>(_onSetSelected);
   }
 
   Future<void> _loadInstalledBibles(
@@ -37,8 +38,9 @@ class BibleSelectorBloc extends Bloc<BibleSelectorEvent, BibleSelectorState> {
           ));
         } else {
           emit(state.copyWith(
-            selectedBibleId:
-                state.selectedBibleId == null ? () => bibles.first.id : null,
+            selectedBibleIds: state.selectedBibleIds.isEmpty
+                ? () => [bibles.first.id!]
+                : null,
             status: () => BibleSelectorStatus.ready,
           ));
         }
@@ -50,6 +52,19 @@ class BibleSelectorBloc extends Bloc<BibleSelectorEvent, BibleSelectorState> {
     BibleSelectorSelect event,
     Emitter<BibleSelectorState> emit,
   ) async {
-    emit(state.copyWith(selectedBibleId: () => event.selectedBibleId));
+    final update = [...state.selectedBibleIds];
+    if (update.contains(event.selectedBibleId)) {
+      update.remove(event.selectedBibleId);
+    } else {
+      update.add(event.selectedBibleId);
+    }
+    emit(state.copyWith(selectedBibleIds: () => update));
+  }
+
+  Future<void> _onSetSelected(
+    BibleSelectorSetSelected event,
+    Emitter<BibleSelectorState> emit,
+  ) async {
+    emit(state.copyWith(selectedBibleIds: () => event.selectedBibleIds));
   }
 }

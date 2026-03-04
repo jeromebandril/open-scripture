@@ -17,16 +17,16 @@ class BSearchbarParseIntent extends BSearchbarEvent {
 }
 
 class BSearchbarFind extends BSearchbarEvent {
-  final int bibleId;
+  final List<int> bibleIds;
   final String query;
 
   const BSearchbarFind({
-    required this.bibleId,
+    required this.bibleIds,
     required this.query,
   });
 
   @override
-  List<Object> get props => [bibleId, query];
+  List<Object> get props => [bibleIds, query];
 }
 
 class DeleteHistoryItem extends BSearchbarEvent {

@@ -41,12 +41,12 @@ class BSearchbarRepositoryImpl implements BSearchbarRepository {
 
   @override
   Future<Either<Failure, List<BibleRef>>> find({
-    required int bibleId,
+    required List<int> bibleIds,
     required String match,
   }) async {
     try {
       return Right(
-          await localDataSource.searchVerses(bibleId, _ftsPhrase(match)));
+          await localDataSource.searchVerses(bibleIds, _ftsPhrase(match)));
     } catch (e) {
       return Left(UnknownFailure(details: e.toString()));
     }

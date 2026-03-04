@@ -1,60 +1,81 @@
 part of 'bible_pane_bloc.dart';
 
 enum BiblePaneStatus {
-  initial,
+  selectBibles,
   loading,
   ready,
   error,
 }
 
 class BiblePaneState extends Equatable {
-  const BiblePaneState({
+  const BiblePaneState._({
     required this.paneId,
-    this.status = BiblePaneStatus.initial,
-    this.bibleId,
-    this.bibleMeta,
-    this.reference,
-    this.segments = const [],
-    this.isMixed = false,
-    this.errorMessage,
-    this.dMode = DisplayMode.normal,
-    this.maxVerse,
-  });
+    required this.status,
+    required this.reference,
+    required this.content,
+    required SplayTreeSet<BibleRef> unionRefs,
+    required this.isMixed,
+    required this.errorMessage,
+    required this.dMode,
+    required this.verseCount,
+  }) : _unionRefs = unionRefs;
+
+  factory BiblePaneState({
+    required int paneId,
+    ParallelBibleConfig content = ParallelBibleConfig.empty,
+    BiblePaneStatus status = BiblePaneStatus.selectBibles,
+    BibleRef? reference,
+    bool isMixed = false,
+    String? errorMessage,
+    DisplayMode dMode = DisplayMode.normal,
+    int? verseCount,
+  }) {
+    return BiblePaneState._(
+      paneId: paneId,
+      status: status,
+      reference: reference,
+      content: content,
+      unionRefs: content.computeUnion(),
+      isMixed: isMixed,
+      errorMessage: errorMessage,
+      dMode: dMode,
+      verseCount: verseCount,
+    );
+  }
 
   final int paneId;
   final BiblePaneStatus status;
-  final int? bibleId;
-  final BibleMeta? bibleMeta;
   final BibleRef? reference;
-  final List<VerseSegment> segments;
+  final ParallelBibleConfig content;
   final bool isMixed;
   final String? errorMessage;
   final DisplayMode dMode;
-  final int? maxVerse;
+  final int? verseCount;
+
+  final SplayTreeSet<BibleRef> _unionRefs;
+  SplayTreeSet<BibleRef> get unionRefs => SplayTreeSet.of(_unionRefs);
+
+  List<BibleId> get openedBiblesIds => content.keys.toList();
 
   BiblePaneState copyWith({
     int Function()? paneId,
-    int? Function()? bibleId,
-    BibleMeta Function()? bibleMeta,
     BiblePaneStatus Function()? status,
     BibleRef Function()? reference,
-    List<VerseSegment> Function()? segments,
+    ParallelBibleConfig Function()? content,
     bool Function()? isMixed,
     String? Function()? errorMessage,
     DisplayMode Function()? dMode,
-    int? Function()? maxVerse,
+    int? Function()? verseCount,
   }) {
     return BiblePaneState(
-      bibleId: bibleId != null ? bibleId() : this.bibleId,
-      bibleMeta: bibleMeta != null ? bibleMeta() : this.bibleMeta,
+      paneId: paneId != null ? paneId() : this.paneId,
       status: status != null ? status() : this.status,
       reference: reference != null ? reference() : this.reference,
-      segments: segments != null ? segments() : this.segments,
-      paneId: paneId != null ? paneId() : this.paneId,
+      content: content != null ? content() : this.content,
       isMixed: isMixed != null ? isMixed() : this.isMixed,
       errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
       dMode: dMode != null ? dMode() : this.dMode,
-      maxVerse: maxVerse != null ? maxVerse() : this.maxVerse,
+      verseCount: verseCount != null ? verseCount() : this.verseCount,
     );
   }
 
@@ -62,13 +83,11 @@ class BiblePaneState extends Equatable {
   List<Object?> get props => [
         paneId,
         status,
-        bibleId,
-        bibleMeta,
         reference,
-        segments,
+        content,
         isMixed,
         errorMessage,
         dMode,
-        maxVerse,
+        verseCount,
       ];
 }

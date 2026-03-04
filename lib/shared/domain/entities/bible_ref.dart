@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-class BibleRef extends Equatable {
+class BibleRef extends Equatable implements Comparable<BibleRef> {
   static const _unset = Object();
 
   final String bookUsfxId;
@@ -29,6 +29,20 @@ class BibleRef extends Equatable {
       verseEnd:
           identical(verseEnd, _unset) ? this.verseStart : verseEnd as int?,
     );
+  }
+
+  @override
+  int compareTo(BibleRef other) {
+    final bookCmp = bookUsfxId.compareTo(other.bookUsfxId);
+    if (bookCmp != 0) return bookCmp;
+
+    final chapterCmp = chapter.compareTo(other.chapter);
+    if (chapterCmp != 0) return chapterCmp;
+
+    final verseCmp = (verseStart ?? 0).compareTo(other.verseStart ?? 0);
+    if (verseCmp != 0) return verseCmp;
+
+    return (verseEnd ?? 0).compareTo(other.verseEnd ?? 0);
   }
 
   @override

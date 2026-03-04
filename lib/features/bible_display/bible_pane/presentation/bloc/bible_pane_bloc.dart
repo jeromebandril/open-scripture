@@ -1,18 +1,20 @@
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:open_scripture/features/obs_live_overlay/domain/entities/overlay_models.dart';
 import 'package:open_scripture/shared/domain/entities/book_names.dart';
-import 'package:open_scripture/shared/domain/entities/verse_segment.dart';
+import 'package:open_scripture/shared/domain/entities/verse.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/domain/repositories/bible_repository.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/models/display_mode.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/navigation_bus.dart';
+import 'package:open_scripture/shared/domain/typedefs.dart';
 import 'package:open_scripture/shared/presentation/notifiers/selected_verse_content_notifier.dart';
 
 import '../../../../../injection_container.dart';
-import '../../../../../shared/domain/entities/bible_meta.dart';
 import '../../../../../shared/domain/entities/bible_ref.dart';
+import '../models/parallel_bible_config.dart';
 
 part 'bible_pane_event.dart';
 part 'bible_pane_state.dart';
@@ -25,11 +27,12 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     NavigationBus? navBus,
   })  : _navBus = navBus,
         _overlayNotifier = notifier,
-        super(BiblePaneState(paneId: paneId, status: BiblePaneStatus.initial)) {
+        super(BiblePaneState(
+            paneId: paneId, status: BiblePaneStatus.selectBibles)) {
     on<BiblePaneOpen>(_onBiblePaneOpen);
     on<BiblePaneDisplayChapter>(_onBiblePaneDisplayChapter);
     on<BiblePaneJustChangeRef>(_onChangeRef);
-    on<BiblePaneCloseBible>(_onCloseBible);
+    on<BiblePaneChooseBibles>(_onClosePane);
     on<BiblePaneDisplayVerses>(_onDisplayVerses);
     on<BiblePaneSetDisplayMode>(_onChangeDisplayMode);
   }
@@ -39,136 +42,204 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
   final ContentOfSelectedVerseNotifier? _overlayNotifier;
   final _resolver = sl<BibleRefResolver>();
 
-  Future<void> _onDisplayVerses(
-    BiblePaneDisplayVerses event,
-    Emitter<BiblePaneState> emit,
-  ) async {
-    if (state.bibleId == null) return;
-
-    final result = await repo.getVersesSegmentsWithSpans(
-      bibleId: state.bibleId!,
-      refs: event.refs,
-    );
-
-    result.fold(
-      (f) => emit(state.copyWith(
-        status: () => BiblePaneStatus.error,
-        errorMessage: () => f.message,
-      )),
-      (segments) => emit(state.copyWith(
-        status: () => BiblePaneStatus.ready,
-        segments: () => segments,
-        reference: () => segments.first.ref,
-        isMixed: () => true,
-      )),
-    );
-  }
-
+  // Add a bible translation to the content
   Future<void> _onBiblePaneOpen(
     BiblePaneOpen event,
     Emitter<BiblePaneState> emit,
   ) async {
     emit(state.copyWith(status: () => BiblePaneStatus.loading));
 
-    final result = await repo.getBibleMetadata(bibleId: event.bibleId);
+    final newMap = Map<BibleId, ParallelBibleData>.from(state.content.asMap);
 
-    result.fold(
-      (f) => emit(state.copyWith(
-        status: () => BiblePaneStatus.error,
-        errorMessage: () => f.message,
-      )),
-      (bm) => emit(state.copyWith(
-          status: () => BiblePaneStatus.ready,
-          bibleId: () => event.bibleId,
-          bibleMeta: () => bm,
-          isMixed: () => false)),
-    );
+    for (final id in event.bibleIds) {
+      final result = await repo.getBibleMetadata(bibleId: id);
+
+      result.fold(
+        (f) {
+          emit(state.copyWith(
+            status: () => BiblePaneStatus.error,
+            content: () => ParallelBibleConfig.empty,
+            errorMessage: () => f.message,
+          ));
+          return;
+        },
+        (bm) {
+          // Add only new translations
+          if (newMap[id] == null) {
+            newMap[id] = ParallelBibleData(meta: bm);
+
+            // fetch and update content if reference is not null
+            if (state.reference != null) {
+              add(BiblePaneDisplayChapter(ref: state.reference!));
+            }
+          }
+        },
+      );
+    }
+
+    // Remove translations that are not selected
+    for (final id in state.openedBiblesIds) {
+      if (!event.bibleIds.contains(id)) {
+        newMap.remove(id);
+      }
+    }
+
+    emit(state.copyWith(
+      status: () => BiblePaneStatus.ready,
+      content: () => ParallelBibleConfig.from(newMap),
+      isMixed: () => false,
+    ));
   }
 
+  /// Display passed bible refs
+  Future<void> _onDisplayVerses(
+    BiblePaneDisplayVerses event,
+    Emitter<BiblePaneState> emit,
+  ) async {
+    if (state.openedBiblesIds.isEmpty) return;
+
+    final newMap = Map<BibleId, ParallelBibleData>.from(state.content.asMap);
+
+    for (var id in state.openedBiblesIds) {
+      final result = await repo.getVersesSegmentsWithSpans(
+        bibleId: id,
+        refs: event.refs,
+      );
+
+      result.fold(
+        (_) => newMap[id] = newMap[id]!.copyWith(
+          verses: () => null,
+        ),
+        (s) => newMap[id] = newMap[id]!.copyWith(
+          verses: () => Verse.groupMixedSegmentsIntoVerses(s),
+        ),
+      );
+    }
+
+    emit(state.copyWith(
+      status: () => BiblePaneStatus.ready,
+      content: () => ParallelBibleConfig.from(newMap),
+      isMixed: () => true,
+    ));
+  }
+
+  /// Display the verses of the whole selected chapter
   Future<void> _onBiblePaneDisplayChapter(
     BiblePaneDisplayChapter event,
     Emitter<BiblePaneState> emit,
   ) async {
-    if (state.bibleId == null) return;
+    if (state.openedBiblesIds.isEmpty) return;
 
-    final eitherFailureOrChapter = event.withSpans
-        ? await repo.getChapterWithSpans(
-            bibleId: state.bibleId!,
+    final newMap = Map<BibleId, ParallelBibleData>.from(state.content.asMap);
+    bool isSuccess = false;
+    int verseCount = 0;
+
+    for (var id in state.openedBiblesIds) {
+      final failureOrChapter = event.withSpans
+          ? await repo.getChapterWithSpans(
+              bibleId: id,
+              reference: event.ref,
+            )
+          : await repo.getChapterSegments(
+              bibleId: id,
+              reference: event.ref,
+            );
+
+      await failureOrChapter.fold<Future<void>>(
+        (f) async => emit(state.copyWith(
+          status: () => BiblePaneStatus.error,
+          reference: () => event.ref,
+          errorMessage: () => f.message,
+        )),
+        (s) async {
+          isSuccess = true;
+
+          // update bible info with verse counter
+          // get the greatest count
+          final result = (await repo.getMaxVerse(
             reference: event.ref,
-          )
-        : await repo.getChapterSegments(
-            bibleId: state.bibleId!,
-            reference: event.ref,
+            bibleId: id,
+          ))
+              .getOrElse(
+            (_) => 0,
           );
+          if (result > verseCount) verseCount = result;
 
-    return eitherFailureOrChapter.fold(
-      (f) => emit(state.copyWith(
+          // set content of the pane
+          newMap[id] = newMap[id]!.copyWith(
+            verses: () => Verse.groupMixedSegmentsIntoVerses(s),
+          );
+        },
+      );
+    }
+
+    final content = ParallelBibleConfig.from(newMap);
+
+    if (isSuccess) {
+      emit(state.copyWith(
+        status: () => BiblePaneStatus.ready,
+        reference: () => event.ref,
+        content: () => content,
+        isMixed: () => false,
+        verseCount: () => verseCount,
+      ));
+
+      // return feedback to searchbar
+      _navBus?.emit(NavigationFeedback(
+        ref: event.ref,
+        success: true,
+        source: event.source,
+      ));
+
+      _sendTextToObsLiveOverlay(event.ref);
+    } else {
+      emit(state.copyWith(
         status: () => BiblePaneStatus.error,
         reference: () => event.ref,
-        errorMessage: () => f.message,
-      )),
-      (verses) async {
-        // update bible info for max verse range
-        final int maxVerse = (await repo.getMaxVerse(
-          reference: event.ref,
-          bibleId: state.bibleId!,
-        ))
-            .getOrElse(
-          (_) => 0,
-        );
-
-        // set content of the pane
-        emit(state.copyWith(
-          status: () => BiblePaneStatus.ready,
-          reference: () => event.ref,
-          segments: () => verses,
-          isMixed: () => false,
-          maxVerse: () => maxVerse,
-        ));
-
-        _sendTextToObsLiveOverlay(state.segments, event.ref);
-
-        // return feedback to searchbar
-        _navBus?.emit(NavigationFeedback(
-          ref: event.ref,
-          success: true,
-          source: event.source,
-        ));
-      },
-    );
+        content: () => content,
+        isMixed: () => false,
+        errorMessage: () => 'Not found',
+        verseCount: () => verseCount,
+      ));
+    }
   }
 
-  void _sendTextToObsLiveOverlay(List<VerseSegment> segments, BibleRef ref) {
-    if (_overlayNotifier == null || segments.isEmpty) return;
+  void _sendTextToObsLiveOverlay(BibleRef ref) {
+    if (_overlayNotifier == null || state.content.isContentEmpty) return;
 
+    // Set the bible reference
     String refStr = ref.toString().replaceAll(
           ref.bookUsfxId,
           _resolver.resolveBook(ref.bookUsfxId)!.fullName,
         );
 
-    //String? bibleName = state.bibleMeta?.abbreviation;
+    // Set content
+    final buffer = StringBuffer();
+    final rangeToDisplay = state.content.getRefsInRange(ref);
 
-    final selVerse =
-        segments.where((s) => s.ref.verseStart == ref.verseStart).toList();
-    String content = selVerse.map((s) => s.textContent).join(' ');
+    // TODO: support parallel view (e.g. multiple translations in the overlay)
+    // For now display content of the first translation
+    final translationToDisplay = state.content.keys.first;
+    final verses = state.content[translationToDisplay]!.verses!.entries
+        .where((e) => rangeToDisplay.contains(e.key))
+        .toList();
+    for (final v in verses) {
+      buffer.write(v.value.text);
+    }
 
     final snapshot = OverlaySnapshot(items: {
       'ref': OverlayItem(text: refStr, visible: true),
-      'content': OverlayItem(text: content, visible: true)
+      'content': OverlayItem(text: buffer.toString(), visible: true)
     });
     _overlayNotifier.update(snapshot);
   }
 
+  /// Just change the selected verse
   void _onChangeRef(
     BiblePaneJustChangeRef event,
     Emitter<BiblePaneState> emit,
   ) {
-    final vn = event.ref.verseStart;
-    if (vn == null || vn < 1 || vn > state.segments.last.ref.verseStart!) {
-      return;
-    }
-
-    _sendTextToObsLiveOverlay(state.segments, event.ref);
+    _sendTextToObsLiveOverlay(event.ref);
 
     if (event.saveHistory) {
       _navBus?.emit(NavigationFeedback(
@@ -181,13 +252,13 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     emit(state.copyWith(reference: () => event.ref));
   }
 
-  Future<void> _onCloseBible(
-    BiblePaneCloseBible event,
+  Future<void> _onClosePane(
+    BiblePaneChooseBibles event,
     Emitter<BiblePaneState> emit,
   ) async {
     emit(state.copyWith(
-      status: () => BiblePaneStatus.initial,
-      bibleId: () => null,
+      status: () => BiblePaneStatus.selectBibles,
+      //content: () => ParallelBibleConfig.empty,
     ));
   }
 

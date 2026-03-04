@@ -9,27 +9,27 @@ enum BibleSelectorStatus {
 class BibleSelectorState extends Equatable {
   const BibleSelectorState({
     this.status = BibleSelectorStatus.inital,
-    this.selectedBibleId,
+    this.selectedBibleIds = const [],
     this.errorMessage,
   });
 
   final BibleSelectorStatus status;
-  final int? selectedBibleId;
+  final List<int> selectedBibleIds;
   final String? errorMessage;
 
   BibleSelectorState copyWith({
     BibleSelectorStatus Function()? status,
-    int? Function()? selectedBibleId,
+    List<int> Function()? selectedBibleIds,
     String Function()? errorMessage,
   }) {
     return BibleSelectorState(
       status: status != null ? status() : this.status,
-      selectedBibleId:
-          selectedBibleId != null ? selectedBibleId() : this.selectedBibleId,
+      selectedBibleIds:
+          selectedBibleIds != null ? selectedBibleIds() : this.selectedBibleIds,
       errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
     );
   }
 
   @override
-  List<Object?> get props => [status, selectedBibleId, errorMessage];
+  List<Object?> get props => [status, selectedBibleIds, errorMessage];
 }
