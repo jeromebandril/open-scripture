@@ -7,6 +7,7 @@ class BibleViewListThemeSettings extends Equatable {
   final bool showVerseDivider;
   final bool showFullRefAlways;
   final bool enableHangingRefs;
+  final int parallelSpacing;
   final HighlightRenderMode highlightRenderMode;
 
   const BibleViewListThemeSettings({
@@ -15,6 +16,7 @@ class BibleViewListThemeSettings extends Equatable {
     this.showFullRefAlways = true,
     this.enableHangingRefs = false,
     this.highlightRenderMode = HighlightRenderMode.fullRefWithColor,
+    this.parallelSpacing = 32,
   });
 
   @override
@@ -24,6 +26,7 @@ class BibleViewListThemeSettings extends Equatable {
         showFullRefAlways,
         enableHangingRefs,
         highlightRenderMode,
+        parallelSpacing,
       ];
 
   Map<String, dynamic> toJson() => {
@@ -32,6 +35,7 @@ class BibleViewListThemeSettings extends Equatable {
         'showFullRefAlways': showFullRefAlways,
         'enableHangingRefs': enableHangingRefs,
         'highlightRenderMode': highlightRenderMode.wire,
+        'parallelSpacing': parallelSpacing,
       };
 
   BibleViewListThemeSettings copyWith({
@@ -40,6 +44,7 @@ class BibleViewListThemeSettings extends Equatable {
     bool? showFullRefAlways,
     bool? enableHangingRefs,
     HighlightRenderMode? highlightRenderMode,
+    int? parallelSpacing,
   }) {
     return BibleViewListThemeSettings(
       underlineRef: underlineRef ?? this.underlineRef,
@@ -47,17 +52,18 @@ class BibleViewListThemeSettings extends Equatable {
       showFullRefAlways: showFullRefAlways ?? this.showFullRefAlways,
       enableHangingRefs: enableHangingRefs ?? this.enableHangingRefs,
       highlightRenderMode: highlightRenderMode ?? this.highlightRenderMode,
+      parallelSpacing: parallelSpacing ?? this.parallelSpacing,
     );
   }
 
   static BibleViewListThemeSettings fromJson(Map<String, dynamic> json) {
     return BibleViewListThemeSettings(
-      underlineRef: json['underlineRef'] as bool,
-      showVerseDivider: (json['showVerseDivider'] as bool),
-      showFullRefAlways: (json['showFullRefAlways'] as bool),
-      enableHangingRefs: json['enableHangingRefs'] as bool,
-      highlightRenderMode: HighlightRenderModeWire.fromWire(
-          json['highlightRenderMode'] as String),
-    );
+        underlineRef: json['underlineRef'] as bool,
+        showVerseDivider: (json['showVerseDivider'] as bool),
+        showFullRefAlways: (json['showFullRefAlways'] as bool),
+        enableHangingRefs: json['enableHangingRefs'] as bool,
+        highlightRenderMode: HighlightRenderModeWire.fromWire(
+            json['highlightRenderMode'] as String),
+        parallelSpacing: json['parallelSpacing'] as int);
   }
 }

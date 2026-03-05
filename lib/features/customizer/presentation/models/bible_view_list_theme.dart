@@ -10,6 +10,7 @@ class BibleViewListTheme extends ThemeExtension<BibleViewListTheme> {
   final bool enableHangingRefs;
   final bool showFullRefAlways;
   final HighlightRenderMode highlightRenderMode;
+  final double parallelSpacing;
 
   const BibleViewListTheme({
     required this.underlineRef,
@@ -17,6 +18,7 @@ class BibleViewListTheme extends ThemeExtension<BibleViewListTheme> {
     required this.enableHangingRefs,
     required this.showFullRefAlways,
     required this.highlightRenderMode,
+    required this.parallelSpacing,
   });
 
   @override
@@ -26,6 +28,7 @@ class BibleViewListTheme extends ThemeExtension<BibleViewListTheme> {
     bool? showFullRefAlways,
     bool? enableHangingRefs,
     HighlightRenderMode? highlightRenderMode,
+    double? parallelSpacing,
   }) {
     return BibleViewListTheme(
       underlineRef: underlineRef ?? this.underlineRef,
@@ -33,6 +36,7 @@ class BibleViewListTheme extends ThemeExtension<BibleViewListTheme> {
       showFullRefAlways: showFullRefAlways ?? this.showFullRefAlways,
       enableHangingRefs: enableHangingRefs ?? this.enableHangingRefs,
       highlightRenderMode: highlightRenderMode ?? this.highlightRenderMode,
+      parallelSpacing: parallelSpacing ?? this.parallelSpacing,
     );
   }
 
@@ -46,6 +50,7 @@ class BibleViewListTheme extends ThemeExtension<BibleViewListTheme> {
       showFullRefAlways: t < 0.5 ? showFullRefAlways : other.showFullRefAlways,
       enableHangingRefs: t < 0.5 ? enableHangingRefs : other.enableHangingRefs,
       highlightRenderMode: highlightRenderMode,
+      parallelSpacing: parallelSpacing,
     );
   }
 }
@@ -58,5 +63,6 @@ extension BibleViewListThemeX on BibleViewListThemeSettings {
         showFullRefAlways: showFullRefAlways,
         enableHangingRefs: enableHangingRefs,
         highlightRenderMode: highlightRenderMode,
+        parallelSpacing: parallelSpacing.toDouble(),
       );
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/models/parallel_bible_config.dart';
+import 'package:open_scripture/features/customizer/presentation/models/bible_view_list_theme.dart';
 import 'package:open_scripture/shared/domain/entities/verse.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
@@ -85,7 +86,7 @@ class _BibleViewListState extends State<BibleViewList> {
         index: index,
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
-        alignment: 0.1,
+        alignment: 0.05,
       );
       return;
     }
@@ -221,11 +222,13 @@ class _ParallelView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final spacing =
+        Theme.of(context).extension<BibleViewListTheme>()!.parallelSpacing;
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      spacing: 28,
-      // Here is the parallel view
+      spacing: spacing,
       children: [
         ...verses.map((v) {
           if (v == null) return SizedBox();

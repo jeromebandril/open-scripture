@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_number.dart';
 
 import '../../../bible_display/bible_pane/presentation/models/display_mode.dart';
 import '../../../settings_window/presentation/widgets/setting.dart';
@@ -109,6 +110,26 @@ class _BibleViewListCustomizerScreenState
                                   value: m, child: Text(m.wire)))
                               .toList(),
                         )),
+                  ],
+                ),
+                SettingSection(
+                  title: 'Parallel view options',
+                  children: [
+                    Setting(
+                      label: 'Spacing',
+                      description:
+                          'The spacing/distance between each column in the parallel view',
+                      child: SettingInputNumber(
+                        max: 300,
+                        min: 0,
+                        value: context.select((CustomizerCubit c) =>
+                            c.state.listTheme.parallelSpacing),
+                        onSubmitted: (val) => cubit.updateTheme(
+                            listTheme: (l) => l.copyWith(
+                                  parallelSpacing: val.toInt(),
+                                )),
+                      ),
+                    )
                   ],
                 ),
               ],
