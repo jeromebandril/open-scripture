@@ -98,11 +98,12 @@ class _BibleViewListState extends State<BibleViewList> {
     super.initState();
 
     // Scrolls to ref after display mode switch (which should remount the widget)
-    // _pendingScrollRef =
-    //     context.read<BiblePaneBloc>().state.reference!.copyWith(verseEnd: null);
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   _scheduleScrollAfterBuild(useAnimation: false);
-    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final bloc = context.read<BiblePaneBloc>();
+      final items = bloc.state.unionRefs.toList();
+      _pendingScrollRef = bloc.state.reference!.copyWith(verseEnd: null);
+      _scheduleScrollAfterBuild(items: items, useAnimation: false);
+    });
   }
 
   @override
