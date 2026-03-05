@@ -114,7 +114,7 @@ class BibleViewPresentation extends StatelessWidget {
                             TextSpan(
                               text: '${rangeToDisplay[i].verseStart!}',
                               style: TextStyle(
-                                  fontSize: 8,
+                                  fontSize: 10,
                                   fontWeight: FontWeight.bold,
                                   color: paneTheme.accentColor,
                                   decoration: TextDecoration.underline),
@@ -132,7 +132,9 @@ class BibleViewPresentation extends StatelessWidget {
                                 style: TextStyle(
                                   fontWeight: paneTheme.textFontWeight,
                                 ),
-                                children: build()),
+                                children: rangeToDisplay.length > 1
+                                    ? build()
+                                    : verseInlineSpan),
                             textAlign: presentTheme.textAlignment,
                           ));
                     }).toList();
