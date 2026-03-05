@@ -84,7 +84,7 @@ class BibleViewPresentation extends StatelessWidget {
 
                     // for each bible translation
                     final views = state.parallelOrder
-                        .where((id) => state.content[id]!.verses != null)
+                        .where((id) => state.content[id]?.verses != null)
                         .map((id) {
                       final value = state.content[id]!;
                       List<InlineSpan> verseInlineSpan = [];
