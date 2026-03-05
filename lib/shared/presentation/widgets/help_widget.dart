@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_scripture/features/shortcuts/presentation/widget/keycap.dart';
 
 import '../../../features/shortcuts/domain/app_command.dart';
 import '../../../features/shortcuts/presentation/models/app_command_shortcuts.dart';
@@ -90,23 +91,20 @@ class HelpWindow extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('-  Go to next verse'),
+                    const Text('-  Move verse'),
                     SizedBox(
                       width: shortcutWidth,
-                      child: ShortcutView(
-                          activator: appCommandShortcuts[AppCommand.nextVerse]),
-                    )
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('-  Go to previous verse'),
-                    SizedBox(
-                      width: shortcutWidth,
-                      child: ShortcutView(
-                          activator: appCommandShortcuts[AppCommand.prevVerse]),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        spacing: 2,
+                        children: [
+                          ShortcutView(
+                              activator:
+                                  appCommandShortcuts[AppCommand.prevVerse]),
+                          Text(''),
+                          Keycap('→')
+                        ],
+                      ),
                     )
                   ],
                 ),
@@ -120,6 +118,19 @@ class HelpWindow extends StatelessWidget {
                       child: ShortcutView(
                           activator: appCommandShortcuts[
                               AppCommand.switchDisplayMode]),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('-  Change bible'),
+                    SizedBox(
+                      width: shortcutWidth,
+                      child: ShortcutView(
+                          activator:
+                              appCommandShortcuts[AppCommand.changeBible]),
                     )
                   ],
                 ),
