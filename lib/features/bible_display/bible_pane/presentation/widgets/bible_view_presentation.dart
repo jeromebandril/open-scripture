@@ -73,6 +73,7 @@ class BibleViewPresentation extends StatelessWidget {
                     style: TextStyle(
                       fontWeight: paneTheme.selectedRefFontWeight,
                       fontFamily: paneTheme.referenceFont,
+                      fontSize: 16,
                       color: paneTheme.accentColor,
                     ),
                   ),
@@ -152,9 +153,11 @@ class BibleViewPresentation extends StatelessWidget {
                                   Text(
                                     '(${e.key})',
                                     style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
+                                        color: paneTheme.enableCustomTheme
+                                            ? paneTheme.refColor
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .primary,
                                         fontSize: 8),
                                   ),
                                 e.value,
