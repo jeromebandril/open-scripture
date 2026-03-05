@@ -13,6 +13,7 @@ class BiblePaneState extends Equatable {
     required this.status,
     required this.reference,
     required this.content,
+    required this.parallelOrder,
     required SplayTreeSet<BibleRef> unionRefs,
     required this.isMixed,
     required this.errorMessage,
@@ -23,6 +24,7 @@ class BiblePaneState extends Equatable {
   factory BiblePaneState({
     required int paneId,
     ParallelBibleConfig content = ParallelBibleConfig.empty,
+    List<BibleId> parallelOrder = const [],
     BiblePaneStatus status = BiblePaneStatus.selectBibles,
     BibleRef? reference,
     bool isMixed = false,
@@ -35,6 +37,7 @@ class BiblePaneState extends Equatable {
       status: status,
       reference: reference,
       content: content,
+      parallelOrder: parallelOrder,
       unionRefs: content.computeUnion(),
       isMixed: isMixed,
       errorMessage: errorMessage,
@@ -47,6 +50,7 @@ class BiblePaneState extends Equatable {
   final BiblePaneStatus status;
   final BibleRef? reference;
   final ParallelBibleConfig content;
+  final List<BibleId> parallelOrder;
   final bool isMixed;
   final String? errorMessage;
   final DisplayMode dMode;
@@ -62,6 +66,7 @@ class BiblePaneState extends Equatable {
     BiblePaneStatus Function()? status,
     BibleRef Function()? reference,
     ParallelBibleConfig Function()? content,
+    List<BibleId> Function()? parallelOrder,
     bool Function()? isMixed,
     String? Function()? errorMessage,
     DisplayMode Function()? dMode,
@@ -72,6 +77,8 @@ class BiblePaneState extends Equatable {
       status: status != null ? status() : this.status,
       reference: reference != null ? reference() : this.reference,
       content: content != null ? content() : this.content,
+      parallelOrder:
+          parallelOrder != null ? parallelOrder() : this.parallelOrder,
       isMixed: isMixed != null ? isMixed() : this.isMixed,
       errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
       dMode: dMode != null ? dMode() : this.dMode,
@@ -85,6 +92,7 @@ class BiblePaneState extends Equatable {
         status,
         reference,
         content,
+        parallelOrder,
         isMixed,
         errorMessage,
         dMode,

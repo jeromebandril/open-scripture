@@ -169,8 +169,9 @@ class _BibleViewListState extends State<BibleViewList> {
 
             // Set content
             final ref = unionContent.elementAt(i);
-            final verses =
-                widget.content.asMap.values.map((v) => v.verses?[ref]).toList();
+            final verses = state.parallelOrder
+                .map((id) => widget.content[id]?.verses?[ref])
+                .toList();
 
             // Selected verse
             final vStart = state.reference?.verseStart;

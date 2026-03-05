@@ -79,14 +79,13 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
 
     // Remove translations that are not selected
     for (final id in state.openedBiblesIds) {
-      if (!event.bibleIds.contains(id)) {
-        newMap.remove(id);
-      }
+      if (!event.bibleIds.contains(id)) newMap.remove(id);
     }
 
     emit(state.copyWith(
       status: () => BiblePaneStatus.ready,
       content: () => ParallelBibleConfig.from(newMap),
+      parallelOrder: () => event.bibleIds,
       isMixed: () => false,
     ));
   }

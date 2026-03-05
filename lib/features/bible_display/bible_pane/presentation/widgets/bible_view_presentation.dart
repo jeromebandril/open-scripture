@@ -37,7 +37,8 @@ class BibleViewPresentation extends StatelessWidget {
         Theme.of(context).extension<BibleViewPresentationTheme>()!;
 
     return BlocBuilder<BiblePaneBloc, BiblePaneState>(
-      buildWhen: (prev, curr) => prev.reference != curr.reference,
+      buildWhen: (prev, curr) =>
+          prev.reference != curr.reference || prev.content != curr.content,
       builder: (context, state) {
         if (state.reference == null) return SizedBox();
         // Set content
@@ -82,7 +83,10 @@ class BibleViewPresentation extends StatelessWidget {
                     final rangeToDisplay = content.getRefsInRange(ref);
 
                     // for each bible translation
-                    final views = content.asMap.map((key, value) {
+                    final views = state.parallelOrder
+                        .where((id) => state.content[id]!.verses != null)
+                        .map((id) {
+                      final value = state.content[id]!;
                       List<InlineSpan> verseInlineSpan = [];
                       final verses = value.verses!.entries
                           .where((e) => rangeToDisplay.contains(e.key))
@@ -131,18 +135,18 @@ class BibleViewPresentation extends StatelessWidget {
                                 children: build()),
                             textAlign: presentTheme.textAlignment,
                           ));
-                    });
+                    }).toList();
 
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       spacing: 64,
-                      children: views.entries
+                      children: views
                           .map(
                             (e) => Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                if (views.entries.length != 1)
+                                if (views.length != 1)
                                   Text(
                                     '(${e.key})',
                                     style: TextStyle(

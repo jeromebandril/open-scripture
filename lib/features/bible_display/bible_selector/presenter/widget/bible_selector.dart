@@ -108,7 +108,16 @@ class _BibleSelectorBody extends StatelessWidget {
                           bible.abbreviation,
                           style: style,
                         ),
-                        trailing: selected ? const Icon(Icons.check) : null,
+                        trailing: selected
+                            ? Text(
+                                '${selectedIds.indexOf(bible.id!) + 1}',
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 24,
+                                ),
+                              )
+                            : null,
                         onTap: () => context.read<BibleSelectorBloc>().add(
                               BibleSelectorSelect(bible.id!),
                             ),
