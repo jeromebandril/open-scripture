@@ -81,25 +81,7 @@ class BiblePane extends StatelessWidget {
               //
               // READY SCREEN
               BiblePaneStatus.ready => state.content.isContentEmpty
-                  ? Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      spacing: 16,
-                      children: [
-                        Text("Ready :)", style: TextStyle(fontSize: 18)),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          spacing: 8,
-                          children: [
-                            Text('Press '),
-                            ShortcutView(
-                                activator: appCommandShortcuts[
-                                    AppCommand.changeBible]),
-                            Text('to change bible '),
-                          ],
-                        ),
-                        Text('( Go to <Help> for the main shortcuts list )'),
-                      ],
-                    )
+                  ? const _InitalEmptyContentScreen()
                   : TextScalerHost(
                       textScalerCubit: blocComponents.textScalerCubit,
                       initialiSize: 14,
@@ -146,6 +128,32 @@ class BiblePane extends StatelessWidget {
           },
         ),
       ),
+    );
+  }
+}
+
+class _InitalEmptyContentScreen extends StatelessWidget {
+  const _InitalEmptyContentScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      spacing: 16,
+      children: [
+        Text("Ready :)", style: TextStyle(fontSize: 18)),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          spacing: 8,
+          children: [
+            Text('Press '),
+            ShortcutView(
+                activator: appCommandShortcuts[AppCommand.changeBible]),
+            Text('to change bible '),
+          ],
+        ),
+        Text('( Go to <Help> for the essential shortcuts list )'),
+      ],
     );
   }
 }
