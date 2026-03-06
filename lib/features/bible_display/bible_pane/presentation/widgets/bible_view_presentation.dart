@@ -158,6 +158,8 @@ class BibleViewPresentation extends StatelessWidget {
                                             : Theme.of(context)
                                                 .colorScheme
                                                 .primary,
+                                        fontWeight:
+                                            presentTheme.subtitleFontWeight,
                                         fontSize: 8),
                                   ),
                                 e.value,

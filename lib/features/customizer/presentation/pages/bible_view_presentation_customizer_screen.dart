@@ -7,6 +7,7 @@ import 'package:open_scripture/features/customizer/presentation/widgets/bible_pa
 import '../../../settings_window/presentation/widgets/setting.dart';
 import '../../../settings_window/presentation/widgets/setting_input_option.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
+import '../../domain/entities/app_font_weight.dart';
 import '../cubit/customizer_cubit.dart';
 
 class BibleViewPresentationCustomizerScreen extends StatefulWidget {
@@ -39,6 +40,23 @@ class _BibleViewPresentationCustomizerScreenState
                 SettingSection(
                   title: 'Options',
                   children: [
+                    Setting(
+                        label: 'Text Font Weight Subtitle',
+                        description:
+                            'Set font weight for the bible metadata indicator when in parallel view',
+                        child: SettingInputOption<AppFontWeight>(
+                          value: context.select((CustomizerCubit c) =>
+                              c.state.presentTheme.subtitleFontWeight),
+                          onChanged: (fw) {
+                            cubit.updateTheme(
+                                presentTheme: (p) =>
+                                    p.copyWith(subtitleFontWeight: fw));
+                          },
+                          items: AppFontWeight.values
+                              .map((fw) => DropdownMenuItem<AppFontWeight>(
+                                  value: fw, child: Text(fw.wire)))
+                              .toList(),
+                        )),
                     Setting(
                         label: 'Text alignment',
                         description: 'Select text alignment',
