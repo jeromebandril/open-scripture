@@ -68,7 +68,7 @@ class MyMenuBar extends StatelessWidget {
               context.read<WindowStackManagerBloc>().add(WindowStackManagerOpen(
                     title: 'Quick Overview',
                     widget: HelpScreen(),
-                    size: Size(450, 315),
+                    size: Size(530, 615),
                   ));
             },
           ),
