@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/shortcuts/presentation/widget/keycap.dart';
+import 'package:open_scripture/shared/presentation/widgets/custom_window_wrapper.dart';
 
 import '../../../features/shortcuts/domain/app_command.dart';
 import '../../../features/shortcuts/presentation/models/app_command_shortcuts.dart';
@@ -38,34 +39,12 @@ class HelpWindow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 450,
-      height: 315,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: Theme.of(context).colorScheme.surface,
-      ),
+    return CustomWindowWrapper(
+      title: 'Quick Overview',
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Row(
-            children: [
-              SizedBox(width: 16),
-              Expanded(
-                  child: const Text('Quick overview',
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600, fontSize: 18))),
-              IconButton(
-                  onPressed: () {
-                    context
-                        .read<WindowStackManagerBloc>()
-                        .add(WindowStackManagerClose());
-                    onClose?.call();
-                  },
-                  icon: Icon(Icons.close)),
-            ],
-          ),
           Expanded(
               child: Container(
             padding: const EdgeInsets.all(16),
