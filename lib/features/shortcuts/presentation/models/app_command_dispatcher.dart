@@ -67,7 +67,8 @@ class AppCommandDispatcher {
       final pane = paneManagerCubit.activePane();
 
       // undo/redo behavior: if the current pane has a bible, close it. otherwise, reopen the last closed bible.
-      if (_prevBibleId.isNotEmpty && pane.bloc.state.openedBiblesIds.isEmpty) {
+      if (_prevBibleId.isNotEmpty &&
+          pane.bloc.state.status == BiblePaneStatus.selectBibles) {
         pane.bloc.add(BiblePaneOpen(_prevBibleId));
         _prevBibleId = [];
         return;
