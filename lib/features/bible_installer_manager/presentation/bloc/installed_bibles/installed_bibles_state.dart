@@ -12,25 +12,31 @@ class InstalledBiblesState extends Equatable {
     this.status = InstalledBiblesStatus.initial,
     this.installedBibles = const [],
     this.errorMessage,
+    this.selectedBibleId,
   });
 
   final InstalledBiblesStatus status;
   final List<BibleMeta> installedBibles;
+  final String? selectedBibleId;
   final String? errorMessage;
 
   InstalledBiblesState copyWith({
     InstalledBiblesStatus Function()? status,
     List<BibleMeta> Function()? installedBibles,
+    String? Function()? selectedBibleId,
     String Function()? errorMessage,
   }) {
     return InstalledBiblesState(
       status: status != null ? status() : this.status,
       installedBibles:
           installedBibles != null ? installedBibles() : this.installedBibles,
+      selectedBibleId:
+          selectedBibleId != null ? selectedBibleId() : this.selectedBibleId,
       errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
     );
   }
 
   @override
-  List<Object?> get props => [status, installedBibles, errorMessage];
+  List<Object?> get props =>
+      [status, installedBibles, selectedBibleId, errorMessage];
 }

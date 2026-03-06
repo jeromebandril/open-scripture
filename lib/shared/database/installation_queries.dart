@@ -76,9 +76,7 @@ extension BibleInstallQueries on db.AppDb {
           langIsoCode: meta.langIsoCode?.toUpperCase(),
         );
       }
-      print('================================================================');
-      print(meta);
-      print('================================================================');
+
       return await into(bibles).insert(
         db.BiblesCompanion.insert(
           extId: meta.extId,

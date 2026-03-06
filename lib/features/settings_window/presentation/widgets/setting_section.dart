@@ -6,30 +6,34 @@ const double settingsSpacing = 8;
 class SettingSection extends StatelessWidget {
   const SettingSection({
     super.key,
-    required this.title,
+    this.title,
     this.children,
     this.child,
+    this.actions,
   })  : itemCount = null,
         itemBuilder = null;
 
   const SettingSection.builder({
     super.key,
-    required this.title,
+    this.title,
     required this.itemCount,
     required this.itemBuilder,
+    this.actions,
   })  : children = null,
         child = null;
 
   const SettingSection.single({
     super.key,
-    required this.title,
+    this.title,
     required this.child,
+    this.actions,
   })  : children = null,
         itemCount = null,
         itemBuilder = null;
 
-  final String title;
+  final String? title;
   final List<Widget>? children;
+  final List<Widget>? actions;
   final Widget? child;
   final int? itemCount;
   final NullableIndexedWidgetBuilder? itemBuilder;
@@ -55,15 +59,23 @@ class SettingSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 16),
-        Padding(
-          padding: const EdgeInsets.only(left: 32),
-          child: Text(
-            title,
-            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+        if (title != null || actions != null) ...[
+          SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.only(left: 32),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  title!,
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+                ),
+                if (actions != null) ...actions!
+              ],
+            ),
           ),
-        ),
-        SizedBox(height: 12),
+          SizedBox(height: 12),
+        ],
         Container(
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surfaceContainerHighest,

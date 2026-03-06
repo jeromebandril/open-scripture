@@ -2,8 +2,12 @@ part of 'installed_bibles_section.dart';
 
 class _InstalledBiblesRow extends StatelessWidget {
   final BibleMeta bibleMeta;
+  final bool selected;
 
-  const _InstalledBiblesRow({required this.bibleMeta});
+  const _InstalledBiblesRow({
+    required this.bibleMeta,
+    this.selected = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -11,6 +15,9 @@ class _InstalledBiblesRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
+        color: selected
+            ? Theme.of(context).colorScheme.primaryContainer
+            : Colors.transparent,
       ),
       height: 36,
       initialColor: null,

@@ -151,14 +151,19 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
 
     return rows
         .map((r) => BibleMeta(
-            id: r.id,
-            extId: r.extId,
-            bibleName: r.bibleName,
-            abbreviation: r.bibleNameAbbreviation,
-            langEngName: r.langEngName,
-            langIsoCode: r.langIsoCode,
-            langNativeName: r.langNativeName,
-            bibleNameLocal: r.bibleNameLocal))
+              id: r.id,
+              extId: r.extId,
+              bibleName: r.bibleName,
+              bibleNameLocal: r.bibleNameLocal,
+              abbreviation: r.bibleNameAbbreviation,
+              originSource: r.originSource,
+              originFormat: r.originFormat,
+              description: r.description,
+              copyright: r.copyright,
+              langEngName: r.langEngName,
+              langIsoCode: r.langIsoCode,
+              langNativeName: r.langNativeName,
+            ))
         .toList();
   }
 

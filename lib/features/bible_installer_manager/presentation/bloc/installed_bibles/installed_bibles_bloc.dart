@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:open_scripture/shared/domain/entities/bible_meta.dart';
 import 'package:open_scripture/features/bible_installer_manager/domain/repositories/bible_manager_repository.dart';
@@ -27,6 +28,7 @@ class InstalledBiblesBloc
   }) : super(const InstalledBiblesState()) {
     on<InstalledBiblesLoad>(_onLoad);
     on<InstalledBiblesUninstall>(_onUninstall);
+    on<InstalledBiblesSelect>(_setSelected);
 
     _sub = notifier.stream.listen((_) {
       add(InstalledBiblesLoad());
@@ -73,6 +75,18 @@ class InstalledBiblesBloc
         ));
       },
     );
+  }
+
+  Future<void> _setSelected(
+    InstalledBiblesSelect event,
+    Emitter<InstalledBiblesState> emit,
+  ) async {
+    if (event.selectedId == null ||
+        state.installedBibles
+                .firstWhereOrNull((b) => b.extId == event.selectedId) !=
+            null) {
+      emit(state.copyWith(selectedBibleId: () => event.selectedId));
+    }
   }
 
   @override

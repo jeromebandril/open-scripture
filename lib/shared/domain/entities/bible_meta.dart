@@ -79,6 +79,23 @@ class BibleMeta extends Equatable {
     );
   }
 
+  Map<String, String> toMap() {
+    return {
+      'Id': '$id',
+      'usfxId': '$extId',
+      'Name': '$bibleName',
+      'Local Name': '$bibleNameLocal',
+      'Abbreviation': '$abbreviation',
+      'Origin Source': '$originSource',
+      'Original Format': '$originFormat',
+      'Description': '$description',
+      'Copyright': '$copyright',
+      'Language (eng)': '$langEngName',
+      'Language (native)': '$langNativeName',
+      'Language (iso 639)': '$langIsoCode',
+    };
+  }
+
   @override
   String toString() {
     return '''
