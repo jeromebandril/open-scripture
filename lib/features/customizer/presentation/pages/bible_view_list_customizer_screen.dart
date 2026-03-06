@@ -139,11 +139,10 @@ class _BibleViewListCustomizerScreenState
         if (widget.showPreview)
           Expanded(
             flex: 1,
-            child: SettingSection(
+            child: SettingSection.single(
               title: 'Preview',
-              children: [
-                Center(child: const BiblePanePreview(mode: DisplayMode.normal)),
-              ],
+              child: Center(
+                  child: const BiblePanePreview(mode: DisplayMode.normal)),
             ),
           )
       ],

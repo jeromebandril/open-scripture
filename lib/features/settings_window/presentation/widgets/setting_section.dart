@@ -8,7 +8,7 @@ class SettingSection extends StatelessWidget {
     super.key,
     required this.title,
     this.children,
-    this.rightSideChild,
+    this.child,
   })  : itemCount = null,
         itemBuilder = null;
 
@@ -18,11 +18,19 @@ class SettingSection extends StatelessWidget {
     required this.itemCount,
     required this.itemBuilder,
   })  : children = null,
-        rightSideChild = null;
+        child = null;
+
+  const SettingSection.single({
+    super.key,
+    required this.title,
+    required this.child,
+  })  : children = null,
+        itemCount = null,
+        itemBuilder = null;
 
   final String title;
   final List<Widget>? children;
-  final Widget? rightSideChild;
+  final Widget? child;
   final int? itemCount;
   final NullableIndexedWidgetBuilder? itemBuilder;
 
@@ -62,44 +70,47 @@ class SettingSection extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
           padding: EdgeInsets.all(32),
-          child: Row(
-            spacing: 32,
-            children: [
-              //
-              // LEFT SIDE
-              //
-              if (itemBuilder != null)
-                Expanded(
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    separatorBuilder: (_, __) => const Padding(
-                      padding: EdgeInsets.symmetric(vertical: settingsSpacing),
-                      child: Divider(),
-                    ),
-                    itemCount: itemCount!,
-                    itemBuilder: itemBuilder!,
-                  ),
-                ),
+          child: children == null && child != null
+              ? child
+              : Row(
+                  spacing: 32,
+                  children: [
+                    //
+                    // LEFT SIDE
+                    //
+                    if (itemBuilder != null)
+                      Expanded(
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          separatorBuilder: (_, __) => const Padding(
+                            padding:
+                                EdgeInsets.symmetric(vertical: settingsSpacing),
+                            child: Divider(),
+                          ),
+                          itemCount: itemCount!,
+                          itemBuilder: itemBuilder!,
+                        ),
+                      ),
 
-              if (children != null)
-                Expanded(
-                  flex: 2,
-                  child: Column(
-                    children: _withDividers(children!),
-                  ),
+                    if (children != null)
+                      Expanded(
+                        flex: 2,
+                        child: Column(
+                          children: _withDividers(children!),
+                        ),
+                      ),
+                    //
+                    // RIGHT SIDE
+                    //
+                    if (child != null)
+                      Expanded(
+                        flex: 1,
+                        //fit: FlexFit.loose,
+                        child: child!,
+                      ),
+                  ],
                 ),
-              //
-              // RIGHT SIDE
-              //
-              if (rightSideChild != null)
-                Expanded(
-                  flex: 1,
-                  //fit: FlexFit.loose,
-                  child: rightSideChild!,
-                ),
-            ],
-          ),
         ),
       ],
     );

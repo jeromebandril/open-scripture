@@ -97,9 +97,9 @@ class _BiblePaneCustomizerScreenState extends State<BiblePaneCustomizerScreen> {
                 child: Column(
                   spacing: 8,
                   children: [
-                    SettingSection(
+                    SettingSection.single(
                       title: '${_previewTitle()} Preview',
-                      children: [BiblePanePreview(mode: _previewMode)],
+                      child: BiblePanePreview(mode: _previewMode),
                     ),
                     if (_index == 0)
                       Container(
