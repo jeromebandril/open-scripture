@@ -186,19 +186,26 @@ class UsfxImporter implements BibleImporter {
     final bibleName = required('//identification/name', 'BibleMeta.bibleName');
     final bibleNameLocal =
         required('//identification/nameLocal', 'BibleMeta.bibleNameLocal');
-    final abbreviation =
-        required('//identification/abbreviation', 'BibleMeta.abbreviation');
+    final abbreviation = required(
+        '//identification/abbreviationLocal', 'BibleMeta.abbreviation');
     final langEngName = required('//language/name', 'BibleMeta.langEngName');
     final langNativeName =
         required('//language/nameLocal', 'BibleMeta.langNativeName');
     final langIso = required('//language/iso', 'BibleMeta.langIsoCode');
+    final desc =
+        required('//identification/description', 'BibleMeta.description');
+    final rights = required('//copyright/statement', 'BibleMeta.copyright');
 
     return BibleMeta(
       id: null,
-      usfxId: abbreviation,
+      extId: abbreviation,
       bibleNameLocal: bibleNameLocal,
       bibleName: bibleName,
       abbreviation: abbreviation,
+      originSource: null,
+      originFormat: formatId,
+      description: desc,
+      copyright: rights,
       langEngName: langEngName,
       langNativeName: langNativeName,
       langIsoCode: langIso,

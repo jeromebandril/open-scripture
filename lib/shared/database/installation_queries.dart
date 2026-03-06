@@ -73,18 +73,23 @@ extension BibleInstallQueries on db.AppDb {
         languageId = await _getOrCreateLanguageId(
           langEngName: eng,
           langNativeName: meta.langNativeName,
-          langIsoCode: meta.langIsoCode,
+          langIsoCode: meta.langIsoCode?.toUpperCase(),
         );
       }
-
+      print('================================================================');
+      print(meta);
+      print('================================================================');
       return await into(bibles).insert(
         db.BiblesCompanion.insert(
-          usfxId: meta.usfxId,
+          extId: meta.extId,
           languageId: Value(languageId), // nullable
           bibleName: meta.bibleName,
           bibleNameLocal: meta.bibleNameLocal,
           bibleNameAbbreviation: meta.abbreviation,
           originSource: Value(meta.originSource),
+          originFormat: Value(meta.originFormat),
+          description: Value(meta.description),
+          copyright: Value(meta.copyright),
         ),
         mode: InsertMode.insertOrIgnore,
       );

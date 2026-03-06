@@ -7,12 +7,15 @@ CREATE TABLE languages (
 
 CREATE TABLE bibles (
   id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-  usfxId NVARCHAR(80) NOT NULL UNIQUE,
+  extId NVARCHAR(80) NOT NULL UNIQUE,
   languageId INTEGER,
   bibleName NVARCHAR(64) NOT NULL,
   bibleNameLocal NVARCHAR(64) NOT NULL,
   bibleNameAbbreviation NVARCHAR(32) NOT NULL,
-  originSource NVARCHAR(128),
+  originSource NVARCHAR(128) NULL,
+  originFormat NVARCHAR(8) NULL,
+  description TEXT NULL,
+  copyright TEXT NULL,
 
   FOREIGN KEY (languageId) REFERENCES languages(id)
 );

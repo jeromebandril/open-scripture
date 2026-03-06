@@ -34,7 +34,7 @@ class _InstalledBiblesRow extends StatelessWidget {
             TextButton(
               onPressed: () => context
                   .read<InstalledBiblesBloc>()
-                  .add(InstalledBiblesUninstall(bibleMeta.usfxId)),
+                  .add(InstalledBiblesUninstall(bibleMeta.extId)),
               child: Row(
                 spacing: 8,
                 children: [

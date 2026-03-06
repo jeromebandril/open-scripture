@@ -88,7 +88,7 @@ class _BibleSelectorBody extends StatelessWidget {
                 SizedBox(height: 18),
                 SizedBox(
                   height:
-                      min(height * 0.5, state.installedBibles.length * 72.0),
+                      min(height * 0.5, state.installedBibles.length * 82.0),
                   child: ListView.separated(
                     itemCount: state.installedBibles.length,
                     separatorBuilder: (_, __) => const Divider(height: 0.05),
@@ -102,26 +102,40 @@ class _BibleSelectorBody extends StatelessWidget {
                       );
 
                       return ListTile(
-                        selected: selected,
-                        title: Text(bible.bibleNameLocal, style: style),
-                        subtitle: Text(
-                          bible.abbreviation,
-                          style: style,
-                        ),
-                        trailing: selected
-                            ? Text(
-                                '${selectedIds.indexOf(bible.id!) + 1}',
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 24,
-                                ),
-                              )
-                            : null,
-                        onTap: () => context.read<BibleSelectorBloc>().add(
-                              BibleSelectorSelect(bible.id!),
-                            ),
-                      );
+                          selected: selected,
+                          title: Text(bible.bibleNameLocal, style: style),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                bible.abbreviation,
+                                style: style,
+                              ),
+                              Text(
+                                bible.langEngName ??
+                                    bible.langNativeName ??
+                                    bible.langIsoCode ??
+                                    '',
+                                style: style.copyWith(
+                                    color: style.color!.withAlpha(125)),
+                              ),
+                            ],
+                          ),
+                          isThreeLine: true,
+                          trailing: selected
+                              ? Text(
+                                  '${selectedIds.indexOf(bible.id!) + 1}',
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 24,
+                                  ),
+                                )
+                              : null,
+                          onTap: () => context
+                              .read<BibleSelectorBloc>()
+                              .add(BibleSelectorSelect(bible.id!)));
                     },
                   ),
                 ),

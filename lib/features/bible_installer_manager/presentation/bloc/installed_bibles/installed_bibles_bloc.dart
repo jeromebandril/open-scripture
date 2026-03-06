@@ -66,7 +66,7 @@ class InstalledBiblesBloc
       )),
       (_) {
         final updatedList = List<BibleMeta>.from(state.installedBibles);
-        updatedList.removeWhere((b) => b.usfxId == event.id);
+        updatedList.removeWhere((b) => b.extId == event.id);
         emit(state.copyWith(
           status: () => InstalledBiblesStatus.loaded,
           installedBibles: () => updatedList,

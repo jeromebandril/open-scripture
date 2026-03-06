@@ -94,6 +94,10 @@ final class OsisImporter implements BibleImporter {
         "//*[local-name()='work'][@osisWork][1]/*[local-name()='identifier'][1]");
     final lang = _firstText(doc,
         "//*[local-name()='work'][@osisWork][1]/*[local-name()='language'][1]");
+    final desc = _firstText(doc,
+        "//*[local-name()='work'][@osisWork][1]/*[local-name()='description'][1]");
+    final rights = _firstText(doc,
+        "//*[local-name()='work'][@osisWork][1]/*[local-name()='rights'][1]");
 
     // Fallbacks
     final safeTitle = title.isEmpty ? 'Untitled' : title;
@@ -109,10 +113,14 @@ final class OsisImporter implements BibleImporter {
 
     return BibleMeta(
       id: null,
-      usfxId: identifier,
+      extId: identifier,
       bibleNameLocal: safeTitle,
       bibleName: safeTitle,
       abbreviation: identifier.isEmpty ? safeTitle : identifier,
+      originSource: null,
+      originFormat: formatId,
+      description: desc,
+      copyright: rights,
       langEngName: lang,
       langNativeName: lang,
       langIsoCode: lang,

@@ -33,7 +33,7 @@ class _RemoteCatalogSectionState extends State<RemoteCatalogSection> {
     final installedIds = context
         .select(
           (InstalledBiblesBloc b) => b.state.installedBibles.map(
-            (e) => e.usfxId,
+            (e) => e.extId,
           ),
         )
         .toList();
@@ -55,7 +55,7 @@ class _RemoteCatalogSectionState extends State<RemoteCatalogSection> {
 
         // Set which bible is already installed
         final bibles = bib.map((b) => b.copyWith(
-              isAlreadyInstalled: installedIds.contains(b.usfxId),
+              isAlreadyInstalled: installedIds.contains(b.extId),
             ));
         // Group bibles by langauge
         final groups = groupBy<BibleMeta, String>(

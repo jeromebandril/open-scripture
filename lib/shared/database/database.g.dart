@@ -293,9 +293,9 @@ class Bibles extends Table with TableInfo<Bibles, Bible> {
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       $customConstraints: 'NOT NULL PRIMARY KEY AUTOINCREMENT');
-  static const VerificationMeta _usfxIdMeta = const VerificationMeta('usfxId');
-  late final GeneratedColumn<String> usfxId = GeneratedColumn<String>(
-      'usfxId', aliasedName, false,
+  static const VerificationMeta _extIdMeta = const VerificationMeta('extId');
+  late final GeneratedColumn<String> extId = GeneratedColumn<String>(
+      'extId', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: true,
       $customConstraints: 'NOT NULL UNIQUE');
@@ -333,16 +333,40 @@ class Bibles extends Table with TableInfo<Bibles, Bible> {
       'originSource', aliasedName, true,
       type: DriftSqlType.string,
       requiredDuringInsert: false,
-      $customConstraints: '');
+      $customConstraints: 'NULL');
+  static const VerificationMeta _originFormatMeta =
+      const VerificationMeta('originFormat');
+  late final GeneratedColumn<String> originFormat = GeneratedColumn<String>(
+      'originFormat', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      $customConstraints: 'NULL');
+  static const VerificationMeta _descriptionMeta =
+      const VerificationMeta('description');
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+      'description', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      $customConstraints: 'NULL');
+  static const VerificationMeta _copyrightMeta =
+      const VerificationMeta('copyright');
+  late final GeneratedColumn<String> copyright = GeneratedColumn<String>(
+      'copyright', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      $customConstraints: 'NULL');
   @override
   List<GeneratedColumn> get $columns => [
         id,
-        usfxId,
+        extId,
         languageId,
         bibleName,
         bibleNameLocal,
         bibleNameAbbreviation,
-        originSource
+        originSource,
+        originFormat,
+        description,
+        copyright
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -357,11 +381,11 @@ class Bibles extends Table with TableInfo<Bibles, Bible> {
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
-    if (data.containsKey('usfxId')) {
-      context.handle(_usfxIdMeta,
-          usfxId.isAcceptableOrUnknown(data['usfxId']!, _usfxIdMeta));
+    if (data.containsKey('extId')) {
+      context.handle(
+          _extIdMeta, extId.isAcceptableOrUnknown(data['extId']!, _extIdMeta));
     } else if (isInserting) {
-      context.missing(_usfxIdMeta);
+      context.missing(_extIdMeta);
     }
     if (data.containsKey('languageId')) {
       context.handle(
@@ -397,6 +421,22 @@ class Bibles extends Table with TableInfo<Bibles, Bible> {
           originSource.isAcceptableOrUnknown(
               data['originSource']!, _originSourceMeta));
     }
+    if (data.containsKey('originFormat')) {
+      context.handle(
+          _originFormatMeta,
+          originFormat.isAcceptableOrUnknown(
+              data['originFormat']!, _originFormatMeta));
+    }
+    if (data.containsKey('description')) {
+      context.handle(
+          _descriptionMeta,
+          description.isAcceptableOrUnknown(
+              data['description']!, _descriptionMeta));
+    }
+    if (data.containsKey('copyright')) {
+      context.handle(_copyrightMeta,
+          copyright.isAcceptableOrUnknown(data['copyright']!, _copyrightMeta));
+    }
     return context;
   }
 
@@ -408,8 +448,8 @@ class Bibles extends Table with TableInfo<Bibles, Bible> {
     return Bible(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      usfxId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}usfxId'])!,
+      extId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}extId'])!,
       languageId: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}languageId']),
       bibleName: attachedDatabase.typeMapping
@@ -421,6 +461,12 @@ class Bibles extends Table with TableInfo<Bibles, Bible> {
           data['${effectivePrefix}bibleNameAbbreviation'])!,
       originSource: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}originSource']),
+      originFormat: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}originFormat']),
+      description: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}description']),
+      copyright: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}copyright']),
     );
   }
 
@@ -438,25 +484,31 @@ class Bibles extends Table with TableInfo<Bibles, Bible> {
 
 class Bible extends DataClass implements Insertable<Bible> {
   final int id;
-  final String usfxId;
+  final String extId;
   final int? languageId;
   final String bibleName;
   final String bibleNameLocal;
   final String bibleNameAbbreviation;
   final String? originSource;
+  final String? originFormat;
+  final String? description;
+  final String? copyright;
   const Bible(
       {required this.id,
-      required this.usfxId,
+      required this.extId,
       this.languageId,
       required this.bibleName,
       required this.bibleNameLocal,
       required this.bibleNameAbbreviation,
-      this.originSource});
+      this.originSource,
+      this.originFormat,
+      this.description,
+      this.copyright});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['usfxId'] = Variable<String>(usfxId);
+    map['extId'] = Variable<String>(extId);
     if (!nullToAbsent || languageId != null) {
       map['languageId'] = Variable<int>(languageId);
     }
@@ -466,13 +518,22 @@ class Bible extends DataClass implements Insertable<Bible> {
     if (!nullToAbsent || originSource != null) {
       map['originSource'] = Variable<String>(originSource);
     }
+    if (!nullToAbsent || originFormat != null) {
+      map['originFormat'] = Variable<String>(originFormat);
+    }
+    if (!nullToAbsent || description != null) {
+      map['description'] = Variable<String>(description);
+    }
+    if (!nullToAbsent || copyright != null) {
+      map['copyright'] = Variable<String>(copyright);
+    }
     return map;
   }
 
   BiblesCompanion toCompanion(bool nullToAbsent) {
     return BiblesCompanion(
       id: Value(id),
-      usfxId: Value(usfxId),
+      extId: Value(extId),
       languageId: languageId == null && nullToAbsent
           ? const Value.absent()
           : Value(languageId),
@@ -482,6 +543,15 @@ class Bible extends DataClass implements Insertable<Bible> {
       originSource: originSource == null && nullToAbsent
           ? const Value.absent()
           : Value(originSource),
+      originFormat: originFormat == null && nullToAbsent
+          ? const Value.absent()
+          : Value(originFormat),
+      description: description == null && nullToAbsent
+          ? const Value.absent()
+          : Value(description),
+      copyright: copyright == null && nullToAbsent
+          ? const Value.absent()
+          : Value(copyright),
     );
   }
 
@@ -490,13 +560,16 @@ class Bible extends DataClass implements Insertable<Bible> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Bible(
       id: serializer.fromJson<int>(json['id']),
-      usfxId: serializer.fromJson<String>(json['usfxId']),
+      extId: serializer.fromJson<String>(json['extId']),
       languageId: serializer.fromJson<int?>(json['languageId']),
       bibleName: serializer.fromJson<String>(json['bibleName']),
       bibleNameLocal: serializer.fromJson<String>(json['bibleNameLocal']),
       bibleNameAbbreviation:
           serializer.fromJson<String>(json['bibleNameAbbreviation']),
       originSource: serializer.fromJson<String?>(json['originSource']),
+      originFormat: serializer.fromJson<String?>(json['originFormat']),
+      description: serializer.fromJson<String?>(json['description']),
+      copyright: serializer.fromJson<String?>(json['copyright']),
     );
   }
   @override
@@ -504,26 +577,32 @@ class Bible extends DataClass implements Insertable<Bible> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'usfxId': serializer.toJson<String>(usfxId),
+      'extId': serializer.toJson<String>(extId),
       'languageId': serializer.toJson<int?>(languageId),
       'bibleName': serializer.toJson<String>(bibleName),
       'bibleNameLocal': serializer.toJson<String>(bibleNameLocal),
       'bibleNameAbbreviation': serializer.toJson<String>(bibleNameAbbreviation),
       'originSource': serializer.toJson<String?>(originSource),
+      'originFormat': serializer.toJson<String?>(originFormat),
+      'description': serializer.toJson<String?>(description),
+      'copyright': serializer.toJson<String?>(copyright),
     };
   }
 
   Bible copyWith(
           {int? id,
-          String? usfxId,
+          String? extId,
           Value<int?> languageId = const Value.absent(),
           String? bibleName,
           String? bibleNameLocal,
           String? bibleNameAbbreviation,
-          Value<String?> originSource = const Value.absent()}) =>
+          Value<String?> originSource = const Value.absent(),
+          Value<String?> originFormat = const Value.absent(),
+          Value<String?> description = const Value.absent(),
+          Value<String?> copyright = const Value.absent()}) =>
       Bible(
         id: id ?? this.id,
-        usfxId: usfxId ?? this.usfxId,
+        extId: extId ?? this.extId,
         languageId: languageId.present ? languageId.value : this.languageId,
         bibleName: bibleName ?? this.bibleName,
         bibleNameLocal: bibleNameLocal ?? this.bibleNameLocal,
@@ -531,11 +610,15 @@ class Bible extends DataClass implements Insertable<Bible> {
             bibleNameAbbreviation ?? this.bibleNameAbbreviation,
         originSource:
             originSource.present ? originSource.value : this.originSource,
+        originFormat:
+            originFormat.present ? originFormat.value : this.originFormat,
+        description: description.present ? description.value : this.description,
+        copyright: copyright.present ? copyright.value : this.copyright,
       );
   Bible copyWithCompanion(BiblesCompanion data) {
     return Bible(
       id: data.id.present ? data.id.value : this.id,
-      usfxId: data.usfxId.present ? data.usfxId.value : this.usfxId,
+      extId: data.extId.present ? data.extId.value : this.extId,
       languageId:
           data.languageId.present ? data.languageId.value : this.languageId,
       bibleName: data.bibleName.present ? data.bibleName.value : this.bibleName,
@@ -548,6 +631,12 @@ class Bible extends DataClass implements Insertable<Bible> {
       originSource: data.originSource.present
           ? data.originSource.value
           : this.originSource,
+      originFormat: data.originFormat.present
+          ? data.originFormat.value
+          : this.originFormat,
+      description:
+          data.description.present ? data.description.value : this.description,
+      copyright: data.copyright.present ? data.copyright.value : this.copyright,
     );
   }
 
@@ -555,99 +644,135 @@ class Bible extends DataClass implements Insertable<Bible> {
   String toString() {
     return (StringBuffer('Bible(')
           ..write('id: $id, ')
-          ..write('usfxId: $usfxId, ')
+          ..write('extId: $extId, ')
           ..write('languageId: $languageId, ')
           ..write('bibleName: $bibleName, ')
           ..write('bibleNameLocal: $bibleNameLocal, ')
           ..write('bibleNameAbbreviation: $bibleNameAbbreviation, ')
-          ..write('originSource: $originSource')
+          ..write('originSource: $originSource, ')
+          ..write('originFormat: $originFormat, ')
+          ..write('description: $description, ')
+          ..write('copyright: $copyright')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, usfxId, languageId, bibleName,
-      bibleNameLocal, bibleNameAbbreviation, originSource);
+  int get hashCode => Object.hash(
+      id,
+      extId,
+      languageId,
+      bibleName,
+      bibleNameLocal,
+      bibleNameAbbreviation,
+      originSource,
+      originFormat,
+      description,
+      copyright);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Bible &&
           other.id == this.id &&
-          other.usfxId == this.usfxId &&
+          other.extId == this.extId &&
           other.languageId == this.languageId &&
           other.bibleName == this.bibleName &&
           other.bibleNameLocal == this.bibleNameLocal &&
           other.bibleNameAbbreviation == this.bibleNameAbbreviation &&
-          other.originSource == this.originSource);
+          other.originSource == this.originSource &&
+          other.originFormat == this.originFormat &&
+          other.description == this.description &&
+          other.copyright == this.copyright);
 }
 
 class BiblesCompanion extends UpdateCompanion<Bible> {
   final Value<int> id;
-  final Value<String> usfxId;
+  final Value<String> extId;
   final Value<int?> languageId;
   final Value<String> bibleName;
   final Value<String> bibleNameLocal;
   final Value<String> bibleNameAbbreviation;
   final Value<String?> originSource;
+  final Value<String?> originFormat;
+  final Value<String?> description;
+  final Value<String?> copyright;
   const BiblesCompanion({
     this.id = const Value.absent(),
-    this.usfxId = const Value.absent(),
+    this.extId = const Value.absent(),
     this.languageId = const Value.absent(),
     this.bibleName = const Value.absent(),
     this.bibleNameLocal = const Value.absent(),
     this.bibleNameAbbreviation = const Value.absent(),
     this.originSource = const Value.absent(),
+    this.originFormat = const Value.absent(),
+    this.description = const Value.absent(),
+    this.copyright = const Value.absent(),
   });
   BiblesCompanion.insert({
     this.id = const Value.absent(),
-    required String usfxId,
+    required String extId,
     this.languageId = const Value.absent(),
     required String bibleName,
     required String bibleNameLocal,
     required String bibleNameAbbreviation,
     this.originSource = const Value.absent(),
-  })  : usfxId = Value(usfxId),
+    this.originFormat = const Value.absent(),
+    this.description = const Value.absent(),
+    this.copyright = const Value.absent(),
+  })  : extId = Value(extId),
         bibleName = Value(bibleName),
         bibleNameLocal = Value(bibleNameLocal),
         bibleNameAbbreviation = Value(bibleNameAbbreviation);
   static Insertable<Bible> custom({
     Expression<int>? id,
-    Expression<String>? usfxId,
+    Expression<String>? extId,
     Expression<int>? languageId,
     Expression<String>? bibleName,
     Expression<String>? bibleNameLocal,
     Expression<String>? bibleNameAbbreviation,
     Expression<String>? originSource,
+    Expression<String>? originFormat,
+    Expression<String>? description,
+    Expression<String>? copyright,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (usfxId != null) 'usfxId': usfxId,
+      if (extId != null) 'extId': extId,
       if (languageId != null) 'languageId': languageId,
       if (bibleName != null) 'bibleName': bibleName,
       if (bibleNameLocal != null) 'bibleNameLocal': bibleNameLocal,
       if (bibleNameAbbreviation != null)
         'bibleNameAbbreviation': bibleNameAbbreviation,
       if (originSource != null) 'originSource': originSource,
+      if (originFormat != null) 'originFormat': originFormat,
+      if (description != null) 'description': description,
+      if (copyright != null) 'copyright': copyright,
     });
   }
 
   BiblesCompanion copyWith(
       {Value<int>? id,
-      Value<String>? usfxId,
+      Value<String>? extId,
       Value<int?>? languageId,
       Value<String>? bibleName,
       Value<String>? bibleNameLocal,
       Value<String>? bibleNameAbbreviation,
-      Value<String?>? originSource}) {
+      Value<String?>? originSource,
+      Value<String?>? originFormat,
+      Value<String?>? description,
+      Value<String?>? copyright}) {
     return BiblesCompanion(
       id: id ?? this.id,
-      usfxId: usfxId ?? this.usfxId,
+      extId: extId ?? this.extId,
       languageId: languageId ?? this.languageId,
       bibleName: bibleName ?? this.bibleName,
       bibleNameLocal: bibleNameLocal ?? this.bibleNameLocal,
       bibleNameAbbreviation:
           bibleNameAbbreviation ?? this.bibleNameAbbreviation,
       originSource: originSource ?? this.originSource,
+      originFormat: originFormat ?? this.originFormat,
+      description: description ?? this.description,
+      copyright: copyright ?? this.copyright,
     );
   }
 
@@ -657,8 +782,8 @@ class BiblesCompanion extends UpdateCompanion<Bible> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
-    if (usfxId.present) {
-      map['usfxId'] = Variable<String>(usfxId.value);
+    if (extId.present) {
+      map['extId'] = Variable<String>(extId.value);
     }
     if (languageId.present) {
       map['languageId'] = Variable<int>(languageId.value);
@@ -676,6 +801,15 @@ class BiblesCompanion extends UpdateCompanion<Bible> {
     if (originSource.present) {
       map['originSource'] = Variable<String>(originSource.value);
     }
+    if (originFormat.present) {
+      map['originFormat'] = Variable<String>(originFormat.value);
+    }
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
+    }
+    if (copyright.present) {
+      map['copyright'] = Variable<String>(copyright.value);
+    }
     return map;
   }
 
@@ -683,12 +817,15 @@ class BiblesCompanion extends UpdateCompanion<Bible> {
   String toString() {
     return (StringBuffer('BiblesCompanion(')
           ..write('id: $id, ')
-          ..write('usfxId: $usfxId, ')
+          ..write('extId: $extId, ')
           ..write('languageId: $languageId, ')
           ..write('bibleName: $bibleName, ')
           ..write('bibleNameLocal: $bibleNameLocal, ')
           ..write('bibleNameAbbreviation: $bibleNameAbbreviation, ')
-          ..write('originSource: $originSource')
+          ..write('originSource: $originSource, ')
+          ..write('originFormat: $originFormat, ')
+          ..write('description: $description, ')
+          ..write('copyright: $copyright')
           ..write(')'))
         .toString();
   }
@@ -2530,19 +2667,22 @@ abstract class _$AppDb extends GeneratedDatabase {
 
   Selectable<GetBiblesResult> getBibles() {
     return customSelect(
-        'SELECT b.id, b.usfxId, b.languageId, b.bibleName, b.bibleNameLocal, b.bibleNameAbbreviation, b.originSource, l.langEngName, l.langIsoCode, l.langNativeName FROM bibles AS b JOIN languages AS l ON b.languageId = l.id',
+        'SELECT b.id, b.extId, b.languageId, b.bibleName, b.bibleNameLocal, b.bibleNameAbbreviation, b.originSource, b.originFormat, b.description, b.copyright, l.langEngName, l.langIsoCode, l.langNativeName FROM bibles AS b JOIN languages AS l ON b.languageId = l.id',
         variables: [],
         readsFrom: {
           bibles,
           languages,
         }).map((QueryRow row) => GetBiblesResult(
           id: row.read<int>('id'),
-          usfxId: row.read<String>('usfxId'),
+          extId: row.read<String>('extId'),
           languageId: row.readNullable<int>('languageId'),
           bibleName: row.read<String>('bibleName'),
           bibleNameLocal: row.read<String>('bibleNameLocal'),
           bibleNameAbbreviation: row.read<String>('bibleNameAbbreviation'),
           originSource: row.readNullable<String>('originSource'),
+          originFormat: row.readNullable<String>('originFormat'),
+          description: row.readNullable<String>('description'),
+          copyright: row.readNullable<String>('copyright'),
           langEngName: row.read<String>('langEngName'),
           langIsoCode: row.readNullable<String>('langIsoCode'),
           langNativeName: row.readNullable<String>('langNativeName'),
@@ -2551,7 +2691,7 @@ abstract class _$AppDb extends GeneratedDatabase {
 
   Selectable<GetBibleResult> getBible(int bibleId) {
     return customSelect(
-        'SELECT b.id, b.usfxId, b.languageId, b.bibleName, b.bibleNameLocal, b.bibleNameAbbreviation, b.originSource, l.langEngName, l.langIsoCode, l.langNativeName FROM bibles AS b JOIN languages AS l ON b.languageId = l.id WHERE b.id = ?1',
+        'SELECT b.id, b.extId, b.languageId, b.bibleName, b.bibleNameLocal, b.bibleNameAbbreviation, b.originSource, l.langEngName, l.langIsoCode, l.langNativeName FROM bibles AS b JOIN languages AS l ON b.languageId = l.id WHERE b.id = ?1',
         variables: [
           Variable<int>(bibleId)
         ],
@@ -2560,7 +2700,7 @@ abstract class _$AppDb extends GeneratedDatabase {
           languages,
         }).map((QueryRow row) => GetBibleResult(
           id: row.read<int>('id'),
-          usfxId: row.read<String>('usfxId'),
+          extId: row.read<String>('extId'),
           languageId: row.readNullable<int>('languageId'),
           bibleName: row.read<String>('bibleName'),
           bibleNameLocal: row.read<String>('bibleNameLocal'),
@@ -2934,21 +3074,27 @@ typedef $LanguagesProcessedTableManager = ProcessedTableManager<
     PrefetchHooks Function()>;
 typedef $BiblesCreateCompanionBuilder = BiblesCompanion Function({
   Value<int> id,
-  required String usfxId,
+  required String extId,
   Value<int?> languageId,
   required String bibleName,
   required String bibleNameLocal,
   required String bibleNameAbbreviation,
   Value<String?> originSource,
+  Value<String?> originFormat,
+  Value<String?> description,
+  Value<String?> copyright,
 });
 typedef $BiblesUpdateCompanionBuilder = BiblesCompanion Function({
   Value<int> id,
-  Value<String> usfxId,
+  Value<String> extId,
   Value<int?> languageId,
   Value<String> bibleName,
   Value<String> bibleNameLocal,
   Value<String> bibleNameAbbreviation,
   Value<String?> originSource,
+  Value<String?> originFormat,
+  Value<String?> description,
+  Value<String?> copyright,
 });
 
 class $BiblesFilterComposer extends Composer<_$AppDb, Bibles> {
@@ -2962,8 +3108,8 @@ class $BiblesFilterComposer extends Composer<_$AppDb, Bibles> {
   ColumnFilters<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get usfxId => $composableBuilder(
-      column: $table.usfxId, builder: (column) => ColumnFilters(column));
+  ColumnFilters<String> get extId => $composableBuilder(
+      column: $table.extId, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<int> get languageId => $composableBuilder(
       column: $table.languageId, builder: (column) => ColumnFilters(column));
@@ -2981,6 +3127,15 @@ class $BiblesFilterComposer extends Composer<_$AppDb, Bibles> {
 
   ColumnFilters<String> get originSource => $composableBuilder(
       column: $table.originSource, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get originFormat => $composableBuilder(
+      column: $table.originFormat, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get description => $composableBuilder(
+      column: $table.description, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get copyright => $composableBuilder(
+      column: $table.copyright, builder: (column) => ColumnFilters(column));
 }
 
 class $BiblesOrderingComposer extends Composer<_$AppDb, Bibles> {
@@ -2994,8 +3149,8 @@ class $BiblesOrderingComposer extends Composer<_$AppDb, Bibles> {
   ColumnOrderings<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get usfxId => $composableBuilder(
-      column: $table.usfxId, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<String> get extId => $composableBuilder(
+      column: $table.extId, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<int> get languageId => $composableBuilder(
       column: $table.languageId, builder: (column) => ColumnOrderings(column));
@@ -3014,6 +3169,16 @@ class $BiblesOrderingComposer extends Composer<_$AppDb, Bibles> {
   ColumnOrderings<String> get originSource => $composableBuilder(
       column: $table.originSource,
       builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get originFormat => $composableBuilder(
+      column: $table.originFormat,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get description => $composableBuilder(
+      column: $table.description, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get copyright => $composableBuilder(
+      column: $table.copyright, builder: (column) => ColumnOrderings(column));
 }
 
 class $BiblesAnnotationComposer extends Composer<_$AppDb, Bibles> {
@@ -3027,8 +3192,8 @@ class $BiblesAnnotationComposer extends Composer<_$AppDb, Bibles> {
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<String> get usfxId =>
-      $composableBuilder(column: $table.usfxId, builder: (column) => column);
+  GeneratedColumn<String> get extId =>
+      $composableBuilder(column: $table.extId, builder: (column) => column);
 
   GeneratedColumn<int> get languageId => $composableBuilder(
       column: $table.languageId, builder: (column) => column);
@@ -3044,6 +3209,15 @@ class $BiblesAnnotationComposer extends Composer<_$AppDb, Bibles> {
 
   GeneratedColumn<String> get originSource => $composableBuilder(
       column: $table.originSource, builder: (column) => column);
+
+  GeneratedColumn<String> get originFormat => $composableBuilder(
+      column: $table.originFormat, builder: (column) => column);
+
+  GeneratedColumn<String> get description => $composableBuilder(
+      column: $table.description, builder: (column) => column);
+
+  GeneratedColumn<String> get copyright =>
+      $composableBuilder(column: $table.copyright, builder: (column) => column);
 }
 
 class $BiblesTableManager extends RootTableManager<
@@ -3070,39 +3244,51 @@ class $BiblesTableManager extends RootTableManager<
               $BiblesAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
-            Value<String> usfxId = const Value.absent(),
+            Value<String> extId = const Value.absent(),
             Value<int?> languageId = const Value.absent(),
             Value<String> bibleName = const Value.absent(),
             Value<String> bibleNameLocal = const Value.absent(),
             Value<String> bibleNameAbbreviation = const Value.absent(),
             Value<String?> originSource = const Value.absent(),
+            Value<String?> originFormat = const Value.absent(),
+            Value<String?> description = const Value.absent(),
+            Value<String?> copyright = const Value.absent(),
           }) =>
               BiblesCompanion(
             id: id,
-            usfxId: usfxId,
+            extId: extId,
             languageId: languageId,
             bibleName: bibleName,
             bibleNameLocal: bibleNameLocal,
             bibleNameAbbreviation: bibleNameAbbreviation,
             originSource: originSource,
+            originFormat: originFormat,
+            description: description,
+            copyright: copyright,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
-            required String usfxId,
+            required String extId,
             Value<int?> languageId = const Value.absent(),
             required String bibleName,
             required String bibleNameLocal,
             required String bibleNameAbbreviation,
             Value<String?> originSource = const Value.absent(),
+            Value<String?> originFormat = const Value.absent(),
+            Value<String?> description = const Value.absent(),
+            Value<String?> copyright = const Value.absent(),
           }) =>
               BiblesCompanion.insert(
             id: id,
-            usfxId: usfxId,
+            extId: extId,
             languageId: languageId,
             bibleName: bibleName,
             bibleNameLocal: bibleNameLocal,
             bibleNameAbbreviation: bibleNameAbbreviation,
             originSource: originSource,
+            originFormat: originFormat,
+            description: description,
+            copyright: copyright,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
@@ -4010,23 +4196,29 @@ class $AppDbManager {
 
 class GetBiblesResult {
   final int id;
-  final String usfxId;
+  final String extId;
   final int? languageId;
   final String bibleName;
   final String bibleNameLocal;
   final String bibleNameAbbreviation;
   final String? originSource;
+  final String? originFormat;
+  final String? description;
+  final String? copyright;
   final String langEngName;
   final String? langIsoCode;
   final String? langNativeName;
   GetBiblesResult({
     required this.id,
-    required this.usfxId,
+    required this.extId,
     this.languageId,
     required this.bibleName,
     required this.bibleNameLocal,
     required this.bibleNameAbbreviation,
     this.originSource,
+    this.originFormat,
+    this.description,
+    this.copyright,
     required this.langEngName,
     this.langIsoCode,
     this.langNativeName,
@@ -4035,7 +4227,7 @@ class GetBiblesResult {
 
 class GetBibleResult {
   final int id;
-  final String usfxId;
+  final String extId;
   final int? languageId;
   final String bibleName;
   final String bibleNameLocal;
@@ -4046,7 +4238,7 @@ class GetBibleResult {
   final String? langNativeName;
   GetBibleResult({
     required this.id,
-    required this.usfxId,
+    required this.extId,
     this.languageId,
     required this.bibleName,
     required this.bibleNameLocal,

@@ -125,7 +125,7 @@ class _PaneInfoState extends State<PaneInfo> {
                       }
                       if (metas.length == 1) {
                         text = isExpanded
-                            ? '${metas.first.usfxId} — ${metas.first.bibleNameLocal} — ${metas.first.langEngName}'
+                            ? '${metas.first.extId} — ${metas.first.bibleNameLocal} — ${metas.first.langEngName}'
                             : metas.first.abbreviation;
                       }
                       return Text(text);

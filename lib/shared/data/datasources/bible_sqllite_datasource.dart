@@ -152,7 +152,7 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
     return rows
         .map((r) => BibleMeta(
             id: r.id,
-            usfxId: r.usfxId,
+            extId: r.extId,
             bibleName: r.bibleName,
             abbreviation: r.bibleNameAbbreviation,
             langEngName: r.langEngName,
@@ -240,7 +240,7 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
   Future<void> uninstallBible(String bibleId) async {
     try {
       final deleted = await (db.delete(db.bibles)
-            ..where((b) => b.usfxId.equals(bibleId)))
+            ..where((b) => b.extId.equals(bibleId)))
           .go();
 
       if (deleted == 0) {
@@ -395,7 +395,7 @@ class BibleLocalDatasourceImpl implements BibleLocalDataSource {
 
       return BibleMeta(
         id: r.id,
-        usfxId: r.usfxId,
+        extId: r.extId,
         bibleName: r.bibleName,
         bibleNameLocal: r.bibleNameLocal,
         abbreviation: r.bibleNameAbbreviation,

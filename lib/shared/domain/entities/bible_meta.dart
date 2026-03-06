@@ -3,7 +3,7 @@ import 'package:open_scripture/shared/database/database.dart';
 
 class BibleMeta extends Equatable {
   final int? id;
-  final String usfxId;
+  final String extId;
   final String bibleName;
   final String bibleNameLocal;
   final String abbreviation;
@@ -11,11 +11,14 @@ class BibleMeta extends Equatable {
   final String? langNativeName;
   final String? langIsoCode;
   final String? originSource;
+  final String? originFormat;
+  final String? description;
+  final String? copyright;
   final bool isAlreadyInstalled;
 
   const BibleMeta({
     this.id,
-    required this.usfxId,
+    required this.extId,
     required this.bibleName,
     required this.bibleNameLocal,
     required this.abbreviation,
@@ -23,17 +26,23 @@ class BibleMeta extends Equatable {
     this.langNativeName,
     this.langIsoCode,
     this.originSource,
+    this.originFormat,
     this.isAlreadyInstalled = false,
+    this.description,
+    this.copyright,
   });
 
   factory BibleMeta.fromDatabase(Bible b) {
     return BibleMeta(
       id: b.id,
-      usfxId: b.usfxId,
+      extId: b.extId,
       bibleName: b.bibleName,
       bibleNameLocal: b.bibleNameLocal,
       abbreviation: b.bibleNameAbbreviation,
       originSource: b.originSource,
+      originFormat: b.originFormat,
+      description: b.description,
+      copyright: b.copyright,
       isAlreadyInstalled: true,
     );
   }
@@ -46,22 +55,46 @@ class BibleMeta extends Equatable {
     String? abbreviation,
     String? langEngName,
     String? langNativeName,
-    String? langAbbreviation,
+    String? langIsoCode,
     String? originSource,
+    String? originFormat,
+    String? description,
+    String? copyright,
     bool? isAlreadyInstalled,
   }) {
     return BibleMeta(
       id: id ?? this.id,
-      usfxId: extId ?? this.usfxId,
+      extId: extId ?? this.extId,
       bibleName: bibleName ?? this.bibleName,
+      bibleNameLocal: bibleNameLocal ?? this.bibleNameLocal,
       abbreviation: abbreviation ?? this.abbreviation,
+      originSource: originSource ?? this.originSource,
+      originFormat: originFormat ?? this.originFormat,
+      description: description ?? this.description,
+      copyright: copyright ?? this.copyright,
       langEngName: langEngName ?? this.langEngName,
       langNativeName: langNativeName ?? this.langNativeName,
-      langIsoCode: langAbbreviation ?? this.langIsoCode,
-      originSource: originSource ?? this.originSource,
+      langIsoCode: langIsoCode ?? this.langIsoCode,
       isAlreadyInstalled: isAlreadyInstalled ?? this.isAlreadyInstalled,
-      bibleNameLocal: bibleNameLocal ?? this.bibleNameLocal,
     );
+  }
+
+  @override
+  String toString() {
+    return '''
+    id: $id 
+    usfxId: $extId 
+    bibleName: $bibleName 
+    localBibleName: $bibleNameLocal 
+    abbreviation: $abbreviation 
+    originSource: $originSource
+    originFormat: $originFormat
+    desc: $description 
+    copyright: $copyright 
+    langEngName: $langEngName 
+    langNativeName: $langNativeName 
+    langIsoCode: $langIsoCode 
+    ''';
   }
 
   @override
@@ -70,10 +103,13 @@ class BibleMeta extends Equatable {
         bibleName,
         bibleNameLocal,
         abbreviation,
+        originSource,
+        originFormat,
+        description,
+        copyright,
         langEngName,
         langNativeName,
         langIsoCode,
-        originSource,
         isAlreadyInstalled
       ];
 }
