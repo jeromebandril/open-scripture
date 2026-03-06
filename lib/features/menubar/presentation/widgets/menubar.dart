@@ -28,8 +28,8 @@ class MyMenuBar extends StatelessWidget {
             'Bible',
             onTap: () {
               context.read<WindowStackManagerBloc>().add(
-                    WindowStackManagerOpen(
-                      SettingsWindow(
+                    WindowStackManagerOpen.selfManaged(
+                      widget: SettingsWindow(
                           initialRoute: SettingsSection.bibleManager),
                     ),
                   );
@@ -40,8 +40,8 @@ class MyMenuBar extends StatelessWidget {
             'Settings',
             onTap: () {
               context.read<WindowStackManagerBloc>().add(
-                    WindowStackManagerOpen(
-                      SettingsWindow(
+                    WindowStackManagerOpen.selfManaged(
+                      widget: SettingsWindow(
                         initialRoute: SettingsSection.appearance,
                       ),
                     ),
@@ -53,8 +53,8 @@ class MyMenuBar extends StatelessWidget {
             'Shortcuts',
             onTap: () {
               context.read<WindowStackManagerBloc>().add(
-                    WindowStackManagerOpen(
-                      SettingsWindow(
+                    WindowStackManagerOpen.selfManaged(
+                      widget: SettingsWindow(
                         initialRoute: SettingsSection.shortcuts,
                       ),
                     ),
@@ -65,9 +65,11 @@ class MyMenuBar extends StatelessWidget {
           ToolbarOption(
             'Help',
             onTap: () {
-              context
-                  .read<WindowStackManagerBloc>()
-                  .add(WindowStackManagerOpen(HelpWindow()));
+              context.read<WindowStackManagerBloc>().add(WindowStackManagerOpen(
+                    title: 'Quick Overview',
+                    widget: HelpScreen(),
+                    size: Size(450, 315),
+                  ));
             },
           ),
         if (screenWidth > breakPoints[4])
@@ -75,8 +77,8 @@ class MyMenuBar extends StatelessWidget {
             'About',
             onTap: () {
               context.read<WindowStackManagerBloc>().add(
-                    WindowStackManagerOpen(
-                      SettingsWindow(
+                    WindowStackManagerOpen.selfManaged(
+                      widget: SettingsWindow(
                         initialRoute: SettingsSection.about,
                       ),
                     ),
