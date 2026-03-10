@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
 import 'package:open_scripture/features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
+import 'package:open_scripture/features/shortcuts/domain/app_command.dart';
+import 'package:open_scripture/features/shortcuts/presentation/models/app_command_shortcuts.dart';
+import 'package:open_scripture/features/shortcuts/presentation/widget/shortcut_view.dart';
 
 import '../../../bible_display/bible_pane/presentation/models/display_mode.dart';
 import '../bloc/b_searchbar_bloc.dart';
@@ -31,6 +34,7 @@ class BSearchbar extends StatefulWidget {
 
 class _BSearchbarState extends State<BSearchbar> {
   bool _findMode = false;
+  final _controller = TextEditingController();
 
   @override
   void initState() {
@@ -44,6 +48,10 @@ class _BSearchbarState extends State<BSearchbar> {
 
   @override
   Widget build(BuildContext context) {
+    final isShortcutVisible = widget.focusNode != null &&
+        !widget.focusNode!.hasFocus &&
+        _controller.text.isEmpty;
+
     return SizedBox(
       width: 280,
       height: widget.height,
@@ -67,6 +75,7 @@ class _BSearchbarState extends State<BSearchbar> {
                   ),
                 },
                 child: TextField(
+                  controller: _controller,
                   focusNode: widget.focusNode,
                   selectAllOnFocus: true,
                   onChanged: (key) {},
@@ -140,13 +149,29 @@ class _BSearchbarState extends State<BSearchbar> {
           //
           // Error notifier
           //
-          Positioned.fill(
-            right: 10,
-            child: Container(
-              alignment: AlignmentDirectional.centerEnd,
-              child: _ErrorNotifier(),
+          if (!isShortcutVisible)
+            Positioned.fill(
+              right: 10,
+              child: Container(
+                alignment: AlignmentDirectional.centerEnd,
+                child: _ErrorNotifier(),
+              ),
             ),
-          ),
+          if (isShortcutVisible)
+            Positioned.fill(
+              right: 10,
+              top: 2.5,
+              child: Container(
+                alignment: AlignmentDirectional.centerEnd,
+                child: ShortcutView(
+                  activator: appCommandShortcuts[AppCommand.focusSearch],
+                  textColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fillColor: Colors.transparent,
+                  borderColor: null,
+                  fontSize: 10,
+                ),
+              ),
+            ),
         ],
       ),
     );

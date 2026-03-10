@@ -6,11 +6,19 @@ import 'keycap.dart';
 class ShortcutView extends StatelessWidget {
   final ShortcutActivator? activator;
   final String unassignedText;
+  final Color? fillColor;
+  final Color? textColor;
+  final Color? borderColor;
+  final double? fontSize;
 
   const ShortcutView({
     super.key,
     required this.activator,
     this.unassignedText = 'Unassigned',
+    this.fillColor,
+    this.textColor,
+    this.borderColor,
+    this.fontSize,
   });
 
   @override
@@ -28,7 +36,18 @@ class ShortcutView extends StatelessWidget {
       crossAxisAlignment: WrapCrossAlignment.center,
       spacing: 2,
       runSpacing: 6,
-      children: tokens.expand((t) => [Keycap(t), const Text('+')]).toList()
+      children: tokens
+          .expand((t) => [
+                Keycap(
+                  t,
+                  fillColor: fillColor,
+                  textColor: textColor,
+                  borderColor: borderColor,
+                  fontSize: fontSize,
+                ),
+                Text('+', style: TextStyle(fontSize: fontSize))
+              ])
+          .toList()
         ..removeLast(),
     );
   }
