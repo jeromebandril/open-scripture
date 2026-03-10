@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_scripture/shared/presentation/cubit/toolbar_cubit.dart';
 import '../../../../shared/presentation/cubit/fullscreen_cubit.dart';
 import '../../../../shared/presentation/cubit/history_visibility_cubit.dart';
 import '../../../../shared/presentation/cubit/menubar_visibility_cubit.dart';
@@ -55,7 +56,8 @@ class _ShortcutsHostState extends State<ShortcutsHost> {
       paneManagerCubit: context.read<PaneManagerCubit>(),
       searchbarBloc: context.read<BSearchbarBloc>(),
       historyVisibilityCubit: context.read<HistoryVisibilityCubit>(),
-      toolbarCubit: context.read<MenubarCubit>(),
+      toolbarCubit: context.read<ToolbarCubit>(),
+      menubarCubit: context.read<MenubarCubit>(),
       fullscreenCubit: context.read<FullscreenCubit>(),
       rootFocusNode: widget.rootFocusNode,
       searchFocusNode: widget.searchFocusNode,

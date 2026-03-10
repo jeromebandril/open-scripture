@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:open_scripture/shared/presentation/cubit/toolbar_cubit.dart';
 
 import '../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../shared/presentation/cubit/fullscreen_cubit.dart';
@@ -18,19 +19,21 @@ class AppCommandDispatcher {
     required this.paneManagerCubit,
     required this.searchbarBloc,
     required this.historyVisibilityCubit,
-    required this.toolbarCubit,
+    required this.menubarCubit,
     required this.fullscreenCubit,
     required this.rootFocusNode,
     required this.searchFocusNode,
     required this.historyFocusNode,
+    required this.toolbarCubit,
   });
 
   final PaneManagerCubit paneManagerCubit;
   final BSearchbarBloc searchbarBloc;
 
   final HistoryVisibilityCubit historyVisibilityCubit;
-  final MenubarCubit toolbarCubit;
+  final MenubarCubit menubarCubit;
   final FullscreenCubit fullscreenCubit;
+  final ToolbarCubit toolbarCubit;
 
   final FocusNode rootFocusNode;
   final FocusNode searchFocusNode;
@@ -52,7 +55,8 @@ class AppCommandDispatcher {
     AppCommand.focusSearch: () => searchFocusNode.requestFocus(),
     AppCommand.unfocusSearch: () => rootFocusNode.requestFocus(),
     AppCommand.toggleHistory: () => historyVisibilityCubit.toggle(),
-    AppCommand.toggleMenubar: () => toolbarCubit.toggleVisibility(),
+    AppCommand.toggleMenubar: () => menubarCubit.toggleVisibility(),
+    AppCommand.toggleToolbar: () => toolbarCubit.toggleVisibility(),
     AppCommand.toggleFullscreen: () {
       fullscreenCubit.toggle();
       historyFocusNode.requestFocus();

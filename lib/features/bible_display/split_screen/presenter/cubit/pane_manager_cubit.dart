@@ -12,7 +12,7 @@ import '../models/split_pane_data.dart';
 
 part 'pane_manager_state.dart';
 
-const maxSplitsPaneX = 2;
+const maxSplitsPaneX = 3;
 
 class PaneManagerCubit extends Cubit<PaneManagerState> {
   PaneManagerCubit({

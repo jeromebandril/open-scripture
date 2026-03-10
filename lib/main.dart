@@ -11,6 +11,7 @@ import 'package:open_scripture/features/b_searchbar/presenter/widgets/parts/hist
 import 'package:open_scripture/features/customizer/presentation/models/bible_view_list_theme.dart';
 import 'package:open_scripture/features/customizer/presentation/models/bible_view_presentation_theme.dart';
 import 'package:open_scripture/features/menubar/presentation/widgets/menubar.dart';
+import 'package:open_scripture/shared/presentation/widgets/toolbar.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -31,6 +32,7 @@ import 'features/shortcuts/presentation/widget/shortcuts_host.dart';
 import 'features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
 import 'features/window_stack_manager/presentation/widgets/window_stack_manager_wrapper.dart';
 import 'injection_container.dart' as di;
+import 'shared/presentation/cubit/toolbar_cubit.dart';
 
 void main() async {
   await di.init();
@@ -109,6 +111,7 @@ class MyApp extends StatelessWidget {
                 BlocProvider(create: (_) => di.sl<HistoryVisibilityCubit>()),
                 BlocProvider(create: (_) => di.sl<PaneManagerCubit>()),
                 BlocProvider(create: (_) => di.sl<MenubarCubit>()),
+                BlocProvider(create: (_) => di.sl<ToolbarCubit>()),
                 BlocProvider(create: (_) => di.sl<FullscreenCubit>()..init()),
                 BlocProvider(create: (_) => di.sl<WindowStackManagerBloc>()),
                 BlocProvider(
@@ -173,6 +176,7 @@ class _HomeState extends State<Home> {
     );
     final isFullscreen = context.select((FullscreenCubit f) => f.state);
     final showMenuBar = context.select((MenubarCubit t) => t.state);
+    final showToolBar = context.select((ToolbarCubit t) => t.state.isVisible);
     final showHistory = context.select((HistoryVisibilityCubit c) => c.state);
     final screen = MediaQuery.of(context).size;
 
@@ -259,6 +263,21 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                     //
+                    // Floating Toolbar
+                    //
+                    if (showToolBar)
+                      Positioned.fill(
+                        child: Center(
+                          child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).dividerColor,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Toolbar()),
+                        ),
+                      ),
+                    //
                     // Dynamic searchbar
                     //
                     if (enableDynamicInterface)
@@ -273,11 +292,9 @@ class _HomeState extends State<Home> {
                           child: Align(
                             alignment: Alignment.topCenter,
                             child: Container(
-                              padding: const EdgeInsets.all(4),
+                              padding: const EdgeInsets.all(6),
                               decoration: BoxDecoration(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .surfaceContainerHighest,
+                                color: Theme.of(context).dividerColor,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: BSearchbar(
@@ -305,7 +322,7 @@ class _HomeState extends State<Home> {
                           child: Align(
                             alignment: Alignment.topCenter,
                             child: Container(
-                              padding: const EdgeInsets.all(12),
+                              padding: const EdgeInsets.all(6),
                               decoration: BoxDecoration(
                                 color: Theme.of(context).dividerColor,
                                 borderRadius: BorderRadius.circular(16),
