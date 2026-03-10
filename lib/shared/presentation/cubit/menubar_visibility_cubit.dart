@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ToolbarCubit extends Cubit<bool> {
-  ToolbarCubit() : super(true);
+class MenubarCubit extends Cubit<bool> {
+  MenubarCubit() : super(true);
 
   void toggleVisibility() {
     emit(!state);

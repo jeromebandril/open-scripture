@@ -45,7 +45,7 @@ import 'shared/domain/entities/book_names.dart';
 import 'shared/installer/bible/import/formats/osis_importer.dart';
 import 'shared/installer/bible/import/formats/usfx_importer.dart';
 import 'shared/installer/bible/source/packages/source_package_factory.dart';
-import 'shared/presentation/cubit/toolbar_cubit.dart';
+import 'shared/presentation/cubit/menubar_visibility_cubit.dart';
 import 'features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
 import 'features/bible_display/bible_pane/presentation/navigation_bus.dart';
 import 'features/bible_display/bible_selector/domain/repositories/bible_selector_repository.dart';
@@ -87,7 +87,7 @@ Future<void> init() async {
 
   // others
   sl.registerLazySingleton(() => NavigationBus());
-  sl.registerFactory(() => ToolbarCubit());
+  sl.registerFactory(() => MenubarCubit());
   sl.registerFactory(() => FullscreenCubit());
   sl.registerFactory(() => FontLoaderCubit());
   sl.registerFactory(() => HistoryVisibilityCubit());

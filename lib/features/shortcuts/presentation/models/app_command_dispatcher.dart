@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import '../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../shared/presentation/cubit/fullscreen_cubit.dart';
 import '../../../../shared/presentation/cubit/history_visibility_cubit.dart';
-import '../../../../shared/presentation/cubit/toolbar_cubit.dart';
+import '../../../../shared/presentation/cubit/menubar_visibility_cubit.dart';
 import '../../../b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
 import '../../../bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
 import '../../../bible_display/bible_pane/presentation/models/display_mode.dart';
@@ -29,7 +29,7 @@ class AppCommandDispatcher {
   final BSearchbarBloc searchbarBloc;
 
   final HistoryVisibilityCubit historyVisibilityCubit;
-  final ToolbarCubit toolbarCubit;
+  final MenubarCubit toolbarCubit;
   final FullscreenCubit fullscreenCubit;
 
   final FocusNode rootFocusNode;

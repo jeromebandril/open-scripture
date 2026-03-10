@@ -3,7 +3,7 @@ import 'package:open_scripture/features/obs_live_overlay/presentation/cubit/obs_
 import 'package:open_scripture/features/obs_live_overlay/presentation/widgets/obs_live_overlay_indicator.dart';
 import 'package:open_scripture/shared/presentation/cubit/history_visibility_cubit.dart';
 import 'package:open_scripture/shared/presentation/cubit/fullscreen_cubit.dart';
-import 'package:open_scripture/shared/presentation/cubit/toolbar_cubit.dart';
+import 'package:open_scripture/shared/presentation/cubit/menubar_visibility_cubit.dart';
 import 'package:open_scripture/shared/presentation/widgets/help_widget.dart';
 import 'package:open_scripture/shared/presentation/widgets/titlebar.dart';
 import 'package:open_scripture/features/b_searchbar/domain/repositories/b_search_intent_type.dart';
@@ -108,7 +108,7 @@ class MyApp extends StatelessWidget {
                     create: (_) => di.sl<ObsLiveOverlaySettingsCubit>()),
                 BlocProvider(create: (_) => di.sl<HistoryVisibilityCubit>()),
                 BlocProvider(create: (_) => di.sl<PaneManagerCubit>()),
-                BlocProvider(create: (_) => di.sl<ToolbarCubit>()),
+                BlocProvider(create: (_) => di.sl<MenubarCubit>()),
                 BlocProvider(create: (_) => di.sl<FullscreenCubit>()..init()),
                 BlocProvider(create: (_) => di.sl<WindowStackManagerBloc>()),
                 BlocProvider(
@@ -172,7 +172,7 @@ class _HomeState extends State<Home> {
       (CustomizerCubit c) => c.state.app.enableDynamicInterface,
     );
     final isFullscreen = context.select((FullscreenCubit f) => f.state);
-    final showMenuBar = context.select((ToolbarCubit t) => t.state);
+    final showMenuBar = context.select((MenubarCubit t) => t.state);
     final showHistory = context.select((HistoryVisibilityCubit c) => c.state);
     final screen = MediaQuery.of(context).size;
 

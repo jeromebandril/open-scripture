@@ -66,6 +66,11 @@ class Titlebar extends StatelessWidget {
                     if (!showLogo && showMenuBar) SizedBox(width: 8),
                     if (menuBar != null && showMenuBar || toolbar == null)
                       menuBar!,
+                    IconButton(
+                      tooltip: 'Toolbar',
+                      onPressed: () {},
+                      icon: Icon(Icons.expand_more_rounded, size: 18),
+                    )
                   ],
                 ),
                 //
