@@ -12,7 +12,7 @@ enum AppCommand {
   closeCurrentPane,
   movePaneToRight,
   movePaneToLeft,
-  toggleToolbar,
+  toggleMenubar,
   toggleFullscreen,
   switchDisplayMode,
   zoomIn,
@@ -78,7 +78,7 @@ const Map<AppCommand, AppCommandInfo> appCommandInfo = {
     label: 'Close Current Pane',
     description: 'Close the currently active pane.',
   ),
-  AppCommand.toggleToolbar: AppCommandInfo(
+  AppCommand.toggleMenubar: AppCommandInfo(
     label: 'Toggle Toolbar',
     description: 'Show or hide the application toolbar.',
   ),

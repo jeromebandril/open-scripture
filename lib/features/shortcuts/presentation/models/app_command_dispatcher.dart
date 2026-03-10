@@ -52,7 +52,7 @@ class AppCommandDispatcher {
     AppCommand.focusSearch: () => searchFocusNode.requestFocus(),
     AppCommand.unfocusSearch: () => rootFocusNode.requestFocus(),
     AppCommand.toggleHistory: () => historyVisibilityCubit.toggle(),
-    AppCommand.toggleToolbar: () => toolbarCubit.toggleVisibility(),
+    AppCommand.toggleMenubar: () => toolbarCubit.toggleVisibility(),
     AppCommand.toggleFullscreen: () {
       fullscreenCubit.toggle();
       historyFocusNode.requestFocus();
