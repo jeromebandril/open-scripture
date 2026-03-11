@@ -81,12 +81,14 @@ class Toolbar extends StatelessWidget {
                 icon: Icon(Icons.close_rounded),
               ),
               TextButton.icon(
-                onPressed: () => activePane.textScalerCubit.zoomIn(),
+                onPressed: () =>
+                    activePane.textScalerCubit.zoomIn(multiplier: 4),
                 label: Text('Zoom In'),
                 icon: Icon(Icons.zoom_in_rounded),
               ),
               TextButton.icon(
-                onPressed: () => activePane.textScalerCubit.zoomOut(),
+                onPressed: () =>
+                    activePane.textScalerCubit.zoomOut(multiplier: 4),
                 label: Text('Zoom Out'),
                 icon: Icon(Icons.zoom_out_rounded),
               ),
