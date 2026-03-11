@@ -58,19 +58,16 @@ class Toolbar extends StatelessWidget {
                 icon: Icon(Icons.menu_book),
               ),
               TextButton.icon(
-                onPressed: () {
-                  final evt = activePane.bloc.state.dMode == DisplayMode.normal
-                      ? const BiblePaneSetDisplayMode(DisplayMode.presentation)
-                      : const BiblePaneSetDisplayMode(DisplayMode.normal);
-                  activePane.bloc.add(evt);
-                },
-                label: activePane.bloc.state.dMode == DisplayMode.normal
-                    ? const Text('Set presentation display mode')
-                    : const Text('Set list display mode'),
-                icon: activePane.bloc.state.dMode == DisplayMode.normal
-                    ? const Icon(Icons.fit_screen_rounded)
-                    : const Icon(Icons.list),
-              ),
+                  onPressed: () {
+                    final evt =
+                        activePane.bloc.state.dMode == DisplayMode.normal
+                            ? const BiblePaneSetDisplayMode(
+                                DisplayMode.presentation)
+                            : const BiblePaneSetDisplayMode(DisplayMode.normal);
+                    activePane.bloc.add(evt);
+                  },
+                  label: const Text('Switch display mode'),
+                  icon: const Icon(Icons.fit_screen_rounded)),
               TextButton.icon(
                 onPressed: () =>
                     context.read<PaneManagerCubit>().splitNewPane(),

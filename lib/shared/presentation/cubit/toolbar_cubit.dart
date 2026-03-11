@@ -24,7 +24,7 @@ class ToolbarState extends Equatable {
 
   const ToolbarState.initial({
     this.isVisible = false,
-    this.highlightActivePane = false,
+    this.highlightActivePane = true,
   });
 
   ToolbarState copyWith({bool? isVisible, bool? highlightActivePane}) {

@@ -202,7 +202,7 @@ class _HomeState extends State<Home> {
                   menuBar: !showMenuBar && isFullscreen
                       ? Tooltip(
                           message:
-                              'Menu bar is hidden, press  CTRL+T  to toggle',
+                              'Menu bar is hidden, press  CTRL+O  to toggle',
                           child: Icon(
                             Icons.visibility_off_outlined,
                             size: 20,
