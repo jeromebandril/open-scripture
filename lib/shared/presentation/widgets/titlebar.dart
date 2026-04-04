@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_scripture/shared/constants/constants.dart';
 import 'package:open_scripture/shared/presentation/cubit/toolbar_cubit.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -23,7 +24,7 @@ class Titlebar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Theme.of(context).colorScheme.surfaceContainerHighest,
-      height: 38,
+      height: kWindowsTitleBarHeight,
       child: Stack(
         children: [
           Positioned.fill(
@@ -66,21 +67,24 @@ class Titlebar extends StatelessWidget {
                         ),
                       ),
                     if (!showLogo && showMenuBar) SizedBox(width: 8),
-                    if (menuBar != null && showMenuBar || toolbar == null)
+                    if (menuBar != null && showMenuBar) ...[
                       menuBar!,
-                    BlocSelector<ToolbarCubit, ToolbarState, bool>(
-                      selector: (state) => state.isVisible,
-                      builder: (context, isVisible) {
-                        return IconButton(
-                          tooltip: '${isVisible ? 'Hide' : 'Show'} Toolbar',
-                          onPressed: () =>
-                              context.read<ToolbarCubit>().toggleVisibility(),
-                          icon: isVisible
-                              ? const Icon(Icons.expand_less_rounded, size: 18)
-                              : const Icon(Icons.expand_more_rounded, size: 18),
-                        );
-                      },
-                    )
+                      BlocSelector<ToolbarCubit, ToolbarState, bool>(
+                        selector: (state) => state.isVisible,
+                        builder: (context, isVisible) {
+                          return IconButton(
+                            tooltip: '${isVisible ? 'Hide' : 'Show'} Toolbar',
+                            onPressed: () =>
+                                context.read<ToolbarCubit>().toggleVisibility(),
+                            icon: isVisible
+                                ? const Icon(Icons.expand_less_rounded,
+                                    size: 18)
+                                : const Icon(Icons.expand_more_rounded,
+                                    size: 18),
+                          );
+                        },
+                      )
+                    ]
                   ],
                 ),
                 //

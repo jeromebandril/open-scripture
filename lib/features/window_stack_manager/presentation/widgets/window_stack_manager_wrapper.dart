@@ -3,7 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/bible_installer_manager/presentation/bloc/installed_bibles/installed_bibles_bloc.dart';
 import 'package:open_scripture/features/obs_live_overlay/presentation/cubit/obs_overlay/obs_live_overlay_cubit.dart';
 import 'package:open_scripture/features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
+import 'package:open_scripture/shared/constants/constants.dart';
+import 'package:open_scripture/shared/presentation/cubit/toolbar_cubit.dart';
+import 'package:open_scripture/shared/presentation/widgets/titlebar.dart';
 
+import '../../../../shared/presentation/cubit/fullscreen_cubit.dart';
 import '../../../obs_live_overlay/presentation/cubit/obs_overlay_settinsg/obs_live_overlay_settings_cubit.dart';
 
 class WindowStackManagerWrapper extends StatefulWidget {
@@ -51,26 +55,32 @@ class _WindowStackManagerWrapperState extends State<WindowStackManagerWrapper> {
   }) {
     return OverlayEntry(
       builder: (overlayContext) {
-        return MultiBlocProvider(
-          providers: [
-            BlocProvider.value(value: context.read<WindowStackManagerBloc>()),
-            BlocProvider.value(value: context.read<ObsLiveOverlayCubit>()),
-            BlocProvider.value(
-                value: context.read<ObsLiveOverlaySettingsCubit>()),
-            BlocProvider.value(value: context.read<InstalledBiblesBloc>()),
-          ],
-          child: BlockSemantics(
-            blocking: true,
-            child: FocusScope(
-              node: focusNode,
-              child: Center(
-                child: Material(
-                  type: MaterialType.transparency,
-                  elevation: 24,
-                  borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    margin: const EdgeInsets.all(24),
-                    child: builder(overlayContext),
+        return Positioned(
+          top: kWindowsTitleBarHeight,
+          bottom: 0,
+          right: 0,
+          left: 0,
+          child: MultiBlocProvider(
+            providers: [
+              BlocProvider.value(value: context.read<WindowStackManagerBloc>()),
+              BlocProvider.value(value: context.read<ObsLiveOverlayCubit>()),
+              BlocProvider.value(
+                  value: context.read<ObsLiveOverlaySettingsCubit>()),
+              BlocProvider.value(value: context.read<InstalledBiblesBloc>()),
+            ],
+            child: BlockSemantics(
+              blocking: true,
+              child: FocusScope(
+                node: focusNode,
+                child: Center(
+                  child: Material(
+                    type: MaterialType.transparency,
+                    elevation: 24,
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      margin: const EdgeInsets.all(24),
+                      child: builder(overlayContext),
+                    ),
                   ),
                 ),
               ),
@@ -84,11 +94,25 @@ class _WindowStackManagerWrapperState extends State<WindowStackManagerWrapper> {
   void _syncToWindows(List<WidgetBuilder> windows) {
     final overlay = Overlay.of(context, rootOverlay: true);
 
+    final isFullscreen = context.read<FullscreenCubit>().state;
+
     // ensure barrier
     _barrierEntry ??= OverlayEntry(
-      builder: (_) => ModalBarrier(
-        dismissible: false,
-        color: Color(0x99000000),
+      builder: (_) => MultiBlocProvider(
+        providers: [
+          BlocProvider.value(value: context.read<ToolbarCubit>()),
+        ],
+        child: Column(
+          children: [
+            if (!isFullscreen) const Material(child: Titlebar()),
+            const Expanded(
+              child: ModalBarrier(
+                dismissible: false,
+                color: Color(0x99000000),
+              ),
+            ),
+          ],
+        ),
       ),
     );
 
