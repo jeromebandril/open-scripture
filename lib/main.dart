@@ -222,6 +222,15 @@ class _HomeState extends State<Home> {
                   showMenuBar: true,
                 ),
               //
+              // Toolbar
+              //
+              if (showToolBar) const Divider(),
+              AnimatedSize(
+                duration: const Duration(milliseconds: 128),
+                curve: Curves.easeInOut,
+                child: showToolBar ? const Toolbar() : const SizedBox.shrink(),
+              ),
+              //
               // BIBLE PANES
               //
               Expanded(
@@ -262,21 +271,6 @@ class _HomeState extends State<Home> {
                         child: MultipleBiblePanes(),
                       ),
                     ),
-                    //
-                    // Floating Toolbar
-                    //
-                    if (showToolBar)
-                      Positioned.fill(
-                        child: Center(
-                          child: Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).dividerColor,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Toolbar()),
-                        ),
-                      ),
                     //
                     // Dynamic searchbar
                     //
