@@ -29,24 +29,31 @@ class ShortcutsHost extends StatefulWidget {
 }
 
 class _ShortcutsHostState extends State<ShortcutsHost> {
-  final FocusScopeNode _scopeNode =
-      FocusScopeNode(debugLabel: 'app_shortcuts_scope');
+  @override
+  void initState() {
+    super.initState();
 
-  // @override
-  // void initState() {
-  //   super.initState();
+    // FocusManager.instance.addListener(() {
+    //   final p = FocusManager.instance.primaryFocus;
+    //   debugPrint('PRIMARY: ${p?.debugLabel}  '
+    //       'root.hasFocus=${widget.rootFocusNode.hasFocus} '
+    //       'root.hasPrimary=${widget.rootFocusNode.hasPrimaryFocus}');
+    // });
 
-  //   FocusManager.instance.addListener(() {
-  //     final p = FocusManager.instance.primaryFocus;
-  //     debugPrint('PRIMARY: ${p?.debugLabel}  '
-  //         'root.hasFocus=${widget.rootFocusNode.hasFocus} '
-  //         'root.hasPrimary=${widget.rootFocusNode.hasPrimaryFocus}');
-  //   });
-  // }
+    FocusManager.instance.addListener(_ensureFocusAnchor);
+  }
+
+  void _ensureFocusAnchor() {
+    final primary = FocusManager.instance.primaryFocus;
+
+    if (primary == null) {
+      widget.rootFocusNode.requestFocus();
+    }
+  }
 
   @override
   void dispose() {
-    _scopeNode.dispose();
+    FocusManager.instance.removeListener(_ensureFocusAnchor);
     super.dispose();
   }
 
@@ -89,12 +96,14 @@ class _ShortcutsHostState extends State<ShortcutsHost> {
       },
       child: Shortcuts(
         shortcuts: buildShortcutIntentMap(appCommandShortcuts),
-        child: Actions(
-          actions: actions,
-          child: Focus(
-            focusNode: widget.rootFocusNode,
-            autofocus: true,
-            child: widget.child,
+        child: FocusScope(
+          child: Actions(
+            actions: actions,
+            child: Focus(
+              focusNode: widget.rootFocusNode,
+              autofocus: true,
+              child: widget.child,
+            ),
           ),
         ),
       ),
