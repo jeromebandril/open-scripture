@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:open_scripture/shared/theme/tokens.dart';
 
 class Setting extends StatelessWidget {
   const Setting({
@@ -17,12 +18,13 @@ class Setting extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      spacing: 16,
+      spacing: AppSpacing.md,
       children: [
         Expanded(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: AppSpacing.xs,
             children: [
               Text(label, style: TextStyle(fontWeight: FontWeight.w500)),
               Text(description, style: TextStyle(fontWeight: FontWeight.w300)),

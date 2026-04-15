@@ -4,6 +4,9 @@ import 'package:open_scripture/shared/constants/constants.dart';
 import 'package:open_scripture/shared/presentation/cubit/toolbar_cubit.dart';
 import 'package:window_manager/window_manager.dart';
 
+import '../../../features/customizer/presentation/cubit/customizer_cubit.dart';
+import '../../../features/customizer/presentation/models/bible_pane_general_theme.dart';
+
 class Titlebar extends StatelessWidget {
   const Titlebar({
     super.key,
@@ -22,8 +25,33 @@ class Titlebar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // for gradient
+    final surface = Theme.of(context).colorScheme.surface;
+    final mid = Theme.of(context).colorScheme.surfaceContainerHighest;
+    final width = MediaQuery.of(context).size.width;
+    final band = 400 / width;
+    final half = band / 2;
+
     return Container(
-      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        gradient: LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          colors: [
+            surface,
+            mid,
+            mid,
+            surface,
+          ],
+          stops: [
+            0.0,
+            (0.5 - half).clamp(0.0, 1.0),
+            (0.5 + half).clamp(0.0, 1.0),
+            1.0,
+          ],
+        ),
+      ),
       height: kWindowsTitleBarHeight,
       child: Stack(
         children: [
@@ -55,9 +83,7 @@ class Titlebar extends StatelessWidget {
                           height: double.infinity,
                           width: 24 + 16, // icon width + spacing
                           alignment: Alignment.center,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .surfaceContainerHighest,
+                          color: Colors.transparent,
                           child: Image.asset(
                             'assets/icon/icon.png',
                             width: 24,
@@ -140,7 +166,7 @@ class _WindowButton extends StatelessWidget {
       splashRadius: 16,
       style: IconButton.styleFrom(
         splashFactory: NoSplash.splashFactory,
-        backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+        backgroundColor: Colors.transparent,
         //fixedSize: const Size(40, 40),
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.zero, // square

@@ -12,6 +12,7 @@ import 'package:open_scripture/features/customizer/presentation/models/bible_vie
 import 'package:open_scripture/features/customizer/presentation/models/bible_view_presentation_theme.dart';
 import 'package:open_scripture/features/menubar/presentation/widgets/menubar.dart';
 import 'package:open_scripture/shared/presentation/widgets/toolbar.dart';
+import 'package:open_scripture/shared/theme/tokens.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -186,7 +187,7 @@ class _HomeState extends State<Home> {
       searchFocusNode: _searchbarFocusNode,
       historyFocusNode: _historyFocusNode,
       child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+        // backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
         //
         // Manages the stacks of windosw that may occur when opening
         // popups or secondary pages in the form of a window (e.g. settings menu)
@@ -224,7 +225,6 @@ class _HomeState extends State<Home> {
               //
               // Toolbar
               //
-              if (showToolBar) const Divider(),
               AnimatedSize(
                 duration: const Duration(milliseconds: 128),
                 curve: Curves.easeInOut,
@@ -289,7 +289,7 @@ class _HomeState extends State<Home> {
                               padding: const EdgeInsets.all(6),
                               decoration: BoxDecoration(
                                 color: Theme.of(context).dividerColor,
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(30),
                               ),
                               child: BSearchbar(
                                 height: 48,
@@ -319,7 +319,8 @@ class _HomeState extends State<Home> {
                               padding: const EdgeInsets.all(6),
                               decoration: BoxDecoration(
                                 color: Theme.of(context).dividerColor,
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius:
+                                    BorderRadius.circular(AppRadius.lg),
                               ),
                               child: HistoryListOverlay(
                                 constraints: screen,

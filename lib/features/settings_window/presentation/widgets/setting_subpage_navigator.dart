@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:open_scripture/shared/theme/tokens.dart';
 
 class SettingSubpageNavigatorData {
   final int id;
@@ -26,7 +27,7 @@ class SettingSubpageNavigator extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(20),
       ),
       height: 40,
       child: Row(
@@ -57,9 +58,10 @@ class _NavBtn extends StatelessWidget {
     final bgColor = isActive ? color.withAlpha(60) : Colors.transparent;
 
     return Material(
-      borderRadius: BorderRadius.circular(4),
       color: bgColor,
+      borderRadius: BorderRadius.circular(20),
       child: InkWell(
+        borderRadius: BorderRadius.circular(20),
         splashColor: Colors.transparent,
         hoverColor: color.withAlpha(30),
         onTap: () => navData.onSelect.call(navData.id),

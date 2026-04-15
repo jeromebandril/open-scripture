@@ -52,6 +52,64 @@ class _BSearchbarState extends State<BSearchbar> {
         !widget.focusNode!.hasFocus &&
         _controller.text.isEmpty;
 
+    return SearchBar(
+      constraints: BoxConstraints(maxWidth: 280, minHeight: widget.height),
+      focusNode: widget.focusNode,
+      leading: Padding(
+        padding: const EdgeInsets.only(left: 4),
+        child: Icon(
+          Icons.search,
+          size: 18,
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
+      ),
+      hintText: !_findMode ? 'Search reference' : null,
+      elevation: WidgetStatePropertyAll(0),
+      trailing: [
+        if (isShortcutVisible)
+          Container(
+            alignment: AlignmentDirectional.centerEnd,
+            child: ShortcutView(
+              activator: appCommandShortcuts[AppCommand.focusSearch],
+              textColor: Theme.of(context).colorScheme.onSurfaceVariant,
+              fillColor: Colors.transparent,
+              borderColor: null,
+              fontSize: 10,
+            ),
+          ),
+      ],
+      onSubmitted: (input) {
+        if (widget.onSubmitted != null) widget.onSubmitted!();
+
+        if (_findMode) {
+          final bibleIds = context
+              .read<PaneManagerCubit>()
+              .activePane()
+              .bloc
+              .state
+              .openedBiblesIds;
+
+          if (bibleIds.isEmpty) return;
+
+          // only list view
+          context
+              .read<PaneManagerCubit>()
+              .activePane()
+              .bloc
+              .add(BiblePaneSetDisplayMode(DisplayMode.normal));
+          context.read<BSearchbarBloc>().add(BSearchbarFind(
+                bibleIds: bibleIds,
+                query: input,
+              ));
+
+          return;
+        }
+
+        BlocProvider.of<BSearchbarBloc>(context)
+            .add(BSearchbarParseIntent(input));
+      },
+    );
+
     return SizedBox(
       width: 280,
       height: widget.height,
@@ -129,16 +187,20 @@ class _BSearchbarState extends State<BSearchbar> {
                     filled: true,
                     fillColor:
                         Theme.of(context).colorScheme.surfaceContainerHigh,
-                    border: const OutlineInputBorder(
+                    border: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.transparent),
-                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                      borderRadius:
+                          BorderRadius.all(Radius.circular(widget.height / 2)),
                     ),
                     hoverColor: Colors.transparent,
-                    // focusedBorder: const OutlineInputBorder(
-                    //   borderSide: BorderSide(color: Colors.transparent),
-                    // ),
-                    enabledBorder: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius:
+                          BorderRadius.all(Radius.circular(widget.height / 2)),
+                      borderSide: BorderSide(color: Colors.transparent),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius:
+                          BorderRadius.all(Radius.circular(widget.height / 2)),
                       borderSide: BorderSide(color: Colors.transparent),
                     ),
                   ),

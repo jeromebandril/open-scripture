@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
 import 'package:open_scripture/features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
 import 'package:open_scripture/features/three_tap_navigator/presentation/cubit/three_tap_navigator_cubit.dart';
+import 'package:open_scripture/shared/theme/tokens.dart';
 
 import '../../../../shared/domain/entities/book.dart';
 import '../../../../injection_container.dart';
@@ -44,7 +45,7 @@ class _ThreeTapNavigatorTriggerState extends State<ThreeTapNavigatorTrigger> {
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(AppRadius.md),
               ),
               child: ConstrainedBox(
                   constraints: BoxConstraints.loose(Size(
@@ -78,35 +79,25 @@ class _ThreeTapNavigatorTriggerState extends State<ThreeTapNavigatorTrigger> {
                   controller: _controller,
                   overlayChildBuilder: _buildOverlay,
                   child: Material(
-                    borderRadius: BorderRadius.circular(8),
+                    shape: CircleBorder(),
                     clipBehavior: Clip.hardEdge,
-                    surfaceTintColor: Theme.of(context)
-                        .colorScheme
-                        .primary
-                        .withValues(alpha: 0.1),
+                    color: Theme.of(context).colorScheme.surfaceContainerHigh,
                     child: InkWell(
                       splashFactory: NoSplash.splashFactory,
                       onTap: () => _controller.show(),
                       mouseCursor: SystemMouseCursors.click,
                       child: SizedBox(
-                        width: 48,
+                        height: 32,
+                        width: 32,
                         child: Center(
                           child: MouseRegion(
                             child: Icon(
-                              Icons.menu_book_sharp,
-                              size: 16,
-                              color: Theme.of(context).colorScheme.primary,
+                              Icons.navigation_rounded,
+                              size: 14,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant,
                             ),
-                            // Text(
-                            //   style: TextStyle(
-                            //     color: Theme.of(context).colorScheme.primary,
-                            //     fontFamily: 'IBM Plex Mono',
-                            //     fontWeight: FontWeight.w500,
-                            //   ),
-                            //   state.referenceResult != null
-                            //       ? state.referenceResult.toString()
-                            //       : '-',
-                            // ),
                           ),
                         ),
                       ),

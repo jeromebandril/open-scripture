@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_scripture/shared/theme/tokens.dart';
 
 import '../bloc/window_stack_manager_bloc.dart';
 
@@ -27,7 +28,7 @@ class CustomWindowWrapper extends StatelessWidget {
           width: size.width,
           height: size.height,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(AppRadius.lg),
             color: Theme.of(context).colorScheme.surface,
           ),
           child: Column(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:open_scripture/shared/theme/tokens.dart';
 
 class Keycap extends StatelessWidget {
   final String text;
@@ -25,7 +26,7 @@ class Keycap extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: fillColor ?? cs.surface,
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(AppRadius.xs),
         border: Border.all(color: borderColor ?? cs.outlineVariant),
       ),
       child: Text(

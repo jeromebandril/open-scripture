@@ -5,6 +5,7 @@ import 'package:open_scripture/shared/presentation/cubit/toolbar_cubit.dart';
 
 import '../../../../../shared/presentation/cubit/fullscreen_cubit.dart';
 import '../../../../../shared/presentation/cubit/menubar_visibility_cubit.dart';
+import '../../../../../shared/theme/tokens.dart';
 import '../../../../customizer/presentation/cubit/customizer_cubit.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../../../bible_pane/presentation/widgets/bible_pane.dart';
@@ -40,8 +41,8 @@ class MultipleBiblePanes extends StatelessWidget {
             borderRadius: isFullscreen && !showMenuBar
                 ? null
                 : const BorderRadius.only(
-                    topLeft: Radius.circular(8),
-                    topRight: Radius.circular(8),
+                    topLeft: Radius.circular(AppRadius.sm),
+                    topRight: Radius.circular(AppRadius.sm),
                   ),
             color: enableCustom
                 ? Theme.of(context)
@@ -66,7 +67,7 @@ class MultipleBiblePanes extends StatelessWidget {
 
                       return Container(
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
+                          // borderRadius: BorderRadius.circular(8),
                           border: toolbarState.highlightActivePane &&
                                   toolbarState.isVisible &&
                                   activeId == panes[i].id

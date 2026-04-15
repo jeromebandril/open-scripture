@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../shared/theme/tokens.dart';
 import '../../../window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
 import '../models/settings_route.dart';
 import 'parts/sidebar_navigator.dart';
@@ -45,7 +46,7 @@ class _SettingsWindowState extends State<SettingsWindow> {
         maxHeight: 800,
       ),
       decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(12)),
+        borderRadius: const BorderRadius.all(Radius.circular(AppRadius.lg)),
         color: Theme.of(context).colorScheme.surface,
       ),
       child: Row(

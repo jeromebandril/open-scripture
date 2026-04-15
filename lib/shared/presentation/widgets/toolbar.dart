@@ -19,7 +19,6 @@ class Toolbar extends StatelessWidget {
       // constraints: BoxConstraints(maxWidth: screenWidth * 0.9),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,

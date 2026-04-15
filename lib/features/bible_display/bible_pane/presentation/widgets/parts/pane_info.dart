@@ -10,6 +10,8 @@ import 'package:open_scripture/features/bible_display/bible_pane/presentation/cu
 import 'package:open_scripture/features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
 import 'package:open_scripture/features/bible_display/split_screen/presenter/widgets/parts/active_pane_indicator.dart';
 
+import '../../../../../../shared/theme/tokens.dart';
+
 class PaneInfo extends StatefulWidget {
   const PaneInfo({super.key});
 
@@ -37,8 +39,8 @@ class _PaneInfoState extends State<PaneInfo> {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(4),
-              topRight: Radius.circular(4),
+              topLeft: Radius.circular(AppRadius.xs),
+              topRight: Radius.circular(AppRadius.xs),
             ),
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
           ),

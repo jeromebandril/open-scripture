@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/shortcuts/domain/app_command.dart';
 import 'package:open_scripture/features/shortcuts/presentation/widget/shortcut_view.dart';
+import 'package:open_scripture/shared/theme/tokens.dart';
 
 import '../../../../../shared/domain/entities/book_names.dart';
 import '../../../../../injection_container.dart';
@@ -46,7 +47,7 @@ class HistoryListOverlay extends StatelessWidget {
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(AppRadius.md),
               ),
               child: ConstrainedBox(
                 constraints: BoxConstraints.loose(Size(
@@ -144,14 +145,8 @@ class _HistoryItemState extends State<_HistoryItem> {
           children: [
             _isHovered
                 ? const SizedBox(
-                    width: 20,
-                    child: Icon(
-                      Icons.arrow_right,
-                      size: 24,
-                    ))
-                : const SizedBox(
-                    width: 20,
-                  ),
+                    width: 20, child: Icon(Icons.arrow_right, size: 24))
+                : const SizedBox(width: 20),
             Expanded(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

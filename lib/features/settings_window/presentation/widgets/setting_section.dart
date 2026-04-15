@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:open_scripture/shared/presentation/widgets/debounce_textfield.dart';
+import 'package:open_scripture/shared/theme/tokens.dart';
 
-const double settingsSpacing = 8;
+const double _settingsSpacing = AppSpacing.sm;
 
 class SettingSection extends StatelessWidget {
   const SettingSection({
@@ -41,7 +42,7 @@ class SettingSection extends StatelessWidget {
   List<Widget> _withDividers(
     List<Widget> children, {
     Widget divider = const Padding(
-      padding: EdgeInsets.symmetric(vertical: settingsSpacing),
+      padding: EdgeInsets.symmetric(vertical: _settingsSpacing),
       child: Divider(),
     ),
   }) {
@@ -60,9 +61,9 @@ class SettingSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (title != null || actions != null) ...[
-          SizedBox(height: 16),
+          SizedBox(height: AppSpacing.lg),
           Padding(
-            padding: const EdgeInsets.only(left: 32),
+            padding: const EdgeInsets.only(left: AppSpacing.xl),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -74,18 +75,18 @@ class SettingSection extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 12),
+          SizedBox(height: AppSpacing.sm),
         ],
         Container(
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(AppRadius.md),
           ),
-          padding: EdgeInsets.all(32),
+          padding: EdgeInsets.all(AppSpacing.xl),
           child: children == null && child != null
               ? child
               : Row(
-                  spacing: 32,
+                  spacing: AppSpacing.xl,
                   children: [
                     //
                     // LEFT SIDE
@@ -97,7 +98,7 @@ class SettingSection extends StatelessWidget {
                           physics: NeverScrollableScrollPhysics(),
                           separatorBuilder: (_, __) => const Padding(
                             padding:
-                                EdgeInsets.symmetric(vertical: settingsSpacing),
+                                EdgeInsets.symmetric(vertical: AppSpacing.sm),
                             child: Divider(),
                           ),
                           itemCount: itemCount!,
@@ -225,16 +226,11 @@ class SettingListSection extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(12),
-                bottomLeft: Radius.circular(12),
-                topRight: Radius.circular(12),
-                bottomRight: Radius.circular(12),
-              ),
+              borderRadius: BorderRadius.circular(AppRadius.md),
             ),
             padding: EdgeInsets.all(32),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(AppRadius.md),
               child: _builder(),
             ),
           ),

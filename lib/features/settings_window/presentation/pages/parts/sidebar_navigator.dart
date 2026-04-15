@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../shared/theme/tokens.dart';
 import '../../models/settings_route.dart';
 
 class SidebarNavigator extends StatelessWidget {
@@ -31,7 +32,8 @@ class SidebarNavigator extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(12), bottomLeft: Radius.circular(12)),
+              topLeft: Radius.circular(AppRadius.lg),
+              bottomLeft: Radius.circular(AppRadius.lg)),
           color: Theme.of(context).colorScheme.surfaceContainerHigh,
         ),
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
@@ -66,7 +68,7 @@ class SidebarNavigator extends StatelessWidget {
               // Group items
               yield Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: BorderRadius.circular(AppRadius.sm),
                     color:
                         Theme.of(context).colorScheme.surfaceContainerHighest,
                   ),
@@ -109,14 +111,14 @@ class _NavigationButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(AppRadius.sm),
       ),
       color: isSelected
           ? Theme.of(context).colorScheme.primaryContainer
           : Colors.transparent,
       child: InkWell(
         splashFactory: NoSplash.splashFactory,
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(AppRadius.sm),
         onTap: onTap,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12),

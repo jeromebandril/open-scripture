@@ -6,6 +6,7 @@ import 'package:open_scripture/features/window_stack_manager/presentation/bloc/w
 import 'package:open_scripture/shared/constants/constants.dart';
 import 'package:open_scripture/shared/presentation/cubit/toolbar_cubit.dart';
 import 'package:open_scripture/shared/presentation/widgets/titlebar.dart';
+import 'package:open_scripture/shared/theme/tokens.dart';
 
 import '../../../../shared/presentation/cubit/fullscreen_cubit.dart';
 import '../../../obs_live_overlay/presentation/cubit/obs_overlay_settinsg/obs_live_overlay_settings_cubit.dart';
@@ -76,7 +77,7 @@ class _WindowStackManagerWrapperState extends State<WindowStackManagerWrapper> {
                   child: Material(
                     type: MaterialType.transparency,
                     elevation: 24,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(AppRadius.lg),
                     child: Container(
                       margin: const EdgeInsets.all(24),
                       child: builder(overlayContext),
