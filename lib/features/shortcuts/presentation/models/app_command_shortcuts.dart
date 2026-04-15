@@ -28,12 +28,12 @@ const Map<AppCommand, SingleActivator> appCommandShortcuts = {
     includeRepeats: false,
   ),
   AppCommand.toggleMenubar: SingleActivator(
-    LogicalKeyboardKey.keyO,
+    LogicalKeyboardKey.keyT,
     control: true,
     includeRepeats: false,
   ),
   AppCommand.toggleToolbar: SingleActivator(
-    LogicalKeyboardKey.keyT,
+    LogicalKeyboardKey.keyO,
     control: true,
     includeRepeats: false,
   ),
