@@ -149,14 +149,14 @@ class _ThreeTapNavigatorOverlayState extends State<_ThreeTapNavigatorOverlay> {
     // here there is a temporary fix for parallel views where
     // I set the books from the first opened bible
     //TODO: Make an union of books from all bibles
-    bibleId = context
+    final openedBibles = context
         .read<PaneManagerCubit>()
         .activePane()
         .bloc
         .state
-        .openedBiblesIds
-        .first;
+        .openedBiblesIds;
 
+    bibleId = openedBibles.isEmpty ? null : openedBibles.first;
     context.read<ThreeTapNavigatorCubit>().loadBooks(bibleId);
   }
 
@@ -170,6 +170,10 @@ class _ThreeTapNavigatorOverlayState extends State<_ThreeTapNavigatorOverlay> {
         ? Center(child: Text('Open a bible first'))
         : BlocBuilder<ThreeTapNavigatorCubit, ThreeTapNavigatorState>(
             builder: (context, state) {
+              if (state.status == ThreeTapNavigatorStatus.error) {
+                return Center(child: Text('Open a bible first'));
+              }
+
               return Column(
                 spacing: 14,
                 children: [

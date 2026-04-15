@@ -29,22 +29,21 @@ class BSearchbar extends StatefulWidget {
 }
 
 class _BSearchbarState extends State<BSearchbar> {
-  final _controller = TextEditingController();
+  // final _controller = TextEditingController();
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _controller.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
-    final isShortcutVisible = widget.focusNode != null &&
-        !widget.focusNode!.hasFocus &&
-        _controller.text.isEmpty;
+    final isShortcutVisible =
+        widget.focusNode != null && !widget.focusNode!.hasFocus;
 
     return SearchBar(
-      controller: _controller,
+      // controller: _controller,
       constraints:
           BoxConstraints(maxWidth: widget.width, minHeight: widget.height),
       focusNode: widget.focusNode,

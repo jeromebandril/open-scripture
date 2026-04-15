@@ -67,7 +67,7 @@ class MultipleBiblePanes extends StatelessWidget {
                   ),
                 ),
                 if (i != panes.length - 1 && showDivider)
-                  const VerticalDivider(width: 1)
+                  const VerticalDivider(width: 1, thickness: 3)
               ]
             ],
           ),
