@@ -194,7 +194,7 @@ class _HomeState extends State<Home> {
               //
               // Simulated classic desktop toolbar
               //
-              if (showMenuBar || !isFullscreen)
+              if (showMenuBar || !isFullscreen) ...[
                 Titlebar(
                   menuBar: const MyMenuBar(),
                   toolbar: _AppHeader(
@@ -205,16 +205,17 @@ class _HomeState extends State<Home> {
                   showButtons: !isFullscreen,
                   showMenuBar: true,
                 ),
+                AnimatedSize(
+                  duration: const Duration(milliseconds: 150),
+                  curve: Curves.easeInOut,
+                  child: showToolBar
+                      ? const Toolbar()
+                      : const SizedBox(width: double.infinity, height: 0),
+                ),
+              ],
               //
               // Toolbar
               //
-              AnimatedSize(
-                duration: const Duration(milliseconds: 150),
-                curve: Curves.easeInOut,
-                child: showToolBar
-                    ? const Toolbar()
-                    : const SizedBox(width: double.infinity, height: 0),
-              ),
               //
               // BIBLE PANES
               //
