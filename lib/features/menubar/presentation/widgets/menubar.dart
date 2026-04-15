@@ -2,17 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../shared/presentation/widgets/help_widget.dart';
+import '../../../../shared/theme/tokens.dart';
 import '../../../settings_window/presentation/models/settings_route.dart';
 import '../../../settings_window/presentation/pages/settings_window.dart';
 import '../../../window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
-
-const breakPoints = [
-  600,
-  800,
-  900,
-  1000,
-  1100,
-];
 
 class MyMenuBar extends StatelessWidget {
   const MyMenuBar({super.key});
@@ -23,7 +16,7 @@ class MyMenuBar extends StatelessWidget {
 
     return SizedBox(
       child: Row(children: [
-        if (screenWidth > breakPoints[0])
+        if (screenWidth > AppBreakpoints.compact)
           ToolbarOption(
             'Bible',
             onTap: () {
@@ -35,7 +28,7 @@ class MyMenuBar extends StatelessWidget {
                   );
             },
           ),
-        if (screenWidth > breakPoints[1])
+        if (screenWidth > AppBreakpoints.small)
           ToolbarOption(
             'Settings',
             onTap: () {
@@ -48,7 +41,7 @@ class MyMenuBar extends StatelessWidget {
                   );
             },
           ),
-        if (screenWidth > breakPoints[2])
+        if (screenWidth > AppBreakpoints.medium)
           ToolbarOption(
             'Shortcuts',
             onTap: () {
@@ -61,7 +54,7 @@ class MyMenuBar extends StatelessWidget {
                   );
             },
           ),
-        if (screenWidth > breakPoints[3])
+        if (screenWidth > AppBreakpoints.large)
           ToolbarOption(
             'Help',
             onTap: () {
@@ -72,7 +65,7 @@ class MyMenuBar extends StatelessWidget {
                   ));
             },
           ),
-        if (screenWidth > breakPoints[4])
+        if (screenWidth > AppBreakpoints.xlarge)
           ToolbarOption(
             'About',
             onTap: () {

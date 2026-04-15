@@ -4,7 +4,6 @@ import 'package:open_scripture/features/obs_live_overlay/presentation/widgets/ob
 import 'package:open_scripture/shared/presentation/cubit/history_visibility_cubit.dart';
 import 'package:open_scripture/shared/presentation/cubit/fullscreen_cubit.dart';
 import 'package:open_scripture/shared/presentation/cubit/menubar_visibility_cubit.dart';
-import 'package:open_scripture/shared/presentation/widgets/help_widget.dart';
 import 'package:open_scripture/shared/presentation/widgets/titlebar.dart';
 import 'package:open_scripture/features/b_searchbar/domain/repositories/b_search_intent_type.dart';
 import 'package:open_scripture/features/b_searchbar/presenter/widgets/parts/history_list_overlay.dart';
@@ -43,7 +42,7 @@ void main() async {
 
   WindowOptions windowOptions = WindowOptions(
     size: Size(1000, 600),
-    minimumSize: Size(300, 200),
+    minimumSize: Size(500, 300),
     center: true,
     backgroundColor: Colors.transparent,
     skipTaskbar: false,
@@ -197,18 +196,7 @@ class _HomeState extends State<Home> {
               //
               if (showMenuBar || !isFullscreen)
                 Titlebar(
-                  menuBar: !showMenuBar && isFullscreen
-                      ? Tooltip(
-                          message:
-                              'Menu bar is hidden, press  CTRL+O  to toggle',
-                          child: Icon(
-                            Icons.visibility_off_outlined,
-                            size: 20,
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
-                        )
-                      : const MyMenuBar(),
+                  menuBar: const MyMenuBar(),
                   toolbar: _AppHeader(
                     searchbarFocusNode: _searchbarFocusNode,
                     returnFocusToRoot: _returnFocusToRoot,
@@ -221,9 +209,11 @@ class _HomeState extends State<Home> {
               // Toolbar
               //
               AnimatedSize(
-                duration: const Duration(milliseconds: 128),
+                duration: const Duration(milliseconds: 150),
                 curve: Curves.easeInOut,
-                child: showToolBar ? const Toolbar() : const SizedBox.shrink(),
+                child: showToolBar
+                    ? const Toolbar()
+                    : const SizedBox(width: double.infinity, height: 0),
               ),
               //
               // BIBLE PANES
@@ -288,9 +278,9 @@ class _HomeState extends State<Home> {
                               ),
                               child: BSearchbar(
                                 height: 48,
+                                width: 300,
                                 focusNode: _searchbarFocusNode,
                                 onSubmitted: () => _returnFocusToRoot(),
-                                //onEditComplete: () => _returnFocusToRoot(),
                               ),
                             ),
                           ),
@@ -319,7 +309,7 @@ class _HomeState extends State<Home> {
                               ),
                               child: HistoryListOverlay(
                                 constraints: screen,
-                                width: 400,
+                                width: 350,
                                 size: HistoryListSize.big,
                                 onSelected: () => _returnFocusToRoot(),
                               ),
@@ -349,64 +339,30 @@ class _AppHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final alignment = context.select(
-    //   (CustomizerCubit c) => c.state.app.searchbarPosition,
-    // );
-    // final isFullscreen = context.select((FullscreenCubit c) => c.state);
-    // final showToolbar = context.select((ToolbarCubit t) => t.state);
-    // final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
-    // final enableHangingRefs =
-    //     Theme.of(context).extension<BibleViewListTheme>()!.enableHangingRefs;
     final enable3TapNav = context.select(
       (CustomizerCubit c) => c.state.app.enable3TapNavigator,
     );
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Row(
       spacing: 4,
       mainAxisAlignment: MainAxisAlignment.center,
       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        if (enable3TapNav) const ThreeTapNavigatorTrigger(),
+        if (enable3TapNav && screenWidth > AppBreakpoints.compact)
+          const ThreeTapNavigatorTrigger(),
         BSearchbar(
           focusNode: searchbarFocusNode,
+          width:
+              screenWidth <= AppBreakpoints.compact ? screenWidth * 0.4 : 300,
           onSubmitted: () => returnFocusToRoot(),
           //onEditComplete: () => _returnFocusToRoot(),
         ),
-        ShowHistoryButton(),
-        const ObsLiveOverlayIndicator(),
+        if (screenWidth > AppBreakpoints.compact) ...[
+          ShowHistoryButton(),
+          const ObsLiveOverlayIndicator(),
+        ]
       ],
     );
   }
 }
-
-
-        //
-        // if (enableHangingRefs)
-        //   Builder(builder: (context) {
-        //     final activePaneBloc =
-        //         context.select((PaneManagerCubit pm) => pm.activeBloc());
-
-        //     return BlocProvider.value(
-        //       value: activePaneBloc,
-        //       child: BlocBuilder<BiblePaneBloc, BiblePaneState>(
-        //         buildWhen: (prev, curr) => prev.reference != curr.reference,
-        //         builder: (context, state) {
-        //           return Padding(
-        //             padding: EdgeInsets.only(
-        //               top: enableDynamicInterface ? 18 : 0,
-        //               bottom: 18,
-        //             ),
-        //             child: Text(
-        //               state.reference.toString(),
-        //               style: TextStyle(
-        //                 fontWeight: FontWeight.bold,
-        //                 fontFamily: paneTheme.referenceFont,
-        //                 color: Theme.of(context).colorScheme.onSurface,
-        //                 fontSize: 42,
-        //               ),
-        //             ),
-        //           );
-        //         },
-        //       ),
-        //     );
-        //   })

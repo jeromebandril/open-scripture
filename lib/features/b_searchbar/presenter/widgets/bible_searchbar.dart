@@ -2,30 +2,26 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
-import 'package:open_scripture/features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
 import 'package:open_scripture/features/shortcuts/domain/app_command.dart';
 import 'package:open_scripture/features/shortcuts/presentation/models/app_command_shortcuts.dart';
 import 'package:open_scripture/features/shortcuts/presentation/widget/shortcut_view.dart';
 
-import '../../../bible_display/bible_pane/presentation/models/display_mode.dart';
 import '../bloc/b_searchbar_bloc.dart';
-import '../models/find_intent.dart';
 
 class BSearchbar extends StatefulWidget {
   const BSearchbar({
     this.focusNode,
     this.onSubmitted,
-    this.onEditComplete,
     this.height = 42,
+    this.width = 280,
     this.isDense = false,
     super.key,
   });
 
   final FocusNode? focusNode;
   final Function()? onSubmitted;
-  final Function()? onEditComplete;
   final double height;
+  final double width;
   final bool isDense;
 
   @override
@@ -33,17 +29,12 @@ class BSearchbar extends StatefulWidget {
 }
 
 class _BSearchbarState extends State<BSearchbar> {
-  bool _findMode = false;
   final _controller = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-    widget.focusNode?.addListener(() {
-      if (widget.focusNode?.hasFocus == null || !widget.focusNode!.hasFocus) {
-        _findMode = false;
-      }
-    });
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -53,7 +44,9 @@ class _BSearchbarState extends State<BSearchbar> {
         _controller.text.isEmpty;
 
     return SearchBar(
-      constraints: BoxConstraints(maxWidth: 280, minHeight: widget.height),
+      controller: _controller,
+      constraints:
+          BoxConstraints(maxWidth: widget.width, minHeight: widget.height),
       focusNode: widget.focusNode,
       leading: Padding(
         padding: const EdgeInsets.only(left: 4),
@@ -63,8 +56,8 @@ class _BSearchbarState extends State<BSearchbar> {
           color: Theme.of(context).colorScheme.onSurface,
         ),
       ),
-      hintText: !_findMode ? 'Search reference' : null,
-      elevation: WidgetStatePropertyAll(0),
+      hintText: 'Search reference',
+      elevation: const WidgetStatePropertyAll(0),
       trailing: [
         if (isShortcutVisible)
           Container(
@@ -81,161 +74,33 @@ class _BSearchbarState extends State<BSearchbar> {
       onSubmitted: (input) {
         if (widget.onSubmitted != null) widget.onSubmitted!();
 
-        if (_findMode) {
-          final bibleIds = context
-              .read<PaneManagerCubit>()
-              .activePane()
-              .bloc
-              .state
-              .openedBiblesIds;
+        // if (_findMode) {
+        //   final bibleIds = context
+        //       .read<PaneManagerCubit>()
+        //       .activePane()
+        //       .bloc
+        //       .state
+        //       .openedBiblesIds;
 
-          if (bibleIds.isEmpty) return;
+        //   if (bibleIds.isEmpty) return;
 
-          // only list view
-          context
-              .read<PaneManagerCubit>()
-              .activePane()
-              .bloc
-              .add(BiblePaneSetDisplayMode(DisplayMode.normal));
-          context.read<BSearchbarBloc>().add(BSearchbarFind(
-                bibleIds: bibleIds,
-                query: input,
-              ));
+        //   // only list view
+        //   context
+        //       .read<PaneManagerCubit>()
+        //       .activePane()
+        //       .bloc
+        //       .add(BiblePaneSetDisplayMode(DisplayMode.normal));
+        //   context.read<BSearchbarBloc>().add(BSearchbarFind(
+        //         bibleIds: bibleIds,
+        //         query: input,
+        //       ));
 
-          return;
-        }
+        //   return;
+        // }
 
         BlocProvider.of<BSearchbarBloc>(context)
             .add(BSearchbarParseIntent(input));
       },
-    );
-
-    return SizedBox(
-      width: 280,
-      height: widget.height,
-      child: Stack(
-        children: [
-          //
-          // Searchbar
-          //
-          Positioned.fill(
-            child: Shortcuts(
-              shortcuts: {
-                const DollarActivator(): const FindIntent(),
-              },
-              child: Actions(
-                actions: {
-                  FindIntent: CallbackAction<FindIntent>(
-                    onInvoke: (intent) {
-                      setState(() => _findMode = true);
-                      return;
-                    },
-                  ),
-                },
-                child: TextField(
-                  controller: _controller,
-                  focusNode: widget.focusNode,
-                  selectAllOnFocus: true,
-                  onChanged: (key) {},
-                  onEditingComplete: () {
-                    if (widget.onEditComplete != null) {
-                      widget.onEditComplete!();
-                    }
-                  },
-                  onSubmitted: (input) {
-                    if (widget.onSubmitted != null) widget.onSubmitted!();
-
-                    if (_findMode) {
-                      final bibleIds = context
-                          .read<PaneManagerCubit>()
-                          .activePane()
-                          .bloc
-                          .state
-                          .openedBiblesIds;
-
-                      if (bibleIds.isEmpty) return;
-
-                      // only list view
-                      context
-                          .read<PaneManagerCubit>()
-                          .activePane()
-                          .bloc
-                          .add(BiblePaneSetDisplayMode(DisplayMode.normal));
-                      context.read<BSearchbarBloc>().add(BSearchbarFind(
-                            bibleIds: bibleIds,
-                            query: input,
-                          ));
-
-                      return;
-                    }
-
-                    BlocProvider.of<BSearchbarBloc>(context)
-                        .add(BSearchbarParseIntent(input));
-                  },
-                  decoration: InputDecoration(
-                    isDense: widget.isDense,
-                    prefixText: !_findMode ? null : '   find:   ',
-                    prefixIcon: !_findMode
-                        ? Icon(
-                            Icons.search,
-                            size: 18,
-                            color: Theme.of(context).colorScheme.onSurface,
-                          )
-                        : null,
-                    contentPadding: const EdgeInsets.only(right: 36),
-                    hintText: !_findMode ? 'Search reference' : null,
-                    filled: true,
-                    fillColor:
-                        Theme.of(context).colorScheme.surfaceContainerHigh,
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.transparent),
-                      borderRadius:
-                          BorderRadius.all(Radius.circular(widget.height / 2)),
-                    ),
-                    hoverColor: Colors.transparent,
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius:
-                          BorderRadius.all(Radius.circular(widget.height / 2)),
-                      borderSide: BorderSide(color: Colors.transparent),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius:
-                          BorderRadius.all(Radius.circular(widget.height / 2)),
-                      borderSide: BorderSide(color: Colors.transparent),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          //
-          // Error notifier
-          //
-          if (!isShortcutVisible)
-            Positioned.fill(
-              right: 10,
-              child: Container(
-                alignment: AlignmentDirectional.centerEnd,
-                child: _ErrorNotifier(),
-              ),
-            ),
-          if (isShortcutVisible)
-            Positioned.fill(
-              right: 10,
-              top: 2.5,
-              child: Container(
-                alignment: AlignmentDirectional.centerEnd,
-                child: ShortcutView(
-                  activator: appCommandShortcuts[AppCommand.focusSearch],
-                  textColor: Theme.of(context).colorScheme.onSurfaceVariant,
-                  fillColor: Colors.transparent,
-                  borderColor: null,
-                  fontSize: 10,
-                ),
-              ),
-            ),
-        ],
-      ),
     );
   }
 }

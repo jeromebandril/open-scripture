@@ -51,7 +51,7 @@ class VerseWidget extends StatelessWidget {
           ? bTheme.accentColor
           : useCustom
               ? bTheme.refColor
-              : Theme.of(context).colorScheme.secondary,
+              : Theme.of(context).colorScheme.tertiary,
     );
 
     return Listener(
@@ -62,11 +62,6 @@ class VerseWidget extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (listTheme.enableHangingRefs)
-            Text(
-              '${reference.verseStart.toString().padLeft(3, ' ')}   ',
-              style: refStyle,
-            ),
           Expanded(
             child: SelectableText.rich(TextSpan(
                 style: TextStyle(
@@ -74,13 +69,12 @@ class VerseWidget extends StatelessWidget {
                   fontWeight: bTheme.textFontWeight,
                 ),
                 children: [
-                  if (!listTheme.enableHangingRefs)
-                    TextSpan(
-                      text: isHighlighted || listTheme.showFullRefAlways
-                          ? reference.toString()
-                          : '$verseNumber',
-                      style: refStyle,
-                    ),
+                  TextSpan(
+                    text: isHighlighted || listTheme.showFullRefAlways
+                        ? reference.toString()
+                        : '$verseNumber',
+                    style: refStyle,
+                  ),
                   TextSpan(text: '  '),
                   VerseSpanBuilder.build(
                     context: context,

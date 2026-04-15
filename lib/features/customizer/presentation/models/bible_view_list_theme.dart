@@ -7,7 +7,6 @@ import '../../domain/entities/highlight_render_mode.dart';
 class BibleViewListTheme extends ThemeExtension<BibleViewListTheme> {
   final TextDecoration underlineRef;
   final bool showVerseDivider;
-  final bool enableHangingRefs;
   final bool showFullRefAlways;
   final HighlightRenderMode highlightRenderMode;
   final double parallelSpacing;
@@ -15,7 +14,6 @@ class BibleViewListTheme extends ThemeExtension<BibleViewListTheme> {
   const BibleViewListTheme({
     required this.underlineRef,
     required this.showVerseDivider,
-    required this.enableHangingRefs,
     required this.showFullRefAlways,
     required this.highlightRenderMode,
     required this.parallelSpacing,
@@ -34,7 +32,6 @@ class BibleViewListTheme extends ThemeExtension<BibleViewListTheme> {
       underlineRef: underlineRef ?? this.underlineRef,
       showVerseDivider: showVerseDivider ?? this.showVerseDivider,
       showFullRefAlways: showFullRefAlways ?? this.showFullRefAlways,
-      enableHangingRefs: enableHangingRefs ?? this.enableHangingRefs,
       highlightRenderMode: highlightRenderMode ?? this.highlightRenderMode,
       parallelSpacing: parallelSpacing ?? this.parallelSpacing,
     );
@@ -48,7 +45,6 @@ class BibleViewListTheme extends ThemeExtension<BibleViewListTheme> {
       underlineRef: underlineRef,
       showVerseDivider: t < 0.5 ? showVerseDivider : other.showVerseDivider,
       showFullRefAlways: t < 0.5 ? showFullRefAlways : other.showFullRefAlways,
-      enableHangingRefs: t < 0.5 ? enableHangingRefs : other.enableHangingRefs,
       highlightRenderMode: highlightRenderMode,
       parallelSpacing: parallelSpacing,
     );
@@ -61,7 +57,6 @@ extension BibleViewListThemeX on BibleViewListThemeSettings {
             underlineRef ? TextDecoration.underline : TextDecoration.none,
         showVerseDivider: showVerseDivider,
         showFullRefAlways: showFullRefAlways,
-        enableHangingRefs: enableHangingRefs,
         highlightRenderMode: highlightRenderMode,
         parallelSpacing: parallelSpacing.toDouble(),
       );

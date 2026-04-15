@@ -12,3 +12,11 @@ class AppSpacing {
   static const lg = 24.0;
   static const xl = 32.0;
 }
+
+class AppBreakpoints {
+  static const compact = 600;
+  static const small = 800;
+  static const medium = 1000;
+  static const large = 1200;
+  static const xlarge = 1600;
+}

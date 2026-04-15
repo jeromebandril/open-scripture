@@ -11,12 +11,10 @@ class Toolbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final screenWidth = MediaQuery.of(context).size.width;
     final activePane = context.select((PaneManagerCubit c) => c.activePane());
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      // constraints: BoxConstraints(maxWidth: screenWidth * 0.9),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
       ),
@@ -29,7 +27,6 @@ class Toolbar extends StatelessWidget {
           SizedBox(
             height: 32,
             child: Row(
-              // mainAxisSize: MainAxisSize.min,
               children: [
                 Checkbox(
                     value: context.select(
@@ -106,20 +103,6 @@ class Toolbar extends StatelessWidget {
               ),
             ],
           ),
-          // SizedBox(height: 12),
-          // SizedBox(
-          //   height: 25,
-          //   child: Row(
-          //     mainAxisSize: MainAxisSize.min,
-          //     spacing: 8,
-          //     children: [
-          //       Text('Press'),
-          //       ShortcutView(
-          //           activator: appCommandShortcuts[AppCommand.toggleToolbar]),
-          //       Text('to close'),
-          //     ],
-          //   ),
-          // )
         ],
       ),
     );

@@ -36,7 +36,8 @@ class SidebarNavigator extends StatelessWidget {
               bottomLeft: Radius.circular(AppRadius.lg)),
           color: Theme.of(context).colorScheme.surfaceContainerHigh,
         ),
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        padding:
+            const EdgeInsets.symmetric(vertical: AppSpacing.lg, horizontal: 12),
         child: ListView(
           children: [
             const Padding(

@@ -86,7 +86,7 @@ class _BibleViewListState extends State<BibleViewList> {
         index: index,
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
-        alignment: 0.05,
+        alignment: 0.02,
       );
       return;
     }

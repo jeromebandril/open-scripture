@@ -28,8 +28,6 @@ class BiblePanePreview extends StatelessWidget {
     final biblePaneTheme =
         Theme.of(context).extension<BiblePaneGeneralTheme>()!;
 
-    final listTheme = Theme.of(context).extension<BibleViewListTheme>()!;
-
     return Column(
       spacing: 4,
       children: [
@@ -40,33 +38,13 @@ class BiblePanePreview extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
-            color: !useCustom || listTheme.enableHangingRefs
+            color: !useCustom
                 ? Theme.of(context).colorScheme.surface
                 : biblePaneTheme.backgroundColor,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (listTheme.enableHangingRefs && mode == DisplayMode.normal)
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(4),
-                      topRight: Radius.circular(4),
-                    ),
-                  ),
-                  padding: const EdgeInsets.only(bottom: 4),
-                  child: Text(
-                    'John 7',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontFamily: biblePaneTheme.referenceFont,
-                      //color: paneTheme.accentColor,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
@@ -156,11 +134,6 @@ class _VerseWidgetPreview extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (listTheme.enableHangingRefs)
-            Text(
-              '${verseNumber.toString().padLeft(3, ' ')}   ',
-              style: refStyle,
-            ),
           Expanded(
             child: SelectableText.rich(TextSpan(
                 style: TextStyle(
@@ -171,13 +144,12 @@ class _VerseWidgetPreview extends StatelessWidget {
                       : Theme.of(context).colorScheme.onSurface,
                 ),
                 children: [
-                  if (!listTheme.enableHangingRefs)
-                    TextSpan(
-                      text: isHighlighted || listTheme.showFullRefAlways
-                          ? ref.toString()
-                          : '$verseNumber',
-                      style: refStyle,
-                    ),
+                  TextSpan(
+                    text: isHighlighted || listTheme.showFullRefAlways
+                        ? ref.toString()
+                        : '$verseNumber',
+                    style: refStyle,
+                  ),
                   TextSpan(text: '  '),
                   VerseSpanBuilder.build(
                     context: context,
