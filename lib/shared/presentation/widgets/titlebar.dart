@@ -4,9 +4,6 @@ import 'package:open_scripture/shared/constants/constants.dart';
 import 'package:open_scripture/shared/presentation/cubit/toolbar_cubit.dart';
 import 'package:window_manager/window_manager.dart';
 
-import '../../../features/customizer/presentation/cubit/customizer_cubit.dart';
-import '../../../features/customizer/presentation/models/bible_pane_general_theme.dart';
-
 class Titlebar extends StatelessWidget {
   const Titlebar({
     super.key,

@@ -8,7 +8,6 @@ import 'package:open_scripture/features/settings_window/presentation/widgets/set
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_option.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
 
-import '../../domain/entities/searchbar_position.dart';
 import '../cubit/customizer_cubit.dart';
 
 class GlobalCustomizerScreen extends StatefulWidget {
@@ -96,34 +95,6 @@ class _GlobalCustomizerScreenState extends State<GlobalCustomizerScreen> {
           SettingSection(
             title: 'Interface',
             children: [
-              Setting(
-                  label: 'Searchbar position',
-                  description: 'Set searchbar\'s horizontal position',
-                  child: SettingInputOption<SearchbarPosition>(
-                    value: context.select(
-                        (CustomizerCubit c) => c.state.app.searchbarPosition),
-                    onChanged: (sp) {
-                      cubit.updateTheme(
-                          appTheme: (a) => a.copyWith(searchbarPosition: sp));
-                    },
-                    items: SearchbarPosition.values
-                        .map((sp) => DropdownMenuItem<SearchbarPosition>(
-                            value: sp, child: Text(sp.wire)))
-                        .toList(),
-                  )),
-              Setting(
-                  label: 'Enable dynamic interface',
-                  description:
-                      'Hide interface by default (increasing the height viewport) and show only its components when needed (using shortcuts)',
-                  child: SettingInputBool(
-                    value: context.select((CustomizerCubit c) =>
-                        c.state.app.enableDynamicInterface),
-                    onChanged: (val) {
-                      cubit.updateTheme(
-                          appTheme: (a) =>
-                              a.copyWith(enableDynamicInterface: val));
-                    },
-                  )),
               Setting(
                   label: 'Enable 3 Tap Navigator',
                   description:

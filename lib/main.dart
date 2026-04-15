@@ -172,9 +172,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    final enableDynamicInterface = context.select(
-      (CustomizerCubit c) => c.state.app.enableDynamicInterface,
-    );
     final isFullscreen = context.select((FullscreenCubit f) => f.state);
     final showMenuBar = context.select((MenubarCubit t) => t.state);
     final showToolBar = context.select((ToolbarCubit t) => t.state.isVisible);
@@ -198,7 +195,7 @@ class _HomeState extends State<Home> {
               //
               // Simulated classic desktop toolbar
               //
-              if (showMenuBar || !isFullscreen || !enableDynamicInterface)
+              if (showMenuBar || !isFullscreen)
                 Titlebar(
                   menuBar: !showMenuBar && isFullscreen
                       ? Tooltip(
@@ -212,12 +209,10 @@ class _HomeState extends State<Home> {
                           ),
                         )
                       : const MyMenuBar(),
-                  toolbar: enableDynamicInterface
-                      ? null
-                      : _AppHeader(
-                          searchbarFocusNode: _searchbarFocusNode,
-                          returnFocusToRoot: _returnFocusToRoot,
-                        ),
+                  toolbar: _AppHeader(
+                    searchbarFocusNode: _searchbarFocusNode,
+                    returnFocusToRoot: _returnFocusToRoot,
+                  ),
                   showLogo: !isFullscreen,
                   showButtons: !isFullscreen,
                   showMenuBar: true,
@@ -274,7 +269,7 @@ class _HomeState extends State<Home> {
                     //
                     // Dynamic searchbar
                     //
-                    if (enableDynamicInterface)
+                    if (isFullscreen && !showMenuBar)
                       Positioned(
                         top: screen.height * 0.08,
                         right: 0,
@@ -304,7 +299,7 @@ class _HomeState extends State<Home> {
                     //
                     // Dynamic History viewer
                     //
-                    if (enableDynamicInterface)
+                    if (isFullscreen && !showMenuBar)
                       Positioned(
                         top: screen.height * 0.08 + 100,
                         right: 0,
@@ -347,14 +342,12 @@ class _HomeState extends State<Home> {
                             //
                             // OBS Live Overlay
                             //
-                            if (isFullscreen && enableDynamicInterface)
+                            if (isFullscreen && !showMenuBar)
                               const ObsLiveOverlayIndicator(),
                             //
                             // Help button when all interface is hidden
                             //
-                            if (isFullscreen &&
-                                !showMenuBar &&
-                                enableDynamicInterface)
+                            if (isFullscreen && !showMenuBar)
                               const HelpTriggerBtn(),
                           ],
                         ),

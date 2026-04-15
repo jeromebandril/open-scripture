@@ -2,8 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:open_scripture/shared/utils/colors_util.dart';
 
-import 'searchbar_position.dart';
-
 /// App-wide theme settings that affect MaterialApp.
 
 class AppThemeSettings extends Equatable {
@@ -11,8 +9,6 @@ class AppThemeSettings extends Equatable {
   final String fontFamily;
   final Color accentColor;
   final bool enableAutoColorScheme;
-  final SearchbarPosition searchbarPosition;
-  final bool enableDynamicInterface;
   final bool enable3TapNavigator;
 
   const AppThemeSettings({
@@ -20,8 +16,6 @@ class AppThemeSettings extends Equatable {
     this.fontFamily = 'General Sans',
     this.accentColor = Colors.blue,
     this.enableAutoColorScheme = true,
-    this.searchbarPosition = SearchbarPosition.left,
-    this.enableDynamicInterface = false,
     this.enable3TapNavigator = false,
   });
 
@@ -31,7 +25,6 @@ class AppThemeSettings extends Equatable {
       Color? accentColor,
       bool? enableAutoColorScheme,
       bool? enableCustomTheme,
-      SearchbarPosition? searchbarPosition,
       bool? enableDynamicInterface,
       bool? enable3TapNavigator}) {
     return AppThemeSettings(
@@ -40,9 +33,6 @@ class AppThemeSettings extends Equatable {
       accentColor: accentColor ?? this.accentColor,
       enableAutoColorScheme:
           enableAutoColorScheme ?? this.enableAutoColorScheme,
-      searchbarPosition: searchbarPosition ?? this.searchbarPosition,
-      enableDynamicInterface:
-          enableDynamicInterface ?? this.enableDynamicInterface,
       enable3TapNavigator: enable3TapNavigator ?? this.enable3TapNavigator,
     );
   }
@@ -53,8 +43,6 @@ class AppThemeSettings extends Equatable {
         fontFamily,
         accentColor,
         enableAutoColorScheme,
-        searchbarPosition,
-        enableDynamicInterface,
         enable3TapNavigator,
       ];
 
@@ -63,8 +51,6 @@ class AppThemeSettings extends Equatable {
         'fontFamily': fontFamily,
         'accentColor': ColorsUtil.colorToHex(accentColor),
         'enableAutoColorScheme': enableAutoColorScheme,
-        'searchbarPosition': searchbarPosition.wire,
-        'enableDynamicInterface': enableDynamicInterface,
         'enable3TapNavigator': enable3TapNavigator,
       };
 
@@ -85,9 +71,6 @@ class AppThemeSettings extends Equatable {
       fontFamily: json['fontFamily'] as String,
       accentColor: Color(ColorsUtil.parseHex(json['accentColor'] as String)),
       enableAutoColorScheme: json['enableAutoColorScheme'] as bool,
-      searchbarPosition:
-          SearchbarPositionWire.fromWire(json['searchbarPosition'] as String),
-      enableDynamicInterface: json['enableDynamicInterface'] as bool,
       enable3TapNavigator: json['enable3TapNavigator'] as bool,
     );
   }
