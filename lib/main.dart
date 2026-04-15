@@ -327,32 +327,6 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                       ),
-                    //
-                    // Top right interface
-                    //
-                    Positioned.fill(
-                        child: Align(
-                      alignment: AlignmentGeometry.topRight,
-                      child: SizedBox(
-                        height: 48,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            //
-                            // OBS Live Overlay
-                            //
-                            if (isFullscreen && !showMenuBar)
-                              const ObsLiveOverlayIndicator(),
-                            //
-                            // Help button when all interface is hidden
-                            //
-                            if (isFullscreen && !showMenuBar)
-                              const HelpTriggerBtn(),
-                          ],
-                        ),
-                      ),
-                    )),
                   ],
                 ),
               ),
