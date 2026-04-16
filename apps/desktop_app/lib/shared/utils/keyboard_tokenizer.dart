@@ -9,8 +9,9 @@ List<String> shortcutTokens(ShortcutActivator? activator) {
     final tokens = <String>[];
 
     // Modifiers in conventional display order
-    if (activator.control)
+    if (activator.control) {
       tokens.add(_modifierLabel(ModifierKey.controlModifier));
+    }
     if (activator.alt) tokens.add(_modifierLabel(ModifierKey.altModifier));
     if (activator.shift) tokens.add(_modifierLabel(ModifierKey.shiftModifier));
     if (activator.meta) tokens.add(_modifierLabel(ModifierKey.metaModifier));
