@@ -1,19 +1,16 @@
 import 'package:fpdart/fpdart.dart';
+import 'package:open_scripture/features/remote_controller/domain/entities/remote_controller_settings.dart';
 import 'package:open_scripture/shared/data/datasources/settings_datasource.dart';
 import 'package:open_scripture/shared/domain/repositories/settings_repository.dart';
 import 'package:open_scripture/shared/error/failure.dart';
 
-import '../../domain/entities/overlay_settings.dart';
-
-class OverlaySettingsRepoImpl implements SettingsRepository<OverlaySettings> {
-  const OverlaySettingsRepoImpl({
-    required this.localDatasource,
-  });
-
-  final SettingsDatasource<OverlaySettings> localDatasource;
+class RemoteControllerSettingsRepoImpl
+    implements SettingsRepository<RemoteControllerSettings> {
+  const RemoteControllerSettingsRepoImpl({required this.localDatasource});
+  final SettingsDatasource<RemoteControllerSettings> localDatasource;
 
   @override
-  Future<Either<Failure, OverlaySettings>> loadSettings() async {
+  Future<Either<Failure, RemoteControllerSettings>> loadSettings() async {
     try {
       return Right(await localDatasource.loadSettings());
     } catch (e) {
@@ -22,7 +19,8 @@ class OverlaySettingsRepoImpl implements SettingsRepository<OverlaySettings> {
   }
 
   @override
-  Future<Either<Failure, void>> saveSettings(OverlaySettings settings) async {
+  Future<Either<Failure, void>> saveSettings(
+      RemoteControllerSettings settings) async {
     try {
       return Right(await localDatasource.saveSettings(settings));
     } catch (e) {

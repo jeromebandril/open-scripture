@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/bible_installer_manager/presentation/bloc/installed_bibles/installed_bibles_bloc.dart';
 import 'package:open_scripture/features/obs_live_overlay/presentation/cubit/obs_overlay/obs_live_overlay_cubit.dart';
+import 'package:open_scripture/features/remote_controller/presentation/cubit/remote_controller/remote_controller_cubit.dart';
 import 'package:open_scripture/features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
 import 'package:open_scripture/shared/constants/constants.dart';
 import 'package:open_scripture/shared/presentation/cubit/toolbar_cubit.dart';
@@ -10,6 +11,7 @@ import 'package:open_scripture/shared/theme/tokens.dart';
 
 import '../../../../shared/presentation/cubit/fullscreen_cubit.dart';
 import '../../../obs_live_overlay/presentation/cubit/obs_overlay_settinsg/obs_live_overlay_settings_cubit.dart';
+import '../../../remote_controller/presentation/cubit/remote_controller_settings/remote_controller_settings_cubit.dart';
 
 class WindowStackManagerWrapper extends StatefulWidget {
   final Widget child;
@@ -61,6 +63,10 @@ class _WindowStackManagerWrapperState extends State<WindowStackManagerWrapper> {
           bottom: 0,
           right: 0,
           left: 0,
+
+          ///
+          /// Damn I really need to re-pass the cubits here
+          ///
           child: MultiBlocProvider(
             providers: [
               BlocProvider.value(value: context.read<WindowStackManagerBloc>()),
@@ -68,6 +74,9 @@ class _WindowStackManagerWrapperState extends State<WindowStackManagerWrapper> {
               BlocProvider.value(
                   value: context.read<ObsLiveOverlaySettingsCubit>()),
               BlocProvider.value(value: context.read<InstalledBiblesBloc>()),
+              BlocProvider.value(value: context.read<RemoteControllerCubit>()),
+              BlocProvider.value(
+                  value: context.read<RemoteControllerSettingsCubit>()),
             ],
             child: BlockSemantics(
               blocking: true,

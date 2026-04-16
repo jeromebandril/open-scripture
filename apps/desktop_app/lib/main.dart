@@ -19,6 +19,8 @@ import 'features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
 import 'features/b_searchbar/presenter/widgets/bible_searchbar.dart';
 import 'features/b_searchbar/presenter/widgets/show_history_button.dart';
 import 'features/obs_live_overlay/presentation/cubit/obs_overlay_settinsg/obs_live_overlay_settings_cubit.dart';
+import 'features/remote_controller/presentation/cubit/remote_controller/remote_controller_cubit.dart';
+import 'features/remote_controller/presentation/cubit/remote_controller_settings/remote_controller_settings_cubit.dart';
 import 'features/three_tap_navigator/presentation/widgets/three_tap_navigator.dart';
 import 'features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
 import 'features/bible_display/bible_pane/presentation/navigation_bus.dart';
@@ -103,24 +105,30 @@ class MyApp extends StatelessWidget {
             darkTheme: dark,
             theme: light,
             debugShowCheckedModeBanner: false,
-            home: MultiBlocProvider(
-              providers: [
-                BlocProvider(create: (_) => di.sl<ObsLiveOverlayCubit>()),
-                BlocProvider(
-                    create: (_) => di.sl<ObsLiveOverlaySettingsCubit>()),
-                BlocProvider(create: (_) => di.sl<HistoryVisibilityCubit>()),
-                BlocProvider(create: (_) => di.sl<PaneManagerCubit>()),
-                BlocProvider(create: (_) => di.sl<MenubarCubit>()),
-                BlocProvider(create: (_) => di.sl<ToolbarCubit>()),
-                BlocProvider(create: (_) => di.sl<FullscreenCubit>()..init()),
-                BlocProvider(create: (_) => di.sl<WindowStackManagerBloc>()),
-                BlocProvider(
-                    create: (_) => di.sl<InstalledBiblesBloc>()
-                      ..add(InstalledBiblesLoad())),
-                BlocProvider(create: (_) => di.sl<BSearchbarBloc>()),
-              ],
-              child: const Home(),
-            ),
+            builder: (context, child) {
+              return MultiBlocProvider(
+                providers: [
+                  BlocProvider(create: (_) => di.sl<ObsLiveOverlayCubit>()),
+                  BlocProvider(
+                      create: (_) => di.sl<ObsLiveOverlaySettingsCubit>()),
+                  BlocProvider(create: (_) => di.sl<HistoryVisibilityCubit>()),
+                  BlocProvider(create: (_) => di.sl<PaneManagerCubit>()),
+                  BlocProvider(create: (_) => di.sl<MenubarCubit>()),
+                  BlocProvider(create: (_) => di.sl<ToolbarCubit>()),
+                  BlocProvider(create: (_) => di.sl<FullscreenCubit>()..init()),
+                  BlocProvider(create: (_) => di.sl<WindowStackManagerBloc>()),
+                  BlocProvider(
+                      create: (_) => di.sl<InstalledBiblesBloc>()
+                        ..add(InstalledBiblesLoad())),
+                  BlocProvider(create: (_) => di.sl<BSearchbarBloc>()),
+                  BlocProvider(create: (_) => di.sl<RemoteControllerCubit>()),
+                  BlocProvider(
+                      create: (_) => di.sl<RemoteControllerSettingsCubit>()),
+                ],
+                child: child!,
+              );
+            },
+            home: const Home(),
           );
         },
       ),

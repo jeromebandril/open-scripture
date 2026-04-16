@@ -3,6 +3,7 @@ import 'package:open_scripture/features/bible_importer/presentation/page/importe
 import 'package:open_scripture/features/customizer/presentation/pages/bible_pane_customizer_screen.dart';
 import 'package:open_scripture/features/customizer/presentation/pages/global_customizer_screen.dart';
 import 'package:open_scripture/features/obs_live_overlay/presentation/page/obs_live_overlay_page.dart';
+import 'package:open_scripture/features/remote_controller/presentation/pages/remote_controller_settings.dart';
 import 'package:open_scripture/features/settings_window/presentation/pages/about_setting_page.dart';
 
 import '../../../bible_installer_manager/presentation/pages/translation_manager.dart';
@@ -38,6 +39,10 @@ final Map<String, SettingsRoute> settingsRoutes = {
       icon: Icons.live_tv_rounded,
       name: 'OBS Live Overlay (beta)',
       builder: (_) => const ObsLiveOverlayPage()),
+  '/remotecontroller': SettingsRoute(
+      icon: Icons.stay_current_portrait_rounded,
+      name: 'Remote Controller (beta)',
+      builder: (_) => const RemoteControllerPage()),
   '/shortcuts': SettingsRoute(
       icon: Icons.keyboard,
       name: 'Shortcuts',

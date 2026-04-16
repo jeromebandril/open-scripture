@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:open_scripture/features/bible_importer/data/repository/bible_importer_repo_impl.dart';
 import 'package:open_scripture/features/font_loader/presentation/cubit/font_loader_cubit.dart';
 import 'package:open_scripture/features/obs_live_overlay/presentation/cubit/obs_overlay/obs_live_overlay_cubit.dart';
+import 'package:open_scripture/features/remote_controller/presentation/cubit/remote_controller/remote_controller_cubit.dart';
 import 'package:open_scripture/features/text_scaler/cubit/text_scaler_cubit.dart';
 import 'package:open_scripture/shared/data/datasources/settings_datasource.dart';
 import 'package:open_scripture/shared/domain/repositories/settings_repository.dart';
@@ -41,6 +42,13 @@ import 'features/obs_live_overlay/data/repository/overlay_settings_repo_impl.dar
 import 'features/obs_live_overlay/domain/entities/overlay_settings.dart';
 import 'features/obs_live_overlay/domain/repostiory/overlay_repository.dart';
 import 'features/obs_live_overlay/presentation/cubit/obs_overlay_settinsg/obs_live_overlay_settings_cubit.dart';
+import 'features/remote_controller/data/datasource/remote_controller_settings_datasource.dart';
+import 'features/remote_controller/data/datasource/remote_controller_ws.dart';
+import 'features/remote_controller/data/repositories/remote_controller_repo_impl.dart';
+import 'features/remote_controller/data/repositories/remote_controller_settings_repo_impl.dart';
+import 'features/remote_controller/domain/entities/remote_controller_settings.dart';
+import 'features/remote_controller/domain/repositories/remote_controller_repo.dart';
+import 'features/remote_controller/presentation/cubit/remote_controller_settings/remote_controller_settings_cubit.dart';
 import 'shared/domain/entities/book_names.dart';
 import 'shared/installer/bible/import/formats/osis_importer.dart';
 import 'shared/installer/bible/import/formats/usfx_importer.dart';
@@ -84,9 +92,10 @@ Future<void> init() async {
 
   initObsLiveOverlayFeature();
 
-  sl.registerFactory(() => TextScalerCubit());
+  initRemoteControllerFeature();
 
-  // others
+  // other simple cubits
+  sl.registerFactory(() => TextScalerCubit());
   sl.registerLazySingleton(() => NavigationBus());
   sl.registerFactory(() => MenubarCubit());
   sl.registerFactory(() => ToolbarCubit());
@@ -235,4 +244,22 @@ void initObsLiveOverlayFeature() {
   sl.registerLazySingleton<OverlayRepository>(
       () => OverlayRepositoryImpl(mgr: sl()));
   sl.registerFactory(() => ObsLiveOverlayCubit(repo: sl(), notifier: sl()));
+}
+
+void initRemoteControllerFeature() {
+  // Settings
+  sl.registerLazySingleton<SettingsDatasource<RemoteControllerSettings>>(
+    () => RemoteControllerSettingsDatasource(),
+  );
+  sl.registerLazySingleton<SettingsRepository<RemoteControllerSettings>>(
+    () => RemoteControllerSettingsRepoImpl(localDatasource: sl()),
+  );
+  sl.registerFactory(() => RemoteControllerSettingsCubit(repo: sl()));
+
+  // WS Server
+  sl.registerLazySingleton<RemoteControllerRepo>(
+    () => RemoteControllerRepoImpl(wsServer: sl()),
+  );
+  sl.registerFactory(() => RemoteControllerCubit(repo: sl()));
+  sl.registerLazySingleton(() => RemoteControllerWSServer());
 }
