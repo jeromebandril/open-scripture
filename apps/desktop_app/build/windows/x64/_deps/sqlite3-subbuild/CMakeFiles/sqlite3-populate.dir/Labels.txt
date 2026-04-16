@@ -1,0 +1,14 @@
+# Target labels
+ sqlite3-populate
+# Source files and their labels
+C:/Users/jerom/mydev/open-scripture/apps/desktop_app/build/windows/x64/_deps/sqlite3-subbuild/CMakeFiles/sqlite3-populate
+C:/Users/jerom/mydev/open-scripture/apps/desktop_app/build/windows/x64/_deps/sqlite3-subbuild/CMakeFiles/5d45919173b2da953049380934db0adf/sqlite3-populate.rule
+C:/Users/jerom/mydev/open-scripture/apps/desktop_app/build/windows/x64/_deps/sqlite3-subbuild/CMakeFiles/34dbbf8499f288e09deeb266d38d9729/sqlite3-populate-complete.rule
+C:/Users/jerom/mydev/open-scripture/apps/desktop_app/build/windows/x64/_deps/sqlite3-subbuild/CMakeFiles/5196af8625fb2937f758a5154988ec59/sqlite3-populate-build.rule
+C:/Users/jerom/mydev/open-scripture/apps/desktop_app/build/windows/x64/_deps/sqlite3-subbuild/CMakeFiles/5196af8625fb2937f758a5154988ec59/sqlite3-populate-configure.rule
+C:/Users/jerom/mydev/open-scripture/apps/desktop_app/build/windows/x64/_deps/sqlite3-subbuild/CMakeFiles/5196af8625fb2937f758a5154988ec59/sqlite3-populate-download.rule
+C:/Users/jerom/mydev/open-scripture/apps/desktop_app/build/windows/x64/_deps/sqlite3-subbuild/CMakeFiles/5196af8625fb2937f758a5154988ec59/sqlite3-populate-install.rule
+C:/Users/jerom/mydev/open-scripture/apps/desktop_app/build/windows/x64/_deps/sqlite3-subbuild/CMakeFiles/5196af8625fb2937f758a5154988ec59/sqlite3-populate-mkdir.rule
+C:/Users/jerom/mydev/open-scripture/apps/desktop_app/build/windows/x64/_deps/sqlite3-subbuild/CMakeFiles/5196af8625fb2937f758a5154988ec59/sqlite3-populate-patch.rule
+C:/Users/jerom/mydev/open-scripture/apps/desktop_app/build/windows/x64/_deps/sqlite3-subbuild/CMakeFiles/5196af8625fb2937f758a5154988ec59/sqlite3-populate-test.rule
+C:/Users/jerom/mydev/open-scripture/apps/desktop_app/build/windows/x64/_deps/sqlite3-subbuild/CMakeFiles/5196af8625fb2937f758a5154988ec59/sqlite3-populate-update.rule

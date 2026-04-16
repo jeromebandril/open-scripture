@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\jerom\mydev\open-scripture\apps\desktop_app\build\windows\x64\_deps\sqlite3-subbuild\CMakeFiles\5d45919173b2da953049380934db0adf\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{7A42DF23-9F0D-377D-8E94-F81A1824F02D}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

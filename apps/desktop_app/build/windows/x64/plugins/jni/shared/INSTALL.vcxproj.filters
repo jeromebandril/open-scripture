@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\jerom\mydev\open-scripture\apps\desktop_app\build\windows\x64\CMakeFiles\59cba60b4fede48b31c2e9dbc1b711ee\INSTALL_force.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{2C12D841-A0E5-36C1-A4AB-37EA2B570680}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
