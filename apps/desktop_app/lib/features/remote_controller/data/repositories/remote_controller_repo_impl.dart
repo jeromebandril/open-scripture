@@ -1,21 +1,23 @@
 import 'dart:io';
 
-import 'package:open_scripture/features/remote_controller/data/datasource/remote_controller_ws.dart';
-import 'package:open_scripture/features/remote_controller/domain/repositories/remote_controller_repo.dart';
-import 'package:shared/command.dart';
+import 'package:shared/models/remote_command.dart';
+
+import '../../../../shared/remote_controller/remote_command_router.dart';
+import '../../domain/repositories/remote_controller_repo.dart';
+import '../datasource/remote_controller_ws.dart';
 
 class RemoteControllerRepoImpl implements RemoteControllerRepo {
   final RemoteControllerWSServer _wsServer;
+  final RemoteCommandRouter _router;
 
-  const RemoteControllerRepoImpl({required RemoteControllerWSServer wsServer})
-      : _wsServer = wsServer;
+  const RemoteControllerRepoImpl({
+    required RemoteControllerWSServer wsServer,
+    required RemoteCommandRouter router,
+  })  : _wsServer = wsServer,
+        _router = router;
 
-  void _handleMessage(Command command, WebSocket client) {
-    switch (command.type) {
-      case 'play':
-        // domain logic
-        break;
-    }
+  void _handleMessage(RemoteCommand command, WebSocket client) {
+    _router.dispatch(command);
   }
 
   @override

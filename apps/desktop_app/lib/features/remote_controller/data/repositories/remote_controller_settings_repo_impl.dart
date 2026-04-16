@@ -1,12 +1,14 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:open_scripture/features/remote_controller/domain/entities/remote_controller_settings.dart';
-import 'package:open_scripture/shared/data/datasources/settings_datasource.dart';
-import 'package:open_scripture/shared/domain/repositories/settings_repository.dart';
-import 'package:open_scripture/shared/error/failure.dart';
+
+import '../../../../shared/data/datasources/settings_datasource.dart';
+import '../../../../shared/domain/repositories/settings_repository.dart';
+import '../../../../shared/error/failure.dart';
+import '../../domain/entities/remote_controller_settings.dart';
 
 class RemoteControllerSettingsRepoImpl
     implements SettingsRepository<RemoteControllerSettings> {
   const RemoteControllerSettingsRepoImpl({required this.localDatasource});
+
   final SettingsDatasource<RemoteControllerSettings> localDatasource;
 
   @override

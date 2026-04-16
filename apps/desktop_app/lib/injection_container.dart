@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:open_scripture/features/bible_display/split_screen/presenter/remote/pane_manager_handler.dart';
 import 'package:open_scripture/features/bible_importer/data/repository/bible_importer_repo_impl.dart';
 import 'package:open_scripture/features/font_loader/presentation/cubit/font_loader_cubit.dart';
 import 'package:open_scripture/features/obs_live_overlay/presentation/cubit/obs_overlay/obs_live_overlay_cubit.dart';
@@ -33,6 +34,7 @@ import 'package:open_scripture/features/three_tap_navigator/data/repository/thre
 import 'package:open_scripture/features/three_tap_navigator/domain/repository/three_tap_navigator_repository.dart';
 import 'package:open_scripture/features/three_tap_navigator/presentation/cubit/three_tap_navigator_cubit.dart';
 import 'package:open_scripture/features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
+import 'features/b_searchbar/presenter/remote/b_searchbar_handler.dart';
 import 'features/bible_importer/domain/repository/bible_importer_repo.dart';
 import 'features/obs_live_overlay/data/datasource/overlay_file_system.dart';
 import 'features/obs_live_overlay/data/datasource/overlay_server_manager.dart';
@@ -60,6 +62,8 @@ import 'features/bible_display/bible_selector/domain/repositories/bible_selector
 import 'shared/presentation/cubit/toolbar_cubit.dart';
 import 'shared/presentation/notifiers/install_notifier.dart';
 import 'features/bible_installer_manager/presentation/bloc/remote_catalog/remote_catalog_bloc.dart';
+import 'shared/remote_controller/remote_command_registry.dart';
+import 'shared/remote_controller/remote_command_router.dart';
 
 final sl = GetIt.instance;
 
@@ -185,8 +189,9 @@ void initBibleManagerFeature() {
 }
 
 void initBSearchbarFeature() {
-  // bloc
-  sl.registerFactory(
+  // Register as singleton instead of factory
+  // since it is basically never disposed
+  sl.registerLazySingleton<BSearchbarBloc>(
     // !!!!
     () => BSearchbarBloc(repo: sl(), navBus: sl()),
   );
@@ -200,11 +205,6 @@ void initBSearchbarFeature() {
 }
 
 void initReaderFeature() {
-  // // bloc
-  // sl.registerFactory(
-  //   () => BiblePaneBloc(repo: sl()),
-  // );
-
   // repositories
   sl.registerLazySingleton<BibleRepository>(
     () => BibleRepositoryImpl(localDatasource: sl()),
@@ -213,7 +213,7 @@ void initReaderFeature() {
 }
 
 void initSplitScreenFeature() {
-  sl.registerFactory(
+  sl.registerLazySingleton<PaneManagerCubit>(
     () => PaneManagerCubit(repo: sl()),
   );
 }
@@ -251,15 +251,33 @@ void initRemoteControllerFeature() {
   sl.registerLazySingleton<SettingsDatasource<RemoteControllerSettings>>(
     () => RemoteControllerSettingsDatasource(),
   );
+
   sl.registerLazySingleton<SettingsRepository<RemoteControllerSettings>>(
     () => RemoteControllerSettingsRepoImpl(localDatasource: sl()),
   );
-  sl.registerFactory(() => RemoteControllerSettingsCubit(repo: sl()));
 
-  // WS Server
-  sl.registerLazySingleton<RemoteControllerRepo>(
-    () => RemoteControllerRepoImpl(wsServer: sl()),
+  sl.registerFactory(
+    () => RemoteControllerSettingsCubit(repo: sl()),
   );
-  sl.registerFactory(() => RemoteControllerCubit(repo: sl()));
+
+  // Searver host
   sl.registerLazySingleton(() => RemoteControllerWSServer());
+  sl.registerLazySingleton(
+    () => RemoteCommandRegistry(handlers: {
+      "search_bar": SearchBarHandler(bloc: sl<BSearchbarBloc>()),
+      "pane": PaneManagerHandler(bloc: sl<PaneManagerCubit>()),
+    }),
+  );
+  sl.registerLazySingleton(
+    () => RemoteCommandRouter(registry: sl()),
+  );
+  sl.registerLazySingleton<RemoteControllerRepo>(
+    () => RemoteControllerRepoImpl(
+      wsServer: sl(),
+      router: sl(),
+    ),
+  );
+  sl.registerFactory(
+    () => RemoteControllerCubit(repo: sl()),
+  );
 }

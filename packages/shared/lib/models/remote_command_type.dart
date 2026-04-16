@@ -1,0 +1,1 @@
+enum RemoteCommandType { action, stateChange }

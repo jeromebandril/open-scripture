@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:shared/command.dart';
+import 'package:shared/models/remote_command.dart';
 
-typedef OnMessage = void Function(Command command, WebSocket client);
+typedef OnMessage = void Function(RemoteCommand command, WebSocket client);
 
 class RemoteControllerWSServer {
   HttpServer? _server;
@@ -33,7 +33,7 @@ class RemoteControllerWSServer {
           (data) {
             try {
               final decoded = jsonDecode(data);
-              final command = Command.fromJson(decoded);
+              final command = RemoteCommand.fromJson(decoded);
               _onMessage?.call(command, socket);
             } catch (e) {
               print('Invalid message: $e');
