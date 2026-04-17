@@ -2,10 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:shared/models/remote_command_type.dart';
+import 'package:shared/models/remote_command.dart';
 
-const int inactivityTimeoutSeconds = 3000;
 const int connectTimeoutSeconds = 15;
+const int pingFrequencySeconds = 20;
+const int inactivityTimeoutSeconds = 3000;
 
 class RemoteWsClient {
   WebSocket? _socket;
@@ -20,7 +21,6 @@ class RemoteWsClient {
 
   DateTime? _lastSeen;
 
-  Timer? _heartbeatTimer;
   Timer? _watchdogTimer;
 
   final StreamController<bool> _connectionController =
@@ -44,7 +44,6 @@ class RemoteWsClient {
       _connectionController.add(true);
 
       _listen();
-      _startHeartbeat();
       _startWatchdog();
       return 0;
     } on TimeoutException {
@@ -87,20 +86,10 @@ class RemoteWsClient {
     );
   }
 
-  void sendCommand(Map<String, dynamic> command) {
+  void sendCommand(RemoteCommand command) {
     if (!_connected || _socket == null) return;
 
-    _socket!.add(jsonEncode(command));
-  }
-
-  void _startHeartbeat() {
-    _heartbeatTimer?.cancel();
-
-    _heartbeatTimer = Timer.periodic(const Duration(seconds: 5), (_) {
-      if (_socket?.readyState == WebSocket.open) {
-        _socket!.add(jsonEncode({"type": RemoteCommandType.ping.name}));
-      }
-    });
+    _socket!.add(command.toRaw());
   }
 
   void _startWatchdog() {
@@ -126,7 +115,6 @@ class RemoteWsClient {
     _socket?.close();
     _socket = null;
 
-    _heartbeatTimer?.cancel();
     _watchdogTimer?.cancel();
 
     if (!_manuallyClosed) {
@@ -152,7 +140,6 @@ class RemoteWsClient {
   Future<void> disconnect() async {
     _manuallyClosed = true;
 
-    _heartbeatTimer?.cancel();
     _watchdogTimer?.cancel();
 
     await _socket?.close();
@@ -164,7 +151,6 @@ class RemoteWsClient {
   }
 
   void dispose() {
-    _heartbeatTimer?.cancel();
     _watchdogTimer?.cancel();
     _connectionController.close();
     _socket?.close();

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/features/shortcuts/domain/app_command.dart';
+import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
 import 'package:open_scripture/features/shortcuts/presentation/models/app_command_shortcuts.dart';
 import 'package:open_scripture/features/shortcuts/presentation/widget/shortcut_view.dart';
 

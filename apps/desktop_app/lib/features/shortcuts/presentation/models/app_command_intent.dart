@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../domain/app_command.dart';
+import '../../domain/models/app_command.dart';
 
 @immutable
 class AppCommandIntent extends Intent {

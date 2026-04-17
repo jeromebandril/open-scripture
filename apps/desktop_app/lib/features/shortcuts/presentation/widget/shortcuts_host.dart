@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/shared/presentation/cubit/toolbar_cubit.dart';
-import '../../../../shared/presentation/cubit/fullscreen_cubit.dart';
-import '../../../../shared/presentation/cubit/history_visibility_cubit.dart';
-import '../../../../shared/presentation/cubit/menubar_visibility_cubit.dart';
-import '../../../b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
-import '../../../bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
-import '../models/app_command_dispatcher.dart';
+import 'package:open_scripture/features/shortcuts/presentation/cubit/shortcuts_cubit.dart';
+import 'package:open_scripture/features/shortcuts/presentation/models/ui_effect_dispatcher.dart';
 import '../models/app_command_intent.dart';
 import '../models/app_command_shortcuts.dart';
 
@@ -59,13 +54,7 @@ class _ShortcutsHostState extends State<ShortcutsHost> {
 
   @override
   Widget build(BuildContext context) {
-    final dispatcher = AppCommandDispatcher(
-      paneManagerCubit: context.read<PaneManagerCubit>(),
-      searchbarBloc: context.read<BSearchbarBloc>(),
-      historyVisibilityCubit: context.read<HistoryVisibilityCubit>(),
-      toolbarCubit: context.read<ToolbarCubit>(),
-      menubarCubit: context.read<MenubarCubit>(),
-      fullscreenCubit: context.read<FullscreenCubit>(),
+    final uiEffectDispatcher = UiEffectDispatcher(
       rootFocusNode: widget.rootFocusNode,
       searchFocusNode: widget.searchFocusNode,
       historyFocusNode: widget.historyFocusNode,
@@ -74,7 +63,8 @@ class _ShortcutsHostState extends State<ShortcutsHost> {
     final actions = <Type, Action<Intent>>{
       AppCommandIntent: CallbackAction<AppCommandIntent>(
         onInvoke: (intent) {
-          dispatcher.dispatch(intent.command);
+          context.read<ShortcutsCubit>().executeCommand(intent.command);
+          uiEffectDispatcher.emitEffectFor(intent.command);
           return null;
         },
       ),

@@ -1,13 +1,22 @@
 import 'package:shared/models/remote_command.dart';
+import 'package:shared/models/remote_command_type.dart';
 
-import 'remote_command_registry.dart';
+import 'models/remote_command_custom_handler.dart';
 
 class RemoteCommandRouter {
-  final RemoteCommandRegistry registry;
+  const RemoteCommandRouter({
+    required Map<String, RemoteCommandCustomHandler> handlers,
+  }) : _handlers = handlers;
 
-  const RemoteCommandRouter({required this.registry});
+  final Map<String, RemoteCommandCustomHandler> _handlers;
 
-  void dispatch(RemoteCommand command) {
-    registry.get(command.target)!.handle(command);
+  void route(RemoteCommand command) {
+    //
+    // Execute only custom commands
+    // i.e. those not defined in the default AppCommand
+    // with custom parameters
+    //
+    if (command.type != RemoteCommandType.custom) return;
+    _handlers[command.target]?.handle(command);
   }
 }

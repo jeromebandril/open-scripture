@@ -32,8 +32,8 @@ class RemoteControllerWSServer {
         socket.listen(
           (data) {
             try {
-              final decoded = jsonDecode(data);
-              final command = RemoteCommand.fromJson(decoded);
+              print(data);
+              final command = RemoteCommand.fromRaw(data);
               _onMessage?.call(command, socket);
             } catch (e) {
               print('Invalid message: $e');

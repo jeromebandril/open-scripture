@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-import '../../domain/app_command.dart';
+import '../../domain/models/app_command.dart';
 import 'app_command_intent.dart';
 
 Map<ShortcutActivator, Intent> buildShortcutIntentMap(

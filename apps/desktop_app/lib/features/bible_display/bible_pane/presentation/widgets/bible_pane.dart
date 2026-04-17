@@ -9,7 +9,7 @@ import 'package:open_scripture/features/customizer/presentation/cubit/customizer
 import 'package:open_scripture/features/shortcuts/presentation/models/app_command_shortcuts.dart';
 import 'package:open_scripture/features/shortcuts/presentation/widget/shortcut_view.dart';
 
-import '../../../../shortcuts/domain/app_command.dart';
+import '../../../../shortcuts/domain/models/app_command.dart';
 import '../../../../text_scaler/presentation/widgets/text_scaler_host.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../../../bible_selector/presenter/widget/bible_selector.dart';

@@ -4,6 +4,9 @@ import 'package:open_scripture/features/bible_importer/data/repository/bible_imp
 import 'package:open_scripture/features/font_loader/presentation/cubit/font_loader_cubit.dart';
 import 'package:open_scripture/features/obs_live_overlay/presentation/cubit/obs_overlay/obs_live_overlay_cubit.dart';
 import 'package:open_scripture/features/remote_controller/presentation/cubit/remote_controller/remote_controller_cubit.dart';
+import 'package:open_scripture/features/shortcuts/data/repositories/shortcuts_repo_impl.dart';
+import 'package:open_scripture/features/shortcuts/domain/repositories/shortcuts_repo.dart';
+import 'package:open_scripture/features/shortcuts/presentation/cubit/shortcuts_cubit.dart';
 import 'package:open_scripture/features/text_scaler/cubit/text_scaler_cubit.dart';
 import 'package:open_scripture/shared/data/datasources/settings_datasource.dart';
 import 'package:open_scripture/shared/domain/repositories/settings_repository.dart';
@@ -51,6 +54,7 @@ import 'features/remote_controller/data/repositories/remote_controller_settings_
 import 'features/remote_controller/domain/entities/remote_controller_settings.dart';
 import 'features/remote_controller/domain/repositories/remote_controller_repo.dart';
 import 'features/remote_controller/presentation/cubit/remote_controller_settings/remote_controller_settings_cubit.dart';
+import 'features/shortcuts/presentation/models/app_command_dispatcher.dart';
 import 'shared/domain/entities/book_names.dart';
 import 'shared/installer/bible/import/formats/osis_importer.dart';
 import 'shared/installer/bible/import/formats/usfx_importer.dart';
@@ -62,7 +66,6 @@ import 'features/bible_display/bible_selector/domain/repositories/bible_selector
 import 'shared/presentation/cubit/toolbar_cubit.dart';
 import 'shared/presentation/notifiers/install_notifier.dart';
 import 'features/bible_installer_manager/presentation/bloc/remote_catalog/remote_catalog_bloc.dart';
-import 'shared/remote_controller/remote_command_registry.dart';
 import 'shared/remote_controller/remote_command_router.dart';
 
 final sl = GetIt.instance;
@@ -71,6 +74,8 @@ Future<void> init() async {
   sl.registerLazySingleton<BibleRefResolver>(
     () => BibleRefResolver(versification: Versification.allSupported),
   );
+
+  initShortcutFeature();
 
   initDatabase();
 
@@ -101,11 +106,27 @@ Future<void> init() async {
   // other simple cubits
   sl.registerFactory(() => TextScalerCubit());
   sl.registerLazySingleton(() => NavigationBus());
-  sl.registerFactory(() => MenubarCubit());
-  sl.registerFactory(() => ToolbarCubit());
-  sl.registerFactory(() => FullscreenCubit());
+  sl.registerLazySingleton(() => MenubarCubit());
+  sl.registerLazySingleton(() => ToolbarCubit());
+  sl.registerLazySingleton(() => FullscreenCubit());
   sl.registerFactory(() => FontLoaderCubit());
-  sl.registerFactory(() => HistoryVisibilityCubit());
+  sl.registerLazySingleton(() => HistoryVisibilityCubit());
+}
+
+void initShortcutFeature() {
+  sl.registerLazySingleton(
+    () => AppCommandDispatcher(
+      paneManagerCubit: sl<PaneManagerCubit>(),
+      searchbarBloc: sl<BSearchbarBloc>(),
+      historyVisibilityCubit: sl<HistoryVisibilityCubit>(),
+      toolbarCubit: sl<ToolbarCubit>(),
+      menubarCubit: sl<MenubarCubit>(),
+      fullscreenCubit: sl<FullscreenCubit>(),
+    ),
+  );
+  sl.registerLazySingleton<ShortcutsRepo>(
+      () => ShortcutsRepoImpl(dispatcher: sl()));
+  sl.registerLazySingleton(() => ShortcutsCubit(repo: sl()));
 }
 
 void initThreeTapNavFeature() {
@@ -263,13 +284,12 @@ void initRemoteControllerFeature() {
   // Searver host
   sl.registerLazySingleton(() => RemoteControllerWSServer());
   sl.registerLazySingleton(
-    () => RemoteCommandRegistry(handlers: {
-      "search_bar": SearchBarHandler(bloc: sl<BSearchbarBloc>()),
-      "pane": PaneManagerHandler(bloc: sl<PaneManagerCubit>()),
-    }),
-  );
-  sl.registerLazySingleton(
-    () => RemoteCommandRouter(registry: sl()),
+    () => RemoteCommandRouter(
+      handlers: {
+        "search_bar": SearchBarHandler(bloc: sl<BSearchbarBloc>()),
+        "pane": PaneManagerHandler(bloc: sl<PaneManagerCubit>()),
+      },
+    ),
   );
   sl.registerLazySingleton<RemoteControllerRepo>(
     () => RemoteControllerRepoImpl(
@@ -278,6 +298,6 @@ void initRemoteControllerFeature() {
     ),
   );
   sl.registerFactory(
-    () => RemoteControllerCubit(repo: sl()),
+    () => RemoteControllerCubit(repo: sl(), dispatcher: sl()),
   );
 }

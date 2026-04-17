@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:open_scripture/features/obs_live_overlay/presentation/cubit/obs_overlay/obs_live_overlay_cubit.dart';
 import 'package:open_scripture/features/obs_live_overlay/presentation/widgets/obs_live_overlay_indicator.dart';
+import 'package:open_scripture/features/shortcuts/presentation/cubit/shortcuts_cubit.dart';
 import 'package:open_scripture/shared/presentation/cubit/history_visibility_cubit.dart';
 import 'package:open_scripture/shared/presentation/cubit/fullscreen_cubit.dart';
 import 'package:open_scripture/shared/presentation/cubit/menubar_visibility_cubit.dart';
@@ -124,6 +125,7 @@ class MyApp extends StatelessWidget {
                   BlocProvider(create: (_) => di.sl<RemoteControllerCubit>()),
                   BlocProvider(
                       create: (_) => di.sl<RemoteControllerSettingsCubit>()),
+                  BlocProvider(create: (_) => di.sl<ShortcutsCubit>()),
                 ],
                 child: child!,
               );

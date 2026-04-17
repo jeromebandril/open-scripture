@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared/models/remote_command.dart';
 import 'package:shared/models/remote_command_type.dart';
 
 import '../injection_container.dart' as di;
@@ -11,34 +12,48 @@ class CommandGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final commands = [
       {
-        "text": "Zoom In",
-        "icon": Icons.zoom_in,
-        "payload": {"zoom_in": 1},
+        "text": "Zoom Out",
+        'name': 'zoom_out',
+        'target': 'pane',
+        "type": RemoteCommandType.custom,
+        "icon": Icons.zoom_out,
+        "payload": {"multiplier": 2.0},
       },
       {
-        "text": "Zoom Out",
-        "icon": Icons.zoom_out,
-        "payload": {"zoom_out": 1},
+        "text": "Zoom In",
+        'name': 'zoom_in',
+        'target': 'pane',
+        "type": RemoteCommandType.custom,
+        "icon": Icons.zoom_in,
+        "payload": {"multiplier": 2.0},
       },
       {
         "text": "Prev",
+        'name': 'go_prev_verse',
+        "type": RemoteCommandType.command,
         "icon": Icons.navigate_before_rounded,
-        "payload": {"zoom_out": 1},
       },
       {
         "text": "Next",
+        'name': 'go_next_verse',
+        "type": RemoteCommandType.command,
         "icon": Icons.navigate_next_rounded,
-        "payload": {"zoom_in": 1},
       },
       {
         "text": "Switch to list view",
+        'name': 'switch_display_mode',
+        'target': 'pane',
+        "type": RemoteCommandType.custom,
         "icon": Icons.view_headline_rounded,
-        "payload": {"zoom_in": 1},
+        "payload": {"display_mode": 0},
       },
       {
         "text": "Switch to big view",
+        "name": 'switch_display_mode',
+        'target': 'pane',
+        "type": RemoteCommandType.custom,
         "icon": Icons.view_column,
-        "payload": {"zoom_in": 1},
+        "payload": {"display_mode": 1},
       },
     ];
 
@@ -60,12 +75,15 @@ class CommandGrid extends StatelessWidget {
             style: TextStyle(fontSize: 18),
           ),
           onPressed: () {
-            di.sl<RemoteWsClient>().sendCommand({
-              "id": 'mobile-test',
-              "target": "pane",
-              "type": RemoteCommandType.action.name,
-              "payload": cmd["payload"],
-            });
+            di.sl<RemoteWsClient>().sendCommand(
+              RemoteCommand(
+                id: 'mobile-test',
+                type: cmd['type'] as RemoteCommandType,
+                name: cmd['name'] as String,
+                target: cmd['target'] as String?,
+                payload: cmd["payload"] as Map<String, dynamic>?,
+              ),
+            );
           },
         );
       }).toList(),

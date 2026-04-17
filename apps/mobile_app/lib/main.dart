@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/components/command_grid.dart';
+import 'package:shared/models/remote_command.dart';
 import 'package:shared/models/remote_command_type.dart';
 
 import 'injection_container.dart' as di;
@@ -48,7 +49,7 @@ class MyApp extends StatelessWidget {
 
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            minimumSize: const Size(0, 60),
+            minimumSize: const Size(82, 72),
             textStyle: const TextStyle(fontSize: 18),
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           ),
@@ -69,15 +70,13 @@ class MyApp extends StatelessWidget {
         ),
 
         searchBarTheme: const SearchBarThemeData(
-          constraints: BoxConstraints(
-            minHeight: 64, // 👈 taller search bar
-          ),
+          constraints: BoxConstraints(minHeight: 64),
           textStyle: WidgetStatePropertyAll(TextStyle(fontSize: 20)),
           hintStyle: WidgetStatePropertyAll(
             TextStyle(fontSize: 20, color: Colors.grey),
           ),
           padding: WidgetStatePropertyAll(
-            EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            EdgeInsets.only(left: 12, right: 4, top: 4, bottom: 4),
           ),
         ),
 
@@ -164,12 +163,15 @@ class _MyHomePageState extends State<MyHomePage> {
                             ElevatedButton(
                               onPressed: () {
                                 if (_controller.text.isEmpty) return;
-                                di.sl<RemoteWsClient>().sendCommand({
-                                  "id": 'mobile-test',
-                                  "target": "search_bar",
-                                  "type": RemoteCommandType.action.name,
-                                  "payload": {"query": _controller.text},
-                                });
+                                di.sl<RemoteWsClient>().sendCommand(
+                                  RemoteCommand(
+                                    id: 'mobile-test',
+                                    name: 'query',
+                                    target: "search_bar",
+                                    type: RemoteCommandType.custom,
+                                    payload: {"query": _controller.text},
+                                  ),
+                                );
                                 _controller.clear();
                               },
                               child: const Icon(Icons.send_rounded, size: 24),

@@ -1,4 +1,3 @@
-import 'package:flutter/widgets.dart';
 import 'package:open_scripture/shared/presentation/cubit/toolbar_cubit.dart';
 
 import '../../../../shared/domain/entities/bible_ref.dart';
@@ -10,10 +9,12 @@ import '../../../bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart
 import '../../../bible_display/bible_pane/presentation/models/display_mode.dart';
 import '../../../bible_display/bible_selector/presenter/bloc/bible_selector_bloc.dart';
 import '../../../bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
-import '../../domain/app_command.dart';
+import '../../domain/models/app_command.dart';
 
 typedef CommandHandler = void Function();
 
+/// This executs only business logic.
+/// Use the UiEffect dispatcher for Ui commands
 class AppCommandDispatcher {
   AppCommandDispatcher({
     required this.paneManagerCubit,
@@ -21,9 +22,9 @@ class AppCommandDispatcher {
     required this.historyVisibilityCubit,
     required this.menubarCubit,
     required this.fullscreenCubit,
-    required this.rootFocusNode,
-    required this.searchFocusNode,
-    required this.historyFocusNode,
+    // required this.rootFocusNode,
+    // required this.searchFocusNode,
+    // required this.historyFocusNode,
     required this.toolbarCubit,
   });
 
@@ -35,35 +36,24 @@ class AppCommandDispatcher {
   final FullscreenCubit fullscreenCubit;
   final ToolbarCubit toolbarCubit;
 
-  final FocusNode rootFocusNode;
-  final FocusNode searchFocusNode;
-  final FocusNode historyFocusNode;
-
   void dispatch(AppCommand command) {
     final handler = _handlers[command];
     if (handler == null) return;
     handler();
   }
 
-  bool get _isTyping {
-    return searchFocusNode.hasFocus;
-  }
-
   List<int> _prevBibleId = [];
 
   late final Map<AppCommand, CommandHandler> _handlers = {
-    AppCommand.focusSearch: () => searchFocusNode.requestFocus(),
-    AppCommand.unfocusSearch: () => rootFocusNode.requestFocus(),
+    // AppCommand.focusSearch: () => searchFocusNode.requestFocus(),
+    // AppCommand.unfocusSearch: () => rootFocusNode.requestFocus(),
     AppCommand.toggleHistory: () => historyVisibilityCubit.toggle(),
     AppCommand.toggleMenubar: () {
       menubarCubit.toggleVisibility();
-      rootFocusNode.requestFocus();
+      // rootFocusNode.requestFocus();
     },
     //AppCommand.toggleToolbar: () => toolbarCubit.toggleVisibility(),
-    AppCommand.toggleFullscreen: () {
-      fullscreenCubit.toggle();
-      historyFocusNode.requestFocus();
-    },
+    AppCommand.toggleFullscreen: () => fullscreenCubit.toggle(),
     AppCommand.nextPane: () => _cyclePane(1),
     AppCommand.prevPane: () => _cyclePane(-1),
     AppCommand.prevVerse: () => _moveVerse(-1),
@@ -122,7 +112,6 @@ class AppCommandDispatcher {
   }
 
   void _moveVerse(int delta) {
-    if (_isTyping) return;
     _withActiveRef<void>((bloc, ref) {
       final results = searchbarBloc.state.results;
 
@@ -192,7 +181,7 @@ class AppCommandDispatcher {
     if (ref == null) return;
 
     bloc.add(BiblePaneDisplayChapter(ref: ref));
-    rootFocusNode.requestFocus();
+    // rootFocusNode.requestFocus();
   }
 
   int _wrapIndex(int index, int length) {
