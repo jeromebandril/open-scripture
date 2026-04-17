@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_app/components/command_grid.dart';
+import 'package:open_scripture_rc/components/command_grid.dart';
 import 'package:shared/models/remote_command.dart';
 import 'package:shared/models/remote_command_type.dart';
 
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Open Scripture Mobile remote controller',
+      title: 'Open Scripture Mobile RC',
       themeMode: ThemeMode.dark,
       theme: ThemeData(
         useMaterial3: true,
