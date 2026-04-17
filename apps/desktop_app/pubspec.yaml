@@ -61,6 +61,7 @@ dependencies:
   flutter_launcher_icons: ^0.14.4
   file_picker: ^10.3.10
   crypto: ^3.0.7
+  qr_flutter: ^4.1.0
 
 dev_dependencies:
   flutter_test:

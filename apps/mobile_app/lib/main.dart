@@ -1,122 +1,230 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/components/command_grid.dart';
+import 'package:shared/models/remote_command_type.dart';
 
-void main() {
+import 'injection_container.dart' as di;
+import 'pages/connection_setup_page.dart';
+import 'service/client_ws.dart';
+
+void main() async {
+  await di.init();
+
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Open Scripture Mobile remote controller',
+      themeMode: ThemeMode.dark,
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.green,
+          brightness: Brightness.dark,
+        ),
+
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(fontSize: 20),
+          bodyMedium: TextStyle(fontSize: 18),
+          bodySmall: TextStyle(fontSize: 16),
+
+          titleLarge: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+          titleMedium: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+          titleSmall: TextStyle(fontSize: 20),
+
+          labelLarge: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ), // buttons
+        ),
+
+        iconTheme: const IconThemeData(size: 44),
+
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size(0, 60),
+            textStyle: const TextStyle(fontSize: 18),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          ),
+        ),
+
+        filledButtonTheme: FilledButtonThemeData(
+          style: FilledButton.styleFrom(
+            minimumSize: const Size(140, 60),
+            textStyle: const TextStyle(fontSize: 18),
+          ),
+        ),
+
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            minimumSize: const Size(120, 56),
+            textStyle: const TextStyle(fontSize: 18),
+          ),
+        ),
+
+        searchBarTheme: const SearchBarThemeData(
+          constraints: BoxConstraints(
+            minHeight: 64, // 👈 taller search bar
+          ),
+          textStyle: WidgetStatePropertyAll(TextStyle(fontSize: 20)),
+          hintStyle: WidgetStatePropertyAll(
+            TextStyle(fontSize: 20, color: Colors.grey),
+          ),
+          padding: WidgetStatePropertyAll(
+            EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          ),
+        ),
+
+        inputDecorationTheme: const InputDecorationTheme(
+          contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 16),
+          hintStyle: TextStyle(fontSize: 18),
+        ),
+
+        listTileTheme: const ListTileThemeData(
+          contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          titleTextStyle: TextStyle(fontSize: 20),
+          subtitleTextStyle: TextStyle(fontSize: 16),
+        ),
+
+        appBarTheme: const AppBarTheme(
+          titleTextStyle: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        ),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      debugShowCheckedModeBanner: false,
+      initialRoute: '/setup',
+      routes: {
+        '/setup': (context) => const ConnectionSetupPage(),
+        '/main': (context) => const MyHomePage(),
+      },
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  final _controller = TextEditingController();
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+      body: Container(
+        alignment: Alignment.center,
+        padding: const EdgeInsets.only(
+          left: 16,
+          right: 16,
+          bottom: 24,
+          top: 48,
+        ),
+        child: SafeArea(
+          child: StreamBuilder<bool>(
+            stream: di.sl<RemoteWsClient>().connectionStream,
+            builder: (context, snapshot) {
+              final connected = snapshot.data ?? true;
+
+              return connected
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      spacing: 16,
+                      children: [
+                        //
+                        // Searchbar to send commands to the desktop app
+                        //
+                        SearchBar(
+                          controller: _controller,
+                          hintText: 'Type a reference',
+                          leading: Padding(
+                            padding: const EdgeInsets.only(left: 4),
+                            child: Icon(
+                              Icons.search,
+                              size: 32,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                          trailing: [
+                            ElevatedButton(
+                              onPressed: () {
+                                if (_controller.text.isEmpty) return;
+                                di.sl<RemoteWsClient>().sendCommand({
+                                  "id": 'mobile-test',
+                                  "target": "search_bar",
+                                  "type": RemoteCommandType.action.name,
+                                  "payload": {"query": _controller.text},
+                                });
+                                _controller.clear();
+                              },
+                              child: const Icon(Icons.send_rounded, size: 24),
+                            ),
+                          ],
+                        ),
+                        const CommandGrid(),
+                      ],
+                    )
+                  : const _ReconnectActions();
+            },
+          ),
+        ),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: .center,
+    );
+  }
+}
+
+class _ReconnectActions extends StatelessWidget {
+  const _ReconnectActions();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.signal_wifi_connected_no_internet_4_rounded,
+          size: 48,
+          color: Theme.of(context).colorScheme.error,
+        ),
+        Text(
+          'Not connected',
+          style: TextStyle(color: Theme.of(context).colorScheme.error),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+            TextButton.icon(
+              onPressed: () {},
+              icon: const Icon(Icons.refresh),
+              label: const Text('Retry'),
+            ),
+            TextButton.icon(
+              onPressed: () {
+                Navigator.pushNamed(context, '/setup');
+              },
+              icon: const Icon(Icons.connected_tv_rounded),
+              label: const Text('New'),
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
+      ],
     );
   }
 }

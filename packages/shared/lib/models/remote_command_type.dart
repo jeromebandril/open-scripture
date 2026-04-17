@@ -1,1 +1,1 @@
-enum RemoteCommandType { action, stateChange }
+enum RemoteCommandType { action, stateChange, ping }

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
+import '../../../../shared/theme/tokens.dart';
+import '../../../../shared/utils/network_utils.dart';
 import '../../../settings_window/presentation/widgets/setting_input_bool.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../../settings_window/presentation/widgets/setting.dart';
@@ -23,6 +26,10 @@ class RemoteControllerPage extends StatelessWidget {
             final enableFeature = context.select(
                 (RemoteControllerSettingsCubit c) =>
                     c.state.settings.enableFeature);
+
+            final port = context.select(
+                (RemoteControllerSettingsCubit c) => c.state.settings.port);
+
             return Column(
               children: [
                 SettingSection(
@@ -30,25 +37,59 @@ class RemoteControllerPage extends StatelessWidget {
                   children: [
                     Text(
                         'This feature allows you to control the app remotely from another device. To use it, open the following URL on your phone:'),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    Column(
+                      spacing: AppSpacing.lg,
                       children: [
-                        const RemoteControllerIndicator(),
-                        TextButton(
-                          onPressed: state.isBusy || !enableFeature
-                              ? null
-                              : () => state.isRunning
-                                  ? context.read<RemoteControllerCubit>().stop()
-                                  : context.read<RemoteControllerCubit>().start(
-                                      context
-                                          .read<RemoteControllerSettingsCubit>()
-                                          .state
-                                          .settings
-                                          .port),
-                          child: state.isRunning
-                              ? const Text('Turn Remote Controller Server Off')
-                              : const Text('Turn Remote Controller Server On'),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const RemoteControllerIndicator(),
+                            TextButton(
+                              onPressed: state.isBusy || !enableFeature
+                                  ? null
+                                  : () => state.isRunning
+                                      ? context
+                                          .read<RemoteControllerCubit>()
+                                          .stop()
+                                      : context
+                                          .read<RemoteControllerCubit>()
+                                          .start(context
+                                              .read<
+                                                  RemoteControllerSettingsCubit>()
+                                              .state
+                                              .settings
+                                              .port),
+                              child: state.isRunning
+                                  ? const Text(
+                                      'Turn Remote Controller Server Off')
+                                  : const Text(
+                                      'Turn Remote Controller Server On'),
+                            ),
+                          ],
                         ),
+                        if (state.isRunning)
+                          FutureBuilder(
+                              future: NetworkUtils.getLocalIp()
+                                  .catchError((_) => 'Unknown'),
+                              builder: (context, asyncSnapshot) {
+                                final serverUrl =
+                                    'http://${asyncSnapshot.data}:$port';
+
+                                return Column(
+                                  children: [
+                                    const Text('Scan this QR Code'),
+                                    const Text(
+                                        'or copy the following URL to your phone:'),
+                                    SelectableText(serverUrl),
+                                    const SizedBox(height: AppSpacing.md),
+                                    QrImageView(
+                                      data: serverUrl,
+                                      size: 200,
+                                      backgroundColor: Colors.white,
+                                    ),
+                                  ],
+                                );
+                              }),
                       ],
                     ),
                   ],
@@ -79,9 +120,7 @@ class RemoteControllerPage extends StatelessWidget {
                           isDisabled: state.isRunning || state.isBusy,
                           min: 49152,
                           max: 65535,
-                          value: context.select(
-                              (RemoteControllerSettingsCubit c) =>
-                                  c.state.settings.port),
+                          value: port,
                           onSubmitted: (p) {
                             context
                                 .read<RemoteControllerSettingsCubit>()
