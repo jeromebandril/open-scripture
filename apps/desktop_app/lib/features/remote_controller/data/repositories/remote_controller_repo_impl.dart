@@ -18,7 +18,7 @@ class RemoteControllerRepoImpl implements RemoteControllerRepo {
 
   final RemoteControllerWSServer _wsServer;
   final RemoteCommandRouter _router;
-  final _controller = StreamController<AppCommand>();
+  final _controller = StreamController<AppCommand>.broadcast();
 
   @override
   Stream<AppCommand> get commands => _controller.stream;

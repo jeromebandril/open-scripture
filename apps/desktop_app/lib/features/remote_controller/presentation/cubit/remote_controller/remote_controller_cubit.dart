@@ -26,17 +26,35 @@ class RemoteControllerCubit extends Cubit<RemoteControllerState> {
   }
 
   Future<void> start(int port) async {
+    if (state.isRunning || _sub != null) return;
+
+    if (state.isBusy) return;
     emit(state.copyWith(isBusy: true));
-    if (state.isRunning) return;
+
     await _repo.start(port: port);
+
+    await _sub?.cancel();
     _sub = _repo.commands.listen(_handleMessage);
+
     emit(state.copyWith(isRunning: true, isBusy: false));
   }
 
   Future<void> stop() async {
+    if (state.isBusy || !state.isRunning) return;
+
     emit(state.copyWith(isBusy: true));
-    if (!state.isRunning) return;
+
     await _repo.stop();
+
+    await _sub?.cancel();
+    _sub = null;
+
     emit(state.copyWith(isRunning: false, isBusy: false));
+  }
+
+  @override
+  Future<void> close() {
+    _sub?.cancel();
+    return super.close();
   }
 }
