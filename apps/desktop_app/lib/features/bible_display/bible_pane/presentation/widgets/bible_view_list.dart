@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/features/bible_display/bible_pane/presentation/models/parallel_bible_config.dart';
 import 'package:open_scripture/features/customizer/presentation/models/bible_view_list_theme.dart';
 import 'package:open_scripture/shared/domain/entities/verse.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -13,14 +12,9 @@ import 'parts/verse_divider.dart';
 import 'parts/verse_widget.dart';
 
 class BibleViewList extends StatefulWidget {
-  const BibleViewList({
-    super.key,
-    required this.uniqueId,
-    required this.content,
-  });
+  const BibleViewList({super.key, required this.uniqueId});
 
   final int uniqueId;
-  final ParallelBibleConfig content;
 
   @override
   State<BibleViewList> createState() => _BibleViewListState();
@@ -108,17 +102,6 @@ class _BibleViewListState extends State<BibleViewList> {
   }
 
   @override
-  void didUpdateWidget(covariant BibleViewList oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    // Scrolls to ref after content segments changes
-    if (!identical(oldWidget.content, widget.content)) {
-      final a = context.read<BiblePaneBloc>().state.unionRefs;
-      _scheduleScrollAfterBuild(items: a.toList());
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     // Set padding
     final screen = MediaQuery.of(context).size;
@@ -127,68 +110,53 @@ class _BibleViewListState extends State<BibleViewList> {
     // theming
     final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
 
-    final unionContent = widget.content.computeUnion();
-
     return BlocConsumer<BiblePaneBloc, BiblePaneState>(
+      //
+      // This is for auto scroll to item (verse) until visible
+      //
       listenWhen: (prev, curr) =>
           (prev.reference != curr.reference && curr.reference != null),
       listener: (context, state) {
         final ref = state.reference;
         if (ref == null) return;
-
         _pendingScrollRef = ref.copyWith(verseEnd: null);
-
         _scheduleScrollAfterBuild(items: state.unionRefs.toList());
       },
-      buildWhen: (prev, curr) => prev.reference != curr.reference,
+      //
+      // Should rebuild only when content or selected ref change.
+      //
+      buildWhen: (prev, curr) =>
+          prev.reference != curr.reference || prev.content != curr.content,
       builder: (context, state) {
+        final content = state.content;
+        final unionRefs = content.computeUnion();
+
         return ScrollablePositionedList.separated(
           itemScrollController: _itemScrollController,
           itemPositionsListener: _itemPositionsListener,
-          itemCount: unionContent.length + 1,
+          itemCount: unionRefs.length + 1,
           padding: EdgeInsets.only(top: 16),
-          separatorBuilder: (ctx, _) {
-            return const VerseDivider();
-          },
+          separatorBuilder: (ctx, _) => const VerseDivider(),
           itemBuilder: (_, i) {
-            // Fixed empty space at the bottom
-            if (i == unionContent.length) {
-              return SizedBox(
-                height: 200,
-                child: state.isMixed
-                    ? Align(
-                        alignment: AlignmentGeometry.center,
-                        child: Text(
-                          '${state.content.asMap.length} results found',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.outline),
-                        ),
-                      )
-                    : null,
-              );
-            }
+            //
+            // Empty space fixed at the bottom
+            //
+            if (i == unionRefs.length) return SizedBox(height: 200);
 
-            // Set content
-            final ref = unionContent.elementAt(i);
+            // Get verse and its variants in a preferred order
+            final ref = unionRefs.elementAt(i);
             final verses = state.parallelOrder
-                .map((id) => widget.content[id]?.verses?[ref])
+                .map((id) => content.getParallelDataByBibleId(id)?.verses?[ref])
                 .toList();
-
-            // Selected verse
-            final vStart = state.reference?.verseStart;
-            final vEnd = state.reference?.verseEnd;
-
-            // highlight a range only if verses are of the same book and chapter
-            final isHighlighted = state.isMixed
-                ? state.reference == ref
-                : (vEnd == null && ref.verseStart == vStart) ||
-                    (vEnd != null &&
-                        vStart != null &&
-                        ref.verseStart! >= vStart &&
-                        ref.verseStart! <= vEnd);
+            final isHighlighted = state.reference == null
+                ? false
+                : ref.contains(state.reference!);
 
             return Padding(
+              //
+              // These paddings are set from app level customization settings,
+              // but they need to be here even if its ugly
+              //
               padding: EdgeInsets.only(
                 left:
                     thisPaneIndex == 0 ? screen.width * paneTheme.xPadding : 0,
@@ -212,8 +180,8 @@ class _BibleViewListState extends State<BibleViewList> {
 class _ParallelView extends StatelessWidget {
   const _ParallelView({
     required this.verses,
-    this.isHighlighted = false,
     required this.ref,
+    this.isHighlighted = false,
   });
 
   final BibleRef ref;
@@ -242,27 +210,9 @@ class _ParallelView extends StatelessWidget {
             isHighlighted: isHighlighted,
           );
 
-          // if (isHighlighted && verses.length > 1) {
-          //   return Expanded(
-          //     child: Column(
-          //       children: [
-          //         SizedBox(
-          //           height: 40,
-          //           child: Text(),
-          //         ),
-          //         verseWidget,
-          //       ],
-          //     ),
-          //   );
-          // }
-
           return Expanded(child: verseWidget);
         }),
       ],
     );
   }
-}
-
-class ChooseIntent extends Intent {
-  const ChooseIntent();
 }

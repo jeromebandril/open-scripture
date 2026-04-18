@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/features/bible_display/bible_pane/presentation/models/parallel_bible_config.dart';
 
 import '../../../../../shared/domain/entities/book_names.dart';
 import '../../../../../shared/domain/entities/verse_span.dart';
@@ -12,14 +11,9 @@ import '../bloc/bible_pane_bloc.dart';
 import '../rendering/verse_richtext_builder.dart';
 
 class BibleViewPresentation extends StatelessWidget {
-  const BibleViewPresentation({
-    super.key,
-    required this.uniqueId,
-    required this.content,
-  });
+  const BibleViewPresentation({super.key, required this.uniqueId});
 
   final int uniqueId;
-  final ParallelBibleConfig content;
 
   @override
   Widget build(BuildContext context) {
@@ -37,11 +31,13 @@ class BibleViewPresentation extends StatelessWidget {
         Theme.of(context).extension<BibleViewPresentationTheme>()!;
 
     return BlocBuilder<BiblePaneBloc, BiblePaneState>(
+      //
+      // Rebuilds only when selected ref or content change
+      //
       buildWhen: (prev, curr) =>
           prev.reference != curr.reference || prev.content != curr.content,
       builder: (context, state) {
         if (state.reference == null) return SizedBox();
-        // Set content
         final ref = state.reference!;
 
         return Container(
@@ -49,6 +45,9 @@ class BibleViewPresentation extends StatelessWidget {
           color: Colors.transparent,
           child: SingleChildScrollView(
             child: Padding(
+              //
+              // Some padding that comes from global customization settings
+              //
               padding: EdgeInsets.only(
                 left:
                     thisPaneIndex == 0 ? screen.width * paneTheme.xPadding : 0,
@@ -62,33 +61,42 @@ class BibleViewPresentation extends StatelessWidget {
                 spacing: 32,
                 children: [
                   //
-                  // Reference title
+                  // Full reference title
                   //
-                  Text(
-                    ref.toString().replaceFirst(
-                          ref.bookUsfxId,
-                          resolver.resolveBook(ref.bookUsfxId)?.fullName ??
-                              'error',
-                        ),
-                    style: TextStyle(
-                      fontWeight: paneTheme.selectedRefFontWeight,
-                      fontFamily: paneTheme.referenceFont,
-                      fontSize: 16,
-                      color: paneTheme.accentColor,
-                    ),
-                  ),
+                  Builder(builder: (context) {
+                    final fullNameBook =
+                        resolver.resolveBook(ref.bookUsfxId)?.fullName;
+                    return Text(
+                      fullNameBook == null
+                          ? ref.toString()
+                          : ref.toString().replaceFirst(
+                                ref.bookUsfxId,
+                                fullNameBook,
+                              ),
+                      style: TextStyle(
+                        fontWeight: paneTheme.selectedRefFontWeight,
+                        fontFamily: paneTheme.referenceFont,
+                        color: paneTheme.accentColor,
+                        fontSize: 16,
+                      ),
+                    );
+                  }),
                   //
                   // Build content here
                   //
                   Builder(builder: (context) {
-                    final rangeToDisplay = content.getRefsInRange(ref);
+                    final rangeToDisplay = state.content.getRefsInRange(ref);
 
                     // for each bible translation
                     final views = state.parallelOrder
-                        .where((id) => state.content[id]?.verses != null)
+                        .where((id) =>
+                            state.content
+                                .getParallelDataByBibleId(id)
+                                ?.verses !=
+                            null)
                         .map((id) {
-                      final value = state.content[id]!;
-                      List<InlineSpan> verseInlineSpan = [];
+                      final value = state.content.getParallelDataByBibleId(id)!;
+                      final List<InlineSpan> verseInlineSpan = [];
                       final verses = value.verses!.entries
                           .where((e) => rangeToDisplay.contains(e.key))
                           .toList();
@@ -131,8 +139,7 @@ class BibleViewPresentation extends StatelessWidget {
                           Text.rich(
                             TextSpan(
                                 style: TextStyle(
-                                  fontWeight: paneTheme.textFontWeight,
-                                ),
+                                    fontWeight: paneTheme.textFontWeight),
                                 children: rangeToDisplay.length > 1
                                     ? build()
                                     : verseInlineSpan),

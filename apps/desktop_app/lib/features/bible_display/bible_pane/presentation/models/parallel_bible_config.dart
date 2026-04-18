@@ -17,6 +17,8 @@ class ParallelBibleConfig extends Equatable {
     return ParallelBibleConfig._(Map.unmodifiable(map));
   }
 
+  ParallelBibleData? getParallelDataByBibleId(BibleId id) => _config[id];
+
   static const ParallelBibleConfig empty =
       ParallelBibleConfig._(<BibleId, ParallelBibleData>{});
 
@@ -34,6 +36,8 @@ class ParallelBibleConfig extends Equatable {
     );
   }
 
+  /// "union" understood as union of all [BibleRef] between each bible/translation.
+  /// Useful because two bibles/translations can have different chapter lengths
   SplayTreeSet<BibleRef> computeUnion() {
     final union = SplayTreeSet<BibleRef>();
 

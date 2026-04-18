@@ -28,42 +28,54 @@ class BiblePane extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isCustom = context.select(
-      (CustomizerCubit c) => c.state.pane.enableCustomTheme,
-    );
+    final isCustom =
+        context.select((CustomizerCubit c) => c.state.pane.enableCustomTheme);
     final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
-
-    return DefaultTextStyle(
-      style: TextStyle(
-        // background color is set on SplitscreenContainer widget
-        color: isCustom
-            ? paneTheme.textColor
-            : Theme.of(context).colorScheme.onSurface,
-        fontFamily: isCustom ? paneTheme.textFont : null,
-        height: kTextHeightNone,
-      ),
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider.value(value: blocComponents.bloc),
-          BlocProvider.value(value: blocComponents.textScalerCubit),
-          BlocProvider.value(value: blocComponents.bibleSelectorCubit),
-          BlocProvider(create: (_) => SelectedWordCubit()),
-        ],
-        child: BlocConsumer<BiblePaneBloc, BiblePaneState>(
-          listenWhen: (prev, curr) =>
-              prev.content != curr.content && curr.reference != null,
-          listener: (BuildContext context, BiblePaneState state) {
-            // blocComponents.bloc
-            //     .add(BiblePaneDisplayChapter(ref: state.reference!));
-          },
+    //
+    // A BiblePane is self dependent. The bloc components are injected
+    // externally, for instance by a splitscreen manager
+    //
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider.value(value: blocComponents.bloc),
+        BlocProvider.value(value: blocComponents.textScalerCubit),
+        BlocProvider.value(value: blocComponents.bibleSelectorCubit),
+        BlocProvider(create: (_) => SelectedWordCubit()),
+      ],
+      //
+      // Its theming can be indipendent from the app's theme
+      // because it has its own customization settings.
+      // MaterialApp theming is used to inject these settings.
+      //
+      // Styling for specific parts of the ui are injected
+      // near the widget that need it.
+      //
+      // (to avoid unnecessary painting background color is
+      // set on SplitscreenContainer, which is the parent widget)
+      //
+      child: DefaultTextStyle(
+        style: TextStyle(
+          color: isCustom
+              ? paneTheme.textColor
+              : Theme.of(context).colorScheme.onSurface,
+          fontFamily: isCustom ? paneTheme.textFont : null,
+          height: kTextHeightNone,
+        ),
+        child: BlocBuilder<BiblePaneBloc, BiblePaneState>(
+          //
+          // Rebuild only when "macro" state changes.
+          // Actual rebuilds from content changes happen
+          // lower in the widget tree, which is in [BibleView].
+          //
           buildWhen: (prev, curr) =>
               prev.status != curr.status ||
               prev.errorMessage != curr.errorMessage ||
-              prev.content != curr.content,
+              prev.content.isContentEmpty != curr.content.isContentEmpty,
           builder: (context, state) {
             final Widget widget = switch (state.status) {
               //
               // INITIAL
+              //
               BiblePaneStatus.selectBibles => BibleSelector(
                   bloc: blocComponents.bibleSelectorCubit,
                   onConfirm: (bibleIds) {
@@ -72,14 +84,17 @@ class BiblePane extends StatelessWidget {
                 ),
               //
               // LOADING SCREEN
+              //
               BiblePaneStatus.loading =>
-                Center(child: CircularProgressIndicator()),
+                const Center(child: CircularProgressIndicator()),
               //
               // ERROR SCREEN
+              //
               BiblePaneStatus.error =>
-                Center(child: Text(state.errorMessage ?? 'Error')),
+                Center(child: Text(state.errorMessage ?? 'Unknown Error')),
               //
               // READY SCREEN
+              //
               BiblePaneStatus.ready => state.content.isContentEmpty
                   ? const _InitalEmptyContentScreen()
                   : TextScalerHost(
@@ -93,17 +108,11 @@ class BiblePane extends StatelessWidget {
                               //
                               // Presentation mode
                               //
-                              ? BibleViewPresentation(
-                                  uniqueId: uniqueId,
-                                  content: state.content,
-                                )
+                              ? BibleViewPresentation(uniqueId: uniqueId)
                               //
                               // Normal mode
                               //
-                              : BibleViewList(
-                                  uniqueId: uniqueId,
-                                  content: state.content,
-                                );
+                              : BibleViewList(uniqueId: uniqueId);
                         },
                       ),
                     ),
@@ -116,11 +125,11 @@ class BiblePane extends StatelessWidget {
                 // PANE STATUS INFO
                 //
                 DefaultTextStyle(
-                  style: TextStyle(inherit: false),
+                  style: const TextStyle(inherit: false),
                   child: Positioned(
                     bottom: 0,
                     right: 0,
-                    child: PaneInfo(),
+                    child: const PaneInfo(),
                   ),
                 ),
               ],
