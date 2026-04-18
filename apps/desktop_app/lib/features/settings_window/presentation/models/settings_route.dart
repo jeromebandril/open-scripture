@@ -3,7 +3,7 @@ import 'package:open_scripture/features/bible_importer/presentation/page/importe
 import 'package:open_scripture/features/customizer/presentation/pages/bible_pane_customizer_screen.dart';
 import 'package:open_scripture/features/customizer/presentation/pages/global_customizer_screen.dart';
 import 'package:open_scripture/features/obs_live_overlay/presentation/page/obs_live_overlay_page.dart';
-import 'package:open_scripture/features/remote_controller/presentation/pages/remote_controller_settings.dart';
+import 'package:open_scripture/features/remote_controller/presentation/pages/remote_controller_page.dart';
 import 'package:open_scripture/features/settings_window/presentation/pages/about_setting_page.dart';
 
 import '../../../bible_installer_manager/presentation/pages/translation_manager.dart';

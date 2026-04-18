@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:open_scripture/features/remote_controller/domain/entities/client_info.dart';
 import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
 import 'package:shared/models/remote_command.dart';
 import 'package:shared/models/remote_command_type.dart';
@@ -22,6 +23,9 @@ class RemoteControllerRepoImpl implements RemoteControllerRepo {
 
   @override
   Stream<AppCommand> get commands => _controller.stream;
+
+  @override
+  Stream<List<ClientInfo>> get clients => _wsServer.clientsStream;
 
   void _handleMessage(RemoteCommand command, WebSocket client) {
     if (command.type == RemoteCommandType.command) {
@@ -61,5 +65,10 @@ class RemoteControllerRepoImpl implements RemoteControllerRepo {
   @override
   Future<void> stop() {
     return _wsServer.stop();
+  }
+
+  @override
+  Future<void> disconnectClient(ClientId id) async {
+    await _wsServer.disconnectClient(id);
   }
 }

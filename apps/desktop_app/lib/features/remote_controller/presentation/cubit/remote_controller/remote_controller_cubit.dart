@@ -6,6 +6,7 @@ import 'package:open_scripture/features/remote_controller/domain/repositories/re
 import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
 
 import '../../../../shortcuts/presentation/models/app_command_dispatcher.dart';
+import '../../../domain/entities/client_info.dart';
 
 part 'remote_controller_state.dart';
 
@@ -20,6 +21,7 @@ class RemoteControllerCubit extends Cubit<RemoteControllerState> {
   final AppCommandDispatcher dispatcher;
 
   StreamSubscription? _sub;
+  StreamSubscription? _subClients;
 
   void _handleMessage(AppCommand command) {
     dispatcher.dispatch(command);
@@ -34,7 +36,9 @@ class RemoteControllerCubit extends Cubit<RemoteControllerState> {
     await _repo.start(port: port);
 
     await _sub?.cancel();
+    await _subClients?.cancel();
     _sub = _repo.commands.listen(_handleMessage);
+    _subClients = _repo.clients.listen(_refreshConnectedClients);
 
     emit(state.copyWith(isRunning: true, isBusy: false));
   }
@@ -48,13 +52,24 @@ class RemoteControllerCubit extends Cubit<RemoteControllerState> {
 
     await _sub?.cancel();
     _sub = null;
+    await _subClients?.cancel();
+    _subClients = null;
 
     emit(state.copyWith(isRunning: false, isBusy: false));
+  }
+
+  void _refreshConnectedClients(List<ClientInfo> clients) {
+    emit(state.copyWith(connectedClients: clients));
+  }
+
+  Future<void> disconnectClient(ClientId id) async {
+    await _repo.disconnectClient(id);
   }
 
   @override
   Future<void> close() {
     _sub?.cancel();
+    _subClients?.cancel();
     return super.close();
   }
 }

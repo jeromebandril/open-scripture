@@ -108,6 +108,7 @@ class RemoteWsClient {
 
   void _handleDisconnect() {
     if (!_connected) return;
+    final isDisconnectedByServer = _socket?.closeCode == 4003;
 
     _connected = false;
     _connectionController.add(false);
@@ -117,7 +118,7 @@ class RemoteWsClient {
 
     _watchdogTimer?.cancel();
 
-    if (!_manuallyClosed) {
+    if (!_manuallyClosed && !isDisconnectedByServer) {
       _scheduleReconnect();
     }
   }

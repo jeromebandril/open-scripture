@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_scripture/features/remote_controller/domain/entities/client_info.dart';
+import 'package:open_scripture/features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../../../shared/theme/tokens.dart';
@@ -12,9 +14,14 @@ import '../cubit/remote_controller/remote_controller_cubit.dart';
 import '../cubit/remote_controller_settings/remote_controller_settings_cubit.dart';
 import '../widgets/remote_controller_indicator.dart';
 
-class RemoteControllerPage extends StatelessWidget {
+class RemoteControllerPage extends StatefulWidget {
   const RemoteControllerPage({super.key});
 
+  @override
+  State<RemoteControllerPage> createState() => _RemoteControllerPageState();
+}
+
+class _RemoteControllerPageState extends State<RemoteControllerPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
@@ -73,28 +80,17 @@ class RemoteControllerPage extends StatelessWidget {
                                 ],
                               ),
                               if (state.isRunning)
-                                FutureBuilder(
-                                    future: NetworkUtils.getLocalIp()
-                                        .catchError((_) => 'Unknown'),
-                                    builder: (context, asyncSnapshot) {
-                                      final serverUrl =
-                                          'http://${asyncSnapshot.data}:$port';
-
-                                      return Column(
-                                        children: [
-                                          const Text('Scan this QR Code'),
-                                          const Text(
-                                              'or copy the following URL to your phone:'),
-                                          SelectableText(serverUrl),
-                                          const SizedBox(height: AppSpacing.md),
-                                          QrImageView(
-                                            data: serverUrl,
-                                            size: 200,
-                                            backgroundColor: Colors.white,
-                                          ),
-                                        ],
-                                      );
-                                    }),
+                                TextButton(
+                                    onPressed: () {
+                                      context
+                                          .read<WindowStackManagerBloc>()
+                                          .add(WindowStackManagerOpen(
+                                              title: 'Connected Devices',
+                                              widget:
+                                                  const _ConnectedClientsList(),
+                                              size: Size(400, 400)));
+                                    },
+                                    child: Text('Manage connected devices')),
                             ],
                           ),
                         ],
@@ -102,11 +98,8 @@ class RemoteControllerPage extends StatelessWidget {
                     ),
                     if (state.isRunning)
                       Expanded(
-                        child: SettingSection(
-                          title: '',
-                          children: [Text('ciao')],
-                        ),
-                      )
+                        child: const _ConnectionDetails(),
+                      ),
                   ],
                 ),
                 SettingSection(
@@ -150,6 +143,89 @@ class RemoteControllerPage extends StatelessWidget {
           },
         ),
       ),
+    );
+  }
+}
+
+class _ConnectionDetails extends StatefulWidget {
+  const _ConnectionDetails();
+
+  @override
+  State<_ConnectionDetails> createState() => __ConnectionDetailsState();
+}
+
+class __ConnectionDetailsState extends State<_ConnectionDetails> {
+  bool _showQrCode = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return SettingSection(
+      title: 'Connection Details',
+      children: [
+        FutureBuilder(
+          future: NetworkUtils.getLocalIp().catchError((_) => 'Unknown'),
+          builder: (context, asyncSnapshot) {
+            return BlocSelector<RemoteControllerSettingsCubit,
+                    RemoteControllerSettingsState, int>(
+                selector: (state) => state.settings.port,
+                builder: (context, port) {
+                  final serverUrl = 'http://${asyncSnapshot.data}:$port';
+
+                  return Column(
+                    children: [
+                      const Text('Scan this QR Code'),
+                      const Text('or copy the following URL to your phone:'),
+                      SelectableText(serverUrl),
+                      const SizedBox(height: AppSpacing.md),
+                      if (_showQrCode)
+                        QrImageView(
+                          data: serverUrl,
+                          size: 200,
+                          backgroundColor: Colors.white,
+                        ),
+                      const SizedBox(height: AppSpacing.sm),
+                      TextButton.icon(
+                          onPressed: () =>
+                              setState(() => _showQrCode = !_showQrCode),
+                          icon: _showQrCode
+                              ? const Icon(Icons.visibility_off_outlined)
+                              : const Icon(Icons.qr_code_rounded),
+                          label: _showQrCode
+                              ? const Text('Hide QR Code')
+                              : const Text('Show QR Code'))
+                    ],
+                  );
+                });
+          },
+        )
+      ],
+    );
+  }
+}
+
+class _ConnectedClientsList extends StatelessWidget {
+  const _ConnectedClientsList();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocSelector<RemoteControllerCubit, RemoteControllerState,
+        List<ClientInfo>>(
+      selector: (s) => s.connectedClients,
+      builder: (context, connectedClients) {
+        return ListView.builder(
+          itemCount: connectedClients.length,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+                title: Text(connectedClients[index].ipAdress),
+                trailing: IconButton(
+                    tooltip: 'Disconnect',
+                    onPressed: () => context
+                        .read<RemoteControllerCubit>()
+                        .disconnectClient(connectedClients[index].id),
+                    icon: const Icon(Icons.remove_circle_outline_rounded)));
+          },
+        );
+      },
     );
   }
 }

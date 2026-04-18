@@ -15,6 +15,16 @@ class BibleRef extends Equatable implements Comparable<BibleRef> {
     this.verseEnd,
   });
 
+  bool contains(BibleRef ref) {
+    final start = ref.verseStart;
+    final end = ref.verseEnd;
+    return (end == null && this.verseStart == start) ||
+        (end != null &&
+            start != null &&
+            this.verseStart! >= start &&
+            this.verseStart! <= end);
+  }
+
   BibleRef copyWith({
     String? bookOsisId,
     int? chapter,
