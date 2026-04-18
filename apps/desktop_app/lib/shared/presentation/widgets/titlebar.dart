@@ -4,6 +4,8 @@ import 'package:open_scripture/shared/constants/constants.dart';
 import 'package:open_scripture/shared/presentation/cubit/toolbar_cubit.dart';
 import 'package:window_manager/window_manager.dart';
 
+import '../../../features/remote_controller/presentation/widgets/remote_controller_indicator.dart';
+
 class Titlebar extends StatelessWidget {
   const Titlebar({
     super.key,
@@ -136,7 +138,9 @@ class Titlebar extends StatelessWidget {
                         onPressed: () => windowManager.close(),
                       ),
                     ],
-                  )
+                  ),
+
+                if (!showButtons) RemoteControllerIndicator()
               ],
             ),
           ),

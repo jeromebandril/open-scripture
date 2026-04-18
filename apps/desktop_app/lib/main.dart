@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:open_scripture/features/obs_live_overlay/presentation/cubit/obs_overlay/obs_live_overlay_cubit.dart';
 import 'package:open_scripture/features/obs_live_overlay/presentation/widgets/obs_live_overlay_indicator.dart';
+import 'package:open_scripture/features/remote_controller/presentation/widgets/remote_controller_indicator.dart';
 import 'package:open_scripture/features/shortcuts/presentation/cubit/shortcuts_cubit.dart';
 import 'package:open_scripture/shared/presentation/cubit/history_visibility_cubit.dart';
 import 'package:open_scripture/shared/presentation/cubit/fullscreen_cubit.dart';
@@ -224,9 +225,6 @@ class _HomeState extends State<Home> {
                 ),
               ],
               //
-              // Toolbar
-              //
-              //
               // BIBLE PANES
               //
               Expanded(
@@ -328,6 +326,15 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                       ),
+                    //
+                    // Other interfaces
+                    //
+                    if (!isFullscreen)
+                      const Positioned(
+                        top: AppSpacing.sm,
+                        right: AppSpacing.sm,
+                        child: RemoteControllerIndicator(),
+                      )
                   ],
                 ),
               ),

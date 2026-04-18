@@ -4,6 +4,7 @@ import 'package:open_scripture/features/remote_controller/domain/entities/client
 import 'package:open_scripture/features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
+import '../../../../shared/presentation/widgets/dot.dart';
 import '../../../../shared/theme/tokens.dart';
 import '../../../../shared/utils/network_utils.dart';
 import '../../../settings_window/presentation/widgets/setting_input_bool.dart';
@@ -12,7 +13,6 @@ import '../../../settings_window/presentation/widgets/setting.dart';
 import '../../../settings_window/presentation/widgets/setting_input_number.dart';
 import '../cubit/remote_controller/remote_controller_cubit.dart';
 import '../cubit/remote_controller_settings/remote_controller_settings_cubit.dart';
-import '../widgets/remote_controller_indicator.dart';
 
 class RemoteControllerPage extends StatefulWidget {
   const RemoteControllerPage({super.key});
@@ -55,7 +55,7 @@ class _RemoteControllerPageState extends State<RemoteControllerPage> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const RemoteControllerIndicator(),
+                                  const _RemoteControllerIndicator(),
                                   TextButton(
                                     onPressed: state.isBusy || !enableFeature
                                         ? null
@@ -223,6 +223,35 @@ class _ConnectedClientsList extends StatelessWidget {
                         .read<RemoteControllerCubit>()
                         .disconnectClient(connectedClients[index].id),
                     icon: const Icon(Icons.remove_circle_outline_rounded)));
+          },
+        );
+      },
+    );
+  }
+}
+
+class _RemoteControllerIndicator extends StatelessWidget {
+  const _RemoteControllerIndicator();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocSelector<RemoteControllerSettingsCubit,
+        RemoteControllerSettingsState, bool>(
+      selector: (state) => state.settings.enableFeature,
+      builder: (context, isEnabled) {
+        if (!isEnabled) return const SizedBox.shrink();
+
+        return BlocBuilder<RemoteControllerCubit, RemoteControllerState>(
+          builder: (context, state) {
+            return Tooltip(
+              message:
+                  'Remote Controller Server is ${state.isRunning ? 'running' : 'off'}',
+              child: Dot(
+                glowing: state.isRunning,
+                overrideColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                overrideGlowingColor: Colors.red,
+              ),
+            );
           },
         );
       },

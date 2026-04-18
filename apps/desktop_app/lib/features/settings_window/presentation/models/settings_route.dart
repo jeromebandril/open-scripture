@@ -9,13 +9,20 @@ import 'package:open_scripture/features/settings_window/presentation/pages/about
 import '../../../bible_installer_manager/presentation/pages/translation_manager.dart';
 import '../../../shortcuts/presentation/pages/shortcuts_screen.dart';
 
-enum SettingsSection { appearance, bibleManager, shortcuts, about }
+enum SettingsSection {
+  appearance,
+  bibleManager,
+  shortcuts,
+  about,
+  remoteController,
+}
 
 String routeFor(SettingsSection s) => switch (s) {
       SettingsSection.appearance => '/appearance/global',
       SettingsSection.bibleManager => '/biblemanager/repo',
       SettingsSection.shortcuts => '/shortcuts',
       SettingsSection.about => '/about',
+      SettingsSection.remoteController => '/remotecontroller',
     };
 
 final Map<String, SettingsRoute> settingsRoutes = {
