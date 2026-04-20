@@ -3,8 +3,7 @@ import 'dart:io';
 
 import 'package:open_scripture/features/remote_controller/domain/entities/client_info.dart';
 import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
-import 'package:shared/models/remote_command.dart';
-import 'package:shared/models/remote_command_type.dart';
+import 'package:shared/rc_protocol/rc_protocol.dart';
 
 import '../../../../shared/remote_controller/remote_command_router.dart';
 import '../../domain/repositories/remote_controller_repo.dart';

@@ -1,6 +1,6 @@
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/models/display_mode.dart';
-import 'package:shared/models/remote_command.dart';
+import 'package:shared/rc_protocol/rc_protocol.dart';
 
 import '../../../../../shared/remote_controller/models/remote_command_custom_handler.dart';
 import '../cubit/pane_manager_cubit.dart';

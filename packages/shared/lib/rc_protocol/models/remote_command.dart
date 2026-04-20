@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'remote_command_type.dart';
+import '../enums/remote_command_type.dart';
 
 class RemoteCommand {
   final String id;

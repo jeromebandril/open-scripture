@@ -1,4 +1,4 @@
-import 'package:shared/models/remote_command.dart';
+import 'package:shared/rc_protocol/rc_protocol.dart';
 
 // Use this class for handling custom commands
 // that are not defined in [AppCommand]

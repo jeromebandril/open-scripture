@@ -1,5 +1,4 @@
-import 'package:shared/models/remote_command.dart';
-import 'package:shared/models/remote_command_type.dart';
+import 'package:shared/rc_protocol/rc_protocol.dart';
 
 import 'models/remote_command_custom_handler.dart';
 

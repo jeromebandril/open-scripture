@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:open_scripture/features/remote_controller/domain/entities/client_info.dart';
-import 'package:shared/models/remote_command.dart';
+import 'package:shared/rc_protocol/rc_protocol.dart';
 
 typedef OnMessage = void Function(RemoteCommand command, WebSocket client);
 

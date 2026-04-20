@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:open_scripture_rc/components/command_grid.dart';
-import 'package:shared/models/remote_command.dart';
-import 'package:shared/models/remote_command_type.dart';
+import 'package:shared/rc_protocol/rc_protocol.dart';
 
 import 'injection_container.dart' as di;
 import 'pages/connection_setup_page.dart';

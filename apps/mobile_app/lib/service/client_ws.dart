@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:shared/models/remote_command.dart';
+import 'package:shared/rc_protocol/rc_protocol.dart';
 
 const int connectTimeoutSeconds = 15;
 const int pingFrequencySeconds = 20;

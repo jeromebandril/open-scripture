@@ -1,4 +1,4 @@
-import 'package:shared/models/remote_command.dart';
+import 'package:shared/rc_protocol/rc_protocol.dart';
 
 import '../../../../shared/remote_controller/models/remote_command_custom_handler.dart';
 import '../bloc/b_searchbar_bloc.dart';
