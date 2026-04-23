@@ -7,8 +7,8 @@ class BibleViewPresentationThemeSettings extends Equatable {
   final AppFontWeight subtitleFontWeight;
 
   const BibleViewPresentationThemeSettings({
-    this.textAlign = AppTextAlign.left,
-    this.subtitleFontWeight = AppFontWeight.bold,
+    this.textAlign = AppTextAlign.center,
+    this.subtitleFontWeight = AppFontWeight.semiBold,
   });
 
   @override

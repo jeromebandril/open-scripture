@@ -18,11 +18,15 @@ class GlobalCustomizerScreen extends StatefulWidget {
 }
 
 class _GlobalCustomizerScreenState extends State<GlobalCustomizerScreen> {
-  final defaultPaneTheme = BiblePaneGeneralThemeSettings();
-
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<CustomizerCubit>();
+
+    final defaultPaneTheme =
+        context.select((CustomizerCubit c) => c.state.app.mode) ==
+                ThemeMode.dark
+            ? BiblePaneGeneralThemeSettings.dark()
+            : BiblePaneGeneralThemeSettings.light();
 
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(42, 0, 42, 42),

@@ -28,8 +28,8 @@ class BiblePaneGeneralThemeSettings extends Equatable {
     this.fontSize = 14,
     this.textColor = const Color(0xFFB9B9B9),
     this.backgroundColor = const Color(0xFF0C0C0C),
-    this.accentColor = const Color(0xFFA390FF), //const Color(0xFF5B1AB1),
-    this.refColor = const Color(0xFF81811E), //const Color(0xFF5C5C0C),
+    this.accentColor = const Color(0xFFA390FF),
+    this.refColor = const Color(0xFF81811E),
     this.enableCustomTheme = false,
     this.textFontWeight = AppFontWeight.semiBold,
     this.widthAdjustmentOffset = 0.0,
@@ -37,12 +37,37 @@ class BiblePaneGeneralThemeSettings extends Equatable {
     this.xPadding = 0.01,
     this.splitscreenGap = 16,
     this.showSplitscreenDivider = true,
-    this.addColor = const Color(0xFF757575),
+    this.addColor = const Color(0xFFD2D2D2),
     this.quoteColor = const Color(0xFFE04A4A),
     this.selectedRefFontWeight = AppFontWeight.extraBold,
     this.refFontWeight = AppFontWeight.semiBold,
     this.underlineStrongWords = true,
   });
+
+  factory BiblePaneGeneralThemeSettings.dark() => BiblePaneGeneralThemeSettings(
+        textColor: const Color(0xFFB9B9B9),
+        backgroundColor: const Color(0xFF0C0C0C),
+        accentColor: const Color(0xFFA390FF),
+        refColor: const Color(0xFF81811E),
+        addColor: const Color(0xFFD2D2D2),
+        quoteColor: const Color(0xFFE04A4A),
+        textFontWeight: AppFontWeight.semiBold,
+        selectedRefFontWeight: AppFontWeight.semiBold,
+        refFontWeight: AppFontWeight.semiBold,
+      );
+
+  factory BiblePaneGeneralThemeSettings.light() =>
+      BiblePaneGeneralThemeSettings(
+        textColor: const Color(0xFF0C0C0C),
+        backgroundColor: const Color.fromARGB(255, 240, 240, 240),
+        accentColor: const Color.fromARGB(255, 114, 34, 218),
+        refColor: const Color(0xFF81811E),
+        addColor: const Color(0xFF858585),
+        quoteColor: const Color(0xFFE04A4A),
+        textFontWeight: AppFontWeight.bold,
+        selectedRefFontWeight: AppFontWeight.bold,
+        refFontWeight: AppFontWeight.bold,
+      );
 
   BiblePaneGeneralThemeSettings copyWith({
     String? textFont,

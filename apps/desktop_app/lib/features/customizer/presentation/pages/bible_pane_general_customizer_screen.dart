@@ -27,8 +27,6 @@ class BiblePaneGeneralCustomizerScreen extends StatefulWidget {
 
 class _BiblePaneGeneralCustomizerScreenState
     extends State<BiblePaneGeneralCustomizerScreen> {
-  final defaultPaneTheme = BiblePaneGeneralThemeSettings();
-
   @override
   void dispose() {
     super.dispose();
@@ -37,6 +35,11 @@ class _BiblePaneGeneralCustomizerScreenState
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<CustomizerCubit>();
+    final defaultPaneTheme =
+        context.select((CustomizerCubit c) => c.state.app.mode) ==
+                ThemeMode.dark
+            ? BiblePaneGeneralThemeSettings.dark()
+            : BiblePaneGeneralThemeSettings.light();
 
     return Row(
       spacing: 16,
