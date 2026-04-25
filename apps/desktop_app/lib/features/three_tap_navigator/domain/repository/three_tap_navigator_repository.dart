@@ -1,6 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 
-import '../../../../shared/domain/entities/book.dart';
+import '../../../../shared/entities/book.dart';
 import '../../../../shared/error/failure.dart';
 
 abstract class ThreeTapNavigatorRepository {

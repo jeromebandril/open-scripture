@@ -1,14 +1,14 @@
-import 'package:open_scripture/shared/presentation/cubit/toolbar_cubit.dart';
+import 'package:open_scripture/core/app_state/toolbar_cubit.dart';
 
-import '../../../../shared/domain/entities/bible_ref.dart';
-import '../../../../shared/presentation/cubit/fullscreen_cubit.dart';
-import '../../../../shared/presentation/cubit/history_visibility_cubit.dart';
-import '../../../../shared/presentation/cubit/menubar_visibility_cubit.dart';
-import '../../../b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
-import '../../../bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
+import '../../../../shared/entities/bible_ref.dart';
+import '../../../../core/app_state/fullscreen_cubit.dart';
+import '../../../../core/app_state/history_visibility_cubit.dart';
+import '../../../../core/app_state/menubar_visibility_cubit.dart';
+import '../../../bible_searchbar/presentation/state/b_searchbar_bloc.dart';
+import '../../../bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../../../bible_display/bible_pane/presentation/models/display_mode.dart';
-import '../../../bible_display/bible_selector/presenter/bloc/bible_selector_bloc.dart';
-import '../../../bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
+import '../../../bible_display/bible_selector/presentation/state/bible_selector_bloc.dart';
+import '../../../bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../../domain/models/app_command.dart';
 
 typedef CommandHandler = void Function();
@@ -28,7 +28,7 @@ class AppCommandDispatcher {
     required this.toolbarCubit,
   });
 
-  final PaneManagerCubit paneManagerCubit;
+  final MultiPaneManagerCubit paneManagerCubit;
   final BSearchbarBloc searchbarBloc;
 
   final HistoryVisibilityCubit historyVisibilityCubit;
@@ -113,50 +113,42 @@ class AppCommandDispatcher {
 
   void _moveVerse(int delta) {
     _withActiveRef<void>((bloc, ref) {
-      final results = searchbarBloc.state.results;
+      final searchState = searchbarBloc.state;
 
-      // If there are search results, cycle through them.
-      if (results.isNotEmpty) {
+      // If in string search mode, cycle through the results.
+      if (searchState is SearchStringResult) {
+        final results = searchState.results;
         final idx = results.indexOf(ref);
         if (idx == -1) return;
-
         final next = _wrapIndex(idx + delta, results.length);
         bloc.add(BiblePaneJustChangeRef(ref: results[next]));
         return;
       }
 
       // Otherwise, move inside the current chapter bounds.
-      final a = bloc.state.unionRefs.toList();
-      final iCurr = a.indexOf(ref.copyWith(verseEnd: null));
-      if (iCurr != -1 && iCurr + delta < a.length && iCurr + delta >= 0) {
-        final next = a[iCurr + delta];
-        bloc.add(
-          BiblePaneJustChangeRef(ref: next),
-        );
+      final refs = bloc.state.unionRefs.toList();
+      final iCurr = refs.indexOf(ref.copyWith(verseEnd: null));
+      if (iCurr != -1 && iCurr + delta < refs.length && iCurr + delta >= 0) {
+        bloc.add(BiblePaneJustChangeRef(ref: refs[iCurr + delta]));
       }
     });
   }
 
   void _extendSelection(int delta) {
     _withActiveRef<void>((bloc, ref) {
-      final results = searchbarBloc.state.results;
-      if (results.isNotEmpty) return; // keep your current behavior
+      if (searchbarBloc.state is SearchStringResult) return;
 
       final last =
           bloc.state.verseCount ?? bloc.state.unionRefs.last.verseStart ?? 0;
-
       final start = ref.verseStart ?? 1;
       final end = ref.verseEnd ?? start;
-
       final nextEnd = end + delta;
 
-      // match your original constraints
       if (delta > 0 && nextEnd > last) return;
       if (delta < 0 && (ref.verseEnd == null || ref.verseEnd == 1)) return;
       if (nextEnd < start) return;
 
       final newEnd = (delta < 0 && start == nextEnd) ? null : nextEnd;
-
       bloc.add(
         BiblePaneJustChangeRef(
           ref: ref.copyWith(verseEnd: newEnd),

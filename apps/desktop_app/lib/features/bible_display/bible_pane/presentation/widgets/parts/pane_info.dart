@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/features/customizer/presentation/cubit/customizer_cubit.dart';
-import 'package:open_scripture/features/text_scaler/cubit/text_scaler_cubit.dart';
-import 'package:open_scripture/shared/domain/entities/bible_meta.dart';
-import 'package:open_scripture/shared/presentation/widgets/hoverable_container.dart';
-import 'package:open_scripture/features/bible_display/bible_pane/presentation/bloc/bible_pane_bloc.dart';
+import 'package:open_scripture/features/customizer/presentation/state/customizer_cubit.dart';
+import 'package:open_scripture/features/text_scaler/presentation/state/text_scaler_cubit.dart';
+import 'package:open_scripture/shared/entities/bible_meta.dart';
+import 'package:open_scripture/shared/widgets/hoverable_container.dart';
+import 'package:open_scripture/features/bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/cubit/selected_word_cubit.dart';
-import 'package:open_scripture/features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
-import 'package:open_scripture/features/bible_display/split_screen/presenter/widgets/parts/active_pane_indicator.dart';
+import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
+import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/widgets/active_pane_indicator.dart';
 
 import '../../../../../../shared/theme/tokens.dart';
 
@@ -25,7 +25,8 @@ class _PaneInfoState extends State<PaneInfo> {
 
   @override
   Widget build(BuildContext context) {
-    final pl = context.select((PaneManagerCubit b) => b.state.panes.length);
+    final pl =
+        context.select((MultiPaneManagerCubit b) => b.state.panes.length);
     final paneId = context.select((BiblePaneBloc b) => b.state.paneId);
     final enableStrongWords = context.select(
       (CustomizerCubit c) => c.state.pane.underlineStrongWords,

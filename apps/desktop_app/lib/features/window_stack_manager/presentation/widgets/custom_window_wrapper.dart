@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/shared/theme/tokens.dart';
 
-import '../bloc/window_stack_manager_bloc.dart';
+import '../state/window_stack_manager_bloc.dart';
 
 class CustomWindowWrapper extends StatelessWidget {
   const CustomWindowWrapper({

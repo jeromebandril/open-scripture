@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:open_scripture/shared/data/datasources/settings_datasource.dart';
+import 'package:open_scripture/core/systems/settings/settings_datasource.dart';
 
 import '../../domain/entities/overlay_settings.dart';
 

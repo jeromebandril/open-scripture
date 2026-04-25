@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 
-import '../../../../shared/data/datasources/settings_datasource.dart';
-import '../../../../shared/domain/repositories/settings_repository.dart';
+import '../../../../core/systems/settings/settings_datasource.dart';
+import '../../../../core/systems/settings/settings_repository.dart';
 import '../../../../shared/error/failure.dart';
 import '../../domain/entities/remote_controller_settings.dart';
 

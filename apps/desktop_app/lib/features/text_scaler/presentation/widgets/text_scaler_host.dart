@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/features/text_scaler/cubit/text_scaler_cubit.dart';
+import 'package:open_scripture/features/text_scaler/presentation/state/text_scaler_cubit.dart';
 
 import '../../../../injection_container.dart';
 

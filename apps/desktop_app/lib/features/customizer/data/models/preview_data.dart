@@ -1,6 +1,6 @@
-import '../../../../shared/domain/entities/bible_ref.dart';
-import '../../../../shared/domain/entities/verse_segment.dart';
-import '../../../../shared/domain/entities/verse_span.dart';
+import '../../../../shared/entities/bible_ref.dart';
+import '../../../../shared/entities/verse_segment.dart';
+import '../../../../shared/entities/verse_span.dart';
 
 typedef PreviewData = ({
   int verseNumber,

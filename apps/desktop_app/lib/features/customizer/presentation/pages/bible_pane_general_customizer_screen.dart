@@ -13,7 +13,7 @@ import 'package:open_scripture/features/settings_window/presentation/widgets/set
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_text.dart';
 
-import '../cubit/customizer_cubit.dart';
+import '../state/customizer_cubit.dart';
 
 class BiblePaneGeneralCustomizerScreen extends StatefulWidget {
   const BiblePaneGeneralCustomizerScreen({super.key, this.showPreview = false});

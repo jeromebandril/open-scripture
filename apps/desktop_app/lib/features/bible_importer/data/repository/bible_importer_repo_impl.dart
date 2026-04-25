@@ -1,6 +1,6 @@
 import 'package:open_scripture/features/bible_installer_manager/domain/entities/bible_download_progress.dart';
-import 'package:open_scripture/shared/data/datasources/bible_sqllite_datasource.dart';
-import 'package:open_scripture/shared/installer/bible/domain/models/artifact.dart';
+import 'package:open_scripture/core/infrastructure/bible_data/bible_local_datasource.dart';
+import 'package:open_scripture/core/systems/installer/bible/domain/models/artifact.dart';
 
 import '../../domain/repository/bible_importer_repo.dart';
 

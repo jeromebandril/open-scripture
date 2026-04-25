@@ -4,16 +4,16 @@ import 'package:open_scripture/features/bible_display/bible_pane/presentation/cu
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/widgets/bible_view_list.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/widgets/parts/pane_info.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/widgets/bible_view_presentation.dart';
-import 'package:open_scripture/features/bible_display/split_screen/presenter/models/split_pane_data.dart';
-import 'package:open_scripture/features/customizer/presentation/cubit/customizer_cubit.dart';
+import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/models/multi_pane_data.dart';
+import 'package:open_scripture/features/customizer/presentation/state/customizer_cubit.dart';
 import 'package:open_scripture/features/shortcuts/presentation/models/app_command_shortcuts.dart';
-import 'package:open_scripture/features/shortcuts/presentation/widget/shortcut_view.dart';
+import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_view.dart';
 
 import '../../../../shortcuts/domain/models/app_command.dart';
 import '../../../../text_scaler/presentation/widgets/text_scaler_host.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
-import '../../../bible_selector/presenter/widget/bible_selector.dart';
-import '../bloc/bible_pane_bloc.dart';
+import '../../../bible_selector/presentation/widgets/bible_selector.dart';
+import '../state/bible_pane_bloc.dart';
 import '../models/display_mode.dart';
 
 class BiblePane extends StatelessWidget {

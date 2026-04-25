@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/features/bible_installer_manager/presentation/bloc/installed_bibles/installed_bibles_bloc.dart';
-import 'package:open_scripture/features/obs_live_overlay/presentation/cubit/obs_overlay/obs_live_overlay_cubit.dart';
-import 'package:open_scripture/features/remote_controller/presentation/cubit/remote_controller/remote_controller_cubit.dart';
-import 'package:open_scripture/features/window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
-import 'package:open_scripture/shared/constants/constants.dart';
-import 'package:open_scripture/shared/presentation/cubit/toolbar_cubit.dart';
-import 'package:open_scripture/shared/presentation/widgets/titlebar.dart';
+import 'package:open_scripture/features/bible_installer_manager/presentation/state/installed_bibles/installed_bibles_bloc.dart';
+import 'package:open_scripture/features/obs_live_overlay/presentation/state/obs_overlay/obs_live_overlay_cubit.dart';
+import 'package:open_scripture/features/remote_controller/presentation/state/remote_controller/remote_controller_cubit.dart';
+import 'package:open_scripture/features/window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
+import 'package:open_scripture/shared/constants.dart';
+import 'package:open_scripture/core/app_state/toolbar_cubit.dart';
+import 'package:open_scripture/app/widgets/titlebar.dart';
 import 'package:open_scripture/shared/theme/tokens.dart';
 
-import '../../../../shared/presentation/cubit/fullscreen_cubit.dart';
-import '../../../obs_live_overlay/presentation/cubit/obs_overlay_settinsg/obs_live_overlay_settings_cubit.dart';
-import '../../../remote_controller/presentation/cubit/remote_controller_settings/remote_controller_settings_cubit.dart';
+import '../../../../core/app_state/fullscreen_cubit.dart';
+import '../../../obs_live_overlay/presentation/state/obs_overlay_settinsg/obs_live_overlay_settings_cubit.dart';
+import '../../../remote_controller/presentation/state/remote_controller_settings/remote_controller_settings_cubit.dart';
 
 class WindowStackManagerWrapper extends StatefulWidget {
   final Widget child;

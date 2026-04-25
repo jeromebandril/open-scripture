@@ -1,6 +1,6 @@
-import 'package:open_scripture/shared/domain/entities/book_names.dart';
+import 'package:open_scripture/shared/entities/book_names.dart';
 
-import '../../domain/entities/bible_ref.dart';
+import '../../entities/bible_ref.dart';
 import 'bible_ref_parser_exceptions.dart';
 
 class BibleReferenceParser {

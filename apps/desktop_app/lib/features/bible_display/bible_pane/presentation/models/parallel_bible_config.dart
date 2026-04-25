@@ -1,10 +1,10 @@
 import 'dart:collection';
 
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/shared/domain/entities/bible_meta.dart';
-import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
-import 'package:open_scripture/shared/domain/entities/verse.dart';
-import 'package:open_scripture/shared/domain/typedefs.dart';
+import 'package:open_scripture/shared/entities/bible_meta.dart';
+import 'package:open_scripture/shared/entities/bible_ref.dart';
+import 'package:open_scripture/shared/entities/verse.dart';
+import 'package:open_scripture/shared/typedefs.dart';
 
 class ParallelBibleConfig extends Equatable {
   final Map<BibleId, ParallelBibleData> _config;

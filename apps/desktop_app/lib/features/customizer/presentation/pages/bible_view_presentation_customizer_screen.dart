@@ -8,7 +8,7 @@ import '../../../settings_window/presentation/widgets/setting.dart';
 import '../../../settings_window/presentation/widgets/setting_input_option.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../domain/entities/app_font_weight.dart';
-import '../cubit/customizer_cubit.dart';
+import '../state/customizer_cubit.dart';
 
 class BibleViewPresentationCustomizerScreen extends StatefulWidget {
   const BibleViewPresentationCustomizerScreen(

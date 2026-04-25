@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../../shared/domain/entities/book_names.dart';
-import '../../../../../shared/domain/entities/verse_span.dart';
+import '../../../../../shared/entities/book_names.dart';
+import '../../../../../shared/entities/verse_span.dart';
 import '../../../../../injection_container.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../../../../customizer/presentation/models/bible_view_presentation_theme.dart';
-import '../../../split_screen/presenter/cubit/pane_manager_cubit.dart';
-import '../bloc/bible_pane_bloc.dart';
+import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
+import '../state/bible_pane_bloc.dart';
 import '../rendering/verse_richtext_builder.dart';
 
 class BibleViewPresentation extends StatelessWidget {
@@ -22,7 +22,7 @@ class BibleViewPresentation extends StatelessWidget {
 
     // Set padding
     final screen = MediaQuery.of(context).size;
-    final panes = context.read<PaneManagerCubit>().state.panes;
+    final panes = context.read<MultiPaneManagerCubit>().state.panes;
     final thisPaneIndex = panes.indexWhere((e) => e.id == uniqueId);
 
     // theming

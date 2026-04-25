@@ -1,0 +1,97 @@
+import 'core_tables.drift';
+
+CREATE TABLE verse_text (
+  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  bibleId INTEGER NOT NULL,
+  bookUsfxId NVARCHAR(10) NOT NULL,
+  bookId INTEGER NOT NULL,
+  chapterNumber INT NOT NULL,
+  verseNumber SMALLINT NOT NULL,
+  textContent TEXT NOT NULL,
+
+  FOREIGN KEY (bookId) REFERENCES books(id) ON DELETE CASCADE,
+  UNIQUE (bibleId, bookUsfxId, chapterNumber, verseNumber)
+);
+
+CREATE INDEX ix_verse_text_bible
+  ON verse_text(bibleId, bookUsfxId, chapterNumber, verseNumber);
+
+CREATE VIRTUAL TABLE verse_text_fts
+USING fts5(
+  textContent,
+  bibleId UNINDEXED,
+  content='verse_text',
+  content_rowid='id'
+);
+
+-- triggers
+
+CREATE TRIGGER verse_text_ai AFTER INSERT ON verse_text BEGIN
+  INSERT INTO verse_text_fts(rowid, textContent, bibleId)
+  VALUES (new.id, new.textContent, new.bibleId);
+END;
+
+-- CREATE TRIGGER verse_text_ad AFTER DELETE ON verse_text BEGIN
+--   INSERT INTO verse_text_fts(verse_text_fts, rowid, textContent, bibleId)
+--   VALUES('delete', old.id, old.textContent, old.bibleId);
+-- END;
+
+-- CREATE TRIGGER verse_text_au AFTER UPDATE ON verse_text BEGIN
+--   INSERT INTO verse_text_fts(verse_text_fts, rowid, textContent, bibleId)
+--   VALUES('delete', old.id, old.textContent, old.bibleId);
+--   INSERT INTO verse_text_fts(rowid, textContent, bibleId)
+--   VALUES (new.id, new.textContent, new.bibleId);
+-- END;
+
+-- queries
+
+
+clearVerseText:
+DELETE FROM verse_text WHERE bibleId = :bibleId;
+
+
+populateVerseText:
+INSERT INTO verse_text(bibleId, bookUsfxId, bookId, chapterNumber, verseNumber, textContent)
+SELECT
+  b.bibleId,
+  b.usfxId,
+  v.bookId,
+  v.chapterNumber,
+  v.verseNumber,
+  (
+    SELECT GROUP_CONCAT(vs2.textContent, ' ')
+    FROM verse_segments vs2
+    WHERE vs2.bookId = v.bookId
+      AND vs2.chapterNumber = v.chapterNumber
+      AND vs2.verseNumber = v.verseNumber
+    ORDER BY vs2.segmentIndex
+  ) AS textContent
+FROM (
+  SELECT DISTINCT bookId, chapterNumber, verseNumber
+  FROM verse_segments
+) v
+JOIN books b ON b.id = v.bookId
+WHERE b.bibleId = :bibleId;
+
+
+
+searchVerses:
+WITH hits AS (
+  SELECT rowid, bm25(verse_text_fts) AS rank
+  FROM verse_text_fts
+  WHERE CAST(bibleId AS INTEGER) = :bibleId
+    AND verse_text_fts MATCH :query
+  ORDER BY rank
+  LIMIT :limit
+)
+SELECT vt.bibleId, vt.bookUsfxId, vt.chapterNumber, vt.verseNumber
+FROM hits
+JOIN verse_text vt ON vt.id = hits.rowid
+ORDER BY hits.rank;
+
+
+testQuery:
+SELECT rowid
+FROM verse_text_fts
+WHERE verse_text_fts MATCH :q
+LIMIT 100;

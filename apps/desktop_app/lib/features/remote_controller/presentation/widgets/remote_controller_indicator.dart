@@ -4,8 +4,8 @@ import 'package:open_scripture/shared/theme/tokens.dart';
 
 import '../../../settings_window/presentation/models/settings_route.dart';
 import '../../../settings_window/presentation/pages/settings_window.dart';
-import '../../../window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
-import '../cubit/remote_controller/remote_controller_cubit.dart';
+import '../../../window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
+import '../state/remote_controller/remote_controller_cubit.dart';
 
 class RemoteControllerIndicator extends StatelessWidget {
   const RemoteControllerIndicator({super.key});

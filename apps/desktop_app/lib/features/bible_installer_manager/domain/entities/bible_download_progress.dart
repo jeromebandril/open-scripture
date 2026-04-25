@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/shared/installer/bible/domain/models/artifact.dart';
+import 'package:open_scripture/core/systems/installer/bible/domain/models/artifact.dart';
 
 enum InstallStage {
   idle,

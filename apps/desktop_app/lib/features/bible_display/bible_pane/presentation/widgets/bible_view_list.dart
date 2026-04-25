@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/customizer/presentation/models/bible_view_list_theme.dart';
-import 'package:open_scripture/shared/domain/entities/verse.dart';
+import 'package:open_scripture/shared/entities/verse.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
+import 'package:open_scripture/shared/entities/bible_ref.dart';
 
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
-import '../../../split_screen/presenter/cubit/pane_manager_cubit.dart';
-import '../bloc/bible_pane_bloc.dart';
+import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
+import '../state/bible_pane_bloc.dart';
 import 'parts/verse_divider.dart';
 import 'parts/verse_widget.dart';
 
@@ -105,7 +105,7 @@ class _BibleViewListState extends State<BibleViewList> {
   Widget build(BuildContext context) {
     // Set padding
     final screen = MediaQuery.of(context).size;
-    final panes = context.read<PaneManagerCubit>().state.panes;
+    final panes = context.read<MultiPaneManagerCubit>().state.panes;
     final thisPaneIndex = panes.indexWhere((e) => e.id == widget.uniqueId);
     // theming
     final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
@@ -199,7 +199,7 @@ class _ParallelView extends StatelessWidget {
       spacing: spacing,
       children: [
         ...verses.map((v) {
-          if (v == null) return SizedBox();
+          if (v == null) return const Expanded(child: SizedBox());
 
           final spans = v.segments.expand((s) => s.spans).toList();
 

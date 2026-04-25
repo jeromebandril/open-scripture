@@ -5,7 +5,7 @@ import 'package:open_scripture/features/remote_controller/domain/entities/client
 import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
 import 'package:shared/rc_protocol/rc_protocol.dart';
 
-import '../../../../shared/remote_controller/remote_command_router.dart';
+import '../../../../core/systems/remote_controller/remote_command_router.dart';
 import '../../domain/repositories/remote_controller_repo.dart';
 import '../datasource/remote_controller_ws.dart';
 

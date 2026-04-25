@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import '../../../../shared/data/datasources/settings_datasource.dart';
+import '../../../../core/systems/settings/settings_datasource.dart';
 import '../../domain/entities/remote_controller_settings.dart';
 
 class RemoteControllerSettingsDatasource

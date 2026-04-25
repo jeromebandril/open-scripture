@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../shared/presentation/widgets/help_widget.dart';
+import '../../../../app/widgets/help_widget.dart';
 import '../../../../shared/theme/tokens.dart';
 import '../../../settings_window/presentation/models/settings_route.dart';
 import '../../../settings_window/presentation/pages/settings_window.dart';
-import '../../../window_stack_manager/presentation/bloc/window_stack_manager_bloc.dart';
+import '../../../window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 
 class MyMenuBar extends StatelessWidget {
   const MyMenuBar({super.key});

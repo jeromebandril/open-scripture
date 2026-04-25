@@ -8,7 +8,7 @@ import '../../../settings_window/presentation/widgets/setting_input_bool.dart';
 import '../../../settings_window/presentation/widgets/setting_input_option.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../domain/entities/highlight_render_mode.dart';
-import '../cubit/customizer_cubit.dart';
+import '../state/customizer_cubit.dart';
 import '../widgets/bible_pane_preview.dart';
 
 class BibleViewListCustomizerScreen extends StatefulWidget {

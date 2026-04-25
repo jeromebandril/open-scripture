@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:open_scripture/shared/data/datasources/settings_datasource.dart';
-import 'package:open_scripture/features/customizer/presentation/cubit/customizer_cubit.dart';
+import 'package:open_scripture/core/systems/settings/settings_datasource.dart';
+import 'package:open_scripture/features/customizer/presentation/state/customizer_cubit.dart';
 
 class CustomizerDatasourceImpl extends SettingsDatasource<CustomizerState> {
   CustomizerDatasourceImpl({this.fileName = 'settings.json'});

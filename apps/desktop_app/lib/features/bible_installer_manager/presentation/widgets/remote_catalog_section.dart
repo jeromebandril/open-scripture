@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
 
-import '../../../../shared/domain/entities/bible_meta.dart';
-import '../../../../shared/presentation/widgets/hoverable_container.dart';
+import '../../../../shared/entities/bible_meta.dart';
+import '../../../../shared/widgets/hoverable_container.dart';
 import '../../domain/entities/bible_download_progress.dart';
-import '../bloc/download_manager/bloc/download_manager_bloc.dart';
-import '../bloc/installed_bibles/installed_bibles_bloc.dart';
-import '../bloc/remote_catalog/remote_catalog_bloc.dart';
+import '../state/download_manager/bloc/download_manager_bloc.dart';
+import '../state/installed_bibles/installed_bibles_bloc.dart';
+import '../state/remote_catalog/remote_catalog_bloc.dart';
 
 part 'parts/group_list.dart';
 part 'remote_catalog_row.dart';

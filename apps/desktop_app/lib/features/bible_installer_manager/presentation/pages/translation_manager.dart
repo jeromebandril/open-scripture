@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/shared/domain/entities/bible_meta.dart';
+import 'package:open_scripture/shared/entities/bible_meta.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_subpage_navigator.dart';
 import 'package:open_scripture/injection_container.dart';
 
-import '../bloc/download_manager/bloc/download_manager_bloc.dart';
-import '../bloc/installed_bibles/installed_bibles_bloc.dart';
-import '../bloc/remote_catalog/remote_catalog_bloc.dart';
+import '../state/download_manager/bloc/download_manager_bloc.dart';
+import '../state/installed_bibles/installed_bibles_bloc.dart';
+import '../state/remote_catalog/remote_catalog_bloc.dart';
 import '../widgets/installed_bibles_section.dart';
 import '../widgets/remote_catalog_section.dart';
 

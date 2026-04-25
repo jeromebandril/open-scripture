@@ -8,7 +8,7 @@ import 'package:open_scripture/features/settings_window/presentation/widgets/set
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_option.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
 
-import '../cubit/customizer_cubit.dart';
+import '../state/customizer_cubit.dart';
 
 class GlobalCustomizerScreen extends StatefulWidget {
   const GlobalCustomizerScreen({super.key});

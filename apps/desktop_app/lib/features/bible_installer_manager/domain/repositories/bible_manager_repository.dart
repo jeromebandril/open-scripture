@@ -1,6 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 
-import '../../../../shared/domain/entities/bible_meta.dart';
+import '../../../../shared/entities/bible_meta.dart';
 import '../../../../shared/error/failure.dart';
 import '../entities/bible_download_progress.dart';
 

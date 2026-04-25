@@ -1,14 +1,14 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:open_scripture/shared/installer/bible/domain/models/artifact.dart';
+import 'package:open_scripture/core/systems/installer/bible/domain/models/artifact.dart';
 import 'dart:async';
 import 'dart:math';
 
-import '../../../../shared/domain/entities/bible_meta.dart';
+import '../../../../shared/entities/bible_meta.dart';
 import '../../../../shared/error/failure.dart';
-import '../../../../shared/data/datasources/bible_ebibleorg_datasource.dart';
+import '../../../../core/infrastructure/bible_data/bible_remote_datasource.dart';
 import '../../domain/entities/bible_download_progress.dart';
 import '../../domain/repositories/bible_manager_repository.dart';
-import '../../../../shared/data/datasources/bible_sqllite_datasource.dart';
+import '../../../../core/infrastructure/bible_data/bible_local_datasource.dart';
 
 // ignore_for_file: constant_identifier_names
 

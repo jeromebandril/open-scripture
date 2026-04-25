@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:open_scripture/features/customizer/presentation/models/bible_pane_general_theme.dart';
 
-import '../../../../../shared/domain/entities/verse_span.dart';
+import '../../../../../shared/entities/verse_span.dart';
 
 const strongWordBold = 'H0430';
 

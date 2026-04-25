@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/features/b_searchbar/presenter/bloc/b_searchbar_bloc.dart';
-import 'package:open_scripture/features/bible_display/split_screen/presenter/cubit/pane_manager_cubit.dart';
-import 'package:open_scripture/features/three_tap_navigator/presentation/cubit/three_tap_navigator_cubit.dart';
+import 'package:open_scripture/features/bible_searchbar/presentation/state/b_searchbar_bloc.dart';
+import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
+import 'package:open_scripture/features/three_tap_navigator/presentation/state/three_tap_navigator_cubit.dart';
 import 'package:open_scripture/shared/theme/tokens.dart';
 
-import '../../../../shared/domain/entities/book.dart';
+import '../../../../shared/entities/book.dart';
 import '../../../../injection_container.dart';
-import '../../../../shared/domain/entities/book_names.dart';
+import '../../../../shared/entities/book_names.dart';
 
 class ThreeTapNavigatorTrigger extends StatefulWidget {
   const ThreeTapNavigatorTrigger({super.key});
@@ -69,7 +69,7 @@ class _ThreeTapNavigatorTriggerState extends State<ThreeTapNavigatorTrigger> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => sl<ThreeTapNavigatorCubit>(),
-      child: BlocBuilder<PaneManagerCubit, PaneManagerState>(
+      child: BlocBuilder<MultiPaneManagerCubit, PaneManagerState>(
         builder: (context, state) {
           return BlocBuilder<BSearchbarBloc, BSearchbarState>(
             builder: (context, state) {
@@ -150,7 +150,7 @@ class _ThreeTapNavigatorOverlayState extends State<_ThreeTapNavigatorOverlay> {
     // I set the books from the first opened bible
     //TODO: Make an union of books from all bibles
     final openedBibles = context
-        .read<PaneManagerCubit>()
+        .read<MultiPaneManagerCubit>()
         .activePane()
         .bloc
         .state
