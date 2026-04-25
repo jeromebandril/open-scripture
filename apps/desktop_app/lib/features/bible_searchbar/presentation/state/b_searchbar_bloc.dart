@@ -51,8 +51,9 @@ class BSearchbarBloc extends Bloc<BSearchbarEvent, BSearchbarState> {
         final result = await _repo.parseBibleRef(intent.rawQuery);
         result.fold(
           (f) => emit(SearchError(
-            message: f.message,
+            message: f.details,
             history: state.history,
+            errorCount: state.errorCount + 1,
           )),
           (ref) {
             emit(SearchReferenceResult(ref: ref, history: state.history));

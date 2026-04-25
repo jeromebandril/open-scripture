@@ -121,7 +121,7 @@ class UnknownFailure extends Failure {
   const UnknownFailure({super.details});
 
   @override
-  String get message => 'Unknown';
+  String get message => 'Unknown error';
 }
 
 class UnexpectedFailure extends Failure {

@@ -28,6 +28,10 @@ class BSearchbarRepositoryImpl implements BSearchbarRepository {
       return Left(InvalidInputFailure(details: e.message));
     } on BibleRefOutOfRangeException catch (e) {
       return Left(InvalidInputFailure(details: e.message));
+    } on BibleRefAmbiguousBookException catch (e) {
+      return Left(InvalidInputFailure(
+          details:
+              '${e.message} Possible candidates: ${e.candidates.join(', ')}'));
     } catch (e) {
       return Left(UnknownFailure(details: e.toString()));
     }

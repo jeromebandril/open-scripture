@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
@@ -29,153 +27,200 @@ class BSearchbar extends StatefulWidget {
 }
 
 class _BSearchbarState extends State<BSearchbar> {
-  // final _controller = TextEditingController();
-
-  // @override
-  // void dispose() {
-  //   _controller.dispose();
-  //   super.dispose();
-  // }
-
   @override
   Widget build(BuildContext context) {
     final isShortcutVisible =
         widget.focusNode != null && !widget.focusNode!.hasFocus;
 
-    return SearchBar(
-      // controller: _controller,
-      constraints:
-          BoxConstraints(maxWidth: widget.width, minHeight: widget.height),
-      focusNode: widget.focusNode,
-      leading: Padding(
-        padding: const EdgeInsets.only(left: 4),
-        child: Icon(
-          Icons.search,
-          size: 18,
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
-      ),
-      hintText: 'Search reference',
-      elevation: const WidgetStatePropertyAll(0),
-      trailing: [
-        if (isShortcutVisible)
-          Container(
-            alignment: AlignmentDirectional.centerEnd,
-            child: ShortcutView(
-              activator: appCommandShortcuts[AppCommand.focusSearch],
-              textColor: Theme.of(context).colorScheme.onSurfaceVariant,
-              fillColor: Colors.transparent,
-              borderColor: null,
-              fontSize: 10,
-            ),
-          ),
-      ],
-      onSubmitted: (input) {
-        if (widget.onSubmitted != null) widget.onSubmitted!();
-
-        // if (_findMode) {
-        //   final bibleIds = context
-        //       .read<PaneManagerCubit>()
-        //       .activePane()
-        //       .bloc
-        //       .state
-        //       .openedBiblesIds;
-
-        //   if (bibleIds.isEmpty) return;
-
-        //   // only list view
-        //   context
-        //       .read<PaneManagerCubit>()
-        //       .activePane()
-        //       .bloc
-        //       .add(BiblePaneSetDisplayMode(DisplayMode.normal));
-        //   context.read<BSearchbarBloc>().add(BSearchbarFind(
-        //         bibleIds: bibleIds,
-        //         query: input,
-        //       ));
-
-        //   return;
-        // }
-
-        BlocProvider.of<BSearchbarBloc>(context)
-            .add(BSearchbarParseIntent(input));
-      },
-    );
-  }
-}
-
-class _ErrorNotifier extends StatefulWidget {
-  const _ErrorNotifier();
-
-  @override
-  State<_ErrorNotifier> createState() => _ErrorNotifierState();
-}
-
-class _ErrorNotifierState extends State<_ErrorNotifier> {
-  final GlobalKey<TooltipState> _tooltipKey = GlobalKey<TooltipState>();
-  Timer? _dismissTimer;
-
-  void _scheduleShowAndAutoDismiss() {
-    _dismissTimer?.cancel();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Show (only works if Tooltip is currently in the tree).
-      _tooltipKey.currentState?.ensureTooltipVisible();
-
-      // Force-dismiss after a while (deterministic).
-      _dismissTimer = Timer(const Duration(seconds: 2), () {
-        Tooltip.dismissAllToolTips();
-      });
-    });
-  }
-
-  void _dismissNow() {
-    _dismissTimer?.cancel();
-    Tooltip.dismissAllToolTips();
-  }
-
-  @override
-  void dispose() {
-    _dismissTimer?.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocConsumer<BSearchbarBloc, BSearchbarState>(
-      listenWhen: (prev, curr) =>
-          prev.runtimeType != curr.runtimeType ||
-          (curr is SearchError &&
-              prev is SearchError &&
-              curr.message != prev.message),
-      listener: (context, state) {
-        switch (state) {
-          case SearchError():
-            _scheduleShowAndAutoDismiss();
-          default:
-            _dismissNow();
-        }
-      },
+    return BlocBuilder<BSearchbarBloc, BSearchbarState>(
+      buildWhen: (prev, curr) =>
+          prev.errorCount != curr.errorCount && curr.errorCount > 0,
       builder: (context, state) {
-        if (state is! SearchError) return const SizedBox.shrink();
-        return Tooltip(
-          key: _tooltipKey,
-          textStyle: TextStyle(
-            color: Theme.of(context).colorScheme.onErrorContainer,
-          ),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.errorContainer,
-            borderRadius: BorderRadius.circular(6),
-          ),
-          showDuration: const Duration(milliseconds: 1),
-          message: state.message,
-          child: const Icon(
-            Icons.error_outline_rounded,
-            size: 20,
-            color: Color.fromARGB(200, 140, 140, 140),
+        return _SearchBarWithErrorFeedback(
+          hasError: state is SearchError,
+          errorTrigger: state.errorCount,
+          child: SearchBar(
+            constraints: BoxConstraints(
+                maxWidth: widget.width, minHeight: widget.height),
+            focusNode: widget.focusNode,
+            leading: Padding(
+              padding: const EdgeInsets.only(left: 4),
+              child: Icon(
+                Icons.search,
+                size: 18,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+            hintText: 'Search reference',
+            elevation: const WidgetStatePropertyAll(0),
+            trailing: [
+              if (isShortcutVisible)
+                Container(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: ShortcutView(
+                    activator: appCommandShortcuts[AppCommand.focusSearch],
+                    textColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fillColor: Colors.transparent,
+                    borderColor: null,
+                    fontSize: 10,
+                  ),
+                ),
+            ],
+            onSubmitted: (input) {
+              if (widget.onSubmitted != null) widget.onSubmitted!();
+              if (input.isEmpty) return;
+
+              // if (_findMode) {
+              //   final bibleIds = context
+              //       .read<PaneManagerCubit>()
+              //       .activePane()
+              //       .bloc
+              //       .state
+              //       .openedBiblesIds;
+
+              //   if (bibleIds.isEmpty) return;
+
+              //   // only list view
+              //   context
+              //       .read<PaneManagerCubit>()
+              //       .activePane()
+              //       .bloc
+              //       .add(BiblePaneSetDisplayMode(DisplayMode.normal));
+              //   context.read<BSearchbarBloc>().add(BSearchbarFind(
+              //         bibleIds: bibleIds,
+              //         query: input,
+              //       ));
+
+              //   return;
+              // }
+
+              BlocProvider.of<BSearchbarBloc>(context)
+                  .add(BSearchbarParseIntent(input));
+            },
           ),
         );
       },
     );
   }
+}
+
+class _SearchBarWithErrorFeedback extends StatefulWidget {
+  const _SearchBarWithErrorFeedback({
+    required this.child,
+    required this.errorTrigger,
+    required this.hasError,
+  });
+
+  final Widget child;
+  final int errorTrigger; // increments on each new error
+  final bool hasError;
+
+  @override
+  State<_SearchBarWithErrorFeedback> createState() =>
+      _SearchBarWithErrorFeedbackState();
+}
+
+class _SearchBarWithErrorFeedbackState
+    extends State<_SearchBarWithErrorFeedback>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _progress;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 100),
+      vsync: this,
+    );
+    _progress = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.linear),
+    );
+  }
+
+  @override
+  void didUpdateWidget(_SearchBarWithErrorFeedback oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.errorTrigger != oldWidget.errorTrigger &&
+        widget.errorTrigger > 0) {
+      _controller
+          .forward(from: 0.0)
+          .then((_) => _controller.reverse())
+          .then((_) => _controller.forward())
+          .then((_) => _controller.reverse());
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final errorColor = Theme.of(context).colorScheme.error;
+    final borderRadius =
+        BorderRadius.circular(50); // match SearchBar's pill shape
+
+    return AnimatedBuilder(
+      animation: _progress,
+      builder: (context, child) {
+        return CustomPaint(
+          foregroundPainter: _progress.value < 1.0
+              ? _BorderProgressPainter(
+                  progress: _progress.value,
+                  color: errorColor,
+                  borderRadius: borderRadius,
+                  strokeWidth: 2.0,
+                )
+              : null,
+          child: child,
+        );
+      },
+      child: widget.child,
+    );
+  }
+}
+
+class _BorderProgressPainter extends CustomPainter {
+  const _BorderProgressPainter({
+    required this.progress,
+    required this.color,
+    required this.borderRadius,
+    required this.strokeWidth,
+  });
+
+  final double progress;
+  final Color color;
+  final BorderRadius borderRadius;
+  final double strokeWidth;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color.withOpacity(progress)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round;
+
+    final rrect = RRect.fromRectAndCorners(
+      Rect.fromLTWH(
+        strokeWidth / 2,
+        strokeWidth / 2,
+        size.width - strokeWidth,
+        size.height - strokeWidth,
+      ),
+      topLeft: borderRadius.topLeft,
+      topRight: borderRadius.topRight,
+      bottomLeft: borderRadius.bottomLeft,
+      bottomRight: borderRadius.bottomRight,
+    );
+
+    canvas.drawRRect(rrect, paint);
+  }
+
+  @override
+  bool shouldRepaint(_BorderProgressPainter old) =>
+      old.progress != progress || old.color != color;
 }
