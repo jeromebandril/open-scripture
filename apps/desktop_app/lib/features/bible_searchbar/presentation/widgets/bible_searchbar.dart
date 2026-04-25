@@ -55,6 +55,7 @@ class _BSearchbarState extends State<BSearchbar> {
             animationBuilder: (context, animation, alignment, child) {
               return FadeTransition(opacity: animation, child: child);
             },
+            animationDuration: const Duration(milliseconds: 300),
             backgroundColor:
                 Theme.of(context).colorScheme.surfaceContainerHighest,
             foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
