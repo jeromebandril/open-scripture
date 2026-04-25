@@ -3,7 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
 import 'package:open_scripture/features/shortcuts/presentation/models/app_command_shortcuts.dart';
 import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_view.dart';
+import 'package:toastification/toastification.dart';
 
+import '../../../../core/app_state/fullscreen_cubit.dart';
+import '../../../../core/app_state/menubar_visibility_cubit.dart';
 import '../state/b_searchbar_bloc.dart';
 
 class BSearchbar extends StatefulWidget {
@@ -32,7 +35,36 @@ class _BSearchbarState extends State<BSearchbar> {
     final isShortcutVisible =
         widget.focusNode != null && !widget.focusNode!.hasFocus;
 
-    return BlocBuilder<BSearchbarBloc, BSearchbarState>(
+    return BlocConsumer<BSearchbarBloc, BSearchbarState>(
+      listenWhen: (prev, curr) =>
+          prev.errorCount != curr.errorCount && curr.errorCount > 0,
+      listener: (context, state) {
+        if (state is! SearchError) return;
+        final isFullscreen = context.read<FullscreenCubit>().state;
+        final showMenuBar = context.read<MenubarCubit>().state;
+        if (!isFullscreen || showMenuBar) return;
+
+        toastification.show(
+            context: context,
+            type: ToastificationType.error,
+            style: ToastificationStyle.flat,
+            title: Text("Invalid query"),
+            description: Text(state.message),
+            alignment: Alignment.topRight,
+            autoCloseDuration: const Duration(seconds: 4),
+            animationBuilder: (context, animation, alignment, child) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+            backgroundColor:
+                Theme.of(context).colorScheme.surfaceContainerHighest,
+            foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
+            boxShadow: highModeShadow,
+            closeButton:
+                const ToastCloseButton(showType: CloseButtonShowType.onHover),
+            showProgressBar: true,
+            borderSide: BorderSide(
+                color: Theme.of(context).colorScheme.surfaceContainerLow));
+      },
       buildWhen: (prev, curr) =>
           prev.errorCount != curr.errorCount && curr.errorCount > 0,
       builder: (context, state) {
