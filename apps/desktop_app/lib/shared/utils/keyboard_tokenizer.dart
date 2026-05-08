@@ -42,7 +42,7 @@ String _modifierLabel(ModifierKey key) {
 }
 
 String _keyLabel(LogicalKeyboardKey key) {
-  // Common special keys
+  // Common special keys and exceptions
   if (key == LogicalKeyboardKey.escape) return 'Esc';
   if (key == LogicalKeyboardKey.enter) return 'Enter';
   if (key == LogicalKeyboardKey.space) return 'Space';
@@ -54,6 +54,8 @@ String _keyLabel(LogicalKeyboardKey key) {
   if (key == LogicalKeyboardKey.arrowDown) return '↓';
   if (key == LogicalKeyboardKey.arrowLeft) return '←';
   if (key == LogicalKeyboardKey.arrowRight) return '→';
+
+  if (key == LogicalKeyboardKey.equal) return '+';
 
   // Letters/digits are usually good via keyLabel.
   final label = key.keyLabel;
