@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_scripture/core/app_state/menubar_visibility_cubit.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/domain/display_mode.dart';
 import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import 'package:open_scripture/core/app_state/fullscreen_cubit.dart';
+import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
+import 'package:open_scripture/features/shortcuts/presentation/models/app_command_shortcuts.dart';
+import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_view.dart';
 
 import '../../shared/theme/tokens.dart';
 import '../../shared/widgets/custom_icon_button.dart';
@@ -39,7 +43,7 @@ class _ToolbarButtonState extends State<ToolbarButton> {
           child: BlockSemantics(
             blocking: true,
             child: Container(
-              width: 250,
+              width: 400,
               padding: const EdgeInsets.all(AppSpacing.sm),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surfaceContainerHighest,
@@ -98,73 +102,138 @@ class ToolbarMenu extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: AppSpacing.sm,
           children: [
-            const _SplitScreenIndicator(),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                BlocBuilder<FullscreenCubit, bool>(
-                  builder: (context, isFullscreen) {
-                    return TextButton.icon(
-                      onPressed: () => context.read<FullscreenCubit>().toggle(),
-                      label: isFullscreen
-                          ? const Text('Exit Fullscreen')
-                          : const Text('Enter Fullscreen'),
-                      icon: isFullscreen
-                          ? const Icon(Icons.close_fullscreen_rounded)
-                          : const Icon(Icons.open_in_full_rounded),
-                    );
-                  },
-                ),
-                TextButton.icon(
-                  onPressed: () =>
-                      activePane.bloc.add(const BiblePaneChooseBibles()),
-                  label: Text('Set bible'),
-                  icon: Icon(Icons.menu_book),
-                ),
-                TextButton.icon(
-                    onPressed: () {
-                      final evt =
-                          activePane.bloc.state.dMode == DisplayMode.list
-                              ? const BiblePaneSetDisplayMode(
-                                  DisplayMode.presentation)
-                              : const BiblePaneSetDisplayMode(DisplayMode.list);
-                      activePane.bloc.add(evt);
+                //
+                // GLOBAL controls
+                //
+                _Control(
+                  command: AppCommand.toggleFullscreen,
+                  child: BlocBuilder<FullscreenCubit, bool>(
+                    builder: (context, isFullscreen) {
+                      return TextButton.icon(
+                        onPressed: () =>
+                            context.read<FullscreenCubit>().toggle(),
+                        label: isFullscreen
+                            ? const Text('Exit Fullscreen')
+                            : const Text('Enter Fullscreen'),
+                        icon: isFullscreen
+                            ? const Icon(Icons.close_fullscreen_rounded)
+                            : const Icon(Icons.open_in_full_rounded),
+                      );
                     },
-                    label: const Text('Switch display mode'),
-                    icon: const Icon(Icons.fit_screen_rounded)),
-                TextButton.icon(
-                  onPressed: () =>
-                      context.read<MultiPaneManagerCubit>().splitNewPane(),
-                  label: Text('Add split screen'),
-                  icon: Icon(Icons.vertical_split_rounded),
+                  ),
                 ),
-                TextButton.icon(
-                  onPressed: () => context
-                      .read<MultiPaneManagerCubit>()
-                      .closePane(context
-                          .read<MultiPaneManagerCubit>()
-                          .state
-                          .activePaneId),
-                  label: Text('Remove split screen'),
-                  icon: Icon(Icons.close_rounded),
+                _Control(
+                  command: AppCommand.toggleMenubar,
+                  child: BlocBuilder<MenubarCubit, bool>(
+                      builder: (context, isMenubarVisible) {
+                    return TextButton.icon(
+                      onPressed: context.select((FullscreenCubit c) => c.state)
+                          ? () =>
+                              context.read<MenubarCubit>().toggleVisibility()
+                          : null,
+                      label: isMenubarVisible
+                          ? const Text('Hide top bar')
+                          : const Text('Show top bar'),
+                      icon: isMenubarVisible
+                          ? const Icon(Icons.visibility_rounded)
+                          : const Icon(Icons.visibility_off_rounded),
+                    );
+                  }),
                 ),
-                TextButton.icon(
-                  onPressed: () =>
-                      activePane.textScalerCubit.zoomIn(multiplier: 4),
-                  label: Text('Zoom In'),
-                  icon: Icon(Icons.zoom_in_rounded),
+                //
+                // PANE specific
+                //
+                const Divider(),
+                const _SplitScreenIndicator(),
+                _Control(
+                  command: AppCommand.changeBible,
+                  child: TextButton.icon(
+                    onPressed: () =>
+                        activePane.bloc.add(const BiblePaneChooseBibles()),
+                    label: Text('Set bible'),
+                    icon: Icon(Icons.menu_book),
+                  ),
                 ),
-                TextButton.icon(
-                  onPressed: () =>
-                      activePane.textScalerCubit.zoomOut(multiplier: 4),
-                  label: Text('Zoom Out'),
-                  icon: Icon(Icons.zoom_out_rounded),
+                _Control(
+                  command: AppCommand.switchDisplayMode,
+                  child: TextButton.icon(
+                      onPressed: () {
+                        final evt = activePane.bloc.state.dMode ==
+                                DisplayMode.list
+                            ? const BiblePaneSetDisplayMode(
+                                DisplayMode.presentation)
+                            : const BiblePaneSetDisplayMode(DisplayMode.list);
+                        activePane.bloc.add(evt);
+                      },
+                      label: const Text('Switch display mode'),
+                      icon: const Icon(Icons.fit_screen_rounded)),
+                ),
+                _Control(
+                  command: AppCommand.addParallelPane,
+                  child: TextButton.icon(
+                    onPressed: () =>
+                        context.read<MultiPaneManagerCubit>().splitNewPane(),
+                    label: Text('Add split screen'),
+                    icon: Icon(Icons.vertical_split_rounded),
+                  ),
+                ),
+                _Control(
+                  command: AppCommand.closeCurrentPane,
+                  child: TextButton.icon(
+                    onPressed: () => context
+                        .read<MultiPaneManagerCubit>()
+                        .closePane(context
+                            .read<MultiPaneManagerCubit>()
+                            .state
+                            .activePaneId),
+                    label: Text('Remove split screen'),
+                    icon: Icon(Icons.close_rounded),
+                  ),
+                ),
+                _Control(
+                  command: AppCommand.zoomIn,
+                  child: TextButton.icon(
+                    onPressed: () =>
+                        activePane.textScalerCubit.zoomIn(multiplier: 4),
+                    label: Text('Zoom In'),
+                    icon: Icon(Icons.zoom_in_rounded),
+                  ),
+                ),
+                _Control(
+                  command: AppCommand.zoomOut,
+                  child: TextButton.icon(
+                    onPressed: () =>
+                        activePane.textScalerCubit.zoomOut(multiplier: 4),
+                    label: Text('Zoom Out'),
+                    icon: Icon(Icons.zoom_out_rounded),
+                  ),
                 ),
               ],
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _Control extends StatelessWidget {
+  const _Control({required this.command, required this.child});
+
+  final Widget child;
+  final AppCommand command;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        child,
+        ShortcutView(activator: appCommandShortcuts[command], fontSize: 9),
+      ],
     );
   }
 }

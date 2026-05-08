@@ -88,7 +88,9 @@ class _AppShellState extends State<AppShell> {
                   showMenuBar: true,
                   showLogo: !isFullscreen,
                   showButtons: !isFullscreen,
-                  leftItems: [const ToolbarButton()],
+                  leftItems: [
+                    const ToolbarButton(),
+                  ],
                   centerItems: [
                     _AppHeader(
                       searchbarFocusNode: _searchbarFocusNode,

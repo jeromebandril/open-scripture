@@ -81,23 +81,27 @@ class Titlebar extends StatelessWidget {
                 //
                 Row(
                   children: [
-                    if (showLogo)
-                      DragToMoveArea(
-                        child: Container(
-                          height: double.infinity,
-                          width: 24 + 16, // icon width + spacing
-                          alignment: Alignment.center,
-                          color: Colors.transparent,
-                          child: Image.asset(
-                            'assets/icon/icon.png',
-                            width: 24,
-                            height: 24,
-                            filterQuality: FilterQuality.medium,
-                          ),
-                        ),
-                      ),
-                    if (!showLogo && showMenuBar) const SizedBox(width: 8),
-                    if (showMenuBar) const MyMenuBar(),
+                    // if (showLogo) ...[
+                    //   DragToMoveArea(
+                    //     child: Container(
+                    //       height: double.infinity,
+                    //       width: 24 + 16, // icon width + spacing
+                    //       alignment: Alignment.center,
+                    //       color: Colors.transparent,
+                    //       child: Image.asset(
+                    //         'assets/icon/icon.png',
+                    //         width: 24,
+                    //         height: 24,
+                    //         filterQuality: FilterQuality.medium,
+                    //       ),
+                    //     ),
+                    //   ),
+                    //   const SizedBox(width: 2),
+                    // ],
+                    if (showMenuBar) ...[
+                      const SizedBox(width: 16),
+                      const MyMenuBar(),
+                    ],
                     if (leftItems != null) ...[
                       const SizedBox(width: AppSpacing.xs),
                       Row(children: leftItems!),
