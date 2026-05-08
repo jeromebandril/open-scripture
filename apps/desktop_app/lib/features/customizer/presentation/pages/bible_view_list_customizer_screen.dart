@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_number.dart';
 
-import '../../../bible_display/bible_pane/presentation/models/display_mode.dart';
+import '../../../bible_display/bible_pane/domain/display_mode.dart';
 import '../../../settings_window/presentation/widgets/setting.dart';
 import '../../../settings_window/presentation/widgets/setting_input_bool.dart';
 import '../../../settings_window/presentation/widgets/setting_input_option.dart';
@@ -141,8 +141,8 @@ class _BibleViewListCustomizerScreenState
             flex: 1,
             child: SettingSection.single(
               title: 'Preview',
-              child: Center(
-                  child: const BiblePanePreview(mode: DisplayMode.normal)),
+              child:
+                  Center(child: const BiblePanePreview(mode: DisplayMode.list)),
             ),
           )
       ],

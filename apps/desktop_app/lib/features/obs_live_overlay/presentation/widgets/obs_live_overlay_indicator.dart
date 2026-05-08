@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/features/obs_live_overlay/presentation/state/obs_overlay_settinsg/obs_live_overlay_settings_cubit.dart';
 
-import '../../../../shared/widgets/dot.dart';
+import '../../../../shared/widgets/service_status_indicator_shell.dart';
+import '../../../settings_window/presentation/models/settings_route.dart';
+import '../../../settings_window/presentation/pages/settings_window.dart';
+import '../../../window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import '../state/obs_overlay/obs_live_overlay_cubit.dart';
 
 class ObsLiveOverlayIndicator extends StatelessWidget {
@@ -10,23 +12,24 @@ class ObsLiveOverlayIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<ObsLiveOverlaySettingsCubit,
-        ObsLiveOverlaySettingsState, bool>(
-      selector: (state) => state.settings.enableFeature,
-      builder: (context, isEnabled) {
-        if (!isEnabled) return const SizedBox.shrink();
+    return BlocBuilder<ObsLiveOverlayCubit, ObsLiveOverlayState>(
+      builder: (context, state) {
+        if (!state.isRunning) return const SizedBox.shrink();
+        final ref = state.snapshot.items['ref'];
 
-        return BlocBuilder<ObsLiveOverlayCubit, ObsLiveOverlayState>(
-          builder: (context, state) {
-            return Tooltip(
-              message:
-                  'OBS Live Overlay is ${state.isRunning ? 'running' : 'off'}',
-              child: Dot(
-                glowing: state.isRunning,
-                overrideColor: Theme.of(context).colorScheme.onSurfaceVariant,
-                overrideGlowingColor: Colors.red,
-              ),
-            );
+        return ServiceStatusIndicatorShell(
+          tooltipMessage:
+              'OBS Live Overlay is ${state.isRunning ? 'running' : 'off'}',
+          text: ref != null && ref.visible ? ref.text : '<empty>',
+          icon: Icons.live_tv_rounded,
+          onTap: () {
+            context.read<WindowStackManagerBloc>().add(
+                  WindowStackManagerOpen.selfManaged(
+                    widget: SettingsWindow(
+                      initialRoute: SettingsSection.obsLiveOverlay,
+                    ),
+                  ),
+                );
           },
         );
       },

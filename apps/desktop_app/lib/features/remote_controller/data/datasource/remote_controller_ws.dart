@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:open_scripture/features/remote_controller/domain/entities/client_info.dart';
 import 'package:shared/rc_protocol/rc_protocol.dart';
 
@@ -23,18 +24,25 @@ class RemoteControllerWSServer {
     required int port,
     required OnMessage onMessage,
   }) async {
-    _onMessage ??= onMessage;
+    _onMessage = onMessage;
 
     _server = await HttpServer.bind(InternetAddress.anyIPv4, port);
 
     _listen();
   }
 
+  void _removeClient(WebSocket socket) {
+    final clientId =
+        _clientsSockets.entries.firstWhereOrNull((e) => e.value == socket)?.key;
+    if (clientId == null) return;
+    _clientsSockets.remove(clientId);
+    _clientsInfos.remove(clientId);
+    _emit();
+  }
+
   void _listen() async {
     await for (HttpRequest request in _server!) {
       if (WebSocketTransformer.isUpgradeRequest(request)) {
-        final socket = await WebSocketTransformer.upgrade(request);
-
         if (_clientsSockets.values.length >= maxClients) {
           request.response
             ..statusCode = HttpStatus.serviceUnavailable
@@ -42,6 +50,8 @@ class RemoteControllerWSServer {
             ..close();
           continue;
         }
+
+        final socket = await WebSocketTransformer.upgrade(request);
 
         final clientId = DateTime.now().microsecondsSinceEpoch.toString();
         _clientsSockets[clientId] = socket;
@@ -62,25 +72,11 @@ class RemoteControllerWSServer {
             }
           },
           onDone: () {
-            final entry =
-                _clientsSockets.entries.firstWhere((e) => e.value == socket);
-
-            final clientId = entry.key;
-
-            _clientsSockets.remove(clientId);
-            _clientsInfos.remove(clientId);
-
+            _removeClient(socket);
             _emit();
           },
           onError: (_) {
-            final entry =
-                _clientsSockets.entries.firstWhere((e) => e.value == socket);
-
-            final clientId = entry.key;
-
-            _clientsSockets.remove(clientId);
-            _clientsInfos.remove(clientId);
-
+            _removeClient(socket);
             _emit();
           },
         );

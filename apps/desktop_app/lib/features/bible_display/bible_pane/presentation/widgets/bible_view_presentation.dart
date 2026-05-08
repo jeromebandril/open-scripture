@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../../shared/entities/book_names.dart';
+import '../../../../../core/book_names.dart';
 import '../../../../../shared/entities/verse_span.dart';
 import '../../../../../injection_container.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';

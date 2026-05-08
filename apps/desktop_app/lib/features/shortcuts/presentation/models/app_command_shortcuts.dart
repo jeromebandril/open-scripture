@@ -32,11 +32,6 @@ const Map<AppCommand, SingleActivator> appCommandShortcuts = {
     control: true,
     includeRepeats: false,
   ),
-  AppCommand.toggleToolbar: SingleActivator(
-    LogicalKeyboardKey.keyO,
-    control: true,
-    includeRepeats: false,
-  ),
   AppCommand.toggleFullscreen: SingleActivator(
     LogicalKeyboardKey.keyF,
     control: true,

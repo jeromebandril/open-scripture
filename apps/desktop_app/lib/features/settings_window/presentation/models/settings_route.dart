@@ -15,6 +15,7 @@ enum SettingsSection {
   shortcuts,
   about,
   remoteController,
+  obsLiveOverlay,
 }
 
 String routeFor(SettingsSection s) => switch (s) {
@@ -23,6 +24,7 @@ String routeFor(SettingsSection s) => switch (s) {
       SettingsSection.shortcuts => '/shortcuts',
       SettingsSection.about => '/about',
       SettingsSection.remoteController => '/remotecontroller',
+      SettingsSection.obsLiveOverlay => '/obsliveoverlay'
     };
 
 final Map<String, SettingsRoute> settingsRoutes = {

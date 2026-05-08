@@ -1,4 +1,4 @@
-import 'package:open_scripture/shared/entities/book_names.dart';
+import 'package:open_scripture/core/book_names.dart';
 
 import '../../entities/bible_ref.dart';
 import 'bible_ref_parser_exceptions.dart';

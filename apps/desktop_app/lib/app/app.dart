@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../core/app_state/fullscreen_cubit.dart';
 import '../core/app_state/history_visibility_cubit.dart';
 import '../core/app_state/menubar_visibility_cubit.dart';
-import '../core/app_state/toolbar_cubit.dart';
 import '../features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../features/bible_installer_manager/presentation/state/installed_bibles/installed_bibles_bloc.dart';
 import '../features/bible_searchbar/presentation/state/b_searchbar_bloc.dart';
@@ -78,7 +77,6 @@ class MyApp extends StatelessWidget {
                   BlocProvider(create: (_) => di.sl<HistoryVisibilityCubit>()),
                   BlocProvider(create: (_) => di.sl<MultiPaneManagerCubit>()),
                   BlocProvider(create: (_) => di.sl<MenubarCubit>()),
-                  BlocProvider(create: (_) => di.sl<ToolbarCubit>()),
                   BlocProvider(create: (_) => di.sl<FullscreenCubit>()..init()),
                   BlocProvider(create: (_) => di.sl<WindowStackManagerBloc>()),
                   BlocProvider(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/shared/theme/tokens.dart';
+import 'package:open_scripture/shared/widgets/service_status_indicator_shell.dart';
 
 import '../../../settings_window/presentation/models/settings_route.dart';
 import '../../../settings_window/presentation/pages/settings_window.dart';
@@ -16,8 +16,10 @@ class RemoteControllerIndicator extends StatelessWidget {
       builder: (context, state) {
         if (!state.isRunning) return SizedBox.shrink();
 
-        return InkWell(
-          mouseCursor: SystemMouseCursors.click,
+        return ServiceStatusIndicatorShell(
+          tooltipMessage: 'Remote Controller Enabled',
+          text: state.connectedClients.length.toString(),
+          icon: Icons.stay_current_portrait_rounded,
           onTap: () {
             context.read<WindowStackManagerBloc>().add(
                   WindowStackManagerOpen.selfManaged(
@@ -27,35 +29,6 @@ class RemoteControllerIndicator extends StatelessWidget {
                   ),
                 );
           },
-          child: Tooltip(
-            message: 'Remote Controller Enabled',
-            child: Container(
-              height: 32,
-              width: 64,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                color: Theme.of(context).colorScheme.surfaceContainerHigh,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                spacing: AppSpacing.xs,
-                children: [
-                  Text(
-                    state.connectedClients.length.toString(),
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
-                  Icon(
-                    Icons.stay_current_portrait_rounded,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    size: 18,
-                  )
-                ],
-              ),
-            ),
-          ),
         );
       },
     );

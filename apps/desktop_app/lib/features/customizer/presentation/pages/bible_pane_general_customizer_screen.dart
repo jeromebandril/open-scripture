@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/features/bible_display/bible_pane/presentation/models/display_mode.dart';
+import 'package:open_scripture/features/bible_display/bible_pane/domain/display_mode.dart';
 import 'package:open_scripture/features/customizer/domain/entities/app_font_weight.dart';
 import 'package:open_scripture/features/customizer/domain/entities/bible_pane_general_theme_settings.dart';
 import 'package:open_scripture/features/customizer/presentation/widgets/bible_pane_preview.dart';
@@ -346,7 +346,7 @@ class _BiblePaneGeneralCustomizerScreenState
               title: 'Preview',
               child: Center(
                   child: const BiblePanePreview(
-                mode: DisplayMode.normal,
+                mode: DisplayMode.list,
               )),
             ),
           )

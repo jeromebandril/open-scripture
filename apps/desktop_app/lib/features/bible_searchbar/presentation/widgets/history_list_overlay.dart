@@ -4,7 +4,7 @@ import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart
 import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_view.dart';
 import 'package:open_scripture/shared/theme/tokens.dart';
 
-import '../../../../shared/entities/book_names.dart';
+import '../../../../core/book_names.dart';
 import '../../../../injection_container.dart';
 import '../../../bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../../../bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/shared/entities/verse_segment.dart';
 import 'package:open_scripture/shared/entities/verse_span.dart';
-import 'package:open_scripture/features/bible_display/bible_pane/presentation/models/display_mode.dart';
+import 'package:open_scripture/features/bible_display/bible_pane/domain/display_mode.dart';
 import 'package:open_scripture/features/customizer/presentation/models/bible_view_presentation_theme.dart';
 
 import '../../../../shared/entities/bible_ref.dart';
-import '../../../../shared/entities/book_names.dart';
+import '../../../../core/book_names.dart';
 import '../../../../injection_container.dart';
 import '../../../bible_display/bible_pane/presentation/rendering/verse_richtext_builder.dart';
-import '../../../bible_display/bible_pane/presentation/widgets/parts/verse_divider.dart';
+import '../../../bible_display/bible_pane/presentation/widgets/verse_divider.dart';
 import '../../data/models/preview_data.dart';
 import '../state/customizer_cubit.dart';
 import '../models/bible_pane_general_theme.dart';
@@ -55,7 +55,7 @@ class BiblePanePreview extends StatelessWidget {
                 padding: EdgeInsets.all(8),
                 child: DefaultTextStyle.merge(
                   style: TextStyle(fontFamily: biblePaneTheme.textFont),
-                  child: mode == DisplayMode.normal
+                  child: mode == DisplayMode.list
                       ? ListView.separated(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),

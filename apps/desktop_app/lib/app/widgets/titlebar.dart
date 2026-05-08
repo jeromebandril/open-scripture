@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_scripture/app/widgets/menubar.dart';
 import 'package:open_scripture/shared/constants.dart';
-import 'package:open_scripture/core/app_state/toolbar_cubit.dart';
+import 'package:open_scripture/shared/theme/tokens.dart';
 import 'package:window_manager/window_manager.dart';
-
-import '../../features/remote_controller/presentation/widgets/remote_controller_indicator.dart';
 
 class Titlebar extends StatelessWidget {
   const Titlebar({
@@ -12,15 +10,17 @@ class Titlebar extends StatelessWidget {
     this.showButtons = true,
     this.showMenuBar = true,
     this.showLogo = true,
-    this.toolbar,
-    this.menuBar,
+    this.centerItems,
+    this.leftItems,
+    this.rightItems,
   });
 
   final bool showButtons;
   final bool showMenuBar;
   final bool showLogo;
-  final Widget? menuBar;
-  final Widget? toolbar;
+  final List<Widget>? leftItems;
+  final List<Widget>? centerItems;
+  final List<Widget>? rightItems;
 
   @override
   Widget build(BuildContext context) {
@@ -32,17 +32,13 @@ class Titlebar extends StatelessWidget {
     final half = band / 2;
 
     return Container(
+      height: kWindowsTitleBarHeight,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
         gradient: LinearGradient(
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
-          colors: [
-            surface,
-            mid,
-            mid,
-            surface,
-          ],
+          colors: [surface, mid, mid, surface],
           stops: [
             0.0,
             (0.5 - half).clamp(0.0, 1.0),
@@ -51,22 +47,31 @@ class Titlebar extends StatelessWidget {
           ],
         ),
       ),
-      height: kWindowsTitleBarHeight,
       child: Stack(
         children: [
-          Positioned.fill(
+          //
+          // Drag area
+          //
+          const Positioned.fill(
             child: DragToMoveArea(
               child: SizedBox(height: 38),
             ),
           ),
-          if (toolbar != null)
+          //
+          // CENTER widgets
+          //
+          if (centerItems != null)
             Positioned.fill(
               child: Container(
                 alignment: Alignment.center,
                 margin: EdgeInsets.symmetric(vertical: 3),
-                child: toolbar!,
+                child:
+                    Row(mainAxisSize: MainAxisSize.min, children: centerItems!),
               ),
             ),
+          //
+          // LEFT and RIGHT widgets
+          //
           Positioned.fill(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -91,33 +96,25 @@ class Titlebar extends StatelessWidget {
                           ),
                         ),
                       ),
-                    if (!showLogo && showMenuBar) SizedBox(width: 8),
-                    if (menuBar != null && showMenuBar) ...[
-                      menuBar!,
-                      BlocSelector<ToolbarCubit, ToolbarState, bool>(
-                        selector: (state) => state.isVisible,
-                        builder: (context, isVisible) {
-                          return IconButton(
-                            tooltip: '${isVisible ? 'Hide' : 'Show'} Toolbar',
-                            onPressed: () =>
-                                context.read<ToolbarCubit>().toggleVisibility(),
-                            icon: isVisible
-                                ? const Icon(Icons.expand_less_rounded,
-                                    size: 18)
-                                : const Icon(Icons.expand_more_rounded,
-                                    size: 18),
-                          );
-                        },
-                      )
+                    if (!showLogo && showMenuBar) const SizedBox(width: 8),
+                    if (showMenuBar) const MyMenuBar(),
+                    if (leftItems != null) ...[
+                      const SizedBox(width: AppSpacing.xs),
+                      Row(children: leftItems!),
                     ]
                   ],
                 ),
-                //
-                // Window buttons
-                //
-                if (showButtons)
-                  Row(
-                    children: [
+                Row(
+                  children: [
+                    if (rightItems != null)
+                      Row(
+                        children: rightItems!,
+                      ),
+                    //
+                    // Window buttons
+                    //
+                    if (showButtons) ...[
+                      const SizedBox(width: AppSpacing.sm),
                       _WindowButton(
                         icon: Icons.minimize_rounded,
                         onPressed: () => windowManager.minimize(),
@@ -137,10 +134,9 @@ class Titlebar extends StatelessWidget {
                         hoverColor: const Color.fromARGB(255, 228, 68, 56),
                         onPressed: () => windowManager.close(),
                       ),
-                    ],
-                  ),
-
-                if (!showButtons) RemoteControllerIndicator()
+                    ]
+                  ],
+                ),
               ],
             ),
           ),

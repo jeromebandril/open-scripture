@@ -1,12 +1,10 @@
-import 'package:open_scripture/core/app_state/toolbar_cubit.dart';
-
 import '../../../../shared/entities/bible_ref.dart';
 import '../../../../core/app_state/fullscreen_cubit.dart';
 import '../../../../core/app_state/history_visibility_cubit.dart';
 import '../../../../core/app_state/menubar_visibility_cubit.dart';
 import '../../../bible_searchbar/presentation/state/b_searchbar_bloc.dart';
 import '../../../bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
-import '../../../bible_display/bible_pane/presentation/models/display_mode.dart';
+import '../../../bible_display/bible_pane/domain/display_mode.dart';
 import '../../../bible_display/bible_selector/presentation/state/bible_selector_bloc.dart';
 import '../../../bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../../domain/models/app_command.dart';
@@ -25,7 +23,6 @@ class AppCommandDispatcher {
     // required this.rootFocusNode,
     // required this.searchFocusNode,
     // required this.historyFocusNode,
-    required this.toolbarCubit,
   });
 
   final MultiPaneManagerCubit paneManagerCubit;
@@ -34,7 +31,6 @@ class AppCommandDispatcher {
   final HistoryVisibilityCubit historyVisibilityCubit;
   final MenubarCubit menubarCubit;
   final FullscreenCubit fullscreenCubit;
-  final ToolbarCubit toolbarCubit;
 
   void dispatch(AppCommand command) {
     final handler = _handlers[command];

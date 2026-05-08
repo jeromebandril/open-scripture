@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
 import 'package:open_scripture/features/shortcuts/presentation/models/app_command_shortcuts.dart';
 import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_view.dart';
-import 'package:toastification/toastification.dart';
 
 import '../../../../core/app_state/fullscreen_cubit.dart';
 import '../../../../core/app_state/menubar_visibility_cubit.dart';
@@ -43,28 +42,6 @@ class _BSearchbarState extends State<BSearchbar> {
         final isFullscreen = context.read<FullscreenCubit>().state;
         final showMenuBar = context.read<MenubarCubit>().state;
         if (!isFullscreen || showMenuBar) return;
-
-        toastification.show(
-            context: context,
-            type: ToastificationType.error,
-            style: ToastificationStyle.flat,
-            title: Text("Invalid query"),
-            description: Text(state.message),
-            alignment: Alignment.topRight,
-            autoCloseDuration: const Duration(seconds: 4),
-            animationBuilder: (context, animation, alignment, child) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-            animationDuration: const Duration(milliseconds: 300),
-            backgroundColor:
-                Theme.of(context).colorScheme.surfaceContainerHighest,
-            foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
-            boxShadow: highModeShadow,
-            closeButton:
-                const ToastCloseButton(showType: CloseButtonShowType.onHover),
-            showProgressBar: true,
-            borderSide: BorderSide(
-                color: Theme.of(context).colorScheme.surfaceContainerLow));
       },
       buildWhen: (prev, curr) =>
           prev.errorCount != curr.errorCount && curr.errorCount > 0,

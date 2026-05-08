@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/obs_live_overlay/presentation/state/obs_overlay/obs_live_overlay_cubit.dart';
-import 'package:open_scripture/features/obs_live_overlay/presentation/widgets/obs_live_overlay_indicator.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_bool.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_number.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
 
+import '../../../../shared/widgets/dot.dart';
 import '../state/obs_overlay_settinsg/obs_live_overlay_settings_cubit.dart';
 
 class ObsLiveOverlayPage extends StatelessWidget {
@@ -31,11 +31,16 @@ class ObsLiveOverlayPage extends StatelessWidget {
                   title: 'OBS Live Overlay (beta)',
                   children: [
                     Text(
-                        'When activated, a red circle will appear on the upper-right corner of the app'),
+                        'When activated, the app will feed the selected reference to a local web server, which can be used by OBS program to display in real time an overlay with the verse content.'),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const ObsLiveOverlayIndicator(),
+                        Dot(
+                          glowing: state.isRunning,
+                          overrideColor:
+                              Theme.of(context).colorScheme.onSurfaceVariant,
+                          overrideGlowingColor: Colors.red,
+                        ),
                         TextButton(
                           onPressed: state.busy || !enableFeature
                               ? null

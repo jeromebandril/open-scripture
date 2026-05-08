@@ -3,13 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/cubit/selected_word_cubit.dart';
 
-import '../../../../../../shared/entities/bible_ref.dart';
-import '../../../../../../shared/entities/verse_segment.dart';
-import '../../../../../../shared/entities/verse_span.dart';
-import '../../../../../customizer/presentation/state/customizer_cubit.dart';
-import '../../../../../customizer/presentation/models/bible_pane_general_theme.dart';
-import '../../../../../customizer/presentation/models/bible_view_list_theme.dart';
-import '../../rendering/verse_richtext_builder.dart';
+import '../../../../../shared/entities/bible_ref.dart';
+import '../../../../../shared/entities/verse_segment.dart';
+import '../../../../../shared/entities/verse_span.dart';
+import '../../../../customizer/presentation/state/customizer_cubit.dart';
+import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
+import '../../../../customizer/presentation/models/bible_view_list_theme.dart';
+import '../rendering/verse_richtext_builder.dart';
 
 class VerseWidget extends StatelessWidget {
   final BibleRef reference;

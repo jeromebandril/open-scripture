@@ -4,10 +4,11 @@ import 'package:open_scripture/features/bible_searchbar/presentation/state/b_sea
 import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import 'package:open_scripture/features/three_tap_navigator/presentation/state/three_tap_navigator_cubit.dart';
 import 'package:open_scripture/shared/theme/tokens.dart';
+import 'package:open_scripture/shared/widgets/custom_icon_button.dart';
 
 import '../../../../shared/entities/book.dart';
 import '../../../../injection_container.dart';
-import '../../../../shared/entities/book_names.dart';
+import '../../../../core/book_names.dart';
 
 class ThreeTapNavigatorTrigger extends StatefulWidget {
   const ThreeTapNavigatorTrigger({super.key});
@@ -78,30 +79,9 @@ class _ThreeTapNavigatorTriggerState extends State<ThreeTapNavigatorTrigger> {
                 child: OverlayPortal.overlayChildLayoutBuilder(
                   controller: _controller,
                   overlayChildBuilder: _buildOverlay,
-                  child: Material(
-                    shape: CircleBorder(),
-                    clipBehavior: Clip.hardEdge,
-                    color: Theme.of(context).colorScheme.surfaceContainerHigh,
-                    child: InkWell(
-                      splashFactory: NoSplash.splashFactory,
-                      onTap: () => _controller.show(),
-                      mouseCursor: SystemMouseCursors.click,
-                      child: SizedBox(
-                        height: 32,
-                        width: 32,
-                        child: Center(
-                          child: MouseRegion(
-                            child: Icon(
-                              Icons.navigation_rounded,
-                              size: 14,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurfaceVariant,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                  child: CustomIconButton(
+                    Icons.navigation_rounded,
+                    onTap: () => _controller.show(),
                   ),
                 ),
               );

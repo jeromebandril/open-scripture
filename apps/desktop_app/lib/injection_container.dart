@@ -2,7 +2,6 @@ import 'package:get_it/get_it.dart';
 import 'package:open_scripture/core/app_state/fullscreen_cubit.dart';
 import 'package:open_scripture/core/app_state/history_visibility_cubit.dart';
 import 'package:open_scripture/core/app_state/menubar_visibility_cubit.dart';
-import 'package:open_scripture/core/app_state/toolbar_cubit.dart';
 import 'package:open_scripture/core/infrastructure/bible_data/bible_local_datasource.dart';
 import 'package:open_scripture/core/infrastructure/bible_data/bible_remote_datasource.dart';
 import 'package:open_scripture/core/infrastructure/database/database.dart';
@@ -18,7 +17,7 @@ import 'package:open_scripture/core/systems/remote_controller/remote_command_rou
 import 'package:open_scripture/core/systems/settings/settings_datasource.dart';
 import 'package:open_scripture/core/systems/settings/settings_repository.dart';
 import 'package:open_scripture/features/bible_searchbar/domain/search_intent_resolver.dart';
-import 'package:open_scripture/shared/entities/book_names.dart';
+import 'package:open_scripture/core/book_names.dart';
 import 'package:open_scripture/shared/utils/bible_ref_parser/bible_ref_parser.dart';
 import 'package:open_scripture/features/bible_searchbar/data/repositories/b_searchbar_repository_impl.dart';
 import 'package:open_scripture/features/bible_searchbar/domain/searchbar_repository.dart';
@@ -149,7 +148,6 @@ void _initAppState() {
   sl.registerLazySingleton(() => ResolvedSearchIntentBus());
   sl.registerLazySingleton(() => InstallNotifier());
   sl.registerLazySingleton(() => MenubarCubit());
-  sl.registerLazySingleton(() => ToolbarCubit());
   sl.registerLazySingleton(() => FullscreenCubit());
   sl.registerLazySingleton(() => HistoryVisibilityCubit());
   sl.registerFactory(() => TextScalerCubit());
@@ -290,7 +288,6 @@ void _initShortcutFeature() {
       paneManagerCubit: sl<MultiPaneManagerCubit>(),
       searchbarBloc: sl<BSearchbarBloc>(),
       historyVisibilityCubit: sl<HistoryVisibilityCubit>(),
-      toolbarCubit: sl<ToolbarCubit>(),
       menubarCubit: sl<MenubarCubit>(),
       fullscreenCubit: sl<FullscreenCubit>(),
     ),

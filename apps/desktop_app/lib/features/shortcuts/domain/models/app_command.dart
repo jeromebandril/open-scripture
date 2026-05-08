@@ -13,7 +13,6 @@ enum AppCommand {
   movePaneToRight,
   movePaneToLeft,
   toggleMenubar,
-  toggleToolbar,
   toggleFullscreen,
   switchDisplayMode,
   zoomIn,

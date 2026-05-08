@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/cubit/selected_word_cubit.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/widgets/bible_view_list.dart';
-import 'package:open_scripture/features/bible_display/bible_pane/presentation/widgets/parts/pane_info.dart';
+import 'package:open_scripture/features/bible_display/bible_pane/presentation/widgets/pane_info.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/widgets/bible_view_presentation.dart';
 import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/models/multi_pane_data.dart';
 import 'package:open_scripture/features/customizer/presentation/state/customizer_cubit.dart';
@@ -14,7 +14,7 @@ import '../../../../text_scaler/presentation/widgets/text_scaler_host.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../../../bible_selector/presentation/widgets/bible_selector.dart';
 import '../state/bible_pane_bloc.dart';
-import '../models/display_mode.dart';
+import '../../domain/display_mode.dart';
 
 class BiblePane extends StatelessWidget {
   final int uniqueId;

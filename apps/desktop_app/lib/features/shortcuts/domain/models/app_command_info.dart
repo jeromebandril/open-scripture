@@ -59,10 +59,6 @@ const Map<AppCommand, AppCommandInfo> appCommandInfo = {
     label: 'Toggle Menubar',
     description: 'Show or hide the application menubar.',
   ),
-  AppCommand.toggleToolbar: AppCommandInfo(
-    label: 'Toggle Toolbar',
-    description: 'Show or hide the application toolbar.',
-  ),
   AppCommand.toggleFullscreen: AppCommandInfo(
     label: 'Toggle Fullscreen',
     description: 'Enter or exit fullscreen mode.',

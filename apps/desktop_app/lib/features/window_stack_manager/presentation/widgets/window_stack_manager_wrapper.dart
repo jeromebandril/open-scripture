@@ -5,7 +5,6 @@ import 'package:open_scripture/features/obs_live_overlay/presentation/state/obs_
 import 'package:open_scripture/features/remote_controller/presentation/state/remote_controller/remote_controller_cubit.dart';
 import 'package:open_scripture/features/window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import 'package:open_scripture/shared/constants.dart';
-import 'package:open_scripture/core/app_state/toolbar_cubit.dart';
 import 'package:open_scripture/app/widgets/titlebar.dart';
 import 'package:open_scripture/shared/theme/tokens.dart';
 
@@ -103,26 +102,21 @@ class _WindowStackManagerWrapperState extends State<WindowStackManagerWrapper> {
 
   void _syncToWindows(List<WidgetBuilder> windows) {
     final overlay = Overlay.of(context, rootOverlay: true);
-
     final isFullscreen = context.read<FullscreenCubit>().state;
 
     // ensure barrier
     _barrierEntry ??= OverlayEntry(
-      builder: (_) => MultiBlocProvider(
-        providers: [
-          BlocProvider.value(value: context.read<ToolbarCubit>()),
-        ],
-        child: Column(
-          children: [
-            if (!isFullscreen) const Material(child: Titlebar()),
-            const Expanded(
-              child: ModalBarrier(
-                dismissible: false,
-                color: Color(0x99000000),
-              ),
+      builder: (_) => Column(
+        children: [
+          if (!isFullscreen)
+            const Material(child: Titlebar(showMenuBar: false)),
+          const Expanded(
+            child: ModalBarrier(
+              dismissible: false,
+              color: Color(0x99000000),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
 

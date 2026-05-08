@@ -55,7 +55,13 @@ class _RemoteControllerPageState extends State<RemoteControllerPage> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const _RemoteControllerIndicator(),
+                                  Dot(
+                                    glowing: state.isRunning,
+                                    overrideColor: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
+                                    overrideGlowingColor: Colors.red,
+                                  ),
                                   TextButton(
                                     onPressed: state.isBusy || !enableFeature
                                         ? null
@@ -223,35 +229,6 @@ class _ConnectedClientsList extends StatelessWidget {
                         .read<RemoteControllerCubit>()
                         .disconnectClient(connectedClients[index].id),
                     icon: const Icon(Icons.remove_circle_outline_rounded)));
-          },
-        );
-      },
-    );
-  }
-}
-
-class _RemoteControllerIndicator extends StatelessWidget {
-  const _RemoteControllerIndicator();
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocSelector<RemoteControllerSettingsCubit,
-        RemoteControllerSettingsState, bool>(
-      selector: (state) => state.settings.enableFeature,
-      builder: (context, isEnabled) {
-        if (!isEnabled) return const SizedBox.shrink();
-
-        return BlocBuilder<RemoteControllerCubit, RemoteControllerState>(
-          builder: (context, state) {
-            return Tooltip(
-              message:
-                  'Remote Controller Server is ${state.isRunning ? 'running' : 'off'}',
-              child: Dot(
-                glowing: state.isRunning,
-                overrideColor: Theme.of(context).colorScheme.onSurfaceVariant,
-                overrideGlowingColor: Colors.red,
-              ),
-            );
           },
         );
       },

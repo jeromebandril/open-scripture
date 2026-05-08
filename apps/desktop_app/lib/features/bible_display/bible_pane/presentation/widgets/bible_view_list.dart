@@ -8,8 +8,8 @@ import 'package:open_scripture/shared/entities/bible_ref.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../state/bible_pane_bloc.dart';
-import 'parts/verse_divider.dart';
-import 'parts/verse_widget.dart';
+import 'verse_divider.dart';
+import 'verse_widget.dart';
 
 class BibleViewList extends StatefulWidget {
   const BibleViewList({super.key, required this.uniqueId});

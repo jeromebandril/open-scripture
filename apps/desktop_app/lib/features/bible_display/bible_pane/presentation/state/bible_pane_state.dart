@@ -29,7 +29,7 @@ class BiblePaneState extends Equatable {
     BibleRef? reference,
     bool isMixed = false,
     String? errorMessage,
-    DisplayMode dMode = DisplayMode.normal,
+    DisplayMode dMode = DisplayMode.list,
     int? verseCount,
   }) {
     return BiblePaneState._(

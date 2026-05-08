@@ -1,5 +1,5 @@
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
-import 'package:open_scripture/features/bible_display/bible_pane/presentation/models/display_mode.dart';
+import 'package:open_scripture/features/bible_display/bible_pane/domain/display_mode.dart';
 import 'package:shared/rc_protocol/rc_protocol.dart';
 
 import '../../../../../core/systems/remote_controller/models/remote_command_custom_handler.dart';
@@ -27,7 +27,7 @@ class PaneManagerHandler implements RemoteCommandCustomHandler {
     if (command.name == 'switch_display_mode') {
       late final BiblePaneEvent evt;
       evt = command.payload?['display_mode'] == 0
-          ? BiblePaneSetDisplayMode(DisplayMode.normal)
+          ? BiblePaneSetDisplayMode(DisplayMode.list)
           : BiblePaneSetDisplayMode(DisplayMode.presentation);
 
       bloc.activePane().bloc.add(evt);

@@ -3,7 +3,7 @@ import 'package:open_scripture/features/customizer/presentation/pages/bible_pane
 import 'package:open_scripture/features/customizer/presentation/pages/bible_view_list_customizer_screen.dart';
 import 'package:open_scripture/features/customizer/presentation/pages/bible_view_presentation_customizer_screen.dart';
 
-import '../../../bible_display/bible_pane/presentation/models/display_mode.dart';
+import '../../../bible_display/bible_pane/domain/display_mode.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../../settings_window/presentation/widgets/setting_subpage_navigator.dart';
 import '../widgets/bible_pane_preview.dart';
@@ -19,7 +19,7 @@ class BiblePaneCustomizerScreen extends StatefulWidget {
 class _BiblePaneCustomizerScreenState extends State<BiblePaneCustomizerScreen> {
   int _index = 0;
   late final List<Widget> _pages;
-  DisplayMode _previewMode = DisplayMode.normal;
+  DisplayMode _previewMode = DisplayMode.list;
 
   @override
   void initState() {
@@ -58,7 +58,7 @@ class _BiblePaneCustomizerScreenState extends State<BiblePaneCustomizerScreen> {
                 id: 0,
                 onSelect: (id) => setState(() {
                   _index = id;
-                  _previewMode = DisplayMode.normal;
+                  _previewMode = DisplayMode.list;
                 }),
                 icon: Icon(Icons.color_lens_rounded),
                 title: 'General',
@@ -67,7 +67,7 @@ class _BiblePaneCustomizerScreenState extends State<BiblePaneCustomizerScreen> {
                 id: 1,
                 onSelect: (id) => setState(() {
                   _index = id;
-                  _previewMode = DisplayMode.normal;
+                  _previewMode = DisplayMode.list;
                 }),
                 icon: const Icon(Icons.list),
                 title: 'List view',
@@ -110,7 +110,7 @@ class _BiblePaneCustomizerScreenState extends State<BiblePaneCustomizerScreen> {
                             IconButton(
                                 tooltip: 'List',
                                 onPressed: () => setState(() {
-                                      _previewMode = DisplayMode.normal;
+                                      _previewMode = DisplayMode.list;
                                     }),
                                 icon: const Icon(Icons.list)),
                             IconButton(
