@@ -6,15 +6,13 @@ import 'package:open_scripture/features/bible_display/bible_pane/presentation/wi
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/widgets/bible_view_presentation.dart';
 import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/models/multi_pane_data.dart';
 import 'package:open_scripture/features/customizer/presentation/state/customizer_cubit.dart';
-import 'package:open_scripture/features/shortcuts/presentation/models/app_command_shortcuts.dart';
-import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_view.dart';
 
-import '../../../../shortcuts/domain/models/app_command.dart';
 import '../../../../text_scaler/presentation/widgets/text_scaler_host.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../../../bible_selector/presentation/widgets/bible_selector.dart';
 import '../state/bible_pane_bloc.dart';
 import '../../domain/display_mode.dart';
+import 'initial_screen.dart';
 
 class BiblePane extends StatelessWidget {
   final int uniqueId;
@@ -96,7 +94,7 @@ class BiblePane extends StatelessWidget {
               // READY SCREEN
               //
               BiblePaneStatus.ready => state.content.isContentEmpty
-                  ? const _InitalEmptyContentScreen()
+                  ? const InitalEmptyContentScreen()
                   : TextScalerHost(
                       textScalerCubit: blocComponents.textScalerCubit,
                       initialiSize: 14,
@@ -110,7 +108,7 @@ class BiblePane extends StatelessWidget {
                               //
                               ? BibleViewPresentation(uniqueId: uniqueId)
                               //
-                              // Normal mode
+                              // List mode
                               //
                               : BibleViewList(uniqueId: uniqueId);
                         },
@@ -137,32 +135,6 @@ class BiblePane extends StatelessWidget {
           },
         ),
       ),
-    );
-  }
-}
-
-class _InitalEmptyContentScreen extends StatelessWidget {
-  const _InitalEmptyContentScreen();
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      spacing: 16,
-      children: [
-        Text("Ready :)", style: TextStyle(fontSize: 18)),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          spacing: 8,
-          children: [
-            Text('Press '),
-            ShortcutView(
-                activator: appCommandShortcuts[AppCommand.changeBible]),
-            Text('to change bible '),
-          ],
-        ),
-        Text('( Go to <Help> for the essential shortcuts list )'),
-      ],
     );
   }
 }

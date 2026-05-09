@@ -99,7 +99,7 @@ class Titlebar extends StatelessWidget {
                     //   const SizedBox(width: 2),
                     // ],
                     if (showMenuBar) ...[
-                      const SizedBox(width: 16),
+                      const SizedBox(width: AppSpacing.sm),
                       const MyMenuBar(),
                     ],
                     if (leftItems != null) ...[

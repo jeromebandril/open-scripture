@@ -249,23 +249,27 @@ class _SplitScreenIndicator extends StatelessWidget {
 
         return SizedBox(
           height: 32,
-          child: Row(
-            children: [
-              const Text('Current active pane:  '),
-              for (final i in state.panes) ...[
-                i.id == state.activePaneId
-                    ? Icon(
-                        Icons.panorama_vertical_select_rounded,
-                        size: 18,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      )
-                    : Icon(
-                        Icons.panorama_vertical_rounded,
-                        size: 18,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      )
-              ]
-            ],
+          child: _Control(
+            command: AppCommand.nextPane,
+            child: Row(
+              children: [
+                SizedBox(width: 12),
+                const Text('Current active pane:  '),
+                for (final i in state.panes) ...[
+                  i.id == state.activePaneId
+                      ? Icon(
+                          Icons.panorama_vertical_select_rounded,
+                          size: 18,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        )
+                      : Icon(
+                          Icons.panorama_vertical_rounded,
+                          size: 18,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        )
+                ]
+              ],
+            ),
           ),
         );
       },

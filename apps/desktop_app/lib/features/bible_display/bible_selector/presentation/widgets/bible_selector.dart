@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/bible_installer_manager/presentation/state/installed_bibles/installed_bibles_bloc.dart';
@@ -40,7 +38,7 @@ class _BibleSelectorBody extends StatelessWidget {
       (CustomizerCubit b) => b.state.pane.enableCustomTheme,
     );
     final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
-    final height = MediaQuery.sizeOf(context).height;
+    // final height = MediaQuery.sizeOf(context).height;
 
     return BlocBuilder<InstalledBiblesBloc, InstalledBiblesState>(
       builder: (context, state) {
@@ -58,8 +56,8 @@ class _BibleSelectorBody extends StatelessWidget {
                   Text(state.errorMessage ?? 'Failed to load bibles'),
                   const SizedBox(height: 12),
                   ElevatedButton(
-                    onPressed: () => print(
-                        'retry'), //context.read<BibleSelectorBloc>().add(const BibleSelectorRetry()),
+                    //context.read<BibleSelectorBloc>().add(const BibleSelectorRetry()),
+                    onPressed: () => print('Retry'),
                     child: const Text('Retry'),
                   ),
                 ],
@@ -69,15 +67,16 @@ class _BibleSelectorBody extends StatelessWidget {
 
           case InstalledBiblesStatus.loaded:
             if (state.installedBibles.isEmpty) {
-              body = Text('Go to <Bible> to install a bible',
+              body = Text('Go to <Settings> to install a bible',
                   textAlign: TextAlign.center);
               break;
             }
+
             body = Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(' Select a bible',
+                Text(' Select bibles',
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.w900,
@@ -85,61 +84,61 @@ class _BibleSelectorBody extends StatelessWidget {
                           ? paneTheme.textColor
                           : Theme.of(context).colorScheme.onSurfaceVariant,
                     )),
-                SizedBox(height: 18),
-                SizedBox(
-                  height:
-                      min(height * 0.5, state.installedBibles.length * 82.0),
-                  child: ListView.separated(
+                const SizedBox(height: 18),
+                ConstrainedBox(
+                  constraints: BoxConstraints(maxHeight: 500),
+                  child: ListView.builder(
+                    shrinkWrap: true,
                     itemCount: state.installedBibles.length,
-                    separatorBuilder: (_, __) => const Divider(height: 0.05),
                     itemBuilder: (context, index) {
                       final bible = state.installedBibles[index];
                       final selected = selectedIds.contains(bible.id);
                       final style = TextStyle(
-                        color: useCustom
-                            ? paneTheme.textColor
-                            : Theme.of(context).colorScheme.onSurface,
+                        color: Theme.of(context).colorScheme.onSurface,
                       );
 
-                      return ListTile(
-                          selected: selected,
-                          title: Text(bible.bibleNameLocal, style: style),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                bible.abbreviation,
-                                style: style,
-                              ),
-                              Text(
-                                bible.langEngName ??
-                                    bible.langNativeName ??
-                                    bible.langIsoCode ??
-                                    '',
-                                style: style.copyWith(
-                                    color: style.color!.withAlpha(125)),
-                              ),
-                            ],
-                          ),
-                          isThreeLine: true,
-                          trailing: selected
-                              ? Text(
-                                  '${selectedIds.indexOf(bible.id!) + 1}',
-                                  style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 24,
-                                  ),
-                                )
-                              : null,
-                          onTap: () => context
-                              .read<BibleSelectorBloc>()
-                              .add(BibleSelectorSelect(bible.id!)));
+                      return Card(
+                        clipBehavior: Clip.hardEdge,
+                        child: ListTile(
+                            selected: selected,
+                            title: Text(bible.bibleNameLocal, style: style),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  bible.abbreviation,
+                                  style: style,
+                                ),
+                                Text(
+                                  bible.langEngName ??
+                                      bible.langNativeName ??
+                                      bible.langIsoCode ??
+                                      '',
+                                  style: style.copyWith(
+                                      color: style.color!.withAlpha(125)),
+                                ),
+                              ],
+                            ),
+                            isThreeLine: true,
+                            trailing: selected
+                                ? Text(
+                                    '${selectedIds.indexOf(bible.id!) + 1}',
+                                    style: TextStyle(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 24,
+                                    ),
+                                  )
+                                : null,
+                            onTap: () => context
+                                .read<BibleSelectorBloc>()
+                                .add(BibleSelectorSelect(bible.id!))),
+                      );
                     },
                   ),
                 ),
-                SizedBox(height: 18),
+                const SizedBox(height: 18),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   spacing: 8,
@@ -149,21 +148,20 @@ class _BibleSelectorBody extends StatelessWidget {
                           ? null
                           : () => onConfirm(selectedIds),
                       autofocus: true,
-                      child: SizedBox(
+                      child: const SizedBox(
                         width: 80,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           spacing: 4,
                           children: [
-                            const Text('Confirm'),
-                            const Icon(Icons.arrow_forward_rounded)
+                            Text('Confirm'),
+                            Icon(Icons.arrow_forward_rounded)
                           ],
                         ),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 42),
               ],
             );
             break;

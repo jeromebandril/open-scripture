@@ -60,7 +60,7 @@ class _PaneInfoState extends State<PaneInfo> {
         fontSize: 12,
       ),
       child: Row(
-        spacing: AppSpacing.xs,
+        spacing: 2,
         children: [
           InkWell(
             hoverColor: Theme.of(context).colorScheme.primary,
