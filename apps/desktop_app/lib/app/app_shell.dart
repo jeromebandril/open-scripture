@@ -18,46 +18,8 @@ import '../features/window_stack_manager/presentation/widgets/window_stack_manag
 import '../shared/theme/tokens.dart';
 import 'widgets/titlebar.dart';
 
-class AppShell extends StatefulWidget {
+class AppShell extends StatelessWidget {
   const AppShell({super.key});
-
-  @override
-  State<AppShell> createState() => _AppShellState();
-}
-
-class _AppShellState extends State<AppShell> {
-  late final FocusNode _searchbarFocusNode;
-  late final FocusNode _historyFocusNode;
-  late final FocusNode _rootFocusNode;
-
-  bool _searchbarHasFocus = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _searchbarFocusNode = FocusNode(debugLabel: 'searchbar');
-    _historyFocusNode = FocusNode(debugLabel: 'history');
-    _rootFocusNode = FocusNode(debugLabel: 'root');
-    _searchbarFocusNode.addListener(_searchbarFocusNodeListener);
-  }
-
-  @override
-  void dispose() {
-    _searchbarFocusNode.dispose();
-    _historyFocusNode.dispose();
-    _rootFocusNode.dispose();
-    super.dispose();
-  }
-
-  void _searchbarFocusNodeListener() {
-    setState(() => _searchbarHasFocus = _searchbarFocusNode.hasFocus);
-  }
-
-  // Return focus to root after search finishes
-  void _returnFocusToRoot() {
-    // This ensures there is always a focused node to receive shortcuts.
-    _rootFocusNode.requestFocus();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,12 +27,10 @@ class _AppShellState extends State<AppShell> {
     final showMenuBar = context.select((MenubarCubit t) => t.state);
     final showHistory = context.select((HistoryVisibilityCubit c) => c.state);
     final screen = MediaQuery.of(context).size;
+    final enableDynamicInterface = isFullscreen && !showMenuBar;
 
     // ShortcusHost must be at the very root after the MaterialApp
     return ShortcutsHost(
-      rootFocusNode: _rootFocusNode,
-      searchFocusNode: _searchbarFocusNode,
-      historyFocusNode: _historyFocusNode,
       child: Scaffold(
         // backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
         //
@@ -81,7 +41,7 @@ class _AppShellState extends State<AppShell> {
           child: Column(
             children: [
               //
-              // Simulated classic desktop toolbar
+              // Titlebar with controls
               //
               if (showMenuBar || !isFullscreen)
                 Titlebar(
@@ -92,10 +52,7 @@ class _AppShellState extends State<AppShell> {
                     const ToolbarButton(),
                   ],
                   centerItems: [
-                    _AppHeader(
-                      searchbarFocusNode: _searchbarFocusNode,
-                      returnFocusToRoot: _returnFocusToRoot,
-                    ),
+                    const _AppHeader(),
                   ],
                   rightItems: [
                     const ObsLiveOverlayIndicator(),
@@ -103,16 +60,19 @@ class _AppShellState extends State<AppShell> {
                   ],
                 ),
               //
-              // BIBLE PANES
+              // Main screen/workspace
               //
               Expanded(
                 child: Stack(
                   children: [
+                    //
+                    // Bible Panes
+                    //
                     Positioned.fill(child: const MultiPaneContainer()),
                     //
-                    // Dynamic fullscreen only interfaces
+                    // Dynamic/fullscreen only interfaces
                     //
-                    if (isFullscreen && !showMenuBar) ...[
+                    if (enableDynamicInterface) ...[
                       //
                       // Dynamic searchbar
                       //
@@ -123,7 +83,7 @@ class _AppShellState extends State<AppShell> {
                         child: Visibility(
                           maintainFocusability: true,
                           maintainState: true,
-                          visible: _searchbarHasFocus,
+                          visible: false,
                           child: Align(
                             alignment: Alignment.topCenter,
                             child: Container(
@@ -132,12 +92,7 @@ class _AppShellState extends State<AppShell> {
                                 color: Theme.of(context).dividerColor,
                                 borderRadius: BorderRadius.circular(30),
                               ),
-                              child: BSearchbar(
-                                height: 48,
-                                width: 300,
-                                focusNode: _searchbarFocusNode,
-                                onSubmitted: () => _returnFocusToRoot(),
-                              ),
+                              child: BSearchbar(height: 48, width: 300),
                             ),
                           ),
                         ),
@@ -145,7 +100,7 @@ class _AppShellState extends State<AppShell> {
                       //
                       // Dynamic History viewer
                       //
-                      if (isFullscreen && !showMenuBar)
+                      if (enableDynamicInterface)
                         Positioned(
                           top: screen.height * 0.08 + 100,
                           right: 0,
@@ -167,7 +122,6 @@ class _AppShellState extends State<AppShell> {
                                   constraints: screen,
                                   width: 350,
                                   size: HistoryListSize.big,
-                                  onSelected: () => _returnFocusToRoot(),
                                 ),
                               ),
                             ),
@@ -186,13 +140,7 @@ class _AppShellState extends State<AppShell> {
 }
 
 class _AppHeader extends StatelessWidget {
-  const _AppHeader({
-    required this.searchbarFocusNode,
-    required this.returnFocusToRoot,
-  });
-
-  final FocusNode searchbarFocusNode;
-  final void Function() returnFocusToRoot;
+  const _AppHeader();
 
   @override
   Widget build(BuildContext context) {
@@ -209,10 +157,8 @@ class _AppHeader extends StatelessWidget {
         if (enable3TapNav && screenWidth > AppBreakpoints.compact)
           const ThreeTapNavigatorTrigger(),
         BSearchbar(
-          focusNode: searchbarFocusNode,
           width:
               screenWidth <= AppBreakpoints.compact ? screenWidth * 0.4 : 300,
-          onSubmitted: () => returnFocusToRoot(),
           //onEditComplete: () => _returnFocusToRoot(),
         ),
         if (screenWidth > AppBreakpoints.compact) ShowHistoryButton(),

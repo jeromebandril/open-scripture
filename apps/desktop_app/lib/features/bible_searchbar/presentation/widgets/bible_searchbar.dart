@@ -6,11 +6,11 @@ import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_
 
 import '../../../../core/app_state/fullscreen_cubit.dart';
 import '../../../../core/app_state/menubar_visibility_cubit.dart';
+import '../../../shortcuts/presentation/widgets/shortcuts_focus_scope.dart';
 import '../state/b_searchbar_bloc.dart';
 
-class BSearchbar extends StatefulWidget {
+class BSearchbar extends StatelessWidget {
   const BSearchbar({
-    this.focusNode,
     this.onSubmitted,
     this.height = 42,
     this.width = 280,
@@ -18,21 +18,14 @@ class BSearchbar extends StatefulWidget {
     super.key,
   });
 
-  final FocusNode? focusNode;
   final Function()? onSubmitted;
   final double height;
   final double width;
   final bool isDense;
 
   @override
-  State<BSearchbar> createState() => _BSearchbarState();
-}
-
-class _BSearchbarState extends State<BSearchbar> {
-  @override
   Widget build(BuildContext context) {
-    final isShortcutVisible =
-        widget.focusNode != null && !widget.focusNode!.hasFocus;
+    final focusNode = ShortcutFocusScope.of(context).search;
 
     return BlocConsumer<BSearchbarBloc, BSearchbarState>(
       listenWhen: (prev, curr) =>
@@ -50,9 +43,8 @@ class _BSearchbarState extends State<BSearchbar> {
           hasError: state is SearchError,
           errorTrigger: state.errorCount,
           child: SearchBar(
-            constraints: BoxConstraints(
-                maxWidth: widget.width, minHeight: widget.height),
-            focusNode: widget.focusNode,
+            constraints: BoxConstraints(maxWidth: width, minHeight: height),
+            focusNode: focusNode,
             leading: Padding(
               padding: const EdgeInsets.only(left: 4),
               child: Icon(
@@ -64,7 +56,7 @@ class _BSearchbarState extends State<BSearchbar> {
             hintText: 'Search reference',
             elevation: const WidgetStatePropertyAll(0),
             trailing: [
-              if (isShortcutVisible)
+              if (!focusNode.hasFocus)
                 Container(
                   alignment: AlignmentDirectional.centerEnd,
                   child: ShortcutView(
@@ -77,7 +69,7 @@ class _BSearchbarState extends State<BSearchbar> {
                 ),
             ],
             onSubmitted: (input) {
-              if (widget.onSubmitted != null) widget.onSubmitted!();
+              if (onSubmitted != null) onSubmitted!();
               if (input.isEmpty) return;
 
               // if (_findMode) {

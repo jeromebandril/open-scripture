@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/bible_installer_manager/presentation/state/installed_bibles/installed_bibles_bloc.dart';
 import 'package:open_scripture/features/obs_live_overlay/presentation/state/obs_overlay/obs_live_overlay_cubit.dart';
 import 'package:open_scripture/features/remote_controller/presentation/state/remote_controller/remote_controller_cubit.dart';
+import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcuts_scope_suppressed.dart';
 import 'package:open_scripture/features/window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import 'package:open_scripture/shared/constants.dart';
 import 'package:open_scripture/app/widgets/titlebar.dart';
@@ -45,6 +46,11 @@ class _WindowStackManagerWrapperState extends State<WindowStackManagerWrapper> {
     }
     _entries.clear();
 
+    // manage last focus node before dispoing all of them
+    final lastFocus = _focusNodes.removeLast();
+    if (lastFocus.hasFocus) FocusManager.instance.primaryFocus?.unfocus();
+    lastFocus.dispose();
+
     for (final n in _focusNodes) {
       n.dispose();
     }
@@ -57,38 +63,42 @@ class _WindowStackManagerWrapperState extends State<WindowStackManagerWrapper> {
   }) {
     return OverlayEntry(
       builder: (overlayContext) {
-        return Positioned(
-          top: kWindowsTitleBarHeight,
-          bottom: 0,
-          right: 0,
-          left: 0,
+        return ShortcutsScopeSuppressed(
+          child: Positioned(
+            top: kWindowsTitleBarHeight,
+            bottom: 0,
+            right: 0,
+            left: 0,
 
-          ///
-          /// Damn I really need to re-pass the cubits here
-          ///
-          child: MultiBlocProvider(
-            providers: [
-              BlocProvider.value(value: context.read<WindowStackManagerBloc>()),
-              BlocProvider.value(value: context.read<ObsLiveOverlayCubit>()),
-              BlocProvider.value(
-                  value: context.read<ObsLiveOverlaySettingsCubit>()),
-              BlocProvider.value(value: context.read<InstalledBiblesBloc>()),
-              BlocProvider.value(value: context.read<RemoteControllerCubit>()),
-              BlocProvider.value(
-                  value: context.read<RemoteControllerSettingsCubit>()),
-            ],
-            child: BlockSemantics(
-              blocking: true,
-              child: FocusScope(
-                node: focusNode,
-                child: Center(
-                  child: Material(
-                    type: MaterialType.transparency,
-                    elevation: 24,
-                    borderRadius: BorderRadius.circular(AppRadius.lg),
-                    child: Container(
-                      margin: const EdgeInsets.all(24),
-                      child: builder(overlayContext),
+            ///
+            /// Damn I really need to re-pass the cubits here
+            ///
+            child: MultiBlocProvider(
+              providers: [
+                BlocProvider.value(
+                    value: context.read<WindowStackManagerBloc>()),
+                BlocProvider.value(value: context.read<ObsLiveOverlayCubit>()),
+                BlocProvider.value(
+                    value: context.read<ObsLiveOverlaySettingsCubit>()),
+                BlocProvider.value(value: context.read<InstalledBiblesBloc>()),
+                BlocProvider.value(
+                    value: context.read<RemoteControllerCubit>()),
+                BlocProvider.value(
+                    value: context.read<RemoteControllerSettingsCubit>()),
+              ],
+              child: BlockSemantics(
+                blocking: true,
+                child: FocusScope(
+                  node: focusNode,
+                  child: Center(
+                    child: Material(
+                      type: MaterialType.transparency,
+                      elevation: 24,
+                      borderRadius: BorderRadius.circular(AppRadius.lg),
+                      child: Container(
+                        margin: const EdgeInsets.all(24),
+                        child: builder(overlayContext),
+                      ),
                     ),
                   ),
                 ),
@@ -128,10 +138,18 @@ class _WindowStackManagerWrapperState extends State<WindowStackManagerWrapper> {
     // POP
     while (_entries.length > windows.length) {
       final lastEntry = _entries.removeLast();
+      final lastFocus = _focusNodes.removeLast();
+
+      if (lastFocus.hasFocus) {
+        FocusManager.instance.primaryFocus?.unfocus();
+      }
+
       lastEntry.remove();
 
-      final lastFocus = _focusNodes.removeLast();
       lastFocus.dispose();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        lastFocus.dispose();
+      });
     }
 
     // PUSH

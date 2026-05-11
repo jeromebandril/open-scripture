@@ -163,19 +163,21 @@ class _WindowButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      splashRadius: 16,
-      style: IconButton.styleFrom(
-        splashFactory: NoSplash.splashFactory,
-        backgroundColor: Colors.transparent,
-        //fixedSize: const Size(40, 40),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.zero, // square
+    return ExcludeFocus(
+      child: IconButton(
+        splashRadius: 16,
+        style: IconButton.styleFrom(
+          splashFactory: NoSplash.splashFactory,
+          backgroundColor: Colors.transparent,
+          //fixedSize: const Size(40, 40),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.zero, // square
+          ),
+          hoverColor: hoverColor ?? Colors.black26,
         ),
-        hoverColor: hoverColor ?? Colors.black26,
+        icon: Icon(icon, size: 16),
+        onPressed: onPressed,
       ),
-      icon: Icon(icon, size: 16),
-      onPressed: onPressed,
     );
   }
 }
