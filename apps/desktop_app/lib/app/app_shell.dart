@@ -37,7 +37,7 @@ class AppShell extends StatelessWidget {
         // Manages the stacks of windosw that may occur when opening
         // popups or secondary pages in the form of a window (e.g. settings menu)
         //
-        body: WindowStackManagerWrapper(
+        body: WindowStackManagerHost(
           child: Column(
             children: [
               //

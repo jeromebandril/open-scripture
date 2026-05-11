@@ -13,20 +13,19 @@ import '../../../../core/app_state/fullscreen_cubit.dart';
 import '../../../obs_live_overlay/presentation/state/obs_overlay_settinsg/obs_live_overlay_settings_cubit.dart';
 import '../../../remote_controller/presentation/state/remote_controller_settings/remote_controller_settings_cubit.dart';
 
-class WindowStackManagerWrapper extends StatefulWidget {
+class WindowStackManagerHost extends StatefulWidget {
   final Widget child;
 
-  const WindowStackManagerWrapper({
+  const WindowStackManagerHost({
     required this.child,
     super.key,
   });
 
   @override
-  State<WindowStackManagerWrapper> createState() =>
-      _WindowStackManagerWrapperState();
+  State<WindowStackManagerHost> createState() => _WindowStackManagerHostState();
 }
 
-class _WindowStackManagerWrapperState extends State<WindowStackManagerWrapper> {
+class _WindowStackManagerHostState extends State<WindowStackManagerHost> {
   final List<OverlayEntry> _entries = [];
   OverlayEntry? _barrierEntry;
   final List<FocusScopeNode> _focusNodes = [];
