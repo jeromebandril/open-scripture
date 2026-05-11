@@ -31,7 +31,7 @@ class _ToolbarButtonState extends State<ToolbarButton> {
       children: [
         Positioned.fill(
           child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
+            behavior: HitTestBehavior.translucent,
             onTap: () {
               _controller.hide();
             },
@@ -75,7 +75,8 @@ class _ToolbarButtonState extends State<ToolbarButton> {
         child: CustomIconButton(
           Icons.handyman_rounded,
           tooltipMessage: 'Toolbar',
-          onTap: () => _controller.show(),
+          onTap: () =>
+              _controller.isShowing ? _controller.hide() : _controller.show(),
         ),
       ),
     );

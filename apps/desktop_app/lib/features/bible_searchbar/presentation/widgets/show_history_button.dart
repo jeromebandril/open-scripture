@@ -20,44 +20,53 @@ class ShowHistoryButton extends StatelessWidget {
       listener: (context, isVisible) {
         isVisible ? _controller.show() : _controller.hide();
       },
-      child: CompositedTransformTarget(
-        link: layerLink,
-        child: OverlayPortal.overlayChildLayoutBuilder(
-          controller: _controller,
-          overlayChildBuilder: (BuildContext context, info) {
-            final screen = MediaQuery.of(context).size;
-            final top = info.childSize.height + menuGap;
+      child: Builder(builder: (context) {
+        final isVisible = context.read<HistoryVisibilityCubit>().state;
 
-            return Stack(
-              children: [
-                // Full-screen barrier for outside taps
-                Positioned.fill(
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () {
-                      context.read<HistoryVisibilityCubit>().toggle();
-                    },
+        WidgetsBinding.instance.addPostFrameCallback(
+          (_) => isVisible ? _controller.show() : _controller.hide(),
+        );
+
+        return CompositedTransformTarget(
+          link: layerLink,
+          child: OverlayPortal.overlayChildLayoutBuilder(
+            controller: _controller,
+            overlayChildBuilder: (BuildContext context, info) {
+              final screen = MediaQuery.of(context).size;
+              final top = info.childSize.height + menuGap;
+
+              return Stack(
+                children: [
+                  // Full-screen barrier for outside taps
+                  Positioned.fill(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () {
+                        context.read<HistoryVisibilityCubit>().toggle();
+                      },
+                    ),
                   ),
-                ),
-                CompositedTransformFollower(
-                  link: layerLink,
-                  showWhenUnlinked: false,
-                  offset: Offset(0, top), // place under anchor
-                  child: _buildOverlay(screen),
-                ),
-              ],
-            );
-          },
-          child: IconButton(
-              onPressed: () => context.read<HistoryVisibilityCubit>().toggle(),
-              tooltip: 'History',
-              visualDensity: VisualDensity.compact,
-              icon: const Icon(
-                Icons.history,
-                size: 20,
-              )),
-        ),
-      ),
+                  CompositedTransformFollower(
+                    link: layerLink,
+                    showWhenUnlinked: false,
+                    offset: Offset(0, top), // place under anchor
+                    child: _buildOverlay(screen),
+                  ),
+                ],
+              );
+            },
+            child: IconButton(
+                onPressed: () =>
+                    context.read<HistoryVisibilityCubit>().toggle(),
+                tooltip: 'History',
+                visualDensity: VisualDensity.compact,
+                icon: const Icon(
+                  Icons.history,
+                  size: 20,
+                )),
+          ),
+        );
+      }),
     );
   }
 }
