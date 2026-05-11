@@ -12,9 +12,10 @@ import '../features/bible_searchbar/presentation/widgets/show_history_button.dar
 import '../features/customizer/presentation/state/customizer_cubit.dart';
 import '../features/remote_controller/presentation/widgets/remote_controller_indicator.dart';
 import '../features/obs_live_overlay/presentation/widgets/obs_live_overlay_indicator.dart';
+import '../features/shortcuts/presentation/widgets/shortcuts_focus_scope.dart';
 import '../features/shortcuts/presentation/widgets/shortcuts_host.dart';
 import '../features/three_tap_navigator/presentation/widgets/three_tap_navigator.dart';
-import '../features/window_stack_manager/presentation/widgets/window_stack_manager_wrapper.dart';
+import '../features/window_stack_manager/presentation/widgets/window_stack_manager_host.dart';
 import '../shared/theme/tokens.dart';
 import 'widgets/titlebar.dart';
 
@@ -80,22 +81,33 @@ class AppShell extends StatelessWidget {
                         top: screen.height * 0.08,
                         right: 0,
                         left: 0,
-                        child: Visibility(
-                          maintainFocusability: true,
-                          maintainState: true,
-                          visible: false,
-                          child: Align(
-                            alignment: Alignment.topCenter,
-                            child: Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).dividerColor,
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              child: BSearchbar(height: 48, width: 300),
-                            ),
-                          ),
-                        ),
+                        child: Builder(builder: (context) {
+                          final focusNode = ShortcutFocusScope.of(context)
+                              .search
+                            ..skipTraversal = true;
+                          return ListenableBuilder(
+                            listenable: focusNode,
+                            builder: (_, __) {
+                              return Visibility(
+                                maintainFocusability: true,
+                                maintainState: true,
+                                visible: focusNode.hasFocus,
+                                child: Align(
+                                  alignment: Alignment.topCenter,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(6),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).dividerColor,
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                    child: const BSearchbar(
+                                        height: 48, width: 300),
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        }),
                       ),
                       //
                       // Dynamic History viewer

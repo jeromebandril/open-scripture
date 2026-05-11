@@ -41,8 +41,8 @@ class AppCommandDispatcher {
   List<int> _prevBibleId = [];
 
   late final Map<AppCommand, CommandHandler> _handlers = {
-    // AppCommand.focusSearch: () => searchFocusNode.requestFocus(),
-    // AppCommand.unfocusSearch: () => rootFocusNode.requestFocus(),
+    // AppCommand.focusSearch: () => searchbarVisibilityCubit.set(true),
+    // AppCommand.unfocusSearch: () => searchbarVisibilityCubit.set(false),
     AppCommand.toggleHistory: () => historyVisibilityCubit.toggle(),
     AppCommand.toggleMenubar: () {
       menubarCubit.toggleVisibility();
