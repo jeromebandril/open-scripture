@@ -56,17 +56,22 @@ class BSearchbar extends StatelessWidget {
             hintText: 'Search reference',
             elevation: const WidgetStatePropertyAll(0),
             trailing: [
-              if (!focusNode.hasFocus)
-                Container(
-                  alignment: AlignmentDirectional.centerEnd,
-                  child: ShortcutView(
-                    activator: appCommandShortcuts[AppCommand.focusSearch],
-                    textColor: Theme.of(context).colorScheme.onSurfaceVariant,
-                    fillColor: Colors.transparent,
-                    borderColor: null,
-                    fontSize: 10,
-                  ),
-                ),
+              ListenableBuilder(
+                listenable: focusNode,
+                builder: (context, __) {
+                  if (focusNode.hasFocus) return SizedBox.shrink();
+                  return Container(
+                    alignment: AlignmentDirectional.centerEnd,
+                    child: ShortcutView(
+                      activator: appCommandShortcuts[AppCommand.focusSearch],
+                      textColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fillColor: Colors.transparent,
+                      borderColor: null,
+                      fontSize: 10,
+                    ),
+                  );
+                },
+              ),
             ],
             onSubmitted: (input) {
               if (onSubmitted != null) onSubmitted!();
