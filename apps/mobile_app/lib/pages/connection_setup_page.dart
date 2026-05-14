@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../injection_container.dart' as di;
-import '../service/client_ws.dart';
+import '../services/client_ws.dart';
 
 class ConnectionSetupPage extends StatefulWidget {
   const ConnectionSetupPage({super.key});
@@ -18,6 +18,32 @@ class _ConnectionSetupPageState extends State<ConnectionSetupPage> {
 
   bool isConnecting = false;
   bool isSuccess = false;
+
+  void _connect() async {
+    if (!_formKey.currentState!.validate()) return;
+    _formKey.currentState!.save();
+    setState(() => isConnecting = true);
+
+    di.sl<RemoteWsClient>().connectionStream.first.then((status) async {
+      if (!mounted) return;
+      if (status.connected) {
+        setState(() {
+          isConnecting = false;
+          isSuccess = true;
+        });
+        await Future.delayed(const Duration(milliseconds: 1000));
+        if (!mounted) return;
+        Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        setState(() => isConnecting = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(status.message ?? 'Failed to connect')),
+        );
+      }
+    });
+
+    di.sl<RemoteWsClient>().connect(ip!, int.parse(port!));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,49 +124,7 @@ class _ConnectionSetupPageState extends State<ConnectionSetupPage> {
                         },
                       ),
                       ElevatedButton.icon(
-                        onPressed: isConnecting
-                            ? null
-                            : () async {
-                                if (!_formKey.currentState!.validate()) return;
-                                _formKey.currentState!.save();
-
-                                setState(() {
-                                  isConnecting = true;
-                                });
-
-                                final result = await di
-                                    .sl<RemoteWsClient>()
-                                    .connect(ip!, int.parse(port!));
-
-                                if (result == 0) {
-                                  setState(() {
-                                    isConnecting = false;
-                                    isSuccess = true;
-                                  });
-
-                                  await Future.delayed(Duration(seconds: 1));
-                                  // Connection successful, navigate to main page
-                                  Navigator.pushReplacementNamed(
-                                    // ignore: use_build_context_synchronously
-                                    context,
-                                    '/main',
-                                  );
-                                } else {
-                                  // Connection failed, show error message
-                                  // ignore: use_build_context_synchronously
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'Failed to connect to desktop app',
-                                      ),
-                                    ),
-                                  );
-                                }
-
-                                setState(() {
-                                  isConnecting = false;
-                                });
-                              },
+                        onPressed: isConnecting ? null : _connect,
                         icon: isConnecting
                             ? null
                             : const Icon(Icons.cable_sharp, size: 28),
@@ -161,21 +145,29 @@ class _ConnectionSetupPageState extends State<ConnectionSetupPage> {
             ),
 
             if (isSuccess)
-              Center(
-                child: AnimatedScale(
-                  scale: 1,
-                  duration: Duration(milliseconds: 300),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.check_circle,
-                        color: Theme.of(context).colorScheme.primary,
-                        size: 128,
-                      ),
-                      SizedBox(height: 12),
-                      Text("Connected!"),
-                    ],
+              Positioned.fill(
+                child: ColoredBox(
+                  color: Theme.of(context).colorScheme.surface,
+                  child: TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0.0, end: 1.0),
+                    duration: const Duration(milliseconds: 400),
+                    builder: (context, value, child) =>
+                        Opacity(opacity: value, child: child),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.check_circle_rounded,
+                          color: Theme.of(context).colorScheme.primary,
+                          size: 128,
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'Connected!',
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

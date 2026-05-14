@@ -1,6 +1,6 @@
 import 'package:get_it/get_it.dart';
 
-import 'service/client_ws.dart';
+import 'services/client_ws.dart';
 
 final sl = GetIt.instance;
 
