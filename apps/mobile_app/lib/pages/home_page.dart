@@ -73,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       if (_controller.text.isEmpty) return;
                       di.sl<RemoteWsClient>().sendCommand(
                         RemoteCommand(
-                          id: 'mobile-test',
+                          clientId: 'mobile-test',
                           name: 'query',
                           target: "search_bar",
                           type: RemoteCommandType.custom,

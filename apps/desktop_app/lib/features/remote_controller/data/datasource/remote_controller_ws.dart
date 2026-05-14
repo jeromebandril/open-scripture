@@ -53,18 +53,25 @@ class RemoteControllerWSServer {
 
         final socket = await WebSocketTransformer.upgrade(request);
 
-        final clientId = DateTime.now().microsecondsSinceEpoch.toString();
-        _clientsSockets[clientId] = socket;
-        _clientsInfos[clientId] = ClientInfo(
-          id: clientId,
-          ipAdress: request.connectionInfo!.remoteAddress.address,
-        );
-        _emit();
-
         socket.listen(
           (data) {
+            final msg = jsonDecode(data as String) as Map<String, dynamic>;
+            if (msg['type'] == RemoteCommandType.handshake.name) {
+              final clientId = msg['client_id'] as String;
+              final deviceName =
+                  msg['device_name'] as String? ?? 'Unknown device';
+              _clientsSockets[clientId]?.close();
+              _clientsSockets[clientId] = socket;
+              _clientsInfos[clientId] = ClientInfo(
+                id: clientId,
+                ipAdress: request.connectionInfo!.remoteAddress.address,
+                deviceName: deviceName,
+              );
+              _emit();
+              return;
+            }
+
             try {
-              print(data);
               final command = RemoteCommand.fromRaw(data);
               _onMessage?.call(command, socket);
             } catch (e) {

@@ -3,14 +3,14 @@ import 'dart:convert';
 import '../enums/remote_command_type.dart';
 
 class RemoteCommand {
-  final String id;
+  final String? clientId;
   final RemoteCommandType type;
   final String? name;
   final String? target;
   final Map<String, dynamic>? payload;
 
   const RemoteCommand({
-    required this.id,
+    this.clientId,
     required this.type,
     this.name,
     this.target,
@@ -19,7 +19,7 @@ class RemoteCommand {
 
   factory RemoteCommand.fromJson(Map<String, dynamic> json) {
     return RemoteCommand(
-      id: json['id'] as String? ?? '',
+      clientId: json['client_id'] as String?,
       type: _parseType(json['type']),
       name: json['command'] as String?,
       target: json['target'] as String?,
@@ -44,7 +44,7 @@ class RemoteCommand {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      if (clientId != null) 'client_id': clientId,
       'type': type.name,
       if (name != null) 'command': name,
       if (target != null) 'target': target,

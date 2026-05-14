@@ -222,7 +222,8 @@ class _ConnectedClientsList extends StatelessWidget {
           itemCount: connectedClients.length,
           itemBuilder: (BuildContext context, int index) {
             return ListTile(
-                title: Text(connectedClients[index].ipAdress),
+                title: Text(connectedClients[index].deviceName),
+                subtitle: Text(connectedClients[index].id),
                 trailing: IconButton(
                     tooltip: 'Disconnect',
                     onPressed: () => context

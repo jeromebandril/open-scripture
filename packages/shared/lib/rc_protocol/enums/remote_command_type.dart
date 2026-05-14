@@ -1,1 +1,1 @@
-enum RemoteCommandType { command, custom }
+enum RemoteCommandType { command, custom, handshake }

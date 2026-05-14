@@ -76,7 +76,6 @@ class CommandGrid extends StatelessWidget {
           onPressed: () {
             di.sl<RemoteWsClient>().sendCommand(
               RemoteCommand(
-                id: 'mobile-test',
                 type: cmd['type'] as RemoteCommandType,
                 name: cmd['name'] as String,
                 target: cmd['target'] as String?,

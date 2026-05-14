@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:open_scripture_rc/services/device_identity_service.dart';
 import 'package:shared/rc_protocol/rc_protocol.dart';
 
 const int connectTimeoutSeconds = 5;
@@ -18,7 +20,8 @@ class ConnectionStatus {
 class RemoteWsClient {
   late final AppLifecycleListener _lifecycleListener;
 
-  RemoteWsClient() {
+  RemoteWsClient({DeviceIdentity? deviceIdentity})
+    : _deviceIdentity = deviceIdentity {
     _lifecycleListener = AppLifecycleListener(
       onPause: _onAppPause,
       onResume: _onAppResume,
@@ -37,6 +40,7 @@ class RemoteWsClient {
     connect(_host!, _port!, retry: true);
   }
 
+  final DeviceIdentity? _deviceIdentity;
   WebSocket? _socket;
 
   String? _host;
@@ -71,6 +75,7 @@ class RemoteWsClient {
       socket.pingInterval = const Duration(seconds: pingFrequencySeconds);
 
       _socket = socket;
+      _sendHandshake();
       _lastActivityAt = DateTime.now();
 
       _connectionController.add(
@@ -101,7 +106,12 @@ class RemoteWsClient {
   }
 
   void sendCommand(RemoteCommand command) {
-    _socket?.add(command.toRaw());
+    _socket?.add(
+      jsonEncode({
+        ...jsonDecode(command.toRaw()),
+        'client_id': _deviceIdentity?.id,
+      }),
+    );
   }
 
   Future<void> reconnect() async {
@@ -121,6 +131,16 @@ class RemoteWsClient {
       onDone: _handleDisconnect,
       onError: (_) => _handleDisconnect(),
       cancelOnError: true,
+    );
+  }
+
+  void _sendHandshake() {
+    _socket?.add(
+      jsonEncode({
+        'type': RemoteCommandType.handshake.name,
+        'client_id': _deviceIdentity?.id,
+        'device_name': _deviceIdentity?.name,
+      }),
     );
   }
 
