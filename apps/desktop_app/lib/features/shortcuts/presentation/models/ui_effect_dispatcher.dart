@@ -23,8 +23,8 @@ class UiEffectDispatcher {
 
   late final Map<AppCommand, UiEffectHandler> _handlers = {
     AppCommand.focusSearch: () => searchFocusNode.requestFocus(),
-    AppCommand.unfocusSearch: () => rootFocusNode.requestFocus(),
-    AppCommand.toggleMenubar: () => rootFocusNode.requestFocus(),
+    AppCommand.closeWhatever: () => rootFocusNode.requestFocus(),
+    AppCommand.toggleToolbar: () => rootFocusNode.requestFocus(),
     AppCommand.switchDisplayMode: () => rootFocusNode.requestFocus(),
   };
 }

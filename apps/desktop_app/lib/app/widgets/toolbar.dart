@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/core/app_state/menubar_visibility_cubit.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/domain/display_mode.dart';
 import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
@@ -9,6 +8,7 @@ import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart
 import 'package:open_scripture/features/shortcuts/presentation/models/app_command_shortcuts.dart';
 import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_view.dart';
 
+import '../../core/app_state/interface_visibility_cubit.dart';
 import '../../shared/theme/tokens.dart';
 import '../../shared/widgets/custom_icon_button.dart';
 
@@ -33,7 +33,9 @@ class _ToolbarButtonState extends State<ToolbarButton> {
           child: GestureDetector(
             behavior: HitTestBehavior.translucent,
             onTap: () {
-              _controller.hide();
+              context
+                  .read<InterfaceVisibilityCubit>()
+                  .setVisibility(toolmenu: false);
             },
           ),
         ),
@@ -67,16 +69,21 @@ class _ToolbarButtonState extends State<ToolbarButton> {
 
   @override
   Widget build(BuildContext context) {
-    return CompositedTransformTarget(
-      link: _layerLink,
-      child: OverlayPortal.overlayChildLayoutBuilder(
-        controller: _controller,
-        overlayChildBuilder: _buildOverlay,
-        child: CustomIconButton(
-          Icons.handyman_rounded,
-          tooltipMessage: 'Toolbar',
-          onTap: () =>
-              _controller.isShowing ? _controller.hide() : _controller.show(),
+    return BlocListener<InterfaceVisibilityCubit, InterfaceVisibilityState>(
+      listener: (context, state) {
+        state.isToolMenuVisible ? _controller.show() : _controller.hide();
+      },
+      child: CompositedTransformTarget(
+        link: _layerLink,
+        child: OverlayPortal.overlayChildLayoutBuilder(
+          controller: _controller,
+          overlayChildBuilder: _buildOverlay,
+          child: CustomIconButton(
+            Icons.handyman_rounded,
+            tooltipMessage: 'Toolbar',
+            onTap: () =>
+                context.read<InterfaceVisibilityCubit>().toggleToolMenu(),
+          ),
         ),
       ),
     );
@@ -127,18 +134,19 @@ class ToolbarMenu extends StatelessWidget {
                   ),
                 ),
                 _Control(
-                  command: AppCommand.toggleMenubar,
-                  child: BlocBuilder<MenubarCubit, bool>(
-                      builder: (context, isMenubarVisible) {
+                  command: AppCommand.toggleToolbar,
+                  child: BlocBuilder<InterfaceVisibilityCubit,
+                      InterfaceVisibilityState>(builder: (context, state) {
                     return TextButton.icon(
                       onPressed: context.select((FullscreenCubit c) => c.state)
-                          ? () =>
-                              context.read<MenubarCubit>().toggleVisibility()
+                          ? () => context
+                              .read<InterfaceVisibilityCubit>()
+                              .toggleToolbar()
                           : null,
-                      label: isMenubarVisible
+                      label: state.isToolbarVisible
                           ? const Text('Hide top bar')
                           : const Text('Show top bar'),
-                      icon: isMenubarVisible
+                      icon: state.isToolbarVisible
                           ? const Icon(Icons.visibility_rounded)
                           : const Icon(Icons.visibility_off_rounded),
                     );

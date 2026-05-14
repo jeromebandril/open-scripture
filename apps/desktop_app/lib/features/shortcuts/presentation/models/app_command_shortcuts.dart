@@ -27,7 +27,7 @@ const Map<AppCommand, SingleActivator> appCommandShortcuts = {
     control: true,
     includeRepeats: false,
   ),
-  AppCommand.toggleMenubar: SingleActivator(
+  AppCommand.toggleToolbar: SingleActivator(
     LogicalKeyboardKey.keyT,
     control: true,
     includeRepeats: false,
@@ -75,7 +75,7 @@ const Map<AppCommand, SingleActivator> appCommandShortcuts = {
     shift: true,
     includeRepeats: false,
   ),
-  AppCommand.unfocusSearch: SingleActivator(
+  AppCommand.closeWhatever: SingleActivator(
     LogicalKeyboardKey.escape,
     includeRepeats: false,
   ),

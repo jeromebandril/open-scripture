@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_scripture/core/app_state/interface_visibility_cubit.dart';
 import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
 import 'package:open_scripture/features/shortcuts/presentation/models/app_command_shortcuts.dart';
 import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_view.dart';
 
 import '../../../../core/app_state/fullscreen_cubit.dart';
-import '../../../../core/app_state/menubar_visibility_cubit.dart';
 import '../../../shortcuts/presentation/widgets/shortcuts_focus_scope.dart';
 import '../state/b_searchbar_bloc.dart';
 
@@ -33,7 +33,8 @@ class BSearchbar extends StatelessWidget {
       listener: (context, state) {
         if (state is! SearchError) return;
         final isFullscreen = context.read<FullscreenCubit>().state;
-        final showMenuBar = context.read<MenubarCubit>().state;
+        final showMenuBar =
+            context.read<InterfaceVisibilityCubit>().state.isToolbarVisible;
         if (!isFullscreen || showMenuBar) return;
       },
       buildWhen: (prev, curr) =>

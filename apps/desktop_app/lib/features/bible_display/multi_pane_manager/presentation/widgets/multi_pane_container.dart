@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/models/multi_pane_data.dart';
 
 import '../../../../../core/app_state/fullscreen_cubit.dart';
-import '../../../../../core/app_state/menubar_visibility_cubit.dart';
+import '../../../../../core/app_state/interface_visibility_cubit.dart';
 import '../../../../../shared/theme/tokens.dart';
 import '../../../../customizer/presentation/state/customizer_cubit.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
@@ -28,7 +28,8 @@ class MultiPaneContainer extends StatelessWidget {
       (CustomizerCubit c) => c.state.pane.showSplitscreenDivider,
     );
     final isFullscreen = context.select((FullscreenCubit f) => f.state);
-    final showMenuBar = context.select((MenubarCubit t) => t.state);
+    final showMenuBar = context
+        .select((InterfaceVisibilityCubit i) => i.state.isToolbarVisible);
 
     return BlocSelector<MultiPaneManagerCubit, PaneManagerState,
         List<PaneDescriptor>>(

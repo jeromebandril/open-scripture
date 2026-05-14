@@ -55,7 +55,7 @@ const Map<AppCommand, AppCommandInfo> appCommandInfo = {
     label: 'Close Current Pane',
     description: 'Close the currently active pane.',
   ),
-  AppCommand.toggleMenubar: AppCommandInfo(
+  AppCommand.toggleToolbar: AppCommandInfo(
     label: 'Toggle Menubar',
     description: 'Show or hide the application menubar.',
   ),

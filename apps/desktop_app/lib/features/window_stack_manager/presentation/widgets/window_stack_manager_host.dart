@@ -145,7 +145,6 @@ class _WindowStackManagerHostState extends State<WindowStackManagerHost> {
 
       lastEntry.remove();
 
-      lastFocus.dispose();
       WidgetsBinding.instance.addPostFrameCallback((_) {
         lastFocus.dispose();
       });

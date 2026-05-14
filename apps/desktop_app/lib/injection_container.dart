@@ -1,7 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:open_scripture/core/app_state/fullscreen_cubit.dart';
-import 'package:open_scripture/core/app_state/history_visibility_cubit.dart';
-import 'package:open_scripture/core/app_state/menubar_visibility_cubit.dart';
+import 'package:open_scripture/core/app_state/interface_visibility_cubit.dart';
 import 'package:open_scripture/core/infrastructure/bible_data/bible_local_datasource.dart';
 import 'package:open_scripture/core/infrastructure/bible_data/bible_remote_datasource.dart';
 import 'package:open_scripture/core/infrastructure/database/database.dart';
@@ -147,11 +146,10 @@ void _initAppState() {
   sl.registerLazySingleton(() => NavigationBus());
   sl.registerLazySingleton(() => ResolvedSearchIntentBus());
   sl.registerLazySingleton(() => InstallNotifier());
-  sl.registerLazySingleton(() => MenubarCubit());
   sl.registerLazySingleton(() => FullscreenCubit());
-  sl.registerLazySingleton(() => HistoryVisibilityCubit());
   sl.registerFactory(() => TextScalerCubit());
   sl.registerFactory(() => FontLoaderCubit());
+  sl.registerLazySingleton(() => InterfaceVisibilityCubit());
 }
 
 // ---------------------------------------------------------------------------
@@ -225,7 +223,7 @@ void _initThreeTapNavFeature() {
   sl.registerLazySingleton<ThreeTapNavigatorRepository>(
     () => ThreeTapNavigatorRepositoryImpl(localDataSource: sl()),
   );
-  sl.registerFactory(() => ThreeTapNavigatorCubit(repo: sl()));
+  sl.registerLazySingleton(() => ThreeTapNavigatorCubit(repo: sl()));
 }
 
 void _initObsLiveOverlayFeature() {
@@ -287,9 +285,8 @@ void _initShortcutFeature() {
     () => AppCommandDispatcher(
       paneManagerCubit: sl<MultiPaneManagerCubit>(),
       searchbarBloc: sl<BSearchbarBloc>(),
-      historyVisibilityCubit: sl<HistoryVisibilityCubit>(),
-      menubarCubit: sl<MenubarCubit>(),
       fullscreenCubit: sl<FullscreenCubit>(),
+      interfaceVisibilityCubit: sl<InterfaceVisibilityCubit>(),
     ),
   );
   sl.registerLazySingleton<ShortcutsRepo>(

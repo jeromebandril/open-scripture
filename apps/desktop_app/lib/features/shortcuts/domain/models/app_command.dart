@@ -12,13 +12,13 @@ enum AppCommand {
   closeCurrentPane,
   movePaneToRight,
   movePaneToLeft,
-  toggleMenubar,
+  toggleToolbar,
   toggleFullscreen,
   switchDisplayMode,
   zoomIn,
   zoomOut,
   // private shortcuts
   // do not show as shortcut in the app
-  unfocusSearch,
+  closeWhatever,
   displayChapterOfSelected,
 }

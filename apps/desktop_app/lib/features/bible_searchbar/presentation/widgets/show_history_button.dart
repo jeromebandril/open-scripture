@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/core/app_state/history_visibility_cubit.dart';
+import 'package:open_scripture/core/app_state/interface_visibility_cubit.dart';
 import 'package:open_scripture/features/bible_searchbar/presentation/widgets/history_list_overlay.dart';
 
 class ShowHistoryButton extends StatelessWidget {
@@ -16,12 +16,15 @@ class ShowHistoryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<HistoryVisibilityCubit, bool>(
-      listener: (context, isVisible) {
-        isVisible ? _controller.show() : _controller.hide();
+    return BlocListener<InterfaceVisibilityCubit, InterfaceVisibilityState>(
+      listenWhen: (prev, curr) =>
+          prev.isHistoryVisible != curr.isHistoryVisible,
+      listener: (context, state) {
+        state.isHistoryVisible ? _controller.show() : _controller.hide();
       },
       child: Builder(builder: (context) {
-        final isVisible = context.read<HistoryVisibilityCubit>().state;
+        final isVisible =
+            context.read<InterfaceVisibilityCubit>().state.isHistoryVisible;
 
         WidgetsBinding.instance.addPostFrameCallback(
           (_) => isVisible ? _controller.show() : _controller.hide(),
@@ -42,7 +45,9 @@ class ShowHistoryButton extends StatelessWidget {
                     child: GestureDetector(
                       behavior: HitTestBehavior.translucent,
                       onTap: () {
-                        context.read<HistoryVisibilityCubit>().toggle();
+                        context
+                            .read<InterfaceVisibilityCubit>()
+                            .toggleHistory();
                       },
                     ),
                   ),
@@ -57,7 +62,7 @@ class ShowHistoryButton extends StatelessWidget {
             },
             child: IconButton(
                 onPressed: () =>
-                    context.read<HistoryVisibilityCubit>().toggle(),
+                    context.read<InterfaceVisibilityCubit>().toggleHistory(),
                 // tooltip: 'History',
                 visualDensity: VisualDensity.compact,
                 icon: const Icon(

@@ -1,7 +1,7 @@
+import 'package:open_scripture/core/app_state/interface_visibility_cubit.dart';
+
 import '../../../../shared/entities/bible_ref.dart';
 import '../../../../core/app_state/fullscreen_cubit.dart';
-import '../../../../core/app_state/history_visibility_cubit.dart';
-import '../../../../core/app_state/menubar_visibility_cubit.dart';
 import '../../../bible_searchbar/presentation/state/b_searchbar_bloc.dart';
 import '../../../bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../../../bible_display/bible_pane/domain/display_mode.dart';
@@ -17,20 +17,15 @@ class AppCommandDispatcher {
   AppCommandDispatcher({
     required this.paneManagerCubit,
     required this.searchbarBloc,
-    required this.historyVisibilityCubit,
-    required this.menubarCubit,
     required this.fullscreenCubit,
-    // required this.rootFocusNode,
-    // required this.searchFocusNode,
-    // required this.historyFocusNode,
+    required this.interfaceVisibilityCubit,
   });
 
   final MultiPaneManagerCubit paneManagerCubit;
   final BSearchbarBloc searchbarBloc;
 
-  final HistoryVisibilityCubit historyVisibilityCubit;
-  final MenubarCubit menubarCubit;
   final FullscreenCubit fullscreenCubit;
+  final InterfaceVisibilityCubit interfaceVisibilityCubit;
 
   void dispatch(AppCommand command) {
     final handler = _handlers[command];
@@ -42,13 +37,13 @@ class AppCommandDispatcher {
 
   late final Map<AppCommand, CommandHandler> _handlers = {
     // AppCommand.focusSearch: () => searchbarVisibilityCubit.set(true),
-    // AppCommand.unfocusSearch: () => searchbarVisibilityCubit.set(false),
-    AppCommand.toggleHistory: () => historyVisibilityCubit.toggle(),
-    AppCommand.toggleMenubar: () {
-      menubarCubit.toggleVisibility();
-      // rootFocusNode.requestFocus();
+    AppCommand.closeWhatever: () {
+      interfaceVisibilityCubit.hideAll();
     },
-    //AppCommand.toggleToolbar: () => toolbarCubit.toggleVisibility(),
+    AppCommand.toggleHistory: () => interfaceVisibilityCubit.toggleHistory(),
+    AppCommand.toggleToolbar: () {
+      interfaceVisibilityCubit.toggleToolbar();
+    },
     AppCommand.toggleFullscreen: () => fullscreenCubit.toggle(),
     AppCommand.nextPane: () => _cyclePane(1),
     AppCommand.prevPane: () => _cyclePane(-1),

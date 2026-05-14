@@ -3,8 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/app/widgets/toolbar.dart';
 
 import '../core/app_state/fullscreen_cubit.dart';
-import '../core/app_state/history_visibility_cubit.dart';
-import '../core/app_state/menubar_visibility_cubit.dart';
+import '../core/app_state/interface_visibility_cubit.dart';
 import '../features/bible_display/multi_pane_manager/presentation/widgets/multi_pane_container.dart';
 import '../features/bible_searchbar/presentation/widgets/bible_searchbar.dart';
 import '../features/bible_searchbar/presentation/widgets/history_list_overlay.dart';
@@ -25,8 +24,10 @@ class AppShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isFullscreen = context.select((FullscreenCubit f) => f.state);
-    final showMenuBar = context.select((MenubarCubit t) => t.state);
-    final showHistory = context.select((HistoryVisibilityCubit c) => c.state);
+    final showMenuBar = context
+        .select((InterfaceVisibilityCubit i) => i.state.isToolbarVisible);
+    final showHistory = context
+        .select((InterfaceVisibilityCubit i) => i.state.isHistoryVisible);
     final screen = MediaQuery.of(context).size;
     final enableDynamicInterface = isFullscreen && !showMenuBar;
 
