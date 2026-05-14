@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared/rc_protocol/rc_protocol.dart';
 
-const int connectTimeoutSeconds = 15;
+const int connectTimeoutSeconds = 5;
 const int pingFrequencySeconds = 10;
 const int inactivityTimeoutSeconds = 1800;
 
@@ -34,7 +34,7 @@ class RemoteWsClient {
   void _onAppResume() {
     if (_host == null || _port == null) return;
     _manuallyClosed = false;
-    connect(_host!, _port!);
+    connect(_host!, _port!, retry: true);
   }
 
   WebSocket? _socket;
@@ -53,7 +53,7 @@ class RemoteWsClient {
   Stream<ConnectionStatus> get connectionStream =>
       _connectionController.stream.distinct();
 
-  Future<void> connect(String host, int port) async {
+  Future<void> connect(String host, int port, {bool retry = false}) async {
     _host = host;
     _port = port;
     _manuallyClosed = false;
@@ -81,11 +81,11 @@ class RemoteWsClient {
       _startInactivityTimer();
 
       _reconnectAttempt = 0;
-    } catch (_) {
+    } catch (w) {
       _connectionController.add(
         ConnectionStatus(false, message: 'Failed to connect to $host:$port'),
       );
-      _scheduleReconnect();
+      if (retry) _scheduleReconnect();
     }
   }
 
@@ -182,7 +182,7 @@ class RemoteWsClient {
     Future.delayed(delay, () async {
       _reconnecting = false;
       if (_manuallyClosed) return;
-      await connect(_host!, _port!);
+      await connect(_host!, _port!, retry: true);
     });
   }
 
