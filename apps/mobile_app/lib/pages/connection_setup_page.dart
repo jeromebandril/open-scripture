@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../injection_container.dart' as di;
 import '../services/client_ws.dart';
+import 'qr_scanner_page.dart';
 
 class ConnectionSetupPage extends StatefulWidget {
   const ConnectionSetupPage({super.key});
@@ -24,25 +25,41 @@ class _ConnectionSetupPageState extends State<ConnectionSetupPage> {
     _formKey.currentState!.save();
     setState(() => isConnecting = true);
 
-    di.sl<RemoteWsClient>().connectionStream.first.then((status) async {
-      if (!mounted) return;
-      if (status.connected) {
-        setState(() {
-          isConnecting = false;
-          isSuccess = true;
-        });
-        await Future.delayed(const Duration(milliseconds: 1000));
-        if (!mounted) return;
-        Navigator.pushReplacementNamed(context, '/home');
-      } else {
-        setState(() => isConnecting = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(status.message ?? 'Failed to connect')),
-        );
-      }
-    });
-
+    di.sl<RemoteWsClient>().connectionStream.first.then(
+      _handleConnectionResult,
+    );
     di.sl<RemoteWsClient>().connect(ip!, int.parse(port!));
+  }
+
+  void _connectWithQrCode() async {
+    final result = await Navigator.of(context).push<(String, int)>(
+      MaterialPageRoute(builder: (_) => const QrScannerPage()),
+    );
+    if (result == null) return;
+    final (host, port) = result;
+    setState(() => isConnecting = true);
+    di.sl<RemoteWsClient>().connectionStream.first.then(
+      _handleConnectionResult,
+    );
+    di.sl<RemoteWsClient>().connect(host, port);
+  }
+
+  void _handleConnectionResult(ConnectionStatus status) async {
+    if (!mounted) return;
+    if (status.connected) {
+      setState(() {
+        isConnecting = false;
+        isSuccess = true;
+      });
+      await Future.delayed(const Duration(milliseconds: 1000));
+      if (!mounted) return;
+      Navigator.pushReplacementNamed(context, '/home');
+    } else {
+      setState(() => isConnecting = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(status.message ?? 'Failed to connect')),
+      );
+    }
   }
 
   @override
@@ -127,10 +144,15 @@ class _ConnectionSetupPageState extends State<ConnectionSetupPage> {
                         onPressed: isConnecting ? null : _connect,
                         icon: isConnecting
                             ? null
-                            : const Icon(Icons.cable_sharp, size: 28),
+                            : const Icon(Icons.link_rounded, size: 28),
                         label: isConnecting
                             ? const CircularProgressIndicator()
                             : const Text('Connect Manually'),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: isConnecting ? null : _connectWithQrCode,
+                        icon: const Icon(Icons.qr_code_scanner_rounded),
+                        label: const Text('Scan QR Code'),
                       ),
                     ],
                   ),
