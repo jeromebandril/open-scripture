@@ -8,6 +8,8 @@ import 'package:shared/rc_protocol/rc_protocol.dart';
 
 typedef OnMessage = void Function(RemoteCommand command, ClientId? clientId);
 
+const int pingFrequencySeconds = 10;
+
 class RemoteControllerWSServer {
   static const int maxClients = 3;
 
@@ -52,6 +54,8 @@ class RemoteControllerWSServer {
         }
 
         final socket = await WebSocketTransformer.upgrade(request);
+        socket.pingInterval = const Duration(seconds: pingFrequencySeconds);
+
         String? clientId;
 
         socket.listen(
