@@ -6,7 +6,7 @@ import '../services/client_ws.dart';
 
 const commands = [
   {
-    "text": "Zoom Out",
+    "label": "Zoom Out",
     'name': 'zoom_out',
     'target': 'pane',
     "type": RemoteCommandType.custom,
@@ -14,7 +14,7 @@ const commands = [
     "payload": {"multiplier": 2.0},
   },
   {
-    "text": "Zoom In",
+    "label": "Zoom In",
     'name': 'zoom_in',
     'target': 'pane',
     "type": RemoteCommandType.custom,
@@ -22,19 +22,19 @@ const commands = [
     "payload": {"multiplier": 2.0},
   },
   {
-    "text": "Prev",
+    "label": "Prev",
     'name': 'go_prev_verse',
     "type": RemoteCommandType.command,
     "icon": Icons.navigate_before_rounded,
   },
   {
-    "text": "Next",
+    "label": "Next",
     'name': 'go_next_verse',
     "type": RemoteCommandType.command,
     "icon": Icons.navigate_next_rounded,
   },
   {
-    "text": "Switch to list view",
+    "label": "Switch to list view",
     'name': 'switch_display_mode',
     'target': 'pane',
     "type": RemoteCommandType.custom,
@@ -42,7 +42,7 @@ const commands = [
     "payload": {"display_mode": 0},
   },
   {
-    "text": "Switch to big view",
+    "label": "Switch to big view",
     "name": 'switch_display_mode',
     'target': 'pane',
     "type": RemoteCommandType.custom,
@@ -69,7 +69,7 @@ class CommandGrid extends StatelessWidget {
           iconAlignment: IconAlignment.end,
           icon: Icon(cmd["icon"] as IconData, size: 32),
           label: Text(
-            cmd["text"] as String,
+            cmd["label"] as String,
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 18),
           ),

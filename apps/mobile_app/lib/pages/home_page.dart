@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared/rc_protocol/rc_protocol.dart';
 
+import '../widgets/bible_selector_sheet.dart';
 import '../widgets/command_grid.dart';
 import '../injection_container.dart' as di;
 import '../services/client_ws.dart';
@@ -23,6 +24,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     _statusSub = di.sl<RemoteWsClient>().connectionStream.listen((status) {
       if (!status.connected) {
+        if (!mounted) return;
         Navigator.of(
           context,
         ).pushReplacementNamed('/disconnected', arguments: status.message);
@@ -37,9 +39,46 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
+  void _openBibleSelectorSheet() {
+    showModalBottomSheet(
+      useSafeArea: true,
+      showDragHandle: true,
+      enableDrag: true,
+      context: context,
+      builder: (context) => BibleSelectorSheet(),
+    );
+  }
+
+  void _sendQuery() {
+    final query = _controller.text.trim();
+    if (query.isEmpty) return;
+
+    di.sl<RemoteWsClient>().sendCommand(
+      RemoteCommand(
+        name: 'query',
+        target: 'search_bar',
+        type: RemoteCommandType.custom,
+        payload: {'query': query},
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        title: const Text('Open Scripture RC'),
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.book_rounded),
+            onPressed: _openBibleSelectorSheet,
+          ),
+        ],
+      ),
       body: Container(
         alignment: Alignment.center,
         padding: const EdgeInsets.only(
@@ -69,19 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 trailing: [
                   ElevatedButton(
-                    onPressed: () {
-                      if (_controller.text.isEmpty) return;
-                      di.sl<RemoteWsClient>().sendCommand(
-                        RemoteCommand(
-                          clientId: 'mobile-test',
-                          name: 'query',
-                          target: "search_bar",
-                          type: RemoteCommandType.custom,
-                          payload: {"query": _controller.text},
-                        ),
-                      );
-                      _controller.clear();
-                    },
+                    onPressed: _sendQuery,
                     child: const Icon(Icons.send_rounded, size: 24),
                   ),
                 ],

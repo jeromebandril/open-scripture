@@ -9,9 +9,10 @@ class SearchBarHandler implements RemoteCommandCustomHandler {
   const SearchBarHandler({required this.bloc});
 
   @override
-  void handle(RemoteCommand command) {
+  Map<String, dynamic>? handle(RemoteCommand command) {
     if (command.name == 'query') {
       bloc.add(BSearchbarParseIntent(command.payload?['query']));
     }
+    return null;
   }
 }

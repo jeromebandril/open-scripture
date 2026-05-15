@@ -6,7 +6,7 @@ import 'package:collection/collection.dart';
 import 'package:open_scripture/features/remote_controller/domain/entities/client_info.dart';
 import 'package:shared/rc_protocol/rc_protocol.dart';
 
-typedef OnMessage = void Function(RemoteCommand command, WebSocket client);
+typedef OnMessage = void Function(RemoteCommand command, ClientId? clientId);
 
 class RemoteControllerWSServer {
   static const int maxClients = 3;
@@ -52,18 +52,19 @@ class RemoteControllerWSServer {
         }
 
         final socket = await WebSocketTransformer.upgrade(request);
+        String? clientId;
 
         socket.listen(
           (data) {
             final msg = jsonDecode(data as String) as Map<String, dynamic>;
             if (msg['type'] == RemoteCommandType.handshake.name) {
-              final clientId = msg['client_id'] as String;
+              clientId = msg['client_id'] as String;
               final deviceName =
                   msg['device_name'] as String? ?? 'Unknown device';
               _clientsSockets[clientId]?.close();
-              _clientsSockets[clientId] = socket;
-              _clientsInfos[clientId] = ClientInfo(
-                id: clientId,
+              _clientsSockets[clientId!] = socket;
+              _clientsInfos[clientId!] = ClientInfo(
+                id: clientId!,
                 ipAdress: request.connectionInfo!.remoteAddress.address,
                 deviceName: deviceName,
               );
@@ -73,7 +74,7 @@ class RemoteControllerWSServer {
 
             try {
               final command = RemoteCommand.fromRaw(data);
-              _onMessage?.call(command, socket);
+              _onMessage?.call(command, clientId);
             } catch (e) {
               print('Invalid message: $e');
             }

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:open_scripture/features/remote_controller/domain/entities/client_info.dart';
 import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
@@ -26,7 +25,8 @@ class RemoteControllerRepoImpl implements RemoteControllerRepo {
   @override
   Stream<List<ClientInfo>> get clients => _wsServer.clientsStream;
 
-  void _handleMessage(RemoteCommand command, WebSocket client) {
+  void _handleMessage(RemoteCommand command, ClientId? clientId) {
+    if (clientId == null) return;
     if (command.type == RemoteCommandType.command) {
       // convert remote command to AppCommand here
       late final AppCommand appCommand;
@@ -53,7 +53,13 @@ class RemoteControllerRepoImpl implements RemoteControllerRepo {
     }
 
     // if custom command, delegate to proper handler
-    _router.route(command);
+    final response = _router.route(command);
+    if (response != null && command.requestId != null) {
+      _wsServer.sendToClient(clientId, {
+        'response': response,
+        'request_id': command.requestId,
+      });
+    }
   }
 
   @override

@@ -27,7 +27,7 @@ import 'package:open_scripture/features/bible_display/bible_pane/domain/reposito
 import 'package:open_scripture/features/bible_display/bible_selector/data/repositories/bible_selector_repository_impl.dart';
 import 'package:open_scripture/features/bible_display/bible_selector/domain/repositories/bible_selector_repository.dart';
 import 'package:open_scripture/features/bible_display/bible_selector/presentation/state/bible_selector_bloc.dart';
-import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/remote/multi_pane_manager_handler.dart';
+import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/remote/pane_manager_handler.dart';
 import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import 'package:open_scripture/features/bible_importer/data/repository/bible_importer_repo_impl.dart';
 import 'package:open_scripture/features/bible_importer/domain/repository/bible_importer_repo.dart';
@@ -175,7 +175,7 @@ void _initBibleManagerFeature() {
   );
   sl.registerFactory(() => DownloadManagerBloc(repo: sl(), notifier: sl()));
   sl.registerFactory(() => RemoteCatalogBloc(repository: sl()));
-  sl.registerFactory(
+  sl.registerLazySingleton<InstalledBiblesBloc>(
       () => InstalledBiblesBloc(repository: sl(), notifier: sl()));
 }
 
@@ -262,7 +262,10 @@ void _initRemoteControllerFeature() {
     () => RemoteCommandRouter(
       handlers: {
         'search_bar': SearchBarHandler(bloc: sl<BSearchbarBloc>()),
-        'pane': PaneManagerHandler(bloc: sl<MultiPaneManagerCubit>()),
+        'pane': PaneManagerHandler(
+          multiPaneManagerCubit: sl<MultiPaneManagerCubit>(),
+          installedBiblesBloc: sl<InstalledBiblesBloc>(),
+        ),
       },
     ),
   );

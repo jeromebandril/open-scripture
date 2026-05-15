@@ -3,5 +3,5 @@ import 'package:shared/rc_protocol/rc_protocol.dart';
 // Use this class for handling custom commands
 // that are not defined in [AppCommand]
 abstract class RemoteCommandCustomHandler {
-  void handle(RemoteCommand command);
+  Map<String, dynamic>? handle(RemoteCommand command);
 }

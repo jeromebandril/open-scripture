@@ -9,13 +9,13 @@ class RemoteCommandRouter {
 
   final Map<String, RemoteCommandCustomHandler> _handlers;
 
-  void route(RemoteCommand command) {
+  Map<String, dynamic>? route(RemoteCommand command) {
     //
     // Execute only custom commands
     // i.e. those not defined in the default AppCommand
     // with custom parameters
     //
-    if (command.type != RemoteCommandType.custom) return;
-    _handlers[command.target]?.handle(command);
+    if (command.type != RemoteCommandType.custom) return null;
+    return _handlers[command.target]?.handle(command);
   }
 }

@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:open_scripture_rc/services/device_identity_service.dart';
 import 'package:shared/rc_protocol/rc_protocol.dart';
+import 'package:uuid/uuid.dart';
 
 const int connectTimeoutSeconds = 5;
 const int pingFrequencySeconds = 10;
@@ -18,6 +19,8 @@ class ConnectionStatus {
 }
 
 class RemoteWsClient {
+  final Map<String, Completer<Map<String, dynamic>>> _pendingRequests = {};
+
   late final AppLifecycleListener _lifecycleListener;
 
   RemoteWsClient({DeviceIdentity? deviceIdentity})
@@ -107,10 +110,29 @@ class RemoteWsClient {
 
   void sendCommand(RemoteCommand command) {
     _socket?.add(
+      jsonEncode({...command.toJson(), 'client_id': _deviceIdentity?.id}),
+    );
+  }
+
+  Future<Map<String, dynamic>?> sendRequest(RemoteCommand command) {
+    final requestId = const Uuid().v4();
+    final completer = Completer<Map<String, dynamic>>();
+    _pendingRequests[requestId] = completer;
+
+    _socket?.add(
       jsonEncode({
-        ...jsonDecode(command.toRaw()),
+        ...command.toJson(),
         'client_id': _deviceIdentity?.id,
+        'request_id': requestId,
       }),
+    );
+
+    return completer.future.timeout(
+      const Duration(seconds: 5),
+      onTimeout: () {
+        _pendingRequests.remove(requestId);
+        return {};
+      },
     );
   }
 
@@ -124,9 +146,13 @@ class RemoteWsClient {
       (data) {
         _lastActivityAt = DateTime.now();
 
-        // try {
-        //   jsonDecode(data);
-        // } catch (_) {}
+        try {
+          final msg = jsonDecode(data as String) as Map<String, dynamic>;
+          final requestId = msg['request_id'] as String?;
+          if (requestId != null && _pendingRequests.containsKey(requestId)) {
+            _pendingRequests.remove(requestId)?.complete(msg);
+          }
+        } catch (_) {}
       },
       onDone: _handleDisconnect,
       onError: (_) => _handleDisconnect(),

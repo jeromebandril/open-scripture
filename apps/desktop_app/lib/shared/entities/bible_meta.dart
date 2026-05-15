@@ -96,6 +96,40 @@ class BibleMeta extends Equatable {
     };
   }
 
+  Map<String, String> toJson() {
+    return {
+      'id': '$id',
+      'usfx_id': '$extId',
+      'name': '$bibleName',
+      'local_name': '$bibleNameLocal',
+      'abbreviation': '$abbreviation',
+      'origin_source': '$originSource',
+      'original_format': '$originFormat',
+      'description': '$description',
+      'copyright': '$copyright',
+      'language_eng': '$langEngName',
+      'language_native': '$langNativeName',
+      'language_iso_code': '$langIsoCode',
+    };
+  }
+
+  BibleMeta fromJson(Map<String, dynamic> json) {
+    return BibleMeta(
+      id: int.tryParse(json['id'] as String? ?? ''),
+      extId: json['usfx_id'] as String,
+      bibleName: json['name'] as String,
+      bibleNameLocal: json['local_name'] as String,
+      abbreviation: json['abbreviation'] as String,
+      originSource: json['origin_source'] as String?,
+      originFormat: json['original_format'] as String?,
+      description: json['description'] as String?,
+      copyright: json['copyright'] as String?,
+      langEngName: json['language_eng'] as String?,
+      langNativeName: json['language_native'] as String?,
+      langIsoCode: json['language_iso_code'] as String?,
+    );
+  }
+
   @override
   String toString() {
     return '''
