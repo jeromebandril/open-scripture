@@ -1,4 +1,0 @@
-enum DisplayMode {
-  normal,
-  presentation,
-}
