@@ -15,6 +15,7 @@ class ActivePaneIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dot(
+      overrideColor: Theme.of(context).colorScheme.surfaceBright,
       overrideGlowingColor: Theme.of(context).colorScheme.primary,
       glowing: id ==
           context.select((MultiPaneManagerCubit p) => p.state.activePaneId),

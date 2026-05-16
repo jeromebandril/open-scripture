@@ -11,27 +11,18 @@ import 'package:open_scripture/features/bible_display/multi_pane_manager/present
 import '../../../../../shared/theme/tokens.dart';
 
 class _PaneInfoItem extends StatelessWidget {
-  const _PaneInfoItem({required this.child});
+  const _PaneInfoItem({required this.child, this.tooltip});
 
   final Widget child;
+  final String? tooltip;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8), child: child);
-  }
-}
-
-class _PaneInfoLabel extends StatelessWidget {
-  const _PaneInfoLabel(this.text);
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(text,
-        style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface.withAlpha(120),
-            fontWeight: FontWeight.w400));
+    return Tooltip(
+      message: tooltip ?? '',
+      child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8), child: child),
+    );
   }
 }
 
@@ -43,8 +34,6 @@ class PaneInfo extends StatefulWidget {
 }
 
 class _PaneInfoState extends State<PaneInfo> {
-  bool isExpanded = false;
-
   @override
   Widget build(BuildContext context) {
     final pl =
@@ -59,108 +48,94 @@ class _PaneInfoState extends State<PaneInfo> {
         color: Theme.of(context).colorScheme.onSurface,
         fontSize: 12,
       ),
-      child: Row(
-        spacing: 2,
-        children: [
-          InkWell(
-            hoverColor: Theme.of(context).colorScheme.primary,
-            splashFactory: NoSplash.splashFactory,
-            mouseCursor: SystemMouseCursors.click,
-            onTap: () => setState(() {
-              isExpanded = !isExpanded;
-            }),
-            child: Container(
-              height: 24,
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(AppRadius.xs),
-                  // topRight: Radius.circular(AppRadius.xs),
-                ),
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-              ),
-              child: Icon(
-                isExpanded
-                    ? Icons.keyboard_double_arrow_right_rounded
-                    : Icons.keyboard_double_arrow_left_rounded,
-                size: 16,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-            ),
+      child: Container(
+        height: 24,
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(AppRadius.xs),
+            topRight: Radius.circular(AppRadius.xs),
           ),
-          Container(
-            height: 24,
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(
-                // topLeft: Radius.circular(AppRadius.xs),
-                topRight: Radius.circular(AppRadius.xs),
-              ),
-              color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            ),
-            child: Row(
-              children: [
-                if (isExpanded) const _PaneInfoLabel('zoom:'),
-                BlocBuilder<TextScalerCubit, TextScalerState>(
-                  builder: (context, state) {
-                    return _PaneInfoItem(
-                      child: Row(
-                        spacing: 4,
-                        children: [
-                          Icon(
-                            Icons.zoom_in,
-                            size: 14,
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
-                          Text('${state.textScaleFactor.toStringAsFixed(2)}x'),
-                        ],
+          color: Theme.of(context)
+              .colorScheme
+              .surfaceContainerHighest
+              .withAlpha(240),
+        ),
+        child: Row(
+          children: [
+            BlocBuilder<TextScalerCubit, TextScalerState>(
+              builder: (context, state) {
+                return _PaneInfoItem(
+                  tooltip: 'Zoom level',
+                  child: Row(
+                    spacing: 4,
+                    children: [
+                      Icon(
+                        Icons.zoom_in,
+                        size: 14,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
-                    );
-                  },
-                ),
-                BlocBuilder<BiblePaneBloc, BiblePaneState>(
-                  builder: (context, state) {
-                    return Row(mainAxisSize: MainAxisSize.min, children: [
-                      if (isExpanded) const _PaneInfoLabel('display mode:'),
-                      _PaneInfoItem(child: Text(state.dMode.name)),
-                      if (isExpanded)
-                        const _PaneInfoLabel('verse count displayed:'),
-                      _PaneInfoItem(child: Text('${state.verseCount ?? '?'}')),
-                    ]);
-                  },
-                ),
-                if (enableStrongWords) ...[
-                  if (isExpanded) const _PaneInfoLabel('strong word selected:'),
-                  BlocBuilder<SelectedWordCubit, WordInfo?>(
-                    builder: (context, wordInfo) {
-                      return wordInfo == null
-                          ? const SizedBox()
-                          : _PaneInfoItem(
-                              child: Text(
-                                  '${wordInfo.text} ~ ${wordInfo.span.payload}'));
-                    },
+                      Text('${state.textScaleFactor.toStringAsFixed(2)}x'),
+                    ],
                   ),
-                ],
-                if (isExpanded) const _PaneInfoLabel('open bible:'),
-                BlocSelector<BiblePaneBloc, BiblePaneState, List<BibleMeta>>(
-                  selector: (state) =>
-                      state.content.asMap.values.map((v) => v.meta).toList(),
-                  builder: (context, metas) {
-                    late final String text;
-                    if (metas.isEmpty) text = '...';
-                    if (metas.length > 1) {
-                      text = metas.map((m) => m.abbreviation).join('  |  ');
-                    }
-                    if (metas.length == 1) text = metas.first.abbreviation;
-                    return _PaneInfoItem(child: Text(text));
-                  },
-                ),
-                if (pl > 1) ActivePaneIndicator(id: paneId)
-              ],
+                );
+              },
             ),
-          ),
-        ],
+            BlocBuilder<BiblePaneBloc, BiblePaneState>(
+              builder: (context, state) {
+                return _PaneInfoItem(
+                    tooltip: 'Verse count',
+                    child: Row(
+                      spacing: 2,
+                      children: [
+                        Icon(
+                          Icons.numbers_rounded,
+                          size: 14,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                        Text('${state.verseCount ?? '?'}'),
+                      ],
+                    ));
+              },
+            ),
+            if (enableStrongWords)
+              BlocBuilder<SelectedWordCubit, WordInfo?>(
+                builder: (context, wordInfo) {
+                  return wordInfo == null
+                      ? const SizedBox()
+                      : _PaneInfoItem(
+                          child: Text(
+                              '${wordInfo.text} ~ ${wordInfo.span.payload}'));
+                },
+              ),
+            BlocSelector<BiblePaneBloc, BiblePaneState, List<BibleMeta>>(
+              selector: (state) =>
+                  state.content.asMap.values.map((v) => v.meta).toList(),
+              builder: (context, metas) {
+                late final String text;
+                if (metas.isEmpty) text = '...';
+                if (metas.length > 1) {
+                  text = metas.map((m) => m.abbreviation).join('  |  ');
+                }
+                if (metas.length == 1) text = metas.first.abbreviation;
+                return _PaneInfoItem(
+                    tooltip: 'Open bibles',
+                    child: Row(
+                      spacing: 4,
+                      children: [
+                        Icon(
+                          Icons.book_rounded,
+                          size: 12,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                        Text(text),
+                      ],
+                    ));
+              },
+            ),
+            if (pl > 1) ActivePaneIndicator(id: paneId)
+          ],
+        ),
       ),
     );
   }
