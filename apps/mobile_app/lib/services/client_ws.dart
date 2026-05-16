@@ -194,7 +194,7 @@ class RemoteWsClient {
 
     socket.close();
 
-    if (socket.closeCode == 4003) {
+    if (socket.closeCode == 4003 || socket.closeCode == 1000) {
       _connectionController.add(
         ConnectionStatus(false, message: socket.closeReason),
       );
