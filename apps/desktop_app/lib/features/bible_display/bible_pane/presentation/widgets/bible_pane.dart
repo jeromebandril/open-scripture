@@ -48,91 +48,98 @@ class BiblePane extends StatelessWidget {
       // Styling for specific parts of the ui are injected
       // near the widget that need it.
       //
-      // (to avoid unnecessary painting background color is
-      // set on SplitscreenContainer, which is the parent widget)
-      //
-      child: DefaultTextStyle(
-        style: TextStyle(
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
           color: isCustom
-              ? paneTheme.textColor
-              : Theme.of(context).colorScheme.onSurface,
-          fontFamily: isCustom ? paneTheme.textFont : null,
-          height: kTextHeightNone,
+              ? Theme.of(context)
+                  .extension<BiblePaneGeneralTheme>()!
+                  .backgroundColor
+              : Theme.of(context).colorScheme.surface,
         ),
-        child: BlocBuilder<BiblePaneBloc, BiblePaneState>(
-          //
-          // Rebuild only when "macro" state changes.
-          // Actual rebuilds from content changes happen
-          // lower in the widget tree, which is in [BibleView].
-          //
-          buildWhen: (prev, curr) =>
-              prev.status != curr.status ||
-              prev.errorMessage != curr.errorMessage ||
-              prev.content.isContentEmpty != curr.content.isContentEmpty,
-          builder: (context, state) {
-            final Widget widget = switch (state.status) {
-              //
-              // INITIAL
-              //
-              BiblePaneStatus.selectBibles => BibleSelector(
-                  bloc: blocComponents.bibleSelectorCubit,
-                  onConfirm: (bibleIds) {
-                    blocComponents.bloc.add(BiblePaneOpen(bibleIds));
-                  },
-                ),
-              //
-              // LOADING SCREEN
-              //
-              BiblePaneStatus.loading =>
-                const Center(child: CircularProgressIndicator()),
-              //
-              // ERROR SCREEN
-              //
-              BiblePaneStatus.error =>
-                Center(child: Text(state.errorMessage ?? 'Unknown Error')),
-              //
-              // READY SCREEN
-              //
-              BiblePaneStatus.ready => state.content.isContentEmpty
-                  ? const InitalEmptyContentScreen()
-                  : TextScalerHost(
-                      textScalerCubit: blocComponents.textScalerCubit,
-                      initialiSize: 14,
-                      child: BlocSelector<BiblePaneBloc, BiblePaneState,
-                          DisplayMode>(
-                        selector: (s) => s.dMode,
-                        builder: (context, dMode) {
-                          return dMode == DisplayMode.presentation
-                              //
-                              // Presentation mode
-                              //
-                              ? BibleViewPresentation(uniqueId: uniqueId)
-                              //
-                              // List mode
-                              //
-                              : BibleViewList(uniqueId: uniqueId);
-                        },
-                      ),
-                    ),
-            };
-
-            return Stack(
-              children: [
-                Positioned.fill(child: widget),
+        child: DefaultTextStyle(
+          style: TextStyle(
+            color: isCustom
+                ? paneTheme.textColor
+                : Theme.of(context).colorScheme.onSurface,
+            fontFamily: isCustom ? paneTheme.textFont : null,
+            height: kTextHeightNone,
+          ),
+          child: BlocBuilder<BiblePaneBloc, BiblePaneState>(
+            //
+            // Rebuild only when "macro" state changes.
+            // Actual rebuilds from content changes happen
+            // lower in the widget tree, which is in [BibleView].
+            //
+            buildWhen: (prev, curr) =>
+                prev.status != curr.status ||
+                prev.errorMessage != curr.errorMessage ||
+                prev.content.isContentEmpty != curr.content.isContentEmpty,
+            builder: (context, state) {
+              final Widget widget = switch (state.status) {
                 //
-                // PANE STATUS INFO
+                // INITIAL
                 //
-                DefaultTextStyle(
-                  style: const TextStyle(inherit: false),
-                  child: Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: const PaneInfo(),
+                BiblePaneStatus.selectBibles => BibleSelector(
+                    bloc: blocComponents.bibleSelectorCubit,
+                    onConfirm: (bibleIds) {
+                      blocComponents.bloc.add(BiblePaneOpen(bibleIds));
+                    },
                   ),
-                ),
-              ],
-            );
-          },
+                //
+                // LOADING SCREEN
+                //
+                BiblePaneStatus.loading =>
+                  const Center(child: CircularProgressIndicator()),
+                //
+                // ERROR SCREEN
+                //
+                BiblePaneStatus.error =>
+                  Center(child: Text(state.errorMessage ?? 'Unknown Error')),
+                //
+                // READY SCREEN
+                //
+                BiblePaneStatus.ready => state.content.isContentEmpty
+                    ? const InitalEmptyContentScreen()
+                    : TextScalerHost(
+                        textScalerCubit: blocComponents.textScalerCubit,
+                        initialiSize: 14,
+                        child: BlocSelector<BiblePaneBloc, BiblePaneState,
+                            DisplayMode>(
+                          selector: (s) => s.dMode,
+                          builder: (context, dMode) {
+                            return dMode == DisplayMode.presentation
+                                //
+                                // Presentation mode
+                                //
+                                ? BibleViewPresentation(uniqueId: uniqueId)
+                                //
+                                // List mode
+                                //
+                                : BibleViewList(uniqueId: uniqueId);
+                          },
+                        ),
+                      ),
+              };
+
+              return Stack(
+                children: [
+                  Positioned.fill(child: widget),
+                  //
+                  // PANE STATUS INFO
+                  //
+                  DefaultTextStyle(
+                    style: const TextStyle(inherit: false),
+                    child: Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: const PaneInfo(),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );

@@ -10,6 +10,7 @@ import '../../../bible_pane/domain/repositories/bible_pane_repository.dart';
 import '../../../bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../../../bible_selector/presentation/state/bible_selector_bloc.dart';
 import '../models/multi_pane_data.dart';
+import '../pane_animation_constants.dart';
 
 part 'multi_pane_manager_state.dart';
 
@@ -78,16 +79,28 @@ class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
     ));
   }
 
-  void closePane(int paneId) {
+  void closePane(int paneId) async {
     if (state.panes.length == 1) return; // cannot close last pane
 
-    _blocs.remove(paneId)?.close();
+    // (animation - phase 1): signal the widget to play the exit animation.
+    emit(state.copyWith(removingPaneId: paneId));
 
-    final nextPanes = state.panes.where((p) => p.id != paneId).toList();
-    final nextActive =
-        state.activePaneId == paneId ? nextPanes.first.id : state.activePaneId;
+    // Wait for the animation to finish before tearing down.
+    await Future<void>.delayed(kPaneRemoveDuration);
 
-    emit(PaneManagerState(panes: nextPanes, activePaneId: nextActive));
+    // (animation - phase 2): close blocs and drop the pane from state.
+    await _blocs[paneId]?.close();
+    _blocs.remove(paneId);
+
+    final newPanes = state.panes.where((p) => p.id != paneId).toList();
+    final newActiveId =
+        state.activePaneId == paneId ? newPanes.first.id : state.activePaneId;
+
+    emit(PaneManagerState(
+      panes: newPanes,
+      activePaneId: newActiveId,
+      removingPaneId: null,
+    ));
   }
 
   int _wrapIndex(int index, int length) {
