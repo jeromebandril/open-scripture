@@ -5,9 +5,11 @@ import 'package:open_scripture/features/customizer/domain/entities/app_text_alig
 import 'package:open_scripture/features/customizer/presentation/widgets/bible_pane_preview.dart';
 
 import '../../../settings_window/presentation/widgets/setting.dart';
+import '../../../settings_window/presentation/widgets/setting_input_number.dart';
 import '../../../settings_window/presentation/widgets/setting_input_option.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../domain/entities/app_font_weight.dart';
+import '../../domain/entities/presentation_verse_number_style.dart';
 import '../state/customizer_cubit.dart';
 
 class BibleViewPresentationCustomizerScreen extends StatefulWidget {
@@ -58,6 +60,22 @@ class _BibleViewPresentationCustomizerScreenState
                               .toList(),
                         )),
                     Setting(
+                        label: 'Title alignment',
+                        description: 'Select title alignment',
+                        child: SettingInputOption<AppTextAlign>(
+                          value: context.select((CustomizerCubit c) =>
+                              c.state.presentTheme.titleTextAlign),
+                          onChanged: (ta) {
+                            cubit.updateTheme(
+                                presentTheme: (p) =>
+                                    p.copyWith(titleTextAlign: ta));
+                          },
+                          items: AppTextAlign.values
+                              .map((ta) => DropdownMenuItem<AppTextAlign>(
+                                  value: ta, child: Text(ta.wire)))
+                              .toList(),
+                        )),
+                    Setting(
                         label: 'Text alignment',
                         description: 'Select text alignment',
                         child: SettingInputOption<AppTextAlign>(
@@ -71,6 +89,40 @@ class _BibleViewPresentationCustomizerScreenState
                               .map((ta) => DropdownMenuItem<AppTextAlign>(
                                   value: ta, child: Text(ta.wire)))
                               .toList(),
+                        )),
+                    Setting(
+                        label: 'Verse number style',
+                        description: 'Select verse number style',
+                        child: SettingInputOption<PresentationVerseNumberStyle>(
+                          value: context.select((CustomizerCubit c) =>
+                              c.state.presentTheme.verseNumberStyle),
+                          onChanged: (vns) {
+                            cubit.updateTheme(
+                                presentTheme: (p) =>
+                                    p.copyWith(verseNumberStyle: vns));
+                          },
+                          items: PresentationVerseNumberStyle.values
+                              .map((vns) => DropdownMenuItem<
+                                      PresentationVerseNumberStyle>(
+                                  value: vns, child: Text(vns.wire)))
+                              .toList(),
+                        )),
+                    Setting(
+                        label: 'Parallel view distance',
+                        description:
+                            'Set distance between each parallel instance',
+                        child: SettingInputNumber(
+                          min: 0,
+                          max: 100,
+                          onSubmitted: (n) {
+                            cubit.updateTheme(
+                                presentTheme: (p) =>
+                                    p.copyWith(parallelDistance: n.toDouble()));
+                          },
+                          value: context.select(
+                            (CustomizerCubit c) =>
+                                (c.state.presentTheme.parallelDistance),
+                          ),
                         )),
                   ],
                 ),

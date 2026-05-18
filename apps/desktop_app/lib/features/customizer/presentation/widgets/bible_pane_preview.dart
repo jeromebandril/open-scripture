@@ -195,13 +195,14 @@ class _BibleViewPresentationPreview extends StatelessWidget {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
             ref.toString().replaceFirst(
                   ref.bookUsfxId,
                   resolver.resolveBook(ref.bookUsfxId)?.fullName ?? 'error',
                 ),
+            textAlign: presentTheme.titleAlignment,
             style: TextStyle(
               fontWeight: paneTheme.selectedRefFontWeight,
               fontFamily: paneTheme.referenceFont,
@@ -220,6 +221,7 @@ class _BibleViewPresentationPreview extends StatelessWidget {
                 onWordTap: (VerseSpan span, String slice) {},
               ));
             }
+
             // add verse number before each verse
             List<InlineSpan> build() {
               return [

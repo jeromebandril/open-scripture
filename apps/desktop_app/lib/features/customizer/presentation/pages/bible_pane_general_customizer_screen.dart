@@ -10,7 +10,6 @@ import 'package:open_scripture/features/settings_window/presentation/widgets/set
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_number.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_option.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
-import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_text.dart';
 import 'package:open_scripture/shared/fonts/app_font.dart';
 
 import '../../../../app/widgets/font_picker.dart';
