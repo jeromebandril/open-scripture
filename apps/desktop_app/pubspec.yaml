@@ -108,12 +108,20 @@ flutter:
   fonts:
     - family: General Sans
       fonts:
-        # - asset: assets/fonts/GeneralSans_Complete/Fonts/Variable/GeneralSans-Variable.ttf
-        - asset: assets/fonts/GeneralSans_Complete/Fonts/OTF/GeneralSans-Regular.otf
-        - asset: assets/fonts/GeneralSans_Complete/Fonts/OTF/GeneralSans-Medium.otf
-        - asset: assets/fonts/GeneralSans_Complete/Fonts/OTF/GeneralSans-Light.otf
-        - asset: assets/fonts/GeneralSans_Complete/Fonts/OTF/GeneralSans-Semibold.otf
-        - asset: assets/fonts/GeneralSans_Complete/Fonts/OTF/GeneralSans-Bold.otf
+        - asset: assets/fonts/GeneralSans_Complete/Fonts/Variable/GeneralSans-Variable.ttf
+        # - asset: assets/fonts/GeneralSans_Complete/Fonts/OTF/GeneralSans-Regular.otf
+        # - asset: assets/fonts/GeneralSans_Complete/Fonts/OTF/GeneralSans-Medium.otf
+        # - asset: assets/fonts/GeneralSans_Complete/Fonts/OTF/GeneralSans-Light.otf
+        # - asset: assets/fonts/GeneralSans_Complete/Fonts/OTF/GeneralSans-Semibold.otf
+        # - asset: assets/fonts/GeneralSans_Complete/Fonts/OTF/GeneralSans-Bold.otf
+    - family: Gelasio
+      fonts:
+        - asset: assets/fonts/Gelasio/Gelasio-Italic-VariableFont_wght.ttf
+        - asset: assets/fonts/Gelasio/Gelasio-VariableFont_wght.ttf
+    - family: Merriweather
+      fonts:
+        - asset: assets/fonts/Merriweather/Merriweather-Italic-VariableFont_opsz,wdth,wght.ttf
+        - asset: assets/fonts/Merriweather/Merriweather-VariableFont_opsz,wdth,wght.ttf
     - family: IBM Plex Mono
       fonts:
         - asset: assets/fonts/IBM_Plex_Mono/IBMPlexMono-Bold.ttf

@@ -4,7 +4,6 @@ import 'package:open_scripture/features/bible_display/bible_pane/domain/display_
 import 'package:open_scripture/features/customizer/domain/entities/app_font_weight.dart';
 import 'package:open_scripture/features/customizer/domain/entities/bible_pane_general_theme_settings.dart';
 import 'package:open_scripture/features/customizer/presentation/widgets/bible_pane_preview.dart';
-import 'package:open_scripture/features/font_loader/presentation/widgets/font_loader_selector.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_bool.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_color.dart';
@@ -12,7 +11,9 @@ import 'package:open_scripture/features/settings_window/presentation/widgets/set
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_option.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_text.dart';
+import 'package:open_scripture/shared/fonts/app_font.dart';
 
+import '../../../../app/widgets/font_picker.dart';
 import '../state/customizer_cubit.dart';
 
 class BiblePaneGeneralCustomizerScreen extends StatefulWidget {
@@ -158,19 +159,19 @@ class _BiblePaneGeneralCustomizerScreenState
                   title: 'Typography',
                   children: [
                     Setting(
-                        label: 'Reference Font',
-                        description: 'Set font for the reference text',
-                        child: SettingInputText(
-                          prefixIcon: Icons.text_fields_rounded,
-                          onSubmitted: (font) {
-                            cubit.updateTheme(
-                                paneTheme: (p) =>
-                                    p.copyWith(referenceFont: font));
-                          },
-                          value: context.select(
-                            (CustomizerCubit c) => c.state.pane.referenceFont,
-                          ),
-                        )),
+                      label: 'Reference Font',
+                      description: 'Set font for the reference text',
+                      child: FontPicker(
+                        selected: kAppFonts.firstWhere((f) =>
+                            f.family ==
+                            context.select(
+                              (CustomizerCubit c) => c.state.pane.referenceFont,
+                            )),
+                        onChanged: (appFont) => cubit.updateTheme(
+                            paneTheme: (p) =>
+                                p.copyWith(referenceFont: appFont.family)),
+                      ),
+                    ),
                     Setting(
                         label: 'Reference Font Weight',
                         description:
@@ -205,27 +206,19 @@ class _BiblePaneGeneralCustomizerScreenState
                               .toList(),
                         )),
                     Setting(
-                        label: 'Text Font',
-                        description: 'Set font for the verse text',
-                        child: Row(
-                          spacing: 4,
-                          children: [
-                            FontLoaderSelector(),
-                            Expanded(
-                              child: SettingInputText(
-                                prefixIcon: Icons.text_fields_rounded,
-                                onSubmitted: (font) {
-                                  cubit.updateTheme(
-                                      paneTheme: (p) =>
-                                          p.copyWith(textFont: font));
-                                },
-                                value: context.select(
-                                  (CustomizerCubit c) => c.state.pane.textFont,
-                                ),
-                              ),
-                            ),
-                          ],
-                        )),
+                      label: 'Text Font',
+                      description: 'Set font for the verse text',
+                      child: FontPicker(
+                        selected: kAppFonts.firstWhere((f) =>
+                            f.family ==
+                            context.select(
+                              (CustomizerCubit c) => c.state.pane.textFont,
+                            )),
+                        onChanged: (appFont) => cubit.updateTheme(
+                            paneTheme: (p) =>
+                                p.copyWith(textFont: appFont.family)),
+                      ),
+                    ),
                     Setting(
                         label: 'Text Font Weight',
                         description: 'Set font weight for verse text',
