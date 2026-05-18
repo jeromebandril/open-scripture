@@ -67,9 +67,7 @@ class _ShortcutsHostState extends State<ShortcutsHost> {
     if (command == null) return false;
 
     // Guard 3: don't steal plain keypresses from text fields
-    final isEditing =
-        FocusManager.instance.primaryFocus?.context?.widget is EditableText;
-    if (isEditing && !_isModifierCombo()) return false;
+    if (_isEditing() && !_isModifierCombo()) return false;
 
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     if (!mounted) return false;
@@ -127,6 +125,15 @@ class _ShortcutsHostState extends State<ShortcutsHost> {
         mod(a.meta, LogicalKeyboardKey.metaLeft, LogicalKeyboardKey.metaRight);
   }
 
+  bool _isEditing() {
+    final focus = FocusManager.instance.primaryFocus;
+    final context = focus?.context;
+
+    return context is Element &&
+        context.mounted &&
+        context.widget is EditableText;
+  }
+
   @override
   Widget build(BuildContext context) {
     return ShortcutFocusScope(
@@ -136,9 +143,7 @@ class _ShortcutsHostState extends State<ShortcutsHost> {
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: () {
-          final isEditing = FocusManager.instance.primaryFocus?.context?.widget
-              is EditableText;
-          if (!isEditing) _root.requestFocus();
+          if (!_isEditing()) _root.requestFocus();
         },
         child: Focus(
           focusNode: _root,
