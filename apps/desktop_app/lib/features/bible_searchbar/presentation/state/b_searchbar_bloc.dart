@@ -27,6 +27,7 @@ class BSearchbarBloc extends Bloc<BSearchbarEvent, BSearchbarState> {
     on<BSearchbarParseIntent>(_onParseIntent);
     on<_SaveInHistory>(_onSaveInHistory);
     on<DeleteHistoryItem>(_onDeleteHistoryItem);
+    on<BSearchbarUpdateRef>(_onUpdateRef);
 
     _sub = _navBus?.stream.listen((event) {
       if (event.source != IntentSource.searchbar) return;
@@ -123,6 +124,15 @@ class BSearchbarBloc extends Bloc<BSearchbarEvent, BSearchbarState> {
         SearchStringResult(results: current.results, history: updated),
       SearchError() => SearchError(message: current.message, history: updated),
     });
+  }
+
+  void _onUpdateRef(
+    BSearchbarUpdateRef event,
+    Emitter<BSearchbarState> emit,
+  ) {
+    final current = state;
+    if (current is! SearchReferenceResult) return;
+    emit(SearchReferenceResult(ref: event.ref, history: current.history));
   }
 
   @override

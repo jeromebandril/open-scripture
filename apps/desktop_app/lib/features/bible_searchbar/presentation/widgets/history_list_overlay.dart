@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_scripture/core/app_state/interface_visibility_cubit.dart';
 import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
 import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_view.dart';
 import 'package:open_scripture/shared/theme/tokens.dart';
@@ -162,7 +163,13 @@ class _HistoryItemState extends State<_HistoryItem> {
                               BiblePaneDisplayChapter(
                                   ref: widget.historyData.ref),
                             );
+                        context
+                            .read<BSearchbarBloc>()
+                            .add(BSearchbarUpdateRef(widget.historyData.ref));
                         widget.onPressed?.call();
+                        context
+                            .read<InterfaceVisibilityCubit>()
+                            .toggleHistory();
                       },
                       child: Row(
                         spacing: 12,
