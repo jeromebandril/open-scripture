@@ -15,7 +15,7 @@ import '../pane_animation_constants.dart';
 part 'multi_pane_manager_state.dart';
 
 const int _maxSplitsPaneX = 3;
-const double _minSizeFactor = 0.1;
+const double _minSizeFactor = 0.2;
 
 class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
   MultiPaneManagerCubit({

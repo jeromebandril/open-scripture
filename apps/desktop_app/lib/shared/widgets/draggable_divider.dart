@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 const _thumbWidth = 8.0;
@@ -7,9 +5,17 @@ const _thumbHeight = 32.0;
 const _dividerThickness = 1.0;
 
 class DraggableDivider extends StatefulWidget {
-  const DraggableDivider({super.key, this.onDrag, this.width = 1});
+  const DraggableDivider({
+    super.key,
+    this.onDrag,
+    this.width = 1,
+    this.onDragStart,
+    this.onDragEnd,
+  });
 
   final Function(double delta)? onDrag;
+  final Function()? onDragStart;
+  final Function()? onDragEnd;
   final double width;
 
   @override
@@ -34,7 +40,11 @@ class _DraggableDividerState extends State<DraggableDivider> {
           Positioned(
               top: thumbPositionY,
               left: widget.width / 2 - _thumbWidth / 2 + _dividerThickness / 2,
-              child: _Thumb(onDrag: widget.onDrag)),
+              child: _Thumb(
+                onDrag: widget.onDrag,
+                onDragStart: widget.onDragStart,
+                onDragEnd: widget.onDragEnd,
+              )),
         ],
       );
     });
@@ -42,9 +52,11 @@ class _DraggableDividerState extends State<DraggableDivider> {
 }
 
 class _Thumb extends StatefulWidget {
-  const _Thumb({this.onDrag});
+  const _Thumb({this.onDrag, this.onDragStart, this.onDragEnd});
 
   final Function(double delta)? onDrag;
+  final Function()? onDragStart;
+  final Function()? onDragEnd;
 
   @override
   State<_Thumb> createState() => _ThumbState();
@@ -53,18 +65,6 @@ class _Thumb extends StatefulWidget {
 class _ThumbState extends State<_Thumb> {
   bool isHovering = false;
   bool isDragging = false;
-  Timer? _debounce;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _debounce?.cancel();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +75,8 @@ class _ThumbState extends State<_Thumb> {
       onEnter: (evt) => setState(() => isHovering = true),
       onExit: (evt) => setState(() => isHovering = false),
       child: GestureDetector(
+        onHorizontalDragStart: _onHorizontalDragStart,
+        onHorizontalDragEnd: _onHorizontalDragEnd,
         onHorizontalDragUpdate: _onHorizontalDragUpdate,
         child: Container(
           alignment: Alignment.center,
@@ -95,15 +97,15 @@ class _ThumbState extends State<_Thumb> {
 
   void _onHorizontalDragUpdate(DragUpdateDetails details) {
     widget.onDrag?.call(details.delta.dx);
+  }
 
+  void _onHorizontalDragStart(DragStartDetails details) {
     setState(() => isDragging = true);
+    widget.onDragStart?.call();
+  }
 
-    _debounce?.cancel();
-    _debounce = Timer(
-      const Duration(milliseconds: 150),
-      () {
-        if (mounted) setState(() => isDragging = false);
-      },
-    );
+  void _onHorizontalDragEnd(DragEndDetails details) {
+    setState(() => isDragging = false);
+    widget.onDragEnd?.call();
   }
 }

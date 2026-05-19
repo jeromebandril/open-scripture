@@ -242,17 +242,16 @@ class _PaneListState extends State<_PaneList> with WindowListener {
           curve: kPaneAnimationCurve,
           child: DraggableDivider(
             width: gapPx,
+            onDragStart: () => setState(() => isResizing = true),
+            onDragEnd: () => setState(() => isResizing = false),
             onDrag: (delta) {
               accumulated += delta;
-
-              if (accumulated.abs() < 10) return;
-
+              if (accumulated.abs() < 2) return;
               context.read<MultiPaneManagerCubit>().resizeAdjacentPanes(
                     leftPaneId: panes[i].id,
                     rightPaneId: panes[i + 1].id,
                     deltaFactor: delta / widthMinusGap,
                   );
-
               accumulated = 0;
             },
           ),
