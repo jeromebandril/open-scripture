@@ -14,7 +14,8 @@ import '../pane_animation_constants.dart';
 
 part 'multi_pane_manager_state.dart';
 
-const _maxSplitsPaneX = 3;
+const int _maxSplitsPaneX = 3;
+const double _minSizeFactor = 0.1;
 
 class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
   MultiPaneManagerCubit({
@@ -65,7 +66,6 @@ class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
   }
 
   void splitNewPane() {
-    // enforce max panes etc. here
     if (state.panes.length >= _maxSplitsPaneX) return;
 
     final newId =
@@ -73,8 +73,17 @@ class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
             1;
     _ensureBloc(newId);
 
+    final newCount = state.panes.length + 1;
+    final evenFactor = 1.0 / newCount;
+
+    // redistribute all existing panes evenly, then append the new one.
+    final newPanes = [
+      ...state.panes.map((p) => p.copyWith(sizeFactor: evenFactor)),
+      PaneDescriptor(id: newId, sizeFactor: evenFactor),
+    ];
+
     emit(PaneManagerState(
-      panes: [...state.panes, PaneDescriptor(id: newId)],
+      panes: newPanes,
       activePaneId: newId,
     ));
   }
@@ -92,6 +101,23 @@ class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
     await _blocs[paneId]?.close();
     _blocs.remove(paneId);
 
+    // Redistribute size proportionally
+    final panes = [...state.panes];
+    final index = panes.indexWhere((p) => p.id == paneId);
+    if (index == -1) return;
+    //
+    final closedSizeFactor = panes[index].sizeFactor;
+    final remainingPanes = panes.where((p) => p.id != paneId).toList();
+    final totalSizeFactor =
+        remainingPanes.fold<double>(0, (sum, p) => sum + p.sizeFactor);
+    //
+    for (int i = 0; i < remainingPanes.length; i++) {
+      final p = remainingPanes[i];
+      final additionalSize = p.sizeFactor / totalSizeFactor * closedSizeFactor;
+      remainingPanes[i] = p.copyWith(sizeFactor: p.sizeFactor + additionalSize);
+    }
+
+    // Get new active Id
     final newPanes = state.panes.where((p) => p.id != paneId).toList();
     final indexOfClosed = state.panes.indexWhere((p) => p.id == paneId);
     final newActiveId = state.activePaneId == paneId
@@ -99,7 +125,7 @@ class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
         : state.activePaneId;
 
     emit(PaneManagerState(
-      panes: newPanes,
+      panes: remainingPanes,
       activePaneId: newActiveId,
       removingPaneId: null,
     ));
@@ -151,6 +177,28 @@ class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
         bibleSelectorCubit: sl<BibleSelectorBloc>(),
       ),
     );
+  }
+
+  void resizeAdjacentPanes({
+    required int leftPaneId,
+    required int rightPaneId,
+    required double deltaFactor,
+  }) {
+    final panes = [...state.panes];
+    final leftIndex = panes.indexWhere((p) => p.id == leftPaneId);
+    final rightIndex = panes.indexWhere((p) => p.id == rightPaneId);
+    if (leftIndex == -1 || rightIndex == -1) return;
+
+    final newLeftFactor = panes[leftIndex].sizeFactor + deltaFactor;
+    final newRightFactor = panes[rightIndex].sizeFactor - deltaFactor;
+
+    if (newLeftFactor < _minSizeFactor) return;
+    if (newRightFactor < _minSizeFactor) return;
+
+    panes[leftIndex] = panes[leftIndex].copyWith(sizeFactor: newLeftFactor);
+    panes[rightIndex] = panes[rightIndex].copyWith(sizeFactor: newRightFactor);
+
+    emit(state.copyWith(panes: panes));
   }
 
   @override

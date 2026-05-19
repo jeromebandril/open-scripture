@@ -10,14 +10,29 @@ class PaneDescriptor extends Equatable {
     required this.id,
     this.ref,
     this.bibleId,
+    this.sizeFactor = 1,
   });
 
   final int id;
   final BibleRef? ref;
   final int? bibleId;
+  final double sizeFactor;
+
+  PaneDescriptor copyWith({
+    BibleRef? ref,
+    int? bibleId,
+    double? sizeFactor,
+  }) {
+    return PaneDescriptor(
+      id: id,
+      ref: ref ?? this.ref,
+      bibleId: bibleId ?? this.bibleId,
+      sizeFactor: sizeFactor ?? this.sizeFactor,
+    );
+  }
 
   @override
-  List<Object?> get props => [id, ref, bibleId];
+  List<Object?> get props => [id, ref, bibleId, sizeFactor];
 }
 
 class PaneBlocComponents extends Equatable {

@@ -7,6 +7,7 @@ import 'package:window_manager/window_manager.dart';
 import '../../../../../core/app_state/fullscreen_cubit.dart';
 import '../../../../../core/app_state/interface_visibility_cubit.dart';
 import '../../../../../shared/theme/tokens.dart';
+import '../../../../../shared/widgets/draggable_divider.dart';
 import '../../../../customizer/presentation/state/customizer_cubit.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../../../bible_pane/presentation/widgets/bible_pane.dart';
@@ -118,72 +119,145 @@ class _PaneListState extends State<_PaneList> with WindowListener {
       selector: (state) => (state.panes, state.removingPaneId),
       builder: (context, data) {
         final (panes, removingPaneId) = data;
-        final cubit = context.read<MultiPaneManagerCubit>();
         final gapPx = gap.toDouble();
 
         return LayoutBuilder(builder: (context, constraints) {
           final totalWidth = constraints.maxWidth;
-          final count = panes.length;
-
-          // Each pane gets an equal share minus the gaps between them.
-          // (dividers are 1px wide, accounted for by the gap setting)
-          final paneWidth = count > 0
-              ? (totalWidth - gapPx * (count - 1)) / count
-              : totalWidth;
-
-          double leftFor(int index) => index * (paneWidth + gapPx);
+          // Strip all gap pixels so sizeFactor sums cleanly to 1.0
+          final widthMinusGaps = totalWidth - gapPx * (panes.length - 1);
 
           return Stack(
             clipBehavior: Clip.none,
             children: [
-              for (int i = 0; i < panes.length; i++) ...[
-                //
-                // Pane slot
-                //
-                AnimatedPositioned(
-                  key: ValueKey(panes[i].id),
-                  left: leftFor(i),
-                  top: 0,
-                  bottom: 0,
-                  width: paneWidth,
-                  duration: isResizing ? Duration.zero : kPaneSwapDuration,
-                  curve: kPaneAnimationCurve,
-                  child: _AnimatedPaneSlot(
-                    paneId: panes[i].id,
-                    isRemoving: panes[i].id == removingPaneId,
-                    child: Listener(
-                      behavior: HitTestBehavior.translucent,
-                      onPointerDown: (_) => cubit.setActive(panes[i].id),
-                      child: BiblePane(
-                        uniqueId: panes[i].id,
-                        blocComponents: cubit.paneBlocsFor(panes[i].id),
-                      ),
-                    ),
-                  ),
+              for (int i = 0; i < panes.length; i++)
+                ..._buildPane(
+                  i: i,
+                  panes,
+                  count: panes.length,
+                  gapPx: gapPx,
+                  widthMinusGap: widthMinusGaps,
+                  showDivider: showDivider,
+                  removingPaneId: removingPaneId,
                 ),
-                //
-                // Divider
-                //
-                if (i != panes.length - 1 && showDivider)
-                  AnimatedPositioned(
-                    key: ValueKey('divider_$i'),
-                    left: leftFor(i + 1) - gapPx / 2 - 0.5,
-                    top: 0,
-                    bottom: 0,
-                    width: 1,
-                    duration: isResizing ? Duration.zero : kPaneSwapDuration,
-                    curve: kPaneAnimationCurve,
-                    child: const VerticalDivider(
-                      width: 1,
-                      thickness: 3,
-                    ),
-                  ),
-              ],
+              // test: center reference
+              // Positioned(
+              //     top: 0,
+              //     left: 0,
+              //     right: 0,
+              //     child: Center(
+              //       child: Container(
+              //         height: 10,
+              //         width: 10,
+              //         color: Colors.red,
+              //       ),
+              //     ))
             ],
           );
         });
       },
     );
+  }
+
+  // Pixel width of pane [i], computed from its sizeFactor over the
+  // gap-free available width. sizeFactor values always sum to 1.0.
+  double _panePixelWidth(
+    List<PaneDescriptor> panes,
+    int i,
+    double widthMinusGaps,
+  ) =>
+      panes[i].sizeFactor * widthMinusGaps;
+
+  // Pixel offset from the Stack's left edge to pane [i].
+  // Accumulates widths of all preceding panes plus their trailing gaps.
+  double _paneLeft(
+    List<PaneDescriptor> panes,
+    int i,
+    double widthMinusGaps,
+    double gapPx,
+  ) {
+    double left = 0;
+    for (int j = 0; j < i; j++) {
+      left += _panePixelWidth(panes, j, widthMinusGaps) + gapPx;
+    }
+    return left;
+  }
+
+  List<Widget> _buildPane(
+    List<PaneDescriptor> panes, {
+    required int i,
+    required int count,
+    required double gapPx,
+    required double widthMinusGap,
+    required bool showDivider,
+    required int? removingPaneId,
+  }) {
+    final cubit = context.read<MultiPaneManagerCubit>();
+    final paneWidth = panes[i].sizeFactor * widthMinusGap;
+    final left = _paneLeft(panes, i, widthMinusGap, gapPx);
+    final isLast = i == panes.length - 1;
+
+    double accumulated = 0;
+
+    return [
+      //
+      // Pane slot
+      //
+      AnimatedPositioned(
+        key: ValueKey(panes[i].id),
+        left: left,
+        top: 0,
+        bottom: 0,
+        width: paneWidth,
+        duration: isResizing ? Duration.zero : kPaneSwapDuration,
+        curve: kPaneAnimationCurve,
+        child: _AnimatedPaneSlot(
+          paneId: panes[i].id,
+          isRemoving: panes[i].id == removingPaneId,
+          child: Listener(
+            behavior: HitTestBehavior.translucent,
+            onPointerDown: (_) => cubit.setActive(panes[i].id),
+            child: BiblePane(
+              uniqueId: panes[i].id,
+              blocComponents: cubit.paneBlocsFor(panes[i].id),
+            ),
+          ),
+        ),
+      ),
+      //
+      // Divider
+      //
+      // Sits in the gap between pane [i] and pane [i+1] and fills it
+      // entirely so the hit area matches the visible gap.
+      // Calls resizeAdjacentPanes so both neighbours adjust simultaneously,
+      // keeping all sizeFactor values summed to 1.0.
+      //
+      if (showDivider && !isLast)
+        AnimatedPositioned(
+          key: ValueKey('divider_$i'),
+          left: left + paneWidth,
+          top: 0,
+          bottom: 0,
+          width: gapPx,
+          duration: isResizing ? Duration.zero : kPaneSwapDuration,
+          curve: kPaneAnimationCurve,
+          child: DraggableDivider(
+            width: gapPx,
+            onDrag: (delta) {
+              accumulated += delta;
+
+              if (accumulated.abs() < 10) return;
+
+              context.read<MultiPaneManagerCubit>().resizeAdjacentPanes(
+                    leftPaneId: panes[i].id,
+                    rightPaneId: panes[i + 1].id,
+                    deltaFactor: delta / widthMinusGap,
+                  );
+
+              accumulated = 0;
+            },
+          ),
+        ),
+    ];
   }
 }
 

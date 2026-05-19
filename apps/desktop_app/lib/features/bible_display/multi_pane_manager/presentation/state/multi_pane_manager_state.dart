@@ -8,6 +8,8 @@ enum SplitStatus {
 
 const _unset = Object();
 
+typedef SizeFactor = double;
+
 class PaneManagerState extends Equatable {
   const PaneManagerState({
     this.status = SplitStatus.initial,
