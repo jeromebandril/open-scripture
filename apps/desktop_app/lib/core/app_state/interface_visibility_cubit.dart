@@ -71,11 +71,10 @@ class InterfaceVisibilityCubit extends Cubit<InterfaceVisibilityState> {
   }
 
   void hideAll() {
-    emit(const InterfaceVisibilityState(
+    emit(state.copyWith(
       isToolMenuVisible: false,
       isHistoryVisible: false,
       is3TapNavVisible: false,
-      isToolbarVisible: false,
     ));
   }
 }
