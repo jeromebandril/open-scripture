@@ -138,12 +138,42 @@ class _SearchBarWithErrorFeedbackState
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 100),
+      duration: const Duration(milliseconds: 500),
       vsync: this,
     );
-    _progress = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.linear),
-    );
+
+    _progress = TweenSequence<double>([
+      // Beep 1 — fade in
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 0.0, end: 1.0)
+            .chain(CurveTween(curve: Curves.easeInOut)),
+        weight: 13,
+      ),
+      // Beep 1 — hold
+      TweenSequenceItem(tween: ConstantTween<double>(1.0), weight: 15),
+      // Beep 1 — fade out
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 1.0, end: 0.0)
+            .chain(CurveTween(curve: Curves.easeInOut)),
+        weight: 13,
+      ),
+      // Gap between beeps
+      TweenSequenceItem(tween: ConstantTween<double>(0.0), weight: 11),
+      // Beep 2 — fade in
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 0.0, end: 1.0)
+            .chain(CurveTween(curve: Curves.easeInOut)),
+        weight: 13,
+      ),
+      // Beep 2 — hold
+      TweenSequenceItem(tween: ConstantTween<double>(1.0), weight: 15),
+      // Beep 2 — fade out (longer tail)
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 1.0, end: 0.0)
+            .chain(CurveTween(curve: Curves.easeInOut)),
+        weight: 20,
+      ),
+    ]).animate(_controller);
   }
 
   @override
@@ -151,11 +181,7 @@ class _SearchBarWithErrorFeedbackState
     super.didUpdateWidget(oldWidget);
     if (widget.errorTrigger != oldWidget.errorTrigger &&
         widget.errorTrigger > 0) {
-      _controller
-          .forward(from: 0.0)
-          .then((_) => _controller.reverse())
-          .then((_) => _controller.forward())
-          .then((_) => _controller.reverse());
+      _controller.forward(from: 0.0);
     }
   }
 
@@ -175,7 +201,7 @@ class _SearchBarWithErrorFeedbackState
       animation: _progress,
       builder: (context, child) {
         return CustomPaint(
-          foregroundPainter: _progress.value < 1.0
+          foregroundPainter: _progress.value <= 1.0
               ? _BorderProgressPainter(
                   progress: _progress.value,
                   color: errorColor,
