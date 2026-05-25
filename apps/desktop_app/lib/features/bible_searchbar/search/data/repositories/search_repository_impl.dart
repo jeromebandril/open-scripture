@@ -2,16 +2,16 @@ import 'package:fpdart/fpdart.dart';
 import 'package:open_scripture/core/infrastructure/bible_data/bible_local_datasource.dart';
 import 'package:open_scripture/shared/error/failure.dart';
 import 'package:open_scripture/shared/utils/bible_ref_parser/bible_ref_parser.dart';
-import 'package:open_scripture/features/bible_searchbar/domain/searchbar_repository.dart';
+import 'package:open_scripture/features/bible_searchbar/search/domain/repositories/search_repository.dart';
 
-import '../../../../shared/entities/bible_ref.dart';
-import '../../../../shared/utils/bible_ref_parser/bible_ref_parser_exceptions.dart';
+import '../../../../../shared/entities/bible_ref.dart';
+import '../../../../../shared/utils/bible_ref_parser/bible_ref_parser_exceptions.dart';
 
-class BSearchbarRepositoryImpl implements BSearchbarRepository {
+class SearchRepositoryImpl implements SearchRepository {
   final BibleReferenceParser parser;
   final BibleLocalDataSource localDataSource;
 
-  const BSearchbarRepositoryImpl({
+  const SearchRepositoryImpl({
     required this.parser,
     required this.localDataSource,
   });

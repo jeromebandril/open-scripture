@@ -15,13 +15,14 @@ import 'package:open_scripture/core/systems/installer/bible/source/packages/sour
 import 'package:open_scripture/core/systems/remote_controller/remote_command_router.dart';
 import 'package:open_scripture/core/systems/settings/settings_datasource.dart';
 import 'package:open_scripture/core/systems/settings/settings_repository.dart';
-import 'package:open_scripture/features/bible_searchbar/domain/search_intent_resolver.dart';
+import 'package:open_scripture/features/bible_searchbar/history/presentation/cubit/history_cubit.dart';
+import 'package:open_scripture/features/bible_searchbar/search/domain/search_intent_resolver.dart';
 import 'package:open_scripture/core/book_names.dart';
 import 'package:open_scripture/shared/utils/bible_ref_parser/bible_ref_parser.dart';
-import 'package:open_scripture/features/bible_searchbar/data/repositories/b_searchbar_repository_impl.dart';
-import 'package:open_scripture/features/bible_searchbar/domain/searchbar_repository.dart';
-import 'package:open_scripture/features/bible_searchbar/presentation/remote/b_searchbar_handler.dart';
-import 'package:open_scripture/features/bible_searchbar/presentation/state/b_searchbar_bloc.dart';
+import 'package:open_scripture/features/bible_searchbar/search/data/repositories/search_repository_impl.dart';
+import 'package:open_scripture/features/bible_searchbar/search/domain/repositories/search_repository.dart';
+import 'package:open_scripture/features/bible_searchbar/search/presentation/remote/search_handler.dart';
+import 'package:open_scripture/features/bible_searchbar/search/presentation/state/search_bloc.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/data/repositories/bible_pane_repository_impl.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/domain/repositories/bible_pane_repository.dart';
 import 'package:open_scripture/features/bible_display/bible_selector/data/repositories/bible_selector_repository_impl.dart';
@@ -184,17 +185,17 @@ void _initWindowStackFeature() {
 }
 
 void _initBSearchbarFeature() {
-  sl.registerLazySingleton<BSearchbarRepository>(
-    () => BSearchbarRepositoryImpl(
+  sl.registerLazySingleton<SearchRepository>(
+    () => SearchRepositoryImpl(
       parser: sl(),
       localDataSource: sl(),
     ),
   );
   sl.registerLazySingleton(() => SearchIntentResolver());
+  sl.registerLazySingleton<HistoryCubit>(() => HistoryCubit(navBus: sl()));
   // Singleton because it is never disposed and is referenced by remote handlers
-  sl.registerLazySingleton<BSearchbarBloc>(
-    () => BSearchbarBloc(
-        repo: sl(), navBus: sl(), resolver: sl(), searchIntentBus: sl()),
+  sl.registerLazySingleton<SearchBloc>(
+    () => SearchBloc(repo: sl(), resolver: sl(), searchIntentBus: sl()),
   );
 }
 
@@ -261,7 +262,7 @@ void _initRemoteControllerFeature() {
   sl.registerLazySingleton(
     () => RemoteCommandRouter(
       handlers: {
-        'search_bar': SearchBarHandler(bloc: sl<BSearchbarBloc>()),
+        'search_bar': SearchBarHandler(bloc: sl<SearchBloc>()),
         'pane': PaneManagerHandler(
           multiPaneManagerCubit: sl<MultiPaneManagerCubit>(),
           installedBiblesBloc: sl<InstalledBiblesBloc>(),
@@ -287,7 +288,7 @@ void _initShortcutFeature() {
   sl.registerLazySingleton(
     () => AppCommandDispatcher(
       paneManagerCubit: sl<MultiPaneManagerCubit>(),
-      searchbarBloc: sl<BSearchbarBloc>(),
+      searchbarBloc: sl<SearchBloc>(),
       fullscreenCubit: sl<FullscreenCubit>(),
       interfaceVisibilityCubit: sl<InterfaceVisibilityCubit>(),
     ),

@@ -2,7 +2,7 @@ import 'package:open_scripture/core/app_state/interface_visibility_cubit.dart';
 
 import '../../../../shared/entities/bible_ref.dart';
 import '../../../../core/app_state/fullscreen_cubit.dart';
-import '../../../bible_searchbar/presentation/state/b_searchbar_bloc.dart';
+import '../../../bible_searchbar/search/presentation/state/search_bloc.dart';
 import '../../../bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../../../bible_display/bible_pane/domain/display_mode.dart';
 import '../../../bible_display/bible_selector/presentation/state/bible_selector_bloc.dart';
@@ -22,7 +22,7 @@ class AppCommandDispatcher {
   });
 
   final MultiPaneManagerCubit paneManagerCubit;
-  final BSearchbarBloc searchbarBloc;
+  final SearchBloc searchbarBloc;
 
   final FullscreenCubit fullscreenCubit;
   final InterfaceVisibilityCubit interfaceVisibilityCubit;

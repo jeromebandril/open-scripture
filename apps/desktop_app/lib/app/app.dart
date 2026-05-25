@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_scripture/features/bible_searchbar/history/presentation/cubit/history_cubit.dart';
 import 'package:open_scripture/features/three_tap_navigator/presentation/state/three_tap_navigator_cubit.dart';
 
 import '../core/app_state/fullscreen_cubit.dart';
 import '../core/app_state/interface_visibility_cubit.dart';
 import '../features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../features/bible_installer_manager/presentation/state/installed_bibles/installed_bibles_bloc.dart';
-import '../features/bible_searchbar/presentation/state/b_searchbar_bloc.dart';
+import '../features/bible_searchbar/search/presentation/state/search_bloc.dart';
 import '../features/customizer/domain/entities/app_theme_settings.dart';
 import '../features/customizer/presentation/models/bible_pane_general_theme.dart';
 import '../features/customizer/presentation/models/bible_view_list_theme.dart';
@@ -80,7 +81,8 @@ class MyApp extends StatelessWidget {
                   BlocProvider(
                       create: (_) => di.sl<InstalledBiblesBloc>()
                         ..add(InstalledBiblesLoad())),
-                  BlocProvider(create: (_) => di.sl<BSearchbarBloc>()),
+                  BlocProvider(create: (_) => di.sl<SearchBloc>()),
+                  BlocProvider(create: (_) => di.sl<HistoryCubit>()),
                   BlocProvider(create: (_) => di.sl<RemoteControllerCubit>()),
                   BlocProvider(
                       create: (_) => di.sl<RemoteControllerSettingsCubit>()),

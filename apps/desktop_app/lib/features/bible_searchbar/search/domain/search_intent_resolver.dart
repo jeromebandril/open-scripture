@@ -1,4 +1,4 @@
-import 'search_intent.dart';
+import 'entities/search_intent.dart';
 
 class SearchIntentResolver {
   const SearchIntentResolver();

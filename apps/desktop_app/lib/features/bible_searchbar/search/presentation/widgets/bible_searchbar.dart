@@ -5,9 +5,9 @@ import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart
 import 'package:open_scripture/features/shortcuts/presentation/models/app_command_shortcuts.dart';
 import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_view.dart';
 
-import '../../../../core/app_state/fullscreen_cubit.dart';
-import '../../../shortcuts/presentation/widgets/shortcuts_focus_scope.dart';
-import '../state/b_searchbar_bloc.dart';
+import '../../../../../core/app_state/fullscreen_cubit.dart';
+import '../../../../shortcuts/presentation/widgets/shortcuts_focus_scope.dart';
+import '../state/search_bloc.dart';
 
 class BSearchbar extends StatelessWidget {
   const BSearchbar({
@@ -27,7 +27,7 @@ class BSearchbar extends StatelessWidget {
   Widget build(BuildContext context) {
     final focusNode = ShortcutFocusScope.of(context).search;
 
-    return BlocConsumer<BSearchbarBloc, BSearchbarState>(
+    return BlocConsumer<SearchBloc, SearchState>(
       listenWhen: (prev, curr) =>
           prev.errorCount != curr.errorCount && curr.errorCount > 0,
       listener: (context, state) {
@@ -102,8 +102,8 @@ class BSearchbar extends StatelessWidget {
               //   return;
               // }
 
-              BlocProvider.of<BSearchbarBloc>(context)
-                  .add(BSearchbarParseIntent(input));
+              BlocProvider.of<SearchBloc>(context)
+                  .add(SearchParseIntent(input));
             },
           ),
         );

@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/core/app_state/interface_visibility_cubit.dart';
+import 'package:open_scripture/features/bible_searchbar/history/presentation/cubit/history_cubit.dart';
 import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
 import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_view.dart';
 import 'package:open_scripture/shared/theme/tokens.dart';
 
-import '../../../../core/book_names.dart';
-import '../../../../injection_container.dart';
-import '../../../bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
-import '../../../bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
-import '../../../shortcuts/presentation/models/app_command_shortcuts.dart';
-import '../state/b_searchbar_bloc.dart';
-import '../models/history_data.dart';
+import '../../../../../core/book_names.dart';
+import '../../../../../injection_container.dart';
+import '../../../../bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
+import '../../../../bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
+import '../../../../shortcuts/presentation/models/app_command_shortcuts.dart';
+import '../../../search/presentation/state/search_bloc.dart';
+import '../../domain/entities/history_entry.dart';
 
 enum HistoryListSize {
   small,
@@ -36,7 +37,7 @@ class HistoryListOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BSearchbarBloc, BSearchbarState>(
+    return BlocBuilder<HistoryCubit, HistoryState>(
       buildWhen: (prev, curr) => prev.history != curr.history,
       builder: (context, state) {
         return BlockSemantics(
@@ -107,7 +108,7 @@ class _HistoryItem extends StatefulWidget {
   });
 
   final int index;
-  final HistoryData historyData;
+  final HistoryEntry historyData;
   final Function()? onPressed;
   final HistoryListSize size;
 
@@ -164,8 +165,8 @@ class _HistoryItemState extends State<_HistoryItem> {
                                   ref: widget.historyData.ref),
                             );
                         context
-                            .read<BSearchbarBloc>()
-                            .add(BSearchbarUpdateRef(widget.historyData.ref));
+                            .read<SearchBloc>()
+                            .add(SearchUpdateRef(widget.historyData.ref));
                         widget.onPressed?.call();
                         context
                             .read<InterfaceVisibilityCubit>()
@@ -194,9 +195,8 @@ class _HistoryItemState extends State<_HistoryItem> {
                     IconButton(
                       visualDensity: VisualDensity.compact,
                       icon: Icon(Icons.remove_circle, size: 18),
-                      onPressed: () => context
-                          .read<BSearchbarBloc>()
-                          .add(DeleteHistoryItem(widget.index)),
+                      onPressed: () =>
+                          context.read<HistoryCubit>().remove(widget.index),
                     )
                 ],
               ),
