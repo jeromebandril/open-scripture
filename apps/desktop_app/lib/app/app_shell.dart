@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/app/widgets/toolbar.dart';
 
-import '../core/app_state/fullscreen_cubit.dart';
-import '../core/app_state/interface_visibility_cubit.dart';
+import 'state/fullscreen_cubit.dart';
+import 'state/interface_visibility_cubit.dart';
 import '../features/bible_display/multi_pane_manager/presentation/widgets/multi_pane_container.dart';
 import '../features/bible_searchbar/search/presentation/widgets/bible_searchbar.dart';
 import '../features/bible_searchbar/history/presentation/widgets/history_list_overlay.dart';

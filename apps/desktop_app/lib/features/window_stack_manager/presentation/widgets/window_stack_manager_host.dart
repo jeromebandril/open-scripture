@@ -9,7 +9,7 @@ import 'package:open_scripture/shared/constants.dart';
 import 'package:open_scripture/app/widgets/titlebar.dart';
 import 'package:open_scripture/shared/theme/tokens.dart';
 
-import '../../../../core/app_state/fullscreen_cubit.dart';
+import '../../../../app/state/fullscreen_cubit.dart';
 import '../../../obs_live_overlay/presentation/state/obs_overlay_settinsg/obs_live_overlay_settings_cubit.dart';
 import '../../../remote_controller/presentation/state/remote_controller_settings/remote_controller_settings_cubit.dart';
 

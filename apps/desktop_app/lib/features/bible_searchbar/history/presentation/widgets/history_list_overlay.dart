@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/core/app_state/interface_visibility_cubit.dart';
+import 'package:open_scripture/app/state/interface_visibility_cubit.dart';
 import 'package:open_scripture/features/bible_searchbar/history/presentation/cubit/history_cubit.dart';
 import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
 import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_view.dart';

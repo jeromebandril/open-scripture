@@ -1,7 +1,7 @@
-import 'package:open_scripture/core/app_state/interface_visibility_cubit.dart';
+import 'package:open_scripture/app/state/interface_visibility_cubit.dart';
 
 import '../../../../shared/entities/bible_ref.dart';
-import '../../../../core/app_state/fullscreen_cubit.dart';
+import '../../../../app/state/fullscreen_cubit.dart';
 import '../../../bible_searchbar/search/presentation/state/search_bloc.dart';
 import '../../../bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../../../bible_display/bible_pane/domain/display_mode.dart';

@@ -1,6 +1,6 @@
 import 'package:get_it/get_it.dart';
-import 'package:open_scripture/core/app_state/fullscreen_cubit.dart';
-import 'package:open_scripture/core/app_state/interface_visibility_cubit.dart';
+import 'package:open_scripture/app/state/fullscreen_cubit.dart';
+import 'package:open_scripture/app/state/interface_visibility_cubit.dart';
 import 'package:open_scripture/core/infrastructure/bible_data/bible_local_datasource.dart';
 import 'package:open_scripture/core/infrastructure/bible_data/bible_remote_datasource.dart';
 import 'package:open_scripture/core/infrastructure/database/database.dart';

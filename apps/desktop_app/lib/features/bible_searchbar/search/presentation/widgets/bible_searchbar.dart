@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/core/app_state/interface_visibility_cubit.dart';
+import 'package:open_scripture/app/state/interface_visibility_cubit.dart';
 import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
 import 'package:open_scripture/features/shortcuts/presentation/models/app_command_shortcuts.dart';
 import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_view.dart';
 
-import '../../../../../core/app_state/fullscreen_cubit.dart';
+import '../../../../../app/state/fullscreen_cubit.dart';
 import '../../../../shortcuts/presentation/widgets/shortcuts_focus_scope.dart';
 import '../state/search_bloc.dart';
 
