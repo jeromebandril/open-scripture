@@ -1,14 +1,14 @@
 import 'package:open_scripture/shared/data/models/segment_key.dart';
 import 'package:open_scripture/shared/data/models/verse_span_model.dart';
 import 'package:open_scripture/shared/entities/bible_ref.dart';
-import 'package:open_scripture/core/systems/installer/bible/import/bible_importer.dart';
+import 'package:open_scripture/core/engines/bible_compiler/import/bible_importer.dart';
 import 'package:xml/xml.dart';
 import 'package:xml/xpath.dart';
 
-import '../../../../../../shared/entities/bible_meta.dart';
-import '../../../../../../shared/entities/book.dart';
-import '../../../../../../shared/entities/verse_segment.dart';
-import '../../../../../../shared/entities/verse_span.dart';
+import '../../../../../shared/entities/bible_meta.dart';
+import '../../../../../shared/entities/book.dart';
+import '../../../../../shared/entities/verse_segment.dart';
+import '../../../../../shared/entities/verse_span.dart';
 import '../../domain/models/canonical_bible_package.dart';
 import '../../domain/models/payload_issue.dart';
 import '../../source/packages/source_package.dart';

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
-import 'package:open_scripture/core/systems/installer/bible/domain/models/artifact.dart';
+import 'package:open_scripture/core/engines/bible_compiler/domain/models/artifact.dart';
 import 'package:open_scripture/shared/data/models/verse_span_model.dart';
 import 'package:open_scripture/shared/entities/book.dart';
 import 'package:open_scripture/core/infrastructure/database/installation_queries.dart';
@@ -12,8 +12,8 @@ import '../../../shared/entities/bible_meta.dart';
 import '../database/database.dart' as driftdb;
 import '../../../shared/error/exception.dart';
 import '../../../shared/entities/verse_segment.dart';
-import '../../systems/installer/bible/import/importer_registry.dart';
-import '../../systems/installer/bible/source/packages/source_package_factory.dart';
+import '../../engines/bible_compiler/import/importer_registry.dart';
+import '../../engines/bible_compiler/source/packages/source_package_factory.dart';
 
 abstract class BibleLocalDataSource {
   /// Installs a previously downloaded bible archive into the local store.

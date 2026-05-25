@@ -1,10 +1,10 @@
-import 'package:open_scripture/features/bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
-import 'package:open_scripture/features/bible_display/bible_pane/domain/display_mode.dart';
+import 'package:open_scripture/features/bible_reader/presentation/state/read_bloc.dart';
+import 'package:open_scripture/features/bible_reader/presentation/models/reader_view_mode.dart';
 import 'package:open_scripture/features/bible_installer_manager/presentation/state/installed_bibles/installed_bibles_bloc.dart';
 import 'package:shared/rc_protocol/rc_protocol.dart';
 
 import '../../../../../core/engines/remote_controller/models/remote_command_custom_handler.dart';
-import '../state/multi_pane_manager_cubit.dart';
+import '../state/split_layout_cubit.dart';
 
 class PaneManagerHandler implements RemoteCommandCustomHandler {
   final MultiPaneManagerCubit multiPaneManagerCubit;
@@ -32,8 +32,8 @@ class PaneManagerHandler implements RemoteCommandCustomHandler {
     if (command.name == 'switch_display_mode') {
       late final BiblePaneEvent evt;
       evt = command.payload?['display_mode'] == 0
-          ? BiblePaneSetDisplayMode(DisplayMode.list)
-          : BiblePaneSetDisplayMode(DisplayMode.presentation);
+          ? BiblePaneSetDisplayMode(ReaderViewMode.list)
+          : BiblePaneSetDisplayMode(ReaderViewMode.presentation);
 
       multiPaneManagerCubit.activePane().bloc.add(evt);
     }

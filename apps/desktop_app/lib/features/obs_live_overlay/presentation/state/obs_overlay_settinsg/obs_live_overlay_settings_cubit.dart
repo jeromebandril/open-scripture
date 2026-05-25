@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/core/systems/settings/settings_repository.dart';
+import 'package:open_scripture/core/engines/settings/settings_repository.dart';
 
 import '../../../domain/entities/overlay_settings.dart';
 

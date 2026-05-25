@@ -4,7 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:open_scripture/features/remote_controller/domain/entities/remote_controller_settings.dart';
 
-import '../../../../../core/systems/settings/settings_repository.dart';
+import '../../../../../core/engines/settings/settings_repository.dart';
 
 part 'remote_controller_settings_state.dart';
 

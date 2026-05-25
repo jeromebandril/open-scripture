@@ -4,13 +4,13 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parser;
-import 'package:open_scripture/core/systems/installer/bible/domain/models/artifact.dart';
+import 'package:open_scripture/core/engines/bible_compiler/domain/models/artifact.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../../../features/bible_installer_manager/domain/entities/bible_download_progress.dart';
-import '../../../shared/constants.dart' as constants;
-import '../../../shared/entities/bible_meta.dart';
-import '../../../shared/error/exception.dart';
+import '../../domain/entities/bible_download_progress.dart';
+import '../../../../shared/constants.dart' as constants;
+import '../../../../shared/entities/bible_meta.dart';
+import '../../../../shared/error/exception.dart';
 
 abstract class BibleRemoteDataSource {
   /// Downloads a bible archive from the remote catalog and persists it

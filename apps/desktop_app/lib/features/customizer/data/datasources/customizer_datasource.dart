@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:open_scripture/core/systems/settings/settings_datasource.dart';
+import 'package:open_scripture/core/engines/settings/settings_datasource.dart';
 import 'package:open_scripture/features/customizer/presentation/state/customizer_cubit.dart';
 
 class CustomizerDatasourceImpl extends SettingsDatasource<CustomizerState> {

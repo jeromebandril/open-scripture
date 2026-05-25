@@ -1,11 +1,11 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:open_scripture/core/systems/installer/bible/domain/models/artifact.dart';
+import 'package:open_scripture/core/engines/bible_compiler/domain/models/artifact.dart';
 import 'dart:async';
 import 'dart:math';
 
 import '../../../../shared/entities/bible_meta.dart';
 import '../../../../shared/error/failure.dart';
-import '../../../../core/infrastructure/bible_data/bible_remote_datasource.dart';
+import '../datasource/bible_remote_datasource.dart';
 import '../../domain/entities/bible_download_progress.dart';
 import '../../domain/repositories/bible_manager_repository.dart';
 import '../../../../core/infrastructure/bible_data/bible_local_datasource.dart';

@@ -1,6 +1,6 @@
 import 'package:shared/rc_protocol/rc_protocol.dart';
 
-import '../../../../../core/systems/remote_controller/models/remote_command_custom_handler.dart';
+import '../../../../../core/engines/remote_controller/models/remote_command_custom_handler.dart';
 import '../state/search_bloc.dart';
 
 class SearchBarHandler implements RemoteCommandCustomHandler {

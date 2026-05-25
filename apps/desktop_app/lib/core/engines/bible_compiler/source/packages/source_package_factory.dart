@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:open_scripture/core/systems/installer/bible/source/packages/zip_source_package.dart';
+import 'package:open_scripture/core/engines/bible_compiler/source/packages/zip_source_package.dart';
 
 import 'bytes_source_package.dart';
 import 'file_source_package.dart';

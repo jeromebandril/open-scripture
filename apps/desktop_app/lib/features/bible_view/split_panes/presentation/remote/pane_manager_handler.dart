@@ -1,10 +1,10 @@
-import 'package:open_scripture/features/bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
-import 'package:open_scripture/features/bible_display/bible_pane/domain/display_mode.dart';
+import 'package:open_scripture/features/bible_display/read_verses/presentation/state/bible_pane_bloc.dart';
+import 'package:open_scripture/features/bible_display/read_verses/domain/display_mode.dart';
 import 'package:open_scripture/features/bible_installer_manager/presentation/state/installed_bibles/installed_bibles_bloc.dart';
 import 'package:shared/rc_protocol/rc_protocol.dart';
 
 import '../../../../../core/engines/remote_controller/models/remote_command_custom_handler.dart';
-import '../state/multi_pane_manager_cubit.dart';
+import '../../../../bible_display/split_panes/presentation/state/multi_pane_manager_cubit.dart';
 
 class PaneManagerHandler implements RemoteCommandCustomHandler {
   final MultiPaneManagerCubit multiPaneManagerCubit;

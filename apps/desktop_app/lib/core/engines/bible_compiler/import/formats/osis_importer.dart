@@ -1,7 +1,7 @@
 import 'package:open_scripture/shared/data/models/verse_span_model.dart';
-import 'package:open_scripture/core/systems/installer/bible/import/bible_importer.dart';
-import 'package:open_scripture/core/systems/installer/bible/domain/models/canonical_bible_package.dart';
-import 'package:open_scripture/core/systems/installer/bible/domain/models/payload_issue.dart';
+import 'package:open_scripture/core/engines/bible_compiler/import/bible_importer.dart';
+import 'package:open_scripture/core/engines/bible_compiler/domain/models/canonical_bible_package.dart';
+import 'package:open_scripture/core/engines/bible_compiler/domain/models/payload_issue.dart';
 
 import 'package:xml/xml.dart';
 import 'package:xml/xpath.dart';
@@ -13,8 +13,8 @@ import 'package:open_scripture/shared/entities/verse_span.dart';
 import 'package:open_scripture/shared/entities/bible_ref.dart';
 import 'package:open_scripture/shared/data/models/segment_key.dart';
 
-import '../../../../../../injection_container.dart';
-import '../../../../../book_names.dart';
+import '../../../../../injection_container.dart';
+import '../../../../book_names.dart';
 import '../../source/packages/source_package.dart';
 
 // good luck future me, parsing bible is a pain
