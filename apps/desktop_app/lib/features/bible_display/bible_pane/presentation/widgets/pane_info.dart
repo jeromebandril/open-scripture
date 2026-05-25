@@ -45,7 +45,7 @@ class _PaneInfoState extends State<PaneInfo> {
 
     return DefaultTextStyle(
       style: TextStyle(
-        color: Theme.of(context).colorScheme.onSurface,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
         fontSize: 12,
       ),
       child: Container(
