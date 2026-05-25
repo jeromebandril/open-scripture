@@ -51,7 +51,7 @@ class BSearchbar extends StatelessWidget {
               child: Icon(
                 Icons.search,
                 size: 18,
-                color: Theme.of(context).colorScheme.onSurface,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
             hintText: 'Search reference',
