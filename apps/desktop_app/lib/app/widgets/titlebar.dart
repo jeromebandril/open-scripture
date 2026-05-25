@@ -24,29 +24,9 @@ class Titlebar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // for gradient
-    final surface = Theme.of(context).colorScheme.surface;
-    final mid = Theme.of(context).colorScheme.surfaceContainerHighest;
-    final width = MediaQuery.of(context).size.width;
-    final band = 400 / width;
-    final half = band / 2;
-
     return Container(
       height: kWindowsTitleBarHeight,
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        gradient: LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          colors: [surface, mid, mid, surface],
-          stops: [
-            0.0,
-            (0.5 - half).clamp(0.0, 1.0),
-            (0.5 + half).clamp(0.0, 1.0),
-            1.0,
-          ],
-        ),
-      ),
+      color: Theme.of(context).colorScheme.surfaceContainerHighest,
       child: Stack(
         children: [
           //
