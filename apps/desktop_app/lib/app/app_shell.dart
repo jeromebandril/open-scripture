@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_scripture/app/widgets/dynamic_searchbar.dart';
 import 'package:open_scripture/app/widgets/toolbar.dart';
+import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
+import 'package:open_scripture/features/shortcuts/presentation/models/app_command_shortcuts.dart';
+import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_view.dart';
+import 'package:open_scripture/shared/widgets/simple_floating_notification.dart';
 
 import 'state/fullscreen_cubit.dart';
 import 'state/interface_visibility_cubit.dart';
@@ -11,7 +16,6 @@ import '../features/bible_searchbar/history/presentation/widgets/show_history_bu
 import '../features/customizer/presentation/state/customizer_cubit.dart';
 import '../features/remote_controller/presentation/widgets/remote_controller_indicator.dart';
 import '../features/obs_live_overlay/presentation/widgets/obs_live_overlay_indicator.dart';
-import '../features/shortcuts/presentation/widgets/shortcuts_focus_scope.dart';
 import '../features/shortcuts/presentation/widgets/shortcuts_host.dart';
 import '../features/three_tap_navigator/presentation/widgets/three_tap_navigator.dart';
 import '../features/window_stack_manager/presentation/widgets/window_stack_manager_host.dart';
@@ -34,117 +38,118 @@ class AppShell extends StatelessWidget {
     // ShortcusHost must be at the very root after the MaterialApp
     return ShortcutsHost(
       child: Scaffold(
-        // backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
         //
-        // Manages the stacks of windosw that may occur when opening
-        // popups or secondary pages in the form of a window (e.g. settings menu)
+        // Bloc Listner to show a small floating notification
+        // when user go full screen mode
         //
-        body: WindowStackManagerHost(
-          child: Column(
-            children: [
-              //
-              // Titlebar with controls
-              //
-              if (showMenuBar || !isFullscreen)
-                Titlebar(
-                  showMenuBar: true,
-                  showLogo: !isFullscreen,
-                  showButtons: !isFullscreen,
-                  leftItems: [
-                    const ToolbarButton(),
-                  ],
-                  centerItems: [
-                    const _AppHeader(),
-                  ],
-                  rightItems: [
-                    const ObsLiveOverlayIndicator(),
-                    const RemoteControllerIndicator(),
-                  ],
-                ),
-              //
-              // Main screen/workspace
-              //
-              Expanded(
-                child: Stack(
+        body: BlocListener<FullscreenCubit, bool>(
+          listenWhen: (prev, curr) => !prev && curr,
+          listener: (context, state) {
+            context.showFloatingNotification(
+              Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  spacing: 8,
                   children: [
-                    //
-                    // Bible Panes
-                    //
-                    Positioned.fill(child: const MultiPaneContainer()),
-                    //
-                    // Dynamic/fullscreen only interfaces
-                    //
-                    if (enableDynamicInterface) ...[
+                    Text('Press'),
+                    ShortcutView(
+                        fillColor: Theme.of(context).colorScheme.onSurface,
+                        textColor: Theme.of(context).colorScheme.surface,
+                        borderColor:
+                            Theme.of(context).colorScheme.surface.withAlpha(80),
+                        activator:
+                            appCommandShortcuts[AppCommand.toggleFullscreen]),
+                    Text('to exit fullscreen'),
+                  ]),
+            );
+          },
+          // backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+          //
+          // Manages the stacks of windosw that may occur when opening
+          // popups or secondary pages in the form of a window (e.g. settings menu)
+          //
+          child: WindowStackManagerHost(
+            child: Column(
+              children: [
+                //
+                // Titlebar with controls
+                //
+                if (showMenuBar || !isFullscreen)
+                  Titlebar(
+                    showMenuBar: true,
+                    showLogo: !isFullscreen,
+                    showButtons: !isFullscreen,
+                    leftItems: [
+                      const ToolbarButton(),
+                    ],
+                    centerItems: [
+                      const _AppHeader(),
+                    ],
+                    rightItems: [
+                      const ObsLiveOverlayIndicator(),
+                      const RemoteControllerIndicator(),
+                    ],
+                  ),
+                //
+                // Main screen/workspace
+                //
+                Expanded(
+                  child: Stack(
+                    children: [
                       //
-                      // Dynamic searchbar
+                      // Bible Panes
                       //
-                      Positioned(
-                        top: screen.height * 0.08,
-                        right: 0,
-                        left: 0,
-                        child: Builder(builder: (context) {
-                          final focusNode = ShortcutFocusScope.of(context)
-                              .search
-                            ..skipTraversal = true;
-                          return ListenableBuilder(
-                            listenable: focusNode,
-                            builder: (_, __) {
-                              return Visibility(
-                                maintainFocusability: true,
-                                maintainState: true,
-                                visible: focusNode.hasFocus,
-                                child: Align(
-                                  alignment: Alignment.topCenter,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(6),
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context).dividerColor,
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                    child: const BSearchbar(
-                                        height: 48, width: 300),
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        }),
-                      ),
+                      Positioned.fill(child: const MultiPaneContainer()),
                       //
-                      // Dynamic History viewer
+                      // Dynamic/fullscreen only interfaces
                       //
-                      if (enableDynamicInterface)
+                      if (enableDynamicInterface) ...[
+                        //
+                        // Dynamic searchbar
+                        //
                         Positioned(
-                          top: screen.height * 0.08 + 100,
+                          top: screen.height * 0.08,
                           right: 0,
                           left: 0,
-                          child: Visibility(
-                            maintainFocusability: true,
-                            maintainState: true,
-                            visible: showHistory,
-                            child: Align(
-                              alignment: Alignment.topCenter,
-                              child: Container(
-                                padding: const EdgeInsets.all(6),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).dividerColor,
-                                  borderRadius:
-                                      BorderRadius.circular(AppRadius.lg),
-                                ),
-                                child: HistoryListOverlay(
-                                  constraints: screen,
-                                  width: 350,
-                                  size: HistoryListSize.big,
+                          child: const DynamicSearchbar(),
+                        ),
+                        //
+                        // Dynamic History viewer
+                        //
+                        if (enableDynamicInterface)
+                          Positioned(
+                            top: screen.height * 0.08 + 100,
+                            right: 0,
+                            left: 0,
+                            child: Visibility(
+                              maintainFocusability: true,
+                              maintainState: true,
+                              visible: showHistory,
+                              child: Align(
+                                alignment: Alignment.topCenter,
+                                child: Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context).dividerColor,
+                                    borderRadius:
+                                        BorderRadius.circular(AppRadius.lg),
+                                  ),
+                                  child: HistoryListOverlay(
+                                    constraints: screen,
+                                    width: 350,
+                                    size: HistoryListSize.big,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
