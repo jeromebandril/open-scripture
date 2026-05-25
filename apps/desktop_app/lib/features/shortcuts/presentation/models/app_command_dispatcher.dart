@@ -70,8 +70,8 @@ class AppCommandDispatcher {
     },
     AppCommand.switchDisplayMode: () => _cycleDisplayMode(),
     AppCommand.displayChapterOfSelected: () => _displayChapterOfSelected(),
-    AppCommand.addParallelPane: () => paneManagerCubit.splitNewPane(),
-    AppCommand.closeCurrentPane: () =>
+    AppCommand.addPane: () => paneManagerCubit.splitNewPane(),
+    AppCommand.removePane: () =>
         paneManagerCubit.closePane(paneManagerCubit.state.activePaneId),
     AppCommand.zoomIn: () =>
         paneManagerCubit.activePane().textScalerCubit.zoomIn(),

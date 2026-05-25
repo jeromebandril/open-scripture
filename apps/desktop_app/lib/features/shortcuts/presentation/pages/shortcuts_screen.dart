@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
 import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_view.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
@@ -14,23 +13,31 @@ class ShortcutsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(42, 0, 42, 42),
-      child: SettingSection.builder(
-        title: 'Shortcuts',
-
-        itemCount: AppCommand.values.length -
-            2, // TODO: make a better way to implement private global shortcuts
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: appCommandGroups.length,
         itemBuilder: (_, i) {
-          final info = appCommandInfo[AppCommand.values[i]]!;
-          return Setting(
-              label: info.label,
-              description: info.description,
-              settingWidth: 250,
-              child: Container(
-                alignment: Alignment.centerLeft,
-                height: 40,
-                child: ShortcutView(
-                    activator: appCommandShortcuts[AppCommand.values[i]]),
-              ));
+          final group = appCommandGroups[i];
+          final commands = group.commands.entries.toList();
+
+          return SettingSection.builder(
+            title: group.scope.displayName,
+            itemCount: commands.length,
+            itemBuilder: (context, i) {
+              final info = commands[i];
+
+              return Setting(
+                  label: info.value.label,
+                  description: info.value.description,
+                  settingWidth: 250,
+                  child: Container(
+                    alignment: Alignment.centerLeft,
+                    height: 24,
+                    child:
+                        ShortcutView(activator: appCommandShortcuts[info.key]),
+                  ));
+            },
+          );
         },
       ),
     );

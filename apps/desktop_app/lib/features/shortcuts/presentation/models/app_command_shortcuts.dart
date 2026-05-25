@@ -83,11 +83,11 @@ const Map<AppCommand, SingleActivator> appCommandShortcuts = {
     LogicalKeyboardKey.enter,
     control: true,
   ),
-  AppCommand.addParallelPane: SingleActivator(
+  AppCommand.addPane: SingleActivator(
     LogicalKeyboardKey.backslash,
     control: true,
   ),
-  AppCommand.closeCurrentPane: SingleActivator(
+  AppCommand.removePane: SingleActivator(
     LogicalKeyboardKey.keyW,
     control: true,
   ),

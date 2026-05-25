@@ -181,7 +181,7 @@ class ToolbarMenu extends StatelessWidget {
                       icon: const Icon(Icons.fit_screen_rounded)),
                 ),
                 _Control(
-                  command: AppCommand.addParallelPane,
+                  command: AppCommand.addPane,
                   child: TextButton.icon(
                     onPressed: () =>
                         context.read<MultiPaneManagerCubit>().splitNewPane(),
@@ -190,7 +190,7 @@ class ToolbarMenu extends StatelessWidget {
                   ),
                 ),
                 _Control(
-                  command: AppCommand.closeCurrentPane,
+                  command: AppCommand.removePane,
                   child: TextButton.icon(
                     onPressed: () => context
                         .read<MultiPaneManagerCubit>()
