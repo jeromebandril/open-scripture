@@ -5,7 +5,6 @@ import 'package:open_scripture/core/infrastructure/book_resolver/book_resolver.d
 import 'package:open_scripture/features/bible_searchbar/history/presentation/cubit/history_cubit.dart';
 import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
 import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_view.dart';
-import 'package:open_scripture/shared/theme/tokens.dart';
 
 import '../../../../../injection_container.dart';
 import '../../../../bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
@@ -19,18 +18,16 @@ enum HistoryListSize {
   big,
 }
 
-class HistoryListOverlay extends StatelessWidget {
-  const HistoryListOverlay({
+// Wrapper for history
+
+class HistoryList extends StatelessWidget {
+  const HistoryList({
     super.key,
-    required this.constraints,
     this.onSelected,
-    this.width,
     this.size = HistoryListSize.small,
     this.focusNode,
   });
 
-  final Size constraints;
-  final double? width;
   final Function()? onSelected;
   final HistoryListSize size;
   final FocusNode? focusNode;
@@ -40,58 +37,41 @@ class HistoryListOverlay extends StatelessWidget {
     return BlocBuilder<HistoryCubit, HistoryState>(
       buildWhen: (prev, curr) => prev.history != curr.history,
       builder: (context, state) {
-        return BlockSemantics(
-          blocking: true,
-          child: Focus(
-            focusNode: focusNode,
-            child: Container(
-              width: width ?? 250,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(AppRadius.md),
+        return Focus(
+          focusNode: focusNode,
+          child: Column(
+            spacing: 8,
+            children: [
+              Expanded(
+                child: state.history.isEmpty
+                    ? Center(child: Text('Empty history'))
+                    : ListView.builder(
+                        itemCount: state.history.length,
+                        itemBuilder: (_, i) {
+                          return _HistoryItem(
+                            index: i,
+                            historyData: state.history[i],
+                            onPressed: () => onSelected?.call(),
+                            size: size,
+                          );
+                        }),
               ),
-              child: ConstrainedBox(
-                constraints: BoxConstraints.loose(Size(
-                  constraints.width,
-                  constraints.height * .2,
-                )),
-                child: Column(
+              SizedBox(
+                height: 25,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   spacing: 8,
                   children: [
-                    Expanded(
-                      child: state.history.isEmpty
-                          ? Center(child: Text('Empty history'))
-                          : ListView.builder(
-                              itemCount: state.history.length,
-                              itemBuilder: (_, i) {
-                                return _HistoryItem(
-                                  index: i,
-                                  historyData: state.history[i],
-                                  onPressed: () => onSelected?.call(),
-                                  size: size,
-                                );
-                              }),
-                    ),
-                    SizedBox(
-                      height: 25,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        spacing: 8,
-                        children: [
-                          Text('Press'),
-                          ShortcutView(
-                              activator: appCommandShortcuts[
-                                  AppCommand.toggleHistory]),
-                          Text('to close'),
-                        ],
-                      ),
-                    )
+                    Text('Press'),
+                    ShortcutView(
+                        activator:
+                            appCommandShortcuts[AppCommand.toggleHistory]),
+                    Text('to close'),
                   ],
                 ),
-              ),
-            ),
+              )
+            ],
           ),
         );
       },

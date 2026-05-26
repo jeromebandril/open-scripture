@@ -7,6 +7,7 @@ import 'package:open_scripture/app/state/fullscreen_cubit.dart';
 import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
 import 'package:open_scripture/features/shortcuts/presentation/models/app_command_shortcuts.dart';
 import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_view.dart';
+import 'package:open_scripture/shared/widgets/dropdown_menu_anchor.dart';
 
 import '../state/interface_visibility_cubit.dart';
 import '../../shared/theme/tokens.dart';
@@ -20,71 +21,40 @@ class ToolbarButton extends StatefulWidget {
 }
 
 class _ToolbarButtonState extends State<ToolbarButton> {
-  final _controller = OverlayPortalController();
-  final LayerLink _layerLink = LayerLink();
-  final double _menuGap = 5;
+  late final ValueNotifier<bool> _menuVisible;
 
-  Widget _buildOverlay(BuildContext context, OverlayChildLayoutInfo info) {
-    final screen = MediaQuery.of(context).size;
-    final top = info.childSize.height + _menuGap;
-    return Stack(
-      children: [
-        Positioned.fill(
-          child: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () {
-              context
-                  .read<InterfaceVisibilityCubit>()
-                  .setVisibility(toolmenu: false);
-            },
-          ),
-        ),
-        CompositedTransformFollower(
-          link: _layerLink,
-          offset: Offset(0, top), // place under anchor
-          child: BlockSemantics(
-            blocking: true,
-            child: Container(
-              width: 400,
-              padding: const EdgeInsets.all(AppSpacing.sm),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(AppRadius.md),
-              ),
-              child: ConstrainedBox(
-                  constraints: BoxConstraints.loose(Size(
-                    screen.width,
-                    screen.height * .4,
-                  )),
-                  //
-                  // Here the custom widget
-                  //
-                  child: const ToolbarMenu()),
-            ),
-          ),
-        ),
-      ],
-    );
+  @override
+  void initState() {
+    super.initState();
+    final v = context.read<InterfaceVisibilityCubit>().state.isToolMenuVisible;
+    _menuVisible = ValueNotifier(v);
+  }
+
+  @override
+  void dispose() {
+    _menuVisible.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<InterfaceVisibilityCubit, InterfaceVisibilityState>(
-      listener: (context, state) {
-        state.isToolMenuVisible ? _controller.show() : _controller.hide();
-      },
-      child: CompositedTransformTarget(
-        link: _layerLink,
-        child: OverlayPortal.overlayChildLayoutBuilder(
-          controller: _controller,
-          overlayChildBuilder: _buildOverlay,
-          child: CustomIconButton(
-            Icons.handyman_rounded,
-            tooltipMessage: 'Toolbar',
-            onTap: () =>
-                context.read<InterfaceVisibilityCubit>().toggleToolMenu(),
-          ),
+      listener: (context, state) =>
+          _menuVisible.value = state.isToolMenuVisible,
+      child: DropdownMenuAnchor(
+        menuVisible: _menuVisible,
+        menuWidth: 400, // absolute width
+        menuHeightFraction: 0.4, // responsive height
+        onDismiss: () => context
+            .read<InterfaceVisibilityCubit>()
+            .setVisibility(toolmenu: false),
+        trigger: CustomIconButton(
+          Icons.handyman_rounded,
+          tooltipMessage: 'Toolbar',
+          onTap: () =>
+              context.read<InterfaceVisibilityCubit>().toggleToolMenu(),
         ),
+        menuContent: const ToolbarMenu(),
       ),
     );
   }

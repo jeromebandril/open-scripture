@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_scripture/app/widgets/app_reveal_animation.dart';
 
 import '../../../../shared/theme/tokens.dart';
 import '../../../window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
@@ -40,56 +41,58 @@ class _SettingsWindowState extends State<SettingsWindow> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      constraints: const BoxConstraints(
-        maxWidth: 1270,
-        maxHeight: 800,
-      ),
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(AppRadius.lg)),
-        color: Theme.of(context).colorScheme.surface,
-      ),
-      child: Row(
-        children: [
-          SidebarNavigator(
-            width: 100,
-            selectedRoute: _selectedRoute,
-            onSelectRoute: _goTo,
-          ),
-          Expanded(
-            flex: 4,
-            child: _SettingRouteLayout(
-              onClose: () => context
-                  .read<WindowStackManagerBloc>()
-                  .add(WindowStackManagerClose()),
-              child: Navigator(
-                key: _navKey,
-                initialRoute: routeFor(widget.initialRoute),
-                onGenerateRoute: (routeSettings) {
-                  final name = routeSettings.name ?? '/';
-                  final setting = settingsRoutes[name];
+    return AppRevealAnimation(
+      child: Container(
+        constraints: const BoxConstraints(
+          maxWidth: 1270,
+          maxHeight: 800,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(AppRadius.lg)),
+          color: Theme.of(context).colorScheme.surface,
+        ),
+        child: Row(
+          children: [
+            SidebarNavigator(
+              width: 100,
+              selectedRoute: _selectedRoute,
+              onSelectRoute: _goTo,
+            ),
+            Expanded(
+              flex: 4,
+              child: _SettingRouteLayout(
+                onClose: () => context
+                    .read<WindowStackManagerBloc>()
+                    .add(WindowStackManagerClose()),
+                child: Navigator(
+                  key: _navKey,
+                  initialRoute: routeFor(widget.initialRoute),
+                  onGenerateRoute: (routeSettings) {
+                    final name = routeSettings.name ?? '/';
+                    final setting = settingsRoutes[name];
 
-                  if (setting?.builder == null) {
-                    return MaterialPageRoute(
-                      builder: (_) => const Center(child: Text('Uknown')),
+                    if (setting?.builder == null) {
+                      return MaterialPageRoute(
+                        builder: (_) => const Center(child: Text('Uknown')),
+                        settings: routeSettings,
+                      );
+                    }
+
+                    return PageRouteBuilder(
+                      transitionDuration: Duration.zero,
+                      reverseTransitionDuration: Duration.zero,
                       settings: routeSettings,
+                      pageBuilder: (BuildContext context,
+                              Animation<double> animation,
+                              Animation<double> secondaryAnimation) =>
+                          setting!.builder(context),
                     );
-                  }
-
-                  return PageRouteBuilder(
-                    transitionDuration: Duration.zero,
-                    reverseTransitionDuration: Duration.zero,
-                    settings: routeSettings,
-                    pageBuilder: (BuildContext context,
-                            Animation<double> animation,
-                            Animation<double> secondaryAnimation) =>
-                        setting!.builder(context),
-                  );
-                },
+                  },
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -5,8 +5,8 @@ import 'package:open_scripture/core/infrastructure/book_resolver/book_resolver.d
 import 'package:open_scripture/features/bible_searchbar/search/presentation/state/search_bloc.dart';
 import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import 'package:open_scripture/features/three_tap_navigator/presentation/state/three_tap_navigator_cubit.dart';
-import 'package:open_scripture/shared/theme/tokens.dart';
 import 'package:open_scripture/shared/widgets/custom_icon_button.dart';
+import 'package:open_scripture/shared/widgets/dropdown_menu_anchor.dart';
 
 import '../../../../shared/entities/book.dart';
 import '../../../../injection_container.dart';
@@ -20,55 +20,23 @@ class ThreeTapNavigatorTrigger extends StatefulWidget {
 }
 
 class _ThreeTapNavigatorTriggerState extends State<ThreeTapNavigatorTrigger> {
-  final _controller = OverlayPortalController();
-  final LayerLink _layerLink = LayerLink();
-  final double _menuGap = 5;
+  late final ValueNotifier<bool> _menuVisible;
 
-  Widget _buildOverlay(BuildContext context, OverlayChildLayoutInfo info) {
-    final screen = MediaQuery.of(context).size;
-    final top = info.childSize.height + _menuGap;
-    return Stack(
-      children: [
-        Positioned.fill(
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {
-              context
-                  .read<InterfaceVisibilityCubit>()
-                  .setVisibility(threeTapNav: false);
-            },
-          ),
-        ),
-        CompositedTransformFollower(
-          link: _layerLink,
-          offset: Offset(0, top), // place under anchor
-          child: BlockSemantics(
-            blocking: true,
-            child: Container(
-              width: 500,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(AppRadius.md),
-              ),
-              child: ConstrainedBox(
-                  constraints: BoxConstraints.loose(Size(
-                    screen.width,
-                    screen.height * .3,
-                  )),
-                  //
-                  // Here the custom widget
-                  //
-                  child: _ThreeTapNavigatorOverlay(
-                    onEnd: () => context
-                        .read<InterfaceVisibilityCubit>()
-                        .setVisibility(threeTapNav: false),
-                  )),
-            ),
-          ),
-        ),
-      ],
-    );
+  @override
+  void initState() {
+    super.initState();
+    final v = context.read<InterfaceVisibilityCubit>().state.isToolMenuVisible;
+    _menuVisible = ValueNotifier(v);
+  }
+
+  @override
+  void dispose() {
+    _menuVisible.dispose();
+    super.dispose();
+  }
+
+  void _dismiss() {
+    context.read<InterfaceVisibilityCubit>().setVisibility(threeTapNav: false);
   }
 
   @override
@@ -76,19 +44,18 @@ class _ThreeTapNavigatorTriggerState extends State<ThreeTapNavigatorTrigger> {
     return BlocListener<InterfaceVisibilityCubit, InterfaceVisibilityState>(
       listenWhen: (prev, curr) =>
           prev.is3TapNavVisible != curr.is3TapNavVisible,
-      listener: (context, state) {
-        state.is3TapNavVisible ? _controller.show() : _controller.hide();
-      },
-      child: CompositedTransformTarget(
-        link: _layerLink,
-        child: OverlayPortal.overlayChildLayoutBuilder(
-          controller: _controller,
-          overlayChildBuilder: _buildOverlay,
-          child: CustomIconButton(
-            Icons.navigation_rounded,
-            onTap: () =>
-                context.read<InterfaceVisibilityCubit>().toggle3TapNav(),
-          ),
+      listener: (context, state) => _menuVisible.value = state.is3TapNavVisible,
+      child: DropdownMenuAnchor(
+        trigger: CustomIconButton(
+          Icons.navigation_rounded,
+          onTap: () => context.read<InterfaceVisibilityCubit>().toggle3TapNav(),
+        ),
+        onDismiss: _dismiss,
+        menuWidth: 500,
+        menuHeightFraction: .3,
+        menuVisible: _menuVisible,
+        menuContent: _ThreeTapNavigatorOverlay(
+          onEnd: _dismiss,
         ),
       ),
     );

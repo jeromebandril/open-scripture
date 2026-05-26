@@ -5,13 +5,14 @@ import 'package:open_scripture/app/widgets/toolbar.dart';
 import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
 import 'package:open_scripture/features/shortcuts/presentation/models/app_command_shortcuts.dart';
 import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_view.dart';
+import 'package:open_scripture/shared/widgets/floating_panel.dart';
 import 'package:open_scripture/shared/widgets/simple_floating_notification.dart';
 
 import 'state/fullscreen_cubit.dart';
 import 'state/interface_visibility_cubit.dart';
 import '../features/bible_display/multi_pane_manager/presentation/widgets/multi_pane_container.dart';
 import '../features/bible_searchbar/search/presentation/widgets/bible_searchbar.dart';
-import '../features/bible_searchbar/history/presentation/widgets/history_list_overlay.dart';
+import '../features/bible_searchbar/history/presentation/widgets/history_list.dart';
 import '../features/bible_searchbar/history/presentation/widgets/show_history_button.dart';
 import '../features/customizer/presentation/state/customizer_cubit.dart';
 import '../features/remote_controller/presentation/widgets/remote_controller_indicator.dart';
@@ -108,42 +109,20 @@ class AppShell extends StatelessWidget {
                         //
                         // Dynamic searchbar
                         //
-                        Positioned(
-                          top: screen.height * 0.08,
-                          right: 0,
-                          left: 0,
-                          child: const DynamicSearchbar(),
-                        ),
+                        const DynamicSearchbar(),
                         //
                         // Dynamic History viewer
                         //
                         if (enableDynamicInterface)
-                          Positioned(
+                          FloatingPanel(
+                            visible: showHistory,
                             top: screen.height * 0.08 + 100,
-                            right: 0,
                             left: 0,
-                            child: Visibility(
-                              maintainFocusability: true,
-                              maintainState: true,
-                              visible: showHistory,
-                              child: Align(
-                                alignment: Alignment.topCenter,
-                                child: Container(
-                                  padding: const EdgeInsets.all(6),
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context).dividerColor,
-                                    borderRadius:
-                                        BorderRadius.circular(AppRadius.lg),
-                                  ),
-                                  child: HistoryListOverlay(
-                                    constraints: screen,
-                                    width: 350,
-                                    size: HistoryListSize.big,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
+                            right: 0,
+                            width: 350,
+                            height: 250,
+                            child: const HistoryList(size: HistoryListSize.big),
+                          )
                       ],
                     ],
                   ),
