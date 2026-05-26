@@ -181,7 +181,7 @@ class _DropdownMenuAnchorState extends State<DropdownMenuAnchor> {
           child: BlockSemantics(
             blocking: true,
             child: AppRevealAnimation(
-              // ← single source-of-truth animation
+              origin: _animOriginFromAlignment(),
               child: ConstrainedBox(
                 constraints: BoxConstraints(
                   maxWidth: resolvedWidth,
@@ -199,6 +199,21 @@ class _DropdownMenuAnchorState extends State<DropdownMenuAnchor> {
         ),
       ],
     );
+  }
+
+  AnimationOrigin _animOriginFromAlignment() {
+    switch (widget.menuAlignment) {
+      case Alignment.topLeft:
+        return AnimationOrigin.topLeft;
+      case Alignment.topRight:
+        return AnimationOrigin.topRight;
+      case Alignment.topCenter:
+        return AnimationOrigin.topCenter;
+      case Alignment.center:
+        return AnimationOrigin.center;
+      default:
+        return AnimationOrigin.topCenter;
+    }
   }
 
   @override
