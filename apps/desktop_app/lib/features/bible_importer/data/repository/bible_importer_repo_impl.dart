@@ -1,11 +1,11 @@
+import 'package:open_scripture/core/infrastructure/bible_data/bible_datasource.dart';
 import 'package:open_scripture/features/bible_installer_manager/domain/entities/bible_download_progress.dart';
-import 'package:open_scripture/core/infrastructure/bible_data/bible_local_datasource.dart';
 import 'package:open_scripture/core/engines/bible_compiler/domain/models/artifact.dart';
 
 import '../../domain/repository/bible_importer_repo.dart';
 
 class BibleImporterRepoImpl implements BibleImporterRepo {
-  final BibleLocalDataSource localDataSource;
+  final BibleDataSource localDataSource;
 
   const BibleImporterRepoImpl({required this.localDataSource});
 

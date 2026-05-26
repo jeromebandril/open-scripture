@@ -1,6 +1,6 @@
 import 'package:fpdart/fpdart.dart';
+import 'package:open_scripture/core/infrastructure/bible_data/bible_datasource.dart';
 
-import '../../../../../core/infrastructure/bible_data/bible_local_datasource.dart';
 import '../../../../../shared/entities/bible_meta.dart';
 import '../../../../../shared/entities/bible_ref.dart';
 import '../../../../../shared/entities/verse_segment.dart';
@@ -9,7 +9,7 @@ import '../../../../../shared/error/failure.dart';
 import '../../domain/repositories/bible_pane_repository.dart';
 
 class BiblePaneRepositoryImpl implements BiblePaneRepository {
-  final BibleLocalDataSource localDatasource;
+  final BibleDataSource localDatasource;
 
   const BiblePaneRepositoryImpl({required this.localDatasource});
 

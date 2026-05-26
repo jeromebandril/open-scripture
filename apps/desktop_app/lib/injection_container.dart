@@ -1,7 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:open_scripture/app/state/fullscreen_cubit.dart';
 import 'package:open_scripture/app/state/interface_visibility_cubit.dart';
-import 'package:open_scripture/core/infrastructure/bible_data/bible_local_datasource.dart';
+import 'package:open_scripture/core/infrastructure/bible_data/bible_datasource.dart';
+import 'package:open_scripture/core/infrastructure/bible_data/bible_local_datasource_impl.dart';
+import 'package:open_scripture/core/infrastructure/bible_data/bible_remote_datasource_impl.dart';
 import 'package:open_scripture/core/infrastructure/book_resolver/book_resolver.dart';
 import 'package:open_scripture/features/bible_installer_manager/data/datasource/bible_remote_datasource.dart';
 import 'package:open_scripture/core/infrastructure/database/database.dart';
@@ -124,15 +127,17 @@ void _initInstaller() {
 }
 
 void _initInfrastructure() {
-  sl.registerLazySingleton<BibleLocalDataSource>(
-    () => BibleLocalDatasourceImpl(
-      db: sl(),
-      importerRegistry: sl(),
-      sourcePackageFactory: sl(),
-    ),
+  sl.registerLazySingleton<BibleDataSource>(
+    () => kIsWeb
+        ? BibleRemoteDatasourceImpl()
+        : BibleLocalDatasourceImpl(
+            db: sl(),
+            importerRegistry: sl(),
+            sourcePackageFactory: sl(),
+          ),
   );
-  sl.registerLazySingleton<BibleRemoteDataSource>(
-    () => BibleRemoteDataSourceImpl(),
+  sl.registerLazySingleton<BibleDownloadDataSource>(
+    () => BibleDownloadDataSourceImpl(),
   );
   sl.registerLazySingleton<BibleRefResolver>(
     () => BibleRefResolver(versification: Versification.allSupported),

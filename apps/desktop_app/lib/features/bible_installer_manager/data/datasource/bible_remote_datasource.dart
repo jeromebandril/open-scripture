@@ -12,7 +12,7 @@ import '../../../../shared/constants.dart' as constants;
 import '../../../../shared/entities/bible_meta.dart';
 import '../../../../shared/error/exception.dart';
 
-abstract class BibleRemoteDataSource {
+abstract class BibleDownloadDataSource {
   /// Downloads a bible archive from the remote catalog and persists it
   /// to a deterministic location in the local file system.
   ///
@@ -41,8 +41,8 @@ abstract class BibleRemoteDataSource {
   Future<List<BibleMeta>> getListOfAllBibles();
 }
 
-class BibleRemoteDataSourceImpl implements BibleRemoteDataSource {
-  BibleRemoteDataSourceImpl();
+class BibleDownloadDataSourceImpl implements BibleDownloadDataSource {
+  BibleDownloadDataSourceImpl();
 
   final dio = Dio();
 

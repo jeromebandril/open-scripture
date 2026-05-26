@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/bible_searchbar/history/presentation/cubit/history_cubit.dart';
@@ -72,23 +73,25 @@ class MyApp extends StatelessWidget {
             builder: (context, child) {
               return MultiBlocProvider(
                 providers: [
-                  BlocProvider(create: (_) => di.sl<ObsLiveOverlayCubit>()),
-                  BlocProvider(
-                      create: (_) => di.sl<ObsLiveOverlaySettingsCubit>()),
+                  if (!kIsWeb) ...[
+                    BlocProvider(create: (_) => di.sl<ObsLiveOverlayCubit>()),
+                    BlocProvider(
+                        create: (_) => di.sl<InstalledBiblesBloc>()
+                          ..add(InstalledBiblesLoad())),
+                    BlocProvider(
+                        create: (_) => di.sl<ObsLiveOverlaySettingsCubit>()),
+                    BlocProvider(
+                        create: (context) => di.sl<ThreeTapNavigatorCubit>()),
+                    BlocProvider(
+                        create: (_) => di.sl<RemoteControllerSettingsCubit>()),
+                    BlocProvider(create: (_) => di.sl<RemoteControllerCubit>()),
+                  ],
                   BlocProvider(create: (_) => di.sl<MultiPaneManagerCubit>()),
                   BlocProvider(create: (_) => di.sl<FullscreenCubit>()..init()),
                   BlocProvider(create: (_) => di.sl<WindowStackManagerBloc>()),
-                  BlocProvider(
-                      create: (_) => di.sl<InstalledBiblesBloc>()
-                        ..add(InstalledBiblesLoad())),
                   BlocProvider(create: (_) => di.sl<SearchBloc>()),
                   BlocProvider(create: (_) => di.sl<HistoryCubit>()),
-                  BlocProvider(create: (_) => di.sl<RemoteControllerCubit>()),
-                  BlocProvider(
-                      create: (_) => di.sl<RemoteControllerSettingsCubit>()),
                   BlocProvider(create: (_) => di.sl<ShortcutsCubit>()),
-                  BlocProvider(
-                      create: (context) => di.sl<ThreeTapNavigatorCubit>()),
                   BlocProvider(
                       create: (context) => di.sl<InterfaceVisibilityCubit>()),
                 ],

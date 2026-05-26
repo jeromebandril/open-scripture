@@ -1,5 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:open_scripture/core/engines/bible_compiler/domain/models/artifact.dart';
+import 'package:open_scripture/core/infrastructure/bible_data/bible_datasource.dart';
 import 'dart:async';
 import 'dart:math';
 
@@ -8,13 +9,12 @@ import '../../../../shared/error/failure.dart';
 import '../datasource/bible_remote_datasource.dart';
 import '../../domain/entities/bible_download_progress.dart';
 import '../../domain/repositories/bible_manager_repository.dart';
-import '../../../../core/infrastructure/bible_data/bible_local_datasource.dart';
 
 // ignore_for_file: constant_identifier_names
 
 class BibleManagerRepositoryImpl implements BibleManagerRepository {
-  final BibleLocalDataSource localDataSource;
-  final BibleRemoteDataSource remoteDataSource;
+  final BibleDataSource localDataSource;
+  final BibleDownloadDataSource remoteDataSource;
 
   const BibleManagerRepositoryImpl({
     required this.localDataSource,
