@@ -6,6 +6,7 @@ import 'package:open_scripture/core/infrastructure/bible_data/bible_datasource.d
 import 'package:open_scripture/core/infrastructure/bible_data/bible_local_datasource_impl.dart';
 import 'package:open_scripture/core/infrastructure/bible_data/bible_remote_datasource_impl.dart';
 import 'package:open_scripture/core/infrastructure/book_resolver/book_resolver.dart';
+import 'package:open_scripture/core/infrastructure/window/app_window_manager.dart';
 import 'package:open_scripture/features/bible_installer_manager/data/datasource/bible_remote_datasource.dart';
 import 'package:open_scripture/core/infrastructure/database/database.dart';
 import 'package:open_scripture/core/infrastructure/event_bus/install_notifier.dart';
@@ -112,10 +113,12 @@ Future<void> init() async {
 // ---------------------------------------------------------------------------
 
 void _initDatabase() {
+  if (kIsWeb) return;
   sl.registerLazySingleton<AppDb>(() => AppDb());
 }
 
 void _initInstaller() {
+  if (kIsWeb) return;
   sl.registerLazySingleton<UsfxImporter>(() => UsfxImporter());
   sl.registerLazySingleton<OsisImporter>(() => OsisImporter());
   sl.registerLazySingleton<ImporterRegistry>(
@@ -152,7 +155,8 @@ void _initAppState() {
   sl.registerLazySingleton(() => NavigationBus());
   sl.registerLazySingleton(() => ResolvedSearchIntentBus());
   sl.registerLazySingleton(() => InstallNotifier());
-  sl.registerLazySingleton(() => FullscreenCubit());
+  sl.registerLazySingleton(() => FullscreenCubit(sl()));
+  sl.registerLazySingleton<AppWindowManager>(() => WindowManagerImpl());
   sl.registerFactory(() => TextScalerCubit());
   sl.registerFactory(() => FontLoaderCubit());
   sl.registerLazySingleton(() => InterfaceVisibilityCubit());
@@ -173,6 +177,7 @@ void _initCustomizerFeature() {
 }
 
 void _initBibleManagerFeature() {
+  if (kIsWeb) return;
   sl.registerLazySingleton<BibleManagerRepository>(
     () => BibleManagerRepositoryImpl(
       localDataSource: sl(),
@@ -219,6 +224,7 @@ void _initReaderFeature() {
 }
 
 void _initBibleImporterFeature() {
+  if (kIsWeb) return;
   sl.registerLazySingleton<BibleImporterRepo>(
     () => BibleImporterRepoImpl(localDataSource: sl()),
   );
@@ -226,6 +232,7 @@ void _initBibleImporterFeature() {
 }
 
 void _initThreeTapNavFeature() {
+  if (kIsWeb) return;
   sl.registerLazySingleton<ThreeTapNavigatorRepository>(
     () => ThreeTapNavigatorRepositoryImpl(localDataSource: sl()),
   );
@@ -233,6 +240,7 @@ void _initThreeTapNavFeature() {
 }
 
 void _initObsLiveOverlayFeature() {
+  if (kIsWeb) return;
   sl.registerLazySingleton<SettingsDatasource<OverlaySettings>>(
     () => OverlaySettingsDatasourceImpl(),
   );
@@ -255,6 +263,7 @@ void _initObsLiveOverlayFeature() {
 }
 
 void _initRemoteControllerFeature() {
+  if (kIsWeb) return;
   sl.registerLazySingleton<SettingsDatasource<RemoteControllerSettings>>(
     () => RemoteControllerSettingsDatasource(),
   );

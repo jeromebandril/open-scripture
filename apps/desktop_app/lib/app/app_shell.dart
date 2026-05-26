@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/app/widgets/dynamic_searchbar.dart';
@@ -79,18 +80,20 @@ class AppShell extends StatelessWidget {
                 if (showMenuBar || !isFullscreen)
                   Titlebar(
                     showMenuBar: true,
-                    showLogo: !isFullscreen,
-                    showButtons: !isFullscreen,
+                    showLogo: !isFullscreen || kIsWeb,
+                    showButtons: !isFullscreen || kIsWeb,
                     leftItems: [
                       const ToolbarButton(),
                     ],
                     centerItems: [
                       const _AppHeader(),
                     ],
-                    rightItems: [
-                      const ObsLiveOverlayIndicator(),
-                      const RemoteControllerIndicator(),
-                    ],
+                    rightItems: kIsWeb
+                        ? null
+                        : [
+                            const ObsLiveOverlayIndicator(),
+                            const RemoteControllerIndicator(),
+                          ],
                   ),
                 //
                 // Main screen/workspace

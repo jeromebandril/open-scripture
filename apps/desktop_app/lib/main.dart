@@ -10,7 +10,7 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  if (kIsWeb) {
+  if (!kIsWeb) {
     await windowManager.ensureInitialized();
     WindowOptions windowOptions = WindowOptions(
       size: Size(1000, 600),
