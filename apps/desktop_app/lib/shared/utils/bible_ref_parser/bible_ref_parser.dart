@@ -1,4 +1,4 @@
-import 'package:open_scripture/core/book_names.dart';
+import 'package:open_scripture/core/infrastructure/book_resolver/book_resolver.dart';
 
 import '../../entities/bible_ref.dart';
 import 'bible_ref_parser_exceptions.dart';

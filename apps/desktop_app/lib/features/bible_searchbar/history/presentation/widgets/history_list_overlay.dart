@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/app/state/interface_visibility_cubit.dart';
+import 'package:open_scripture/core/infrastructure/book_resolver/book_resolver.dart';
 import 'package:open_scripture/features/bible_searchbar/history/presentation/cubit/history_cubit.dart';
 import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
 import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_view.dart';
 import 'package:open_scripture/shared/theme/tokens.dart';
 
-import '../../../../../core/book_names.dart';
 import '../../../../../injection_container.dart';
 import '../../../../bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../../../../bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';

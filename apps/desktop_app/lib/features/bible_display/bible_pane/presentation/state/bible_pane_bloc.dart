@@ -3,8 +3,8 @@ import 'dart:collection';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:open_scripture/core/infrastructure/book_resolver/book_resolver.dart';
 import 'package:open_scripture/features/obs_live_overlay/domain/entities/overlay_models.dart';
-import 'package:open_scripture/core/book_names.dart';
 import 'package:open_scripture/shared/entities/verse.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/domain/repositories/bible_pane_repository.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/domain/display_mode.dart';

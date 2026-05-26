@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:open_scripture/core/book_names.dart';
+import 'package:open_scripture/core/infrastructure/book_resolver/book_resolver.dart';
 import 'package:open_scripture/shared/data/models/segment_key.dart';
 import 'package:open_scripture/shared/data/models/verse_span_model.dart';
 import 'package:open_scripture/shared/entities/verse_segment.dart';

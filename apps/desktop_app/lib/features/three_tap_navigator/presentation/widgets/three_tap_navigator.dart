@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/app/state/interface_visibility_cubit.dart';
+import 'package:open_scripture/core/infrastructure/book_resolver/book_resolver.dart';
 import 'package:open_scripture/features/bible_searchbar/search/presentation/state/search_bloc.dart';
 import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import 'package:open_scripture/features/three_tap_navigator/presentation/state/three_tap_navigator_cubit.dart';
@@ -9,7 +10,6 @@ import 'package:open_scripture/shared/widgets/custom_icon_button.dart';
 
 import '../../../../shared/entities/book.dart';
 import '../../../../injection_container.dart';
-import '../../../../core/book_names.dart';
 
 class ThreeTapNavigatorTrigger extends StatefulWidget {
   const ThreeTapNavigatorTrigger({super.key});
