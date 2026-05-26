@@ -37,7 +37,6 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   shared_preferences: ^2.2.2
-  mockito: ^5.4.4
   equatable: ^2.0.5
   fpdart: ^1.1.0
   xml: ^6.5.0
@@ -52,29 +51,29 @@ dependencies:
   rxdart: ^0.28.0
   dio: ^5.4.1
   collection: ^1.18.0
-  drift: ^2.21.0
-  drift_flutter: ^0.2.1
+  drift: ^2.33.0
+  drift_flutter: ^0.3.0
   path: ^1.9.1
   flutter_colorpicker: ^1.1.0
   window_manager: ^0.5.1
   scrollable_positioned_list: ^0.3.8
-  flutter_launcher_icons: ^0.14.4
-  file_picker: ^10.3.10
+  file_picker: ^11.0.2
   crypto: ^3.0.7
   qr_flutter: ^4.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
-  build_runner: ^2.4.13
-  drift_dev: ^2.21.2
+  build_runner: ^2.15.0
+  drift_dev: ^2.33.0
+  mockito: ^5.4.4
+  flutter_launcher_icons: ^0.14.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

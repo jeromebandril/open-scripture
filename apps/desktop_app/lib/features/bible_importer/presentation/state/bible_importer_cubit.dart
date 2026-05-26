@@ -26,7 +26,7 @@ class BibleImporterCubit extends Cubit<BibleImporterState> {
   }
 
   Future<void> pickFile() async {
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['zip', 'xml'],
       withData: false,
