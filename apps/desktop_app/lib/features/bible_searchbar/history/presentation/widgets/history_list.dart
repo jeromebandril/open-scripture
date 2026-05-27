@@ -6,7 +6,7 @@ import 'package:open_scripture/features/bible_searchbar/history/presentation/cub
 import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
 import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_view.dart';
 
-import '../../../../../injection_container.dart';
+import '../../../../../core/di/injection_container.dart';
 import '../../../../bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../../../../bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../../../../shortcuts/presentation/models/app_command_shortcuts.dart';

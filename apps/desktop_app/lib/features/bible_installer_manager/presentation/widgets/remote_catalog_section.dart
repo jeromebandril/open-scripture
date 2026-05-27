@@ -1,13 +1,13 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_scripture/features/my_library/presentation/cubit/my_library_cubit.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
 
 import '../../../../shared/entities/bible_meta.dart';
 import '../../../../shared/widgets/hoverable_container.dart';
 import '../../domain/entities/bible_download_progress.dart';
 import '../state/download_manager/bloc/download_manager_bloc.dart';
-import '../state/installed_bibles/installed_bibles_bloc.dart';
 import '../state/remote_catalog/remote_catalog_bloc.dart';
 
 part 'parts/group_list.dart';
@@ -31,11 +31,7 @@ class _RemoteCatalogSectionState extends State<RemoteCatalogSection> {
   @override
   Widget build(BuildContext context) {
     final installedIds = context
-        .select(
-          (InstalledBiblesBloc b) => b.state.installedBibles.map(
-            (e) => e.extId,
-          ),
-        )
+        .select((MyLibraryCubit b) => b.state.bibles.map((e) => e.extId))
         .toList();
 
     return BlocBuilder<RemoteCatalogBloc, RemoteCatalogState>(

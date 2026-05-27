@@ -7,7 +7,7 @@ import 'package:open_scripture/features/bible_display/bible_pane/domain/display_
 import 'package:open_scripture/features/customizer/presentation/models/bible_view_presentation_theme.dart';
 
 import '../../../../shared/entities/bible_ref.dart';
-import '../../../../injection_container.dart';
+import '../../../../core/di/injection_container.dart';
 import '../../../bible_display/bible_pane/presentation/rendering/verse_richtext_builder.dart';
 import '../../../bible_display/bible_pane/presentation/widgets/verse_divider.dart';
 import '../../data/models/preview_data.dart';

@@ -2,13 +2,13 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:open_scripture/core/infrastructure/event_bus/navigation_bus.dart';
 import 'package:open_scripture/core/infrastructure/event_bus/resolved_search_intent_bus.dart';
-import 'package:open_scripture/injection_container.dart';
+import 'package:open_scripture/core/di/injection_container.dart';
 import 'package:open_scripture/core/infrastructure/event_bus/selected_verse_bus.dart';
+import 'package:open_scripture/features/bible_display/bible_selector/presentation/cubit/bible_selector_cubit.dart';
 
 import '../../../../text_scaler/presentation/state/text_scaler_cubit.dart';
 import '../../../bible_pane/domain/repositories/bible_pane_repository.dart';
 import '../../../bible_pane/presentation/state/bible_pane_bloc.dart';
-import '../../../bible_selector/presentation/state/bible_selector_bloc.dart';
 import '../models/multi_pane_data.dart';
 import '../pane_animation_constants.dart';
 
@@ -170,11 +170,13 @@ class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
         bloc: BiblePaneBloc(
           paneId: paneId,
           repo: _repo,
-          navBus: sl<NavigationBus>(),
-          notifier: sl<SelectedVerseBus>(),
+          navBus: sl.isRegistered<NavigationBus>() ? sl<NavigationBus>() : null,
+          notifier: sl.isRegistered<SelectedVerseBus>()
+              ? sl<SelectedVerseBus>()
+              : null,
         ),
         textScalerCubit: sl<TextScalerCubit>(),
-        bibleSelectorCubit: sl<BibleSelectorBloc>(),
+        bibleSelectorCubit: sl<BibleSelectorCubit>(),
       ),
     );
   }

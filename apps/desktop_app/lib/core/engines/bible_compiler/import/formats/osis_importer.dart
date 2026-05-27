@@ -14,7 +14,7 @@ import 'package:open_scripture/shared/entities/verse_span.dart';
 import 'package:open_scripture/shared/entities/bible_ref.dart';
 import 'package:open_scripture/shared/data/models/segment_key.dart';
 
-import '../../../../../injection_container.dart';
+import '../../../../di/injection_container.dart';
 import '../../source/packages/source_package.dart';
 
 // good luck future me, parsing bible is a pain

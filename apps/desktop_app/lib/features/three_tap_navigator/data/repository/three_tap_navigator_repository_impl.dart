@@ -1,5 +1,5 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:open_scripture/core/infrastructure/bible_data/bible_datasource.dart';
+import 'package:open_scripture/core/infrastructure/bible_data/content/bible_content_datasource.dart';
 
 import 'package:open_scripture/shared/entities/book.dart';
 
@@ -8,7 +8,7 @@ import 'package:open_scripture/shared/error/failure.dart';
 import '../../domain/repository/three_tap_navigator_repository.dart';
 
 class ThreeTapNavigatorRepositoryImpl implements ThreeTapNavigatorRepository {
-  final BibleDataSource localDataSource;
+  final BibleContentDatasource localDataSource;
 
   ThreeTapNavigatorRepositoryImpl({required this.localDataSource});
 

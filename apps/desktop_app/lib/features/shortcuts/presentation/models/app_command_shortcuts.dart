@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
@@ -27,14 +28,18 @@ const Map<AppCommand, SingleActivator> appCommandShortcuts = {
     control: true,
     includeRepeats: false,
   ),
-  AppCommand.toggleToolbar: SingleActivator(
-    LogicalKeyboardKey.keyT,
-    control: true,
-    includeRepeats: false,
-  ),
+  AppCommand.toggleToolbar: kIsWeb
+      ? SingleActivator(LogicalKeyboardKey.keyB,
+          control: true, includeRepeats: false)
+      : SingleActivator(
+          LogicalKeyboardKey.keyT,
+          control: true,
+          includeRepeats: false,
+        ),
   AppCommand.toggleFullscreen: SingleActivator(
     LogicalKeyboardKey.keyF,
     control: true,
+    shift: kIsWeb,
     includeRepeats: false,
   ),
   AppCommand.nextVerse: SingleActivator(

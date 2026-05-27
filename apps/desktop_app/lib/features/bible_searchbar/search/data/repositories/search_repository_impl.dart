@@ -1,5 +1,5 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:open_scripture/core/infrastructure/bible_data/bible_datasource.dart';
+import 'package:open_scripture/core/infrastructure/bible_data/content/bible_content_datasource.dart';
 import 'package:open_scripture/shared/error/failure.dart';
 import 'package:open_scripture/shared/utils/bible_ref_parser/bible_ref_parser.dart';
 import 'package:open_scripture/features/bible_searchbar/search/domain/repositories/search_repository.dart';
@@ -9,7 +9,7 @@ import '../../../../../shared/utils/bible_ref_parser/bible_ref_parser_exceptions
 
 class SearchRepositoryImpl implements SearchRepository {
   final BibleReferenceParser parser;
-  final BibleDataSource localDataSource;
+  final BibleContentDatasource localDataSource;
 
   const SearchRepositoryImpl({
     required this.parser,

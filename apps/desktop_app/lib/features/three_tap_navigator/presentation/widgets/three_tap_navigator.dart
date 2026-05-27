@@ -9,7 +9,7 @@ import 'package:open_scripture/shared/widgets/custom_icon_button.dart';
 import 'package:open_scripture/shared/widgets/dropdown_menu_anchor.dart';
 
 import '../../../../shared/entities/book.dart';
-import '../../../../injection_container.dart';
+import '../../../../core/di/injection_container.dart';
 
 class ThreeTapNavigatorTrigger extends StatefulWidget {
   const ThreeTapNavigatorTrigger({super.key});

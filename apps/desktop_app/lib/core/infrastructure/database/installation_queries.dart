@@ -4,7 +4,7 @@ import 'package:open_scripture/shared/data/models/segment_key.dart';
 import 'package:open_scripture/shared/data/models/verse_span_model.dart';
 import 'package:open_scripture/shared/entities/verse_segment.dart';
 
-import '../../../injection_container.dart';
+import '../../di/injection_container.dart';
 import '../../../shared/entities/bible_meta.dart';
 import '../../../shared/entities/book.dart';
 import 'database.dart' as db;

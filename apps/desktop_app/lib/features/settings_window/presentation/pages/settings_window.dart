@@ -42,6 +42,7 @@ class _SettingsWindowState extends State<SettingsWindow> {
   @override
   Widget build(BuildContext context) {
     return AppRevealAnimation(
+      origin: AnimationOrigin.center,
       child: Container(
         constraints: const BoxConstraints(
           maxWidth: 1270,

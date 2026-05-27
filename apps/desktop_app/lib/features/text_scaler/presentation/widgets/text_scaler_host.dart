@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/text_scaler/presentation/state/text_scaler_cubit.dart';
 
-import '../../../../injection_container.dart';
+import '../../../../core/di/injection_container.dart';
 
 const sensitivity = 0.05;
 const lowerLimit = 1.0;

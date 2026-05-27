@@ -1,18 +1,17 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parser;
+import 'package:open_scripture/features/bible_installer_manager/domain/entities/bible_download_progress.dart';
+import 'package:open_scripture/shared/entities/bible_meta.dart';
 import 'package:open_scripture/core/engines/bible_compiler/domain/models/artifact.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:open_scripture/shared/constants.dart' as constants;
+import 'package:open_scripture/shared/error/exception.dart';
 
-import '../../domain/entities/bible_download_progress.dart';
-import '../../../../shared/constants.dart' as constants;
-import '../../../../shared/entities/bible_meta.dart';
-import '../../../../shared/error/exception.dart';
-
-abstract class BibleDownloadDataSource {
+abstract class BibleDownloadDatasource {
   /// Downloads a bible archive from the remote catalog and persists it
   /// to a deterministic location in the local file system.
   ///
@@ -38,11 +37,11 @@ abstract class BibleDownloadDataSource {
   /// Throws an [AppException] subtype (e.g. [ServerException],
   /// [ParsingException]) if the request fails or the response
   /// cannot be interpreted.
-  Future<List<BibleMeta>> getListOfAllBibles();
+  Future<List<BibleMeta>> getDownloadCatalog();
 }
 
-class BibleDownloadDataSourceImpl implements BibleDownloadDataSource {
-  BibleDownloadDataSourceImpl();
+class BibleDownloadDatasourceImpl implements BibleDownloadDatasource {
+  BibleDownloadDatasourceImpl();
 
   final dio = Dio();
 
@@ -54,7 +53,7 @@ class BibleDownloadDataSourceImpl implements BibleDownloadDataSource {
 
     () async {
       try {
-        final url = '${constants.contentSourceURL}\\${bibleId}_usfx.zip';
+        final url = '${constants.downloadCatalogURL}\\${bibleId}_usfx.zip';
 
         final appPath = await getTemporaryDirectory();
         final directory = Directory('${appPath.path}\\$bibleId');
@@ -147,9 +146,9 @@ class BibleDownloadDataSourceImpl implements BibleDownloadDataSource {
   }
 
   @override
-  Future<List<BibleMeta>> getListOfAllBibles() async {
+  Future<List<BibleMeta>> getDownloadCatalog() async {
     try {
-      final response = await http.get(Uri.parse(constants.contentSourceURL));
+      final response = await http.get(Uri.parse(constants.downloadCatalogURL));
 
       if (response.statusCode != 200) {
         throw ServerException('HTTP ${response.statusCode}');

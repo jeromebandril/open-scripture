@@ -1,158 +1,32 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
-import 'package:open_scripture/core/engines/bible_compiler/domain/models/artifact.dart';
-import 'package:open_scripture/core/infrastructure/bible_data/bible_datasource.dart';
+import 'package:open_scripture/core/infrastructure/bible_data/content/bible_content_datasource.dart';
 import 'package:open_scripture/shared/data/models/verse_span_model.dart';
 import 'package:open_scripture/shared/entities/book.dart';
-import 'package:open_scripture/core/infrastructure/database/installation_queries.dart';
 import 'package:open_scripture/shared/entities/bible_ref.dart';
-import 'package:open_scripture/features/bible_installer_manager/domain/entities/bible_download_progress.dart';
 
-import '../../../shared/entities/bible_meta.dart';
-import '../database/database.dart' as driftdb;
-import '../../../shared/error/exception.dart';
-import '../../../shared/entities/verse_segment.dart';
-import '../../engines/bible_compiler/import/importer_registry.dart';
-import '../../engines/bible_compiler/source/packages/source_package_factory.dart';
+import '../../database/database.dart' as driftdb;
+import '../../../../shared/error/exception.dart';
+import '../../../../shared/entities/verse_segment.dart';
+import '../../../engines/bible_compiler/import/importer_registry.dart';
+import '../../../engines/bible_compiler/source/packages/source_package_factory.dart';
 
-class BibleLocalDatasourceImpl implements BibleDataSource {
+class BibleContentDatasourceLocalImpl implements BibleContentDatasource {
   final driftdb.AppDb db;
   final SourcePackageFactory sourcePackageFactory;
   final ImporterRegistry importerRegistry;
 
-  BibleLocalDatasourceImpl({
+  BibleContentDatasourceLocalImpl({
     required this.db,
-    required this.importerRegistry,
     required this.sourcePackageFactory,
+    required this.importerRegistry,
   });
-
-  /*
-  * New Implementation using SQL Lite as main storage system
-  */
-  @override
-  Future<List<BibleMeta>> getInstalledBibles() async {
-    List<driftdb.GetBiblesResult> rows = await db.getBibles().get();
-
-    return rows
-        .map((r) => BibleMeta(
-              id: r.id,
-              extId: r.extId,
-              bibleName: r.bibleName,
-              bibleNameLocal: r.bibleNameLocal,
-              abbreviation: r.bibleNameAbbreviation,
-              originSource: r.originSource,
-              originFormat: r.originFormat,
-              description: r.description,
-              copyright: r.copyright,
-              langEngName: r.langEngName,
-              langIsoCode: r.langIsoCode,
-              langNativeName: r.langNativeName,
-            ))
-        .toList();
-  }
-
-  @override
-  Stream<List<BibleMeta>> watchInstalledBibles() {
-    throw UnimplementedError();
-  }
-
-  @override
-  Stream<InstallProgress> installBible(Artifact artifact) async* {
-    try {
-      yield const InstallProgress(
-        stage: InstallStage.installing,
-        message: 'Preparing source...',
-      );
-      final pkg = await sourcePackageFactory.fromPath(artifact.path);
-
-      yield const InstallProgress(
-        stage: InstallStage.installing,
-        message: 'Detecting format...',
-      );
-      final importer = await importerRegistry.resolve(pkg);
-
-      yield InstallProgress(
-        stage: InstallStage.installing,
-        message: 'Parsing ${importer.formatId}...',
-      );
-      final canonical = await importer.importFrom(pkg);
-
-      if (canonical.hasErrors) {
-        yield InstallProgress(
-          stage: InstallStage.failed,
-          message: 'Import produced errors',
-        );
-        return;
-      }
-
-      yield const InstallProgress(
-        stage: InstallStage.installing,
-        message: 'Writing to database...',
-      );
-      try {
-        await db.insertBible(
-          canonical.data.bibleMeta,
-          canonical.data.books,
-          canonical.data.segments,
-          canonical.data.spans,
-        );
-      } catch (e, st) {
-        throw InstallDatabaseException(
-          'Failed inserting bible into database',
-          cause: e,
-          stackTrace: st,
-        );
-      }
-
-      yield const InstallProgress(
-        stage: InstallStage.done,
-        message: 'Installed',
-      );
-    } on InstallDatabaseException catch (e) {
-      yield InstallProgress(
-        stage: InstallStage.failed,
-        received: 0,
-        total: 0,
-        message: e.message,
-      );
-    } catch (e) {
-      yield const InstallProgress(
-        stage: InstallStage.failed,
-        received: 0,
-        total: 0,
-        message: 'Installation failed (unexpected error)',
-      );
-    }
-  }
-
-  @override
-  Future<void> uninstallBible(String bibleId) async {
-    try {
-      final deleted = await (db.delete(db.bibles)
-            ..where((b) => b.extId.equals(bibleId)))
-          .go();
-
-      if (deleted == 0) {
-        throw UninstallNotFoundException('Bible not found: $bibleId');
-      }
-    } catch (e, st) {
-      if (e is UninstallNotFoundException) rethrow;
-
-      throw UninstallationException(
-        'Failed to uninstall bible: $bibleId',
-        cause: e,
-        stackTrace: st,
-      );
-    }
-  }
 
   @override
   Future<List<Book>> getBooks(int bibleId) async {
     try {
       final result = await db.getBooks(bibleId).get();
-
-      print('books found: ${result.length}');
 
       return result
           .map((r) => Book(
@@ -270,41 +144,6 @@ class BibleLocalDatasourceImpl implements BibleDataSource {
       int bibleId, String bookId, int chapter, int verse) {
     // TODO: implement getVerse
     throw UnimplementedError();
-  }
-
-  @override
-  Future<BibleMeta> getBible(int bibleId) async {
-    try {
-      final rows = await db.getBible(bibleId).get();
-
-      if (rows.isEmpty) {
-        throw NotFoundException('Bible not found (id=$bibleId)');
-      }
-
-      final r = rows.first;
-
-      return BibleMeta(
-        id: r.id,
-        extId: r.extId,
-        bibleName: r.bibleName,
-        bibleNameLocal: r.bibleNameLocal,
-        abbreviation: r.bibleNameAbbreviation,
-        originSource: r.originSource,
-        // language
-        langEngName: r.langEngName,
-        langIsoCode: r.langIsoCode,
-        langNativeName: r.langNativeName,
-      );
-    } on AppException {
-      rethrow;
-    } catch (e, st) {
-      // Wrap unexpected DB / Drift errors
-      throw LocalDataException(
-        'Failed to load bible metadata (id=$bibleId)',
-        cause: e,
-        stackTrace: st,
-      );
-    }
   }
 
   @override

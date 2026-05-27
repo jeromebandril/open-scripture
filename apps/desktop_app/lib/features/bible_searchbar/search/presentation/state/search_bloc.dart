@@ -33,7 +33,6 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     Emitter<SearchState> emit,
   ) async {
     final intent = _resolver.resolve(event.query);
-
     switch (intent) {
       case ReferenceIntent():
         final result = await _repo.parseBibleRef(intent.rawQuery);

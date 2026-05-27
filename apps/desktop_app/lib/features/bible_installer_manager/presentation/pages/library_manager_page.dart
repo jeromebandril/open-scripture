@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_scripture/features/my_library/presentation/cubit/my_library_cubit.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
 import 'package:open_scripture/features/window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import 'package:open_scripture/shared/widgets/bible_meta_editor.dart';
 
 import '../../../../shared/entities/bible_meta.dart';
 import '../../../../shared/widgets/hoverable_container.dart';
-import '../state/installed_bibles/installed_bibles_bloc.dart';
+import '../state/installer/installer_bloc.dart';
 
-part 'installed_bibles_row.dart';
+part '../widgets/library_bible_row.dart';
 
-class InstalledBiblesSection extends StatelessWidget {
-  const InstalledBiblesSection({super.key, this.onSelect});
+class LibraryManagerPage extends StatelessWidget {
+  const LibraryManagerPage({super.key, this.onSelect});
 
   final Function(BibleMeta)? onSelect;
 
@@ -20,30 +21,28 @@ class InstalledBiblesSection extends StatelessWidget {
     return Column(
       children: [
         Expanded(
-          child: BlocBuilder<InstalledBiblesBloc, InstalledBiblesState>(
+          child: BlocBuilder<MyLibraryCubit, MyLibraryState>(
             builder: (context, state) {
               return SettingListSection(
                 title: 'Installed',
-                isLoading: state.status == InstalledBiblesStatus.loading,
-                isError: state.status == InstalledBiblesStatus.error,
+                isLoading: state.status == MyLibraryStatus.loading,
+                isError: state.status == MyLibraryStatus.error,
                 emptyListPlaceholder: Text('No Installed bibles yet'),
                 errorPlaceholder: Text('Error'),
-                itemCount: state.installedBibles.length,
+                itemCount: state.bibles.length,
                 separatorBuilder: (_, __) => Divider(height: 0.1),
                 itemBuilder: (_, index) {
-                  final selected = state.selectedBibleId ==
-                      state.installedBibles[index].extId;
+                  final bibles = state.bibles;
+                  final selIndex = state.selectedBibleIndex;
+                  final isSelected = selIndex == null
+                      ? false
+                      : bibles[selIndex].extId == bibles[index].extId;
+
                   return GestureDetector(
-                    onTap: () {
-                      final toSelect =
-                          selected ? null : state.installedBibles[index].extId;
-                      context
-                          .read<InstalledBiblesBloc>()
-                          .add(InstalledBiblesSelect(selectedId: toSelect));
-                    },
+                    onTap: () => context.read<MyLibraryCubit>().select(index),
                     child: _InstalledBiblesRow(
-                      selected: selected,
-                      bibleMeta: state.installedBibles[index],
+                      isSelected: isSelected,
+                      bibleMeta: bibles[index],
                     ),
                   );
                 },
@@ -51,14 +50,15 @@ class InstalledBiblesSection extends StatelessWidget {
             },
           ),
         ),
-        BlocBuilder<InstalledBiblesBloc, InstalledBiblesState>(
+        BlocBuilder<MyLibraryCubit, MyLibraryState>(
           buildWhen: (prev, curr) =>
-              prev.selectedBibleId != curr.selectedBibleId,
+              prev.selectedBibleIndex != curr.selectedBibleIndex,
           builder: (context, state) {
-            final sel = state.selectedBibleId;
-            if (sel == null) return const SizedBox.shrink();
-            final meta =
-                state.installedBibles.firstWhere((b) => b.extId == sel).toMap();
+            if (state.selectedBibleIndex == null) {
+              return const SizedBox.shrink();
+            }
+
+            final meta = state.bibles[state.selectedBibleIndex!].toMap();
             return SettingSection.single(
               title: 'Metadata of selected',
               actions: [

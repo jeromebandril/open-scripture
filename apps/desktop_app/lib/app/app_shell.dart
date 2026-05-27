@@ -80,8 +80,8 @@ class AppShell extends StatelessWidget {
                 if (showMenuBar || !isFullscreen)
                   Titlebar(
                     showMenuBar: true,
-                    showLogo: !isFullscreen || kIsWeb,
-                    showButtons: !isFullscreen || kIsWeb,
+                    showLogo: !isFullscreen && !kIsWeb,
+                    showButtons: !isFullscreen && !kIsWeb,
                     leftItems: [
                       const ToolbarButton(),
                     ],

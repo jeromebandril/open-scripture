@@ -61,7 +61,7 @@ class BiblePane extends StatelessWidget {
           style: TextStyle(
             color: isCustom
                 ? paneTheme.textColor
-                : Theme.of(context).colorScheme.onSurface,
+                : Theme.of(context).colorScheme.onSurfaceVariant,
             fontFamily: paneTheme.textFont,
             height: kTextHeightNone,
           ),

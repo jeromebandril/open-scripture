@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/features/bible_installer_manager/presentation/state/installed_bibles/installed_bibles_bloc.dart';
+import 'package:open_scripture/core/di/injection_container.dart' as di;
+import 'package:open_scripture/features/bible_display/bible_selector/presentation/cubit/bible_selector_cubit.dart';
+import 'package:open_scripture/features/bible_installer_manager/presentation/state/installer/installer_bloc.dart';
 import 'package:open_scripture/features/customizer/presentation/state/customizer_cubit.dart';
+import 'package:open_scripture/features/my_library/presentation/cubit/my_library_cubit.dart';
 
-import '../../../../../injection_container.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
-import '../state/bible_selector_bloc.dart';
 
 class BibleSelector extends StatelessWidget {
   final void Function(List<int> selectedBibleId) onConfirm;
-  final BibleSelectorBloc? bloc;
+  final BibleSelectorCubit? bloc;
 
   const BibleSelector({required this.onConfirm, this.bloc, super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-      value: bloc ?? sl<BibleSelectorBloc>()
-        ..add(BibleSelectorInit()),
+      value: bloc ?? di.sl<BibleSelectorCubit>(),
       child: _BibleSelectorBody(onConfirm: onConfirm),
     );
   }
@@ -30,25 +30,25 @@ class _BibleSelectorBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedIds = context.select(
-      (BibleSelectorBloc b) => b.state.selectedBibleIds,
-    );
-
     final useCustom = context.select(
       (CustomizerCubit b) => b.state.pane.enableCustomTheme,
     );
     final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
     // final height = MediaQuery.sizeOf(context).height;
 
-    return BlocBuilder<InstalledBiblesBloc, InstalledBiblesState>(
+    final selectedIds = context.select(
+      (BibleSelectorCubit b) => b.state.selectedBiblesIds,
+    );
+
+    return BlocBuilder<MyLibraryCubit, MyLibraryState>(
       builder: (context, state) {
         Widget body;
         switch (state.status) {
-          case InstalledBiblesStatus.loading || InstalledBiblesStatus.initial:
+          case MyLibraryStatus.loading || MyLibraryStatus.initial:
             body = const Center(child: CircularProgressIndicator());
             break;
 
-          case InstalledBiblesStatus.error:
+          case MyLibraryStatus.error:
             body = Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -65,8 +65,8 @@ class _BibleSelectorBody extends StatelessWidget {
             );
             break;
 
-          case InstalledBiblesStatus.loaded:
-            if (state.installedBibles.isEmpty) {
+          case MyLibraryStatus.ready:
+            if (state.bibles.isEmpty) {
               body = Text('Go to <Settings> to install a bible',
                   textAlign: TextAlign.center);
               break;
@@ -92,9 +92,9 @@ class _BibleSelectorBody extends StatelessWidget {
                     constraints: BoxConstraints(maxHeight: 500),
                     child: ListView.builder(
                       shrinkWrap: true,
-                      itemCount: state.installedBibles.length,
+                      itemCount: state.bibles.length,
                       itemBuilder: (context, index) {
-                        final bible = state.installedBibles[index];
+                        final bible = state.bibles[index];
                         final selected = selectedIds.contains(bible.id);
                         final style = TextStyle(
                           color: Theme.of(context).colorScheme.onSurface,
@@ -136,8 +136,8 @@ class _BibleSelectorBody extends StatelessWidget {
                                     )
                                   : null,
                               onTap: () => context
-                                  .read<BibleSelectorBloc>()
-                                  .add(BibleSelectorSelect(bible.id!))),
+                                  .read<BibleSelectorCubit>()
+                                  .select(bible.id!)),
                         );
                       },
                     ),

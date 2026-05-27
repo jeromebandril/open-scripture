@@ -1,6 +1,6 @@
 import 'package:fpdart/fpdart.dart';
+import 'package:open_scripture/core/engines/settings/datasource/settings_datasource_desktop.dart';
 
-import '../../../../core/engines/settings/settings_datasource.dart';
 import '../../../../core/engines/settings/settings_repository.dart';
 import '../../../../shared/error/failure.dart';
 import '../../domain/entities/remote_controller_settings.dart';

@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
@@ -13,13 +12,6 @@ abstract class SettingsDatasource<T> {
     return File(p.join(settingsDir.path, fileName));
   }
 
-  /// Saves settings locally.
-  ///
-  /// Throws a [InstallationException] if it fails
   Future<void> saveSettings(T settings);
-
-  /// Load settings.
-  ///
-  /// Throws a [InstallationException] if it fails
   Future<T> loadSettings();
 }

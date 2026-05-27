@@ -5,7 +5,6 @@ import '../../../../app/state/fullscreen_cubit.dart';
 import '../../../bible_searchbar/search/presentation/state/search_bloc.dart';
 import '../../../bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../../../bible_display/bible_pane/domain/display_mode.dart';
-import '../../../bible_display/bible_selector/presentation/state/bible_selector_bloc.dart';
 import '../../../bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../../domain/models/app_command.dart';
 
@@ -65,8 +64,7 @@ class AppCommandDispatcher {
       _prevBibleId = pane.bloc.state.openedBiblesIds;
       if (_prevBibleId.isEmpty) return;
       pane.bloc.add(BiblePaneChooseBibles());
-      pane.bibleSelectorCubit
-          .add(BibleSelectorSetSelected(selectedBibleIds: _prevBibleId));
+      pane.bibleSelectorCubit.set(_prevBibleId);
     },
     AppCommand.switchDisplayMode: () => _cycleDisplayMode(),
     AppCommand.displayChapterOfSelected: () => _displayChapterOfSelected(),

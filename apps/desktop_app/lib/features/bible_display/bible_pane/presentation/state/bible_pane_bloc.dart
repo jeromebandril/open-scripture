@@ -12,7 +12,7 @@ import 'package:open_scripture/core/infrastructure/event_bus/navigation_bus.dart
 import 'package:open_scripture/shared/typedefs.dart';
 import 'package:open_scripture/core/infrastructure/event_bus/selected_verse_bus.dart';
 
-import '../../../../../injection_container.dart';
+import '../../../../../core/di/injection_container.dart';
 import '../../../../../shared/entities/bible_ref.dart';
 import '../models/parallel_bible_config.dart';
 

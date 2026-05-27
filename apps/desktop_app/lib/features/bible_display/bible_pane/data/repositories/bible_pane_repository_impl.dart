@@ -1,5 +1,6 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:open_scripture/core/infrastructure/bible_data/bible_datasource.dart';
+import 'package:open_scripture/core/infrastructure/bible_data/content/bible_content_datasource.dart';
+import 'package:open_scripture/features/my_library/data/datasources/my_library_datasource.dart';
 
 import '../../../../../shared/entities/bible_meta.dart';
 import '../../../../../shared/entities/bible_ref.dart';
@@ -9,9 +10,14 @@ import '../../../../../shared/error/failure.dart';
 import '../../domain/repositories/bible_pane_repository.dart';
 
 class BiblePaneRepositoryImpl implements BiblePaneRepository {
-  final BibleDataSource localDatasource;
+  const BiblePaneRepositoryImpl({
+    required BibleContentDatasource localDatasource,
+    required MyLibraryDatasource libraryDatasource,
+  })  : _contentDatasource = localDatasource,
+        _libraryDatasource = libraryDatasource;
 
-  const BiblePaneRepositoryImpl({required this.localDatasource});
+  final BibleContentDatasource _contentDatasource;
+  final MyLibraryDatasource _libraryDatasource;
 
   @override
   Future<Either<Failure, List<VerseSegment>>> getVersesSegmentsWithSpans({
@@ -19,7 +25,7 @@ class BiblePaneRepositoryImpl implements BiblePaneRepository {
     required List<BibleRef> refs,
   }) async {
     try {
-      return Right(await localDatasource.getVersesSegments(bibleId, refs));
+      return Right(await _contentDatasource.getVersesSegments(bibleId, refs));
     } catch (e) {
       return Left(UnknownFailure(details: e.toString()));
     }
@@ -31,7 +37,7 @@ class BiblePaneRepositoryImpl implements BiblePaneRepository {
     required BibleRef reference,
   }) async {
     try {
-      final List<VerseSegment> verses = await localDatasource.getChapter(
+      final List<VerseSegment> verses = await _contentDatasource.getChapter(
           bibleId, reference.bookUsfxId, reference.chapter);
       return Right(verses);
     } on NotFoundException catch (e) {
@@ -63,7 +69,7 @@ class BiblePaneRepositoryImpl implements BiblePaneRepository {
     required BibleRef reference,
   }) async {
     try {
-      final verses = await localDatasource.getChapterWithSpans(
+      final verses = await _contentDatasource.getChapterWithSpans(
           bibleId, reference.bookUsfxId, reference.chapter);
       return Right(verses);
     } on NotFoundException catch (e) {
@@ -93,7 +99,7 @@ class BiblePaneRepositoryImpl implements BiblePaneRepository {
   Future<Either<Failure, BibleMeta>> getBibleMetadata(
       {required int bibleId}) async {
     try {
-      return Right(await localDatasource.getBible(bibleId));
+      return Right(await _libraryDatasource.getBible(bibleId));
     } catch (e) {
       return Left(NoLocalDataFailure());
     }
@@ -105,13 +111,13 @@ class BiblePaneRepositoryImpl implements BiblePaneRepository {
     required BibleRef reference,
   }) async {
     try {
-      final bookId = await localDatasource.resolveBookNameToId(
+      final bookId = await _contentDatasource.resolveBookNameToId(
         bibleId,
         reference.bookUsfxId,
       );
 
       return Right(
-          await localDatasource.getMaxVerseRange(bookId, reference.chapter));
+          await _contentDatasource.getMaxVerseRange(bookId, reference.chapter));
     } catch (e) {
       return Left(UnexpectedFailure(details: e.toString()));
     }

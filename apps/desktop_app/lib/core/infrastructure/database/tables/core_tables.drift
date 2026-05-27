@@ -10,7 +10,7 @@ CREATE TABLE bibles (
   extId NVARCHAR(80) NOT NULL UNIQUE,
   languageId INTEGER,
   bibleName NVARCHAR(64) NOT NULL,
-  bibleNameLocal NVARCHAR(64) NOT NULL,
+  bibleNameLocal NVARCHAR(64) NULL,
   bibleNameAbbreviation NVARCHAR(32) NOT NULL,
   originSource NVARCHAR(128) NULL,
   originFormat NVARCHAR(8) NULL,

@@ -1,12 +1,12 @@
-part of 'installed_bibles_section.dart';
+part of '../pages/library_manager_page.dart';
 
 class _InstalledBiblesRow extends StatelessWidget {
   final BibleMeta bibleMeta;
-  final bool selected;
+  final bool isSelected;
 
   const _InstalledBiblesRow({
     required this.bibleMeta,
-    this.selected = false,
+    this.isSelected = false,
   });
 
   @override
@@ -15,7 +15,7 @@ class _InstalledBiblesRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        color: selected
+        color: isSelected
             ? Theme.of(context).colorScheme.primaryContainer
             : Colors.transparent,
       ),
@@ -40,7 +40,7 @@ class _InstalledBiblesRow extends StatelessWidget {
             ),
             TextButton(
               onPressed: () => context
-                  .read<InstalledBiblesBloc>()
+                  .read<InstallerBloc>()
                   .add(InstalledBiblesUninstall(bibleMeta.extId)),
               child: Row(
                 spacing: 8,

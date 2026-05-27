@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'app/app.dart';
-import 'injection_container.dart' as di;
+import 'core/di/injection_container.dart' as di;
 
 void main() async {
   await di.init();

@@ -37,7 +37,7 @@ class RemoteCatalogBloc extends Bloc<RemoteCatalogEvent, RemoteCatalogState> {
 
     await Future.delayed(Duration.zero);
 
-    final eitherFailureOrData = await repository.getAllDownloadableBibles();
+    final eitherFailureOrData = await repository.getDownloadCatalog();
 
     emit(eitherFailureOrData.fold(
       (failure) => state.copyWith(

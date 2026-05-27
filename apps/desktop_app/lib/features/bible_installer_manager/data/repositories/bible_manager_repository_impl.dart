@@ -1,57 +1,40 @@
-import 'package:fpdart/fpdart.dart';
-import 'package:open_scripture/core/engines/bible_compiler/domain/models/artifact.dart';
-import 'package:open_scripture/core/infrastructure/bible_data/bible_datasource.dart';
 import 'dart:async';
 import 'dart:math';
-
-import '../../../../shared/entities/bible_meta.dart';
-import '../../../../shared/error/failure.dart';
-import '../datasource/bible_remote_datasource.dart';
-import '../../domain/entities/bible_download_progress.dart';
-import '../../domain/repositories/bible_manager_repository.dart';
-
-// ignore_for_file: constant_identifier_names
+import 'package:fpdart/fpdart.dart';
+import 'package:open_scripture/features/bible_installer_manager/domain/entities/bible_download_progress.dart';
+import 'package:open_scripture/features/bible_installer_manager/domain/repositories/bible_manager_repository.dart';
+import 'package:open_scripture/core/engines/bible_compiler/domain/models/artifact.dart';
+import 'package:open_scripture/core/infrastructure/bible_data/install/bible_install_datasource.dart';
+import 'package:open_scripture/features/bible_installer_manager/data/datasource/bible_download_datasource.dart';
+import 'package:open_scripture/shared/entities/bible_meta.dart';
+import 'package:open_scripture/shared/error/failure.dart';
 
 class BibleManagerRepositoryImpl implements BibleManagerRepository {
-  final BibleDataSource localDataSource;
-  final BibleDownloadDataSource remoteDataSource;
-
   const BibleManagerRepositoryImpl({
-    required this.localDataSource,
-    required this.remoteDataSource,
-  });
+    required BibleInstallDatasource installDatasource,
+    required BibleDownloadDatasource downloadDatasource,
+  })  : _installDatasource = installDatasource,
+        _downloadDatasource = downloadDatasource;
+
+  final BibleInstallDatasource _installDatasource;
+  final BibleDownloadDatasource _downloadDatasource;
 
   @override
-  Future<Either<Failure, List<BibleMeta>>> getAllDownloadableBibles() async {
-    var result = await remoteDataSource.getListOfAllBibles();
+  Future<Either<Failure, List<BibleMeta>>> getDownloadCatalog() async {
+    final result = await _downloadDatasource.getDownloadCatalog();
     return Right(result);
-  }
-
-  @override
-  Future<Either<Failure, List<BibleMeta>>> getAllInstalledBibles() async {
-    var result = await localDataSource.getInstalledBibles();
-    return Right(result);
-  }
-
-  @override
-  Stream<InstallProgress> downloadBible(String bibleId) {
-    return remoteDataSource.downloadBibleFileContent(bibleId);
-  }
-
-  @override
-  Stream<InstallProgress> installBible(String bibleId) {
-    throw UnimplementedError();
-    //return localDataSource.installBible(bibleId);
   }
 
   @override
   Stream<InstallProgress> downloadAndInstallBible(String bibleId) async* {
-    //return simulateDownloadAndInstall();
+    // uncomment for UI tests
+    //return _simulateDownloadAndInstall();
 
     Artifact? artifact;
 
     // 1) Download phase
-    await for (final p in remoteDataSource.downloadBibleFileContent(bibleId)) {
+    await for (final p
+        in _downloadDatasource.downloadBibleFileContent(bibleId)) {
       yield p;
 
       if (p.stage == InstallStage.failed) return;
@@ -70,10 +53,8 @@ class BibleManagerRepositoryImpl implements BibleManagerRepository {
       return;
     }
 
-    print(artifact);
-
     // 2) Install phase
-    await for (final p in localDataSource.installBible(artifact)) {
+    await for (final p in _installDatasource.installBible(artifact)) {
       yield p;
       if (p.stage == InstallStage.failed) return;
       if (p.stage == InstallStage.done) return;
@@ -83,15 +64,16 @@ class BibleManagerRepositoryImpl implements BibleManagerRepository {
   }
 
   @override
-  Future<Either<Failure, void>> uninstallTranslation(String bibleId) async {
+  Future<Either<Failure, void>> uninstallBible(String bibleId) async {
     try {
-      return Right(await localDataSource.uninstallBible(bibleId));
+      return Right(await _installDatasource.uninstallBible(bibleId));
     } catch (e) {
       return Left(InstallFailure());
     }
   }
 
-  Stream<InstallProgress> simulateDownloadAndInstall({
+  /// Simulates data stream for progress bar UI tests
+  Stream<InstallProgress> _simulateDownloadAndInstall({
     Duration tick = const Duration(milliseconds: 80),
     int downloadBytesTotal = 50 * 1024 * 1024, // 50 MB
     int installStepsTotal = 60,
@@ -172,10 +154,5 @@ class BibleManagerRepositoryImpl implements BibleManagerRepository {
       total: 1,
       message: 'Installed',
     );
-  }
-
-  @override
-  Stream<List<BibleMeta>> watchAllInstalledBibles() {
-    return localDataSource.watchInstalledBibles();
   }
 }

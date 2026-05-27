@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/core/infrastructure/book_resolver/book_resolver.dart';
 
 import '../../../../../shared/entities/verse_span.dart';
-import '../../../../../injection_container.dart';
+import '../../../../../core/di/injection_container.dart';
 import '../../../../customizer/domain/entities/presentation_verse_number_style.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../../../../customizer/presentation/models/bible_view_presentation_theme.dart';

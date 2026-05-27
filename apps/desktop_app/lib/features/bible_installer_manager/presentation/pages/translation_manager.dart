@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/shared/entities/bible_meta.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_subpage_navigator.dart';
-import 'package:open_scripture/injection_container.dart';
+import 'package:open_scripture/core/di/injection_container.dart';
 
 import '../state/download_manager/bloc/download_manager_bloc.dart';
-import '../state/installed_bibles/installed_bibles_bloc.dart';
+import '../state/installer/installer_bloc.dart';
 import '../state/remote_catalog/remote_catalog_bloc.dart';
-import '../widgets/installed_bibles_section.dart';
+import 'library_manager_page.dart';
 import '../widgets/remote_catalog_section.dart';
 
 class BibleManagerWidget extends StatelessWidget {
@@ -17,7 +17,7 @@ class BibleManagerWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider.value(value: context.read<InstalledBiblesBloc>()),
+        BlocProvider.value(value: context.read<InstallerBloc>()),
         BlocProvider(
           create: (_) => sl<RemoteCatalogBloc>()
             ..add(RemoteCatalogSubscriptionRequested()),
@@ -48,7 +48,7 @@ class _BibleManagerState extends State<_BibleManager> {
     super.initState();
     _pages = [
       const RemoteCatalogSection(),
-      const InstalledBiblesSection(),
+      const LibraryManagerPage(),
     ];
   }
 

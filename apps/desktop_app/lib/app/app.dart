@@ -2,12 +2,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/bible_searchbar/history/presentation/cubit/history_cubit.dart';
+import 'package:open_scripture/features/my_library/presentation/cubit/my_library_cubit.dart';
 import 'package:open_scripture/features/three_tap_navigator/presentation/state/three_tap_navigator_cubit.dart';
 
 import 'state/fullscreen_cubit.dart';
 import 'state/interface_visibility_cubit.dart';
 import '../features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
-import '../features/bible_installer_manager/presentation/state/installed_bibles/installed_bibles_bloc.dart';
+import '../features/bible_installer_manager/presentation/state/installer/installer_bloc.dart';
 import '../features/bible_searchbar/search/presentation/state/search_bloc.dart';
 import '../features/customizer/domain/entities/app_theme_settings.dart';
 import '../features/customizer/presentation/models/bible_pane_general_theme.dart';
@@ -20,7 +21,7 @@ import '../features/remote_controller/presentation/state/remote_controller/remot
 import '../features/remote_controller/presentation/state/remote_controller_settings/remote_controller_settings_cubit.dart';
 import '../features/shortcuts/presentation/state/shortcuts_cubit.dart';
 import '../features/window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
-import '../injection_container.dart' as di;
+import '../core/di/injection_container.dart' as di;
 import 'app_shell.dart';
 
 class MyApp extends StatelessWidget {
@@ -76,16 +77,16 @@ class MyApp extends StatelessWidget {
                   if (!kIsWeb) ...[
                     BlocProvider(create: (_) => di.sl<ObsLiveOverlayCubit>()),
                     BlocProvider(
-                        create: (_) => di.sl<InstalledBiblesBloc>()
-                          ..add(InstalledBiblesLoad())),
-                    BlocProvider(
                         create: (_) => di.sl<ObsLiveOverlaySettingsCubit>()),
                     BlocProvider(
                         create: (context) => di.sl<ThreeTapNavigatorCubit>()),
                     BlocProvider(
                         create: (_) => di.sl<RemoteControllerSettingsCubit>()),
                     BlocProvider(create: (_) => di.sl<RemoteControllerCubit>()),
+                    BlocProvider(create: (_) => di.sl<InstallerBloc>()),
                   ],
+                  BlocProvider(
+                      create: (_) => di.sl<MyLibraryCubit>()..getBibles()),
                   BlocProvider(create: (_) => di.sl<MultiPaneManagerCubit>()),
                   BlocProvider(create: (_) => di.sl<FullscreenCubit>()..init()),
                   BlocProvider(create: (_) => di.sl<WindowStackManagerBloc>()),
