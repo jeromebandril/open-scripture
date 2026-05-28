@@ -18,6 +18,9 @@
    in the file LICENSE.
    ------------------------------------------------------------------ */
 
+#ifndef BZ_API
+#   define BZ_API(func) func
+#endif
 
 #ifndef _BZLIB_H
 #define _BZLIB_H

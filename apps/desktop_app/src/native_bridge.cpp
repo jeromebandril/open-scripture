@@ -8,6 +8,8 @@
 #include <cstdlib>
 #include <string>
 #include <sstream>
+#include <iostream>
+
 
 // Temporary XzCompress stub — prevents linker error when liblzma
 // constructor is not resolved from sword_core
@@ -36,6 +38,18 @@ static char* alloc_string(const std::string& s) {
     memcpy(buf, s.c_str(), s.size() + 1);
     return buf;
 }
+
+// Helper to safely allocate a string that Flutter can grab without memory leaks
+char* alloc_string(const char* str) {
+    if (!str) return nullptr;
+    size_t len = strlen(str) + 1;
+    char* out = (char*)malloc(len);
+    if (out) {
+        strcpy_s(out, len, str); // Secure string copy on Windows
+    }
+    return out;
+}
+
 
 // Public C API 
 
@@ -73,7 +87,7 @@ char* sword_list_modules() {
     std::ostringstream json;
     json << "[";
     bool first = true;
-    for (auto& [key, mod] : g_mgr->Modules) {
+    for (auto& [key, mod] : g_mgr->getModules()) {
         if (!first) json << ",";
         first = false;
         // Escape any quotes in the strings defensively
@@ -106,15 +120,39 @@ char* sword_list_modules() {
 // Caller must free with sword_free_string().
 __declspec(dllexport)
 char* sword_get_verse(const char* module_name, const char* osis_key) {
-    if (!g_mgr || !module_name || !osis_key) return alloc_string("");
+    // 1. Safety check parameters
+    if (!g_mgr || !module_name || !osis_key) {
+        return alloc_string("BRIDGE_ERROR: Null pointer passed to native bridge.");
+    }
+    
+    // 2. Fetch the module cleanly from the manager
     sword::SWModule* mod = g_mgr->getModule(module_name);
-    if (!mod) return alloc_string("");
+    if (!mod) {
+        return alloc_string("BRIDGE_ERROR: Module not found in g_mgr.");
+    }
+    
     try {
+        // 3. Tell SWORD to point its internal index to the requested verse (e.g., "Gen.1.1")
         mod->setKey(osis_key);
-        const char* raw = mod->renderText();
-        return alloc_string(raw ? raw : "");
-    } catch (...) {
-        return alloc_string("");
+        
+        // 4. Use renderText() instead of getRawEntry()
+        // This forces SWORD to safely extract the verse from the 1.36MB pool
+        sword::SWBuf rendered = mod->renderText();
+        
+        // 5. Verify we actually got text back
+        if (rendered.length() > 0) {
+            return alloc_string(rendered.c_str());
+        } else {
+            return alloc_string("BRIDGE_WARNING: Verse found, but content is empty.");
+        }
+    } 
+    catch (const std::exception& e) {
+        std::string err = "BRIDGE_EXCEPTION: std::exception occurred: ";
+        err += e.what();
+        return alloc_string(err.c_str());
+    }
+    catch (...) {
+        return alloc_string("BRIDGE_EXCEPTION: An unhandled native exception occurred.");
     }
 }
 

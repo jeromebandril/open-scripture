@@ -354,7 +354,15 @@ ZEXTERN int ZEXPORT uncompress OF((Bytef *dest,   uLongf *destLen,
 		char *buf = new char[blen]; 
 		//SWLog::getSystemLog()->logInfo("Doing decompress {%s}\n", zbuf);
 		slen = 0;
-		switch (uncompress((Bytef*)buf, &blen, (Bytef*)zbuf, zlen)){
+    // --- DIAGNOSTIC INSTRUMETATION START ---
+		unsigned char *b = (unsigned char*)zbuf;
+		fprintf(stderr, "[SWORD_ZIP] Attempting Zlib Decompress. SrcLen: %lu. Starting bytes: 0x%02X 0x%02X\n", zlen, b[0], b[1]);
+		// --- DIAGNOSTIC INSTRUMENTATION END ---
+    // --- DIAGNOSTIC INSTRUMETATION START ---
+    int result = uncompress((Bytef*)buf, &blen, (Bytef*)zbuf, zlen);
+		fprintf(stderr, "[SWORD_ZIP] Decompress complete. Result Code: %d (Expected 0 for Z_OK). Target Decompressed Len: %lu\n", result, blen);
+		// --- DIAGNOSTIC INSTRUMENTATION END ---
+		switch (result){
 			case Z_OK: sendChars(buf, blen); slen = blen; break;
 			case Z_MEM_ERROR: SWLog::getSystemLog()->logError("ERROR: not enough memory during decompression."); break;
 			case Z_BUF_ERROR: SWLog::getSystemLog()->logError("ERROR: not enough room in the out buffer during decompression."); break;

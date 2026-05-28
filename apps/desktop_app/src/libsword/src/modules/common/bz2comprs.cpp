@@ -25,8 +25,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <windows.h>
 #include <bz2comprs.h>
+extern "C" {
 #include <bzlib.h>
+}
 
 SWORD_NAMESPACE_START
 
@@ -106,7 +109,6 @@ void Bzip2Compress::encode(void) {
  *			used to separate this method from the actual
  *			i/o.
  */
-
 void Bzip2Compress::decode(void) {
 	direct = 1;	// set direction needed by parent [Get|Send]Chars()
 
@@ -131,13 +133,44 @@ void Bzip2Compress::decode(void) {
 		char *buf = new char[blen]; 
 		//printf("Doing decompress {%s}\n", zbuf);
 		slen = 0;
-		switch (BZ2_bzBuffToBuffDecompress(buf, &blen, zbuf, (unsigned int)zlen, 0, 0)){
-			case BZ_OK: sendChars(buf, blen); slen = blen; break;
-			case BZ_MEM_ERROR: fprintf(stderr, "ERROR: not enough memory during decompression.\n"); break;
-			case BZ_OUTBUFF_FULL: fprintf(stderr, "ERROR: not enough room in the out buffer during decompression.\n"); break;
-			case BZ_DATA_ERROR: fprintf(stderr, "ERROR: corrupt data during decompression.\n"); break;
-			default: fprintf(stderr, "ERROR: an unknown error occurred during decompression.\n"); break;
-		}
+
+    // ==============================
+	  // Explicitly enforce a local copy of the length to guarantee an exact 32-bit unsigned int footprint
+	  unsigned int winDLen = blen; 
+	  unsigned int winSLen = (unsigned int)zlen;
+
+	  if (winSLen < 4) {
+	  	fprintf(stderr, "[SWORD_BZIP2] CRITICAL: Buffer is empty or too small! Size: %u. File read likely failed.\n", winSLen);
+	  } else {
+	  	unsigned char *b = (unsigned char*)zbuf;
+	  	fprintf(stderr, "[SWORD_BZIP2] Stream starting bytes: 0x%02X 0x%02X 0x%02X 0x%02X (Size: %u)\n", b[0], b[1], b[2], b[3], winSLen);
+	  }
+
+	  int result = BZ2_bzBuffToBuffDecompress(buf, &winDLen, zbuf, winSLen, 0, 0);
+
+	  // Format and pipe diagnostic information straight to the SAME terminal console
+	  fprintf(stderr, "[SWORD_BZIP2] Decompress complete. Result Code: %d (Expected 0 for BZ_OK). SrcLen: %u, DestAllocated: %u, DestWritten: %u\n", 
+	  	result, winSLen, blen, winDLen
+	  );
+	  //===========================
+	  switch (result){
+	  	case BZ_OK: 
+	  		sendChars(buf, winDLen); // Fixed: send winDLen, not old blen
+	  		slen = winDLen; 
+	  		break;
+	  	case BZ_MEM_ERROR: 
+	  		fprintf(stderr, "[SWORD_BZIP2] ERROR: not enough memory during decompression.\n"); 
+	  		break;
+	  	case BZ_OUTBUFF_FULL: 
+	  		fprintf(stderr, "[SWORD_BZIP2] ERROR: not enough room in the out buffer during decompression.\n"); 
+	  		break;
+	  	case BZ_DATA_ERROR: 
+	  		fprintf(stderr, "[SWORD_BZIP2] ERROR: corrupt data during decompression.\n"); 
+	  		break;
+	  	default: 
+	  		fprintf(stderr, "[SWORD_BZIP2] ERROR: an unknown error occurred during decompression. RAW_RESULT = %d\n", result); 
+	  		break;
+	  }
 		delete [] buf;
 	}
 	else {
