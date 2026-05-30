@@ -3,21 +3,25 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:open_scripture/features/bible_importer/domain/repository/bible_importer_repo.dart';
+import 'package:open_scripture/shared/domain/entities/bible_source.dart';
+import 'package:open_scripture/shared/domain/repositories/bible_install_repository.dart';
 
 import '../../../../core/infrastructure/event_bus/install_notifier.dart';
-import '../../../bible_installer_manager/domain/entities/bible_download_progress.dart';
+import '../../../../shared/domain/entities/bible_download_progress.dart';
 
 part 'bible_importer_state.dart';
 
 class BibleImporterCubit extends Cubit<BibleImporterState> {
-  BibleImporterCubit({required this.repo, required this.notifier})
-      : super(BibleImporterState());
-
-  final BibleImporterRepo repo;
-
-  final InstallNotifier notifier;
+  final BibleInstallRepository _repo;
+  final InstallNotifier _notifier;
   StreamSubscription<InstallProgress>? _sub;
+
+  BibleImporterCubit({
+    required BibleInstallRepository repo,
+    required InstallNotifier notifier,
+  })  : _repo = repo,
+        _notifier = notifier,
+        super(BibleImporterState());
 
   @override
   Future<void> close() async {
@@ -35,11 +39,17 @@ class BibleImporterCubit extends Cubit<BibleImporterState> {
       lockParentWindow: true,
     );
 
-    final path = result?.files.single.path;
-    final name = result?.files.single.name; // safer than result.names.single
+    // Aborted
+    if (result == null) {
+      emit(state.copyWith(status: BibleImporterStatus.initial));
+      return;
+    }
+
+    final path = result.files.single.path;
+    final name = result.files.single.name;
 
     if (path == null) {
-      emit(state.copyWith(status: BibleImporterStatus.initial));
+      emit(state.copyWith(status: BibleImporterStatus.failed));
       return;
     }
 
@@ -55,10 +65,8 @@ class BibleImporterCubit extends Cubit<BibleImporterState> {
       ),
     ));
 
-    final stream = repo.importAndInstallFromPath(
-      path,
-      displayName: name ?? _basename(path),
-    );
+    final src = LocalFileSource(filePath: path, displayName: name);
+    final stream = _repo.install(src);
 
     _sub = stream.listen(
       (p) {
@@ -75,12 +83,18 @@ class BibleImporterCubit extends Cubit<BibleImporterState> {
           errorMessage: () => null,
         ));
       },
+      onError: (error) {
+        emit(state.copyWith(
+          status: BibleImporterStatus.failed,
+          errorMessage: () => 'Unexpected error: $error',
+        ));
+      },
       onDone: () {
         // If repo always emits done, you may not need this.
         if (state.progress?.stage != InstallStage.done) {
           emit(state.copyWith(status: BibleImporterStatus.succeed));
         }
-        notifier.refreshInstalledList();
+        _notifier.refreshInstalledList();
       },
       cancelOnError: false,
     );
@@ -96,6 +110,4 @@ class BibleImporterCubit extends Cubit<BibleImporterState> {
         return BibleImporterStatus.running;
     }
   }
-
-  String _basename(String path) => path.split(RegExp(r'[\\/]+')).last;
 }

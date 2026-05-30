@@ -1,32 +1,33 @@
 import 'package:fpdart/fpdart.dart';
-
-import '../../../../../shared/entities/bible_meta.dart';
-import '../../../../../shared/entities/bible_ref.dart';
-import '../../../../../shared/entities/verse_segment.dart';
-import '../../../../../shared/error/failure.dart';
+import 'package:open_scripture/shared/domain/entities/bible_book.dart';
+import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
+import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
+import 'package:open_scripture/shared/domain/entities/verse.dart';
+import 'package:open_scripture/shared/error/failure.dart';
 
 abstract class BiblePaneRepository {
-  Future<Either<Failure, BibleMeta>> getBibleMetadata({
-    required int bibleId,
+  Future<Either<Failure, BibleTranslation>> getBibleMetadata({
+    required BibleId bibleId,
   });
 
-  Future<Either<Failure, List<VerseSegment>>> getVersesSegmentsWithSpans({
-    required int bibleId,
+  Future<Either<Failure, List<Verse>>> getVersesWithSpans({
+    required BibleId bibleId,
     required List<BibleRef> refs,
   });
 
-  Future<Either<Failure, List<VerseSegment>>> getChapterSegments({
-    required int bibleId,
-    required BibleRef reference,
+  Future<Either<Failure, List<Verse>>> getChapterWithSpans({
+    required BibleId bibleId,
+    required BibleRef ref,
   });
 
-  Future<Either<Failure, List<VerseSegment>>> getChapterWithSpans({
-    required int bibleId,
-    required BibleRef reference,
+  Future<Either<Failure, List<Verse>>> getChapter({
+    required BibleId bibleId,
+    required BibleRef ref,
   });
 
+  // TODO: passing BibleRef is enough, delete book parameter
   Future<Either<Failure, int>> getMaxVerse({
-    required int bibleId,
-    required BibleRef reference,
+    required BibleBook book,
+    required BibleRef ref,
   });
 }

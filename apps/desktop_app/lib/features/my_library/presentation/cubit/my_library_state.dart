@@ -16,15 +16,16 @@ final class MyLibraryState extends Equatable {
   });
 
   final MyLibraryStatus status;
-  final List<BibleMeta> bibles;
+  final List<BibleTranslation> bibles;
   final int? selectedBibleIndex;
   final String? errorMessage;
 
-  MyLibraryState copywith(
-      {MyLibraryStatus? status,
-      List<BibleMeta>? bibles,
-      String? Function()? errorMessage,
-      int? Function()? selectedBibleIndex}) {
+  MyLibraryState copywith({
+    MyLibraryStatus? status,
+    List<BibleTranslation>? bibles,
+    String? Function()? errorMessage,
+    int? Function()? selectedBibleIndex,
+  }) {
     return MyLibraryState(
       status: status ?? this.status,
       bibles: bibles ?? this.bibles,

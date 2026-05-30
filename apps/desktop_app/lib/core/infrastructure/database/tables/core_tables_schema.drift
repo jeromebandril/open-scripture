@@ -1,0 +1,67 @@
+-- Enable foreign key enforcement
+PRAGMA foreign_keys = ON;
+
+-- 1. Languages Metadata
+CREATE TABLE languages (
+    id INTEGER PRIMARY KEY,
+    isoCode TEXT NOT NULL UNIQUE,
+    engName TEXT NOT NULL,
+    nativeName TEXT
+) STRICT;
+
+-- 2. Canonical Books (The universal structure of the Bible)
+CREATE TABLE canonical_books (
+    id INTEGER PRIMARY KEY,
+    bookToken TEXT NOT NULL UNIQUE, -- e.g., 'GEN', 'EXO'
+    bookOrder INTEGER NOT NULL
+) STRICT;
+
+-- 3. Localized Book Names
+CREATE TABLE localized_book_names (
+    bibleId INTEGER NOT NULL,
+    bookId INTEGER NOT NULL,
+    longName TEXT NOT NULL,
+    shortName TEXT NOT NULL,
+    abbr TEXT,
+    -- A comma-separated list of searchable aliases for this specific language
+    -- e.g., 'sng, song, sos, canticles'
+    aliases TEXT NULL,
+
+    PRIMARY KEY (bibleId, bookId),
+    FOREIGN KEY (bibleId) REFERENCES bibles(id) ON DELETE CASCADE,
+    FOREIGN KEY (bookId) REFERENCES canonical_books(id) ON DELETE CASCADE
+) STRICT, WITHOUT ROWID;
+
+-- 4. Installed Bible Translations
+CREATE TABLE bibles (
+    id INTEGER PRIMARY KEY, 
+    extId TEXT NOT NULL UNIQUE, -- e.g., 'KJV', 'RVR1960'
+    languageId INTEGER NOT NULL,
+    bName TEXT NOT NULL,
+    nameLocal TEXT,
+    abbreviation TEXT NOT NULL,
+    originSource TEXT,
+    originFormat TEXT,
+    bDescription TEXT,
+    copyright TEXT,
+    FOREIGN KEY (languageId) REFERENCES languages(id) ON DELETE RESTRICT
+) STRICT;
+
+-- 5. Verse Segments (The Data Payload)
+CREATE TABLE verse_segments (
+    bibleId INTEGER NOT NULL,
+    bookId INTEGER NOT NULL,
+    chapterNumber INTEGER NOT NULL,
+    verseNumber INTEGER NOT NULL,
+    segmentIndex INTEGER NOT NULL,
+    paragraphStart INTEGER NOT NULL DEFAULT 0 CHECK (paragraphStart IN (0, 1)),
+    heading TEXT,
+    spansJson TEXT NOT NULL CHECK (json_valid(spansJson)),
+    PRIMARY KEY (bibleId, bookId, chapterNumber, verseNumber, segmentIndex),
+    FOREIGN KEY (bibleId) REFERENCES bibles(id) ON DELETE CASCADE,
+    FOREIGN KEY (bookId) REFERENCES canonical_books(id) ON DELETE RESTRICT
+) STRICT, WITHOUT ROWID;
+
+-- 6. Performance Indexes
+-- (Note: Secondary indexes are intentionally omitted for verse_segments. See breakdown.)
+CREATE INDEX ix_canonical_books_order ON canonical_books(bookOrder);

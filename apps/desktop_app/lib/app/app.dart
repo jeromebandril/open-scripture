@@ -83,7 +83,7 @@ class MyApp extends StatelessWidget {
                     BlocProvider(
                         create: (_) => di.sl<RemoteControllerSettingsCubit>()),
                     BlocProvider(create: (_) => di.sl<RemoteControllerCubit>()),
-                    BlocProvider(create: (_) => di.sl<InstallerBloc>()),
+                    // BlocProvider(create: (_) => di.sl<InstallerBloc>()),
                   ],
                   BlocProvider(
                       create: (_) => di.sl<MyLibraryCubit>()..getBibles()),

@@ -136,9 +136,11 @@ class _BibleViewPresentationCustomizerScreenState
             child: SettingSection(
               title: 'Preview',
               children: [
-                Center(
-                    child:
-                        const BiblePanePreview(mode: DisplayMode.presentation)),
+                // TODO: remove placeholder
+                SizedBox(), //BiblePanePreview(mode: _previewMode),
+                // Center(
+                //     child:
+                //         const BiblePanePreview(mode: DisplayMode.presentation)),
               ],
             ),
           )

@@ -80,7 +80,7 @@ class _WindowStackManagerHostState extends State<WindowStackManagerHost> {
                       value: context.read<ObsLiveOverlaySettingsCubit>()),
                   BlocProvider.value(
                       value: context.read<ObsLiveOverlayCubit>()),
-                  BlocProvider.value(value: context.read<InstallerBloc>()),
+                  // BlocProvider.value(value: context.read<InstallerBloc>()),
                   BlocProvider.value(
                       value: context.read<RemoteControllerCubit>()),
                   BlocProvider.value(

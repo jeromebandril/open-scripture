@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
-
-import '../../../../../shared/entities/bible_ref.dart';
+import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
 
 class HistoryEntry extends Equatable {
   final BibleRef ref;

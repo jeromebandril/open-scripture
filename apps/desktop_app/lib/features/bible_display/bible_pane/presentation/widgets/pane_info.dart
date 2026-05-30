@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/customizer/presentation/state/customizer_cubit.dart';
 import 'package:open_scripture/features/text_scaler/presentation/state/text_scaler_cubit.dart';
-import 'package:open_scripture/shared/entities/bible_meta.dart';
+import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/cubit/selected_word_cubit.dart';
 import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
@@ -108,7 +108,7 @@ class _PaneInfoState extends State<PaneInfo> {
                               '${wordInfo.text} ~ ${wordInfo.span.payload}'));
                 },
               ),
-            BlocSelector<BiblePaneBloc, BiblePaneState, List<BibleMeta>>(
+            BlocSelector<BiblePaneBloc, BiblePaneState, List<BibleTranslation>>(
               selector: (state) =>
                   state.content.asMap.values.map((v) => v.meta).toList(),
               builder: (context, metas) {

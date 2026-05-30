@@ -1,13 +1,14 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
 
 part 'bible_selector_state.dart';
 
 class BibleSelectorCubit extends Cubit<BibleSelectorState> {
   BibleSelectorCubit() : super(BibleSelectorState());
 
-  void select(int bibleId) {
-    final currentIds = List<int>.from(state.selectedBiblesIds);
+  void select(BibleId bibleId) {
+    final currentIds = List<BibleId>.from(state.selectedBiblesIds);
 
     if (currentIds.contains(bibleId)) {
       currentIds.remove(bibleId);
@@ -19,6 +20,6 @@ class BibleSelectorCubit extends Cubit<BibleSelectorState> {
     emit(BibleSelectorState(selectedBiblesIds: currentIds));
   }
 
-  void set(List<int> selected) =>
+  void set(List<BibleId> selected) =>
       emit(BibleSelectorState(selectedBiblesIds: selected));
 }

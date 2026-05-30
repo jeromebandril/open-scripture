@@ -1,34 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_scripture/features/bible_display/bible_pane/presentation/rendering/verse_richtext_builder.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/cubit/selected_word_cubit.dart';
-
-import '../../../../../shared/entities/bible_ref.dart';
-import '../../../../../shared/entities/verse_segment.dart';
-import '../../../../../shared/entities/verse_span.dart';
-import '../../../../customizer/presentation/state/customizer_cubit.dart';
-import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
-import '../../../../customizer/presentation/models/bible_view_list_theme.dart';
-import '../rendering/verse_richtext_builder.dart';
+import 'package:open_scripture/features/customizer/presentation/models/bible_pane_general_theme.dart';
+import 'package:open_scripture/features/customizer/presentation/models/bible_view_list_theme.dart';
+import 'package:open_scripture/features/customizer/presentation/state/customizer_cubit.dart';
+import 'package:open_scripture/shared/domain/entities/verse.dart';
 
 class VerseWidget extends StatelessWidget {
-  final BibleRef reference;
-  final List<VerseSegment> segments;
-  final List<VerseSpan>? spans;
+  final Verse verse;
   final bool isHighlighted;
 
   const VerseWidget({
-    required this.reference,
-    required this.segments,
-    this.spans,
+    required this.verse,
     this.isHighlighted = false,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    final String content = segments.map((e) => e.textContent).join();
-    final int verseNumber = reference.verseStart!;
+    final verseNumber = verse.ref.verseStart!;
 
     final useCustom = context.select(
       (CustomizerCubit c) => c.state.pane.enableCustomTheme,
@@ -54,43 +46,85 @@ class VerseWidget extends StatelessWidget {
               : Theme.of(context).colorScheme.tertiary,
     );
 
+    final headingStyle = TextStyle(
+      fontWeight: FontWeight.bold,
+      color: bTheme.refColor,
+      height: 2.0,
+    );
+
     return Listener(
       onPointerDown: (_) {
         context.read<BiblePaneBloc>().add(
-            BiblePaneJustChangeRef(ref: reference.copyWith(verseEnd: null)));
+              BiblePaneJustChangeRef(
+                  ref: verse.ref.copyWith(verseEnd: () => null)),
+            );
       },
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            child: SelectableText.rich(TextSpan(
+            child: SelectableText.rich(
+              TextSpan(
                 style: TextStyle(
                   height: 1.25,
                   fontWeight: bTheme.textFontWeight,
                 ),
                 children: [
+                  // --- Verse reference number ---
                   TextSpan(
                     text: isHighlighted || listTheme.showFullRefAlways
-                        ? reference.toString()
+                        ? verse.ref.toString()
                         : '$verseNumber',
                     style: refStyle,
                   ),
-                  TextSpan(text: '  '),
-                  VerseSpanBuilder.build(
-                    context: context,
-                    text: content,
-                    spans: spans!,
-                    onWordTap: (VerseSpan span, String slice) => context
-                        .read<SelectedWordCubit>()
-                        .setSelectedWord(WordInfo(
-                          text: slice,
-                          span: span,
-                        )),
-                  ),
-                ])),
+                  const TextSpan(text: '  '),
+
+                  // --- Segments → spans ---
+                  ..._buildSegmentSpans(context, headingStyle),
+                ],
+              ),
+            ),
           ),
         ],
       ),
     );
+  }
+
+  List<InlineSpan> _buildSegmentSpans(
+    BuildContext context,
+    TextStyle headingStyle,
+  ) {
+    final result = <InlineSpan>[];
+
+    for (var i = 0; i < verse.segments.length; i++) {
+      final segment = verse.segments[i];
+
+      // Paragraph break — only insert if not the very first segment
+      if (segment.isParagraphStart && i > 0) {
+        result.add(const TextSpan(text: '\n'));
+      }
+
+      // Section heading above this segment
+      if (segment.heading != null) {
+        result.add(TextSpan(
+          text: '${segment.heading}\n',
+          style: headingStyle,
+        ));
+      }
+
+      // The actual spans
+      result.addAll(
+        VerseSpanBuilder.build(
+          spans: segment.spans,
+          context: context,
+          onWordTap: (VerseSpan span) =>
+              context.read<SelectedWordCubit>().setSelectedWord(
+                    WordInfo(span: span, text: span.text),
+                  ),
+        ),
+      );
+    }
+
+    return result;
   }
 }

@@ -99,7 +99,8 @@ class _BiblePaneCustomizerScreenState extends State<BiblePaneCustomizerScreen> {
                   children: [
                     SettingSection.single(
                       title: '${_previewTitle()} Preview',
-                      child: BiblePanePreview(mode: _previewMode),
+                      // TODO: remove placeholder
+                      child: SizedBox(), //BiblePanePreview(mode: _previewMode),
                     ),
                     if (_index == 0)
                       Container(

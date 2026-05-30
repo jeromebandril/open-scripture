@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/core/di/injection_container.dart' as di;
 import 'package:open_scripture/features/bible_display/bible_selector/presentation/cubit/bible_selector_cubit.dart';
-import 'package:open_scripture/features/bible_installer_manager/presentation/state/installer/installer_bloc.dart';
+import 'package:open_scripture/features/customizer/presentation/models/bible_pane_general_theme.dart';
 import 'package:open_scripture/features/customizer/presentation/state/customizer_cubit.dart';
 import 'package:open_scripture/features/my_library/presentation/cubit/my_library_cubit.dart';
-
-import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
+import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
 
 class BibleSelector extends StatelessWidget {
-  final void Function(List<int> selectedBibleId) onConfirm;
+  final void Function(List<BibleId> selectedBibleIds) onConfirm;
   final BibleSelectorCubit? bloc;
 
   const BibleSelector({required this.onConfirm, this.bloc, super.key});
@@ -24,7 +23,7 @@ class BibleSelector extends StatelessWidget {
 }
 
 class _BibleSelectorBody extends StatelessWidget {
-  final void Function(List<int> selectedBibleId) onConfirm;
+  final void Function(List<String> selectedBibleIds) onConfirm;
 
   const _BibleSelectorBody({required this.onConfirm});
 
@@ -95,7 +94,9 @@ class _BibleSelectorBody extends StatelessWidget {
                       itemCount: state.bibles.length,
                       itemBuilder: (context, index) {
                         final bible = state.bibles[index];
-                        final selected = selectedIds.contains(bible.id);
+                        // use external id
+                        final selected = selectedIds.contains(bible.extId);
+
                         final style = TextStyle(
                           color: Theme.of(context).colorScheme.onSurface,
                         );
@@ -104,7 +105,7 @@ class _BibleSelectorBody extends StatelessWidget {
                           clipBehavior: Clip.hardEdge,
                           child: ListTile(
                               selected: selected,
-                              title: Text(bible.bibleNameLocal, style: style),
+                              title: Text(bible.localName, style: style),
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -125,7 +126,7 @@ class _BibleSelectorBody extends StatelessWidget {
                               isThreeLine: true,
                               trailing: selected
                                   ? Text(
-                                      '${selectedIds.indexOf(bible.id!) + 1}',
+                                      '${selectedIds.indexOf(bible.extId) + 1}',
                                       style: TextStyle(
                                         color: Theme.of(context)
                                             .colorScheme
@@ -137,7 +138,7 @@ class _BibleSelectorBody extends StatelessWidget {
                                   : null,
                               onTap: () => context
                                   .read<BibleSelectorCubit>()
-                                  .select(bible.id!)),
+                                  .select(bible.extId)),
                         );
                       },
                     ),

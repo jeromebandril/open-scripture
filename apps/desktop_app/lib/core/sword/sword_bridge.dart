@@ -26,12 +26,6 @@ typedef _SwordFreeStringDart = void Function(Pointer<Utf8> ptr);
 typedef _SwordShutdownNative = Void Function();
 typedef _SwordShutdownDart = void Function();
 
-// for testing
-typedef _TestZlibNative = Pointer<Utf8> Function();
-typedef _TestZlibDart = Pointer<Utf8> Function();
-
-// Bridge class
-
 class SwordBridge {
   late final _SwordInitDart _init;
   late final _SwordListModulesDart _listModules;
@@ -39,7 +33,6 @@ class SwordBridge {
   late final _SwordVerseCountDart _verseCount;
   late final _SwordFreeStringDart _freeString;
   late final _SwordShutdownDart _shutdown;
-  late final _TestZlibDart _testZLib;
 
   SwordBridge() {
     final lib = DynamicLibrary.open('native_sword_bridge.dll');
@@ -58,18 +51,6 @@ class SwordBridge {
             'sword_free_string');
     _shutdown = lib.lookupFunction<_SwordShutdownNative, _SwordShutdownDart>(
         'sword_shutdown');
-    _testZLib =
-        lib.lookupFunction<_TestZlibNative, _TestZlibDart>('sword_test_zlib');
-  }
-
-// Method
-  String testZlib() {
-    final ptr = _testZLib();
-    try {
-      return _ptrToString(ptr);
-    } finally {
-      _freeString(ptr);
-    }
   }
 
   /// Call once at app startup with the path to your modules directory.

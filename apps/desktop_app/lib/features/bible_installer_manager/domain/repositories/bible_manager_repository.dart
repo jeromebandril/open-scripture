@@ -1,11 +1,10 @@
 import 'package:fpdart/fpdart.dart';
-
-import '../../../../shared/entities/bible_meta.dart';
-import '../../../../shared/error/failure.dart';
-import '../entities/bible_download_progress.dart';
+import 'package:open_scripture/shared/domain/entities/bible_download_progress.dart';
+import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
+import 'package:open_scripture/shared/error/failure.dart';
 
 abstract class BibleManagerRepository {
   Stream<InstallProgress> downloadAndInstallBible(String bibleId);
-  Future<Either<Failure, List<BibleMeta>>> getDownloadCatalog();
+  Future<Either<Failure, List<BibleTranslation>>> getDownloadCatalog();
   Future<Either<Failure, void>> uninstallBible(String id);
 }

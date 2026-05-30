@@ -3,18 +3,22 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/my_library/presentation/cubit/my_library_cubit.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
 import 'package:open_scripture/features/window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
+import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
 import 'package:open_scripture/shared/widgets/bible_meta_editor.dart';
-
-import '../../../../shared/entities/bible_meta.dart';
-import '../../../../shared/widgets/hoverable_container.dart';
-import '../state/installer/installer_bloc.dart';
+import 'package:open_scripture/shared/widgets/hoverable_container.dart';
 
 part '../widgets/library_bible_row.dart';
+
+extension _BibleTranslationFieldTable on BibleTranslation {
+  Map<String, dynamic> toTable() {
+    return {'name': name, 'abbreviation': abbreviation};
+  }
+}
 
 class LibraryManagerPage extends StatelessWidget {
   const LibraryManagerPage({super.key, this.onSelect});
 
-  final Function(BibleMeta)? onSelect;
+  final Function(BibleTranslation)? onSelect;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +62,7 @@ class LibraryManagerPage extends StatelessWidget {
               return const SizedBox.shrink();
             }
 
-            final meta = state.bibles[state.selectedBibleIndex!].toMap();
+            final meta = state.bibles[state.selectedBibleIndex!].toTable();
             return SettingSection.single(
               title: 'Metadata of selected',
               actions: [

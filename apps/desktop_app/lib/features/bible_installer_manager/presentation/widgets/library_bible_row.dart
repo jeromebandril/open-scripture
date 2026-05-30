@@ -1,7 +1,7 @@
 part of '../pages/library_manager_page.dart';
 
 class _InstalledBiblesRow extends StatelessWidget {
-  final BibleMeta bibleMeta;
+  final BibleTranslation bibleMeta;
   final bool isSelected;
 
   const _InstalledBiblesRow({
@@ -28,7 +28,7 @@ class _InstalledBiblesRow extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-                bibleMeta.bibleName.split("\\").last,
+                bibleMeta.name.split("\\").last,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -39,9 +39,10 @@ class _InstalledBiblesRow extends StatelessWidget {
               ),
             ),
             TextButton(
-              onPressed: () => context
-                  .read<InstallerBloc>()
-                  .add(InstalledBiblesUninstall(bibleMeta.extId)),
+              onPressed: null,
+              // onPressed: () => context
+              //     .read<InstallerBloc>()
+              //     .add(InstalledBiblesUninstall(bibleMeta.extId)),
               child: Row(
                 spacing: 8,
                 children: [

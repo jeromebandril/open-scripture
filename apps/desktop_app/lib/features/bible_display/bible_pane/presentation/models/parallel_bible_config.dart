@@ -1,10 +1,9 @@
 import 'dart:collection';
 
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/shared/entities/bible_meta.dart';
-import 'package:open_scripture/shared/entities/bible_ref.dart';
-import 'package:open_scripture/shared/entities/verse.dart';
-import 'package:open_scripture/shared/typedefs.dart';
+import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
+import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
+import 'package:open_scripture/shared/domain/entities/verse.dart';
 
 class ParallelBibleConfig extends Equatable {
   final Map<BibleId, ParallelBibleData> _config;
@@ -85,19 +84,28 @@ class ParallelBibleConfig extends Equatable {
   List<Object?> get props => [_config];
 }
 
+/// Group of ordered verses per Bible translation
 class ParallelBibleData extends Equatable {
-  final BibleMeta meta;
+  final BibleTranslation meta;
   final SplayTreeMap<BibleRef, Verse>? verses;
 
   const ParallelBibleData({required this.meta, this.verses});
 
   ParallelBibleData copyWith({
-    BibleMeta? meta,
+    BibleTranslation? meta,
     SplayTreeMap<BibleRef, Verse>? Function()? verses,
   }) {
     return ParallelBibleData(
       meta: meta ?? this.meta,
       verses: verses != null ? verses() : this.verses,
+    );
+  }
+
+  static SplayTreeMap<BibleRef, Verse> versesToMap(List<Verse> verses) {
+    return SplayTreeMap.fromIterable(
+      verses,
+      key: (v) => (v as Verse).ref,
+      value: (v) => v as Verse,
     );
   }
 

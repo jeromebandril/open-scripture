@@ -1,9 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/shared/entities/bible_ref.dart';
+import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
 import 'package:open_scripture/features/three_tap_navigator/domain/repository/three_tap_navigator_repository.dart';
-
-import '../../../../shared/entities/book.dart';
+import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
+import 'package:open_scripture/shared/domain/entities/localized_book.dart';
 
 part 'three_tap_navigator_state.dart';
 
@@ -12,12 +12,12 @@ class ThreeTapNavigatorCubit extends Cubit<ThreeTapNavigatorState> {
       : _repo = repo,
         super(ThreeTapNavigatorState());
 
-  int? _bibleId;
+  BibleId? _bibleId;
   final ThreeTapNavigatorRepository _repo;
-  final Map<int, int> _selectedBookIds = {};
+  final Map<String, int> _selectedBookIds = {};
   final Map<String, int> _selectedChapterIds = {};
 
-  Future<void> loadBooks(int? bibleId) async {
+  Future<void> loadBooks(BibleId? bibleId) async {
     if (bibleId == null) {
       return emit(state.copyWith(status: ThreeTapNavigatorStatus.error));
     }
@@ -41,9 +41,11 @@ class ThreeTapNavigatorCubit extends Cubit<ThreeTapNavigatorState> {
     }
   }
 
-  Future<void> getMaxChapter(int bookId) async {
-    if (!_selectedBookIds.keys.contains(bookId)) {
-      final result = await _repo.getMaxChapter(bookId: bookId);
+  Future<void> getChapterBoundary(String bookToken) async {
+    if (!_selectedBookIds.keys.contains(bookToken)) {
+      final result = await _repo.getChapterBoundaryOf(
+        bookToken: bookToken,
+      );
 
       return result.fold(
         (f) => emit(state.copyWith(
@@ -55,22 +57,25 @@ class ThreeTapNavigatorCubit extends Cubit<ThreeTapNavigatorState> {
             status: ThreeTapNavigatorStatus.loaded,
             maxChapter: maxChap,
           ));
-          _selectedBookIds[bookId] = maxChap;
+          _selectedBookIds[bookToken] = maxChap;
         },
       );
     }
 
     return emit(state.copyWith(
       status: ThreeTapNavigatorStatus.loaded,
-      maxChapter: _selectedBookIds[bookId],
+      maxChapter: _selectedBookIds[bookToken],
     ));
   }
 
-  Future<void> getMaxVerse(int bookId, int chapter) async {
-    final uniqueKey = '$bookId-$chapter';
+  Future<void> getVerseBoundary(String bookToken, int chapter) async {
+    final uniqueKey = '$bookToken-$chapter';
 
     if (!_selectedChapterIds.keys.contains(uniqueKey)) {
-      final result = await _repo.getMaxVerse(bookId: bookId, chapter: chapter);
+      final result = await _repo.getVerseBoundaryOf(
+        bookToken: bookToken,
+        chapter: chapter,
+      );
 
       return result.fold(
         (f) => emit(state.copyWith(

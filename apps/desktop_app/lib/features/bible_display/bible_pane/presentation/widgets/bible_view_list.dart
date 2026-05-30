@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/customizer/presentation/models/bible_view_list_theme.dart';
-import 'package:open_scripture/shared/entities/verse.dart';
+import 'package:open_scripture/shared/domain/entities/verse.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:open_scripture/shared/entities/bible_ref.dart';
+import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
 
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
@@ -59,7 +59,6 @@ class _BibleViewListState extends State<BibleViewList> {
   }
 
   Future<void> _scrollWhenReady(int index, bool useAnimation) async {
-    // wait up to ~10 frames for attachment + positions
     for (var i = 0; i < 10; i++) {
       if (!mounted) return;
 
@@ -92,39 +91,30 @@ class _BibleViewListState extends State<BibleViewList> {
   void initState() {
     super.initState();
 
-    // Scrolls to ref after display mode switch (which should remount the widget)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final bloc = context.read<BiblePaneBloc>();
       final items = bloc.state.unionRefs.toList();
-      _pendingScrollRef = bloc.state.reference!.copyWith(verseEnd: null);
+      _pendingScrollRef = bloc.state.reference!.copyWith(verseEnd: () => null);
       _scheduleScrollAfterBuild(items: items, useAnimation: false);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // Set padding
     final screen = MediaQuery.of(context).size;
     final panes = context.read<MultiPaneManagerCubit>().state.panes;
     final thisPaneIndex = panes.indexWhere((e) => e.id == widget.uniqueId);
-    // theming
     final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
 
     return BlocConsumer<BiblePaneBloc, BiblePaneState>(
-      //
-      // This is for auto scroll to item (verse) until visible
-      //
       listenWhen: (prev, curr) =>
           (prev.reference != curr.reference && curr.reference != null),
       listener: (context, state) {
         final ref = state.reference;
         if (ref == null) return;
-        _pendingScrollRef = ref.copyWith(verseEnd: null);
+        _pendingScrollRef = ref.copyWith(verseEnd: () => null);
         _scheduleScrollAfterBuild(items: state.unionRefs.toList());
       },
-      //
-      // Should rebuild only when content or selected ref change.
-      //
       buildWhen: (prev, curr) =>
           prev.reference != curr.reference || prev.content != curr.content,
       builder: (context, state) {
@@ -135,28 +125,20 @@ class _BibleViewListState extends State<BibleViewList> {
           itemScrollController: _itemScrollController,
           itemPositionsListener: _itemPositionsListener,
           itemCount: unionRefs.length + 1,
-          padding: EdgeInsets.only(top: 16),
+          padding: const EdgeInsets.only(top: 16),
           separatorBuilder: (ctx, _) => const VerseDivider(),
           itemBuilder: (_, i) {
-            //
-            // Empty space fixed at the bottom
-            //
-            if (i == unionRefs.length) return SizedBox(height: 200);
+            if (i == unionRefs.length) return const SizedBox(height: 200);
 
-            // Get verse and its variants in a preferred order
             final ref = unionRefs.elementAt(i);
             final verses = state.parallelOrder
                 .map((id) => content.getParallelDataByBibleId(id)?.verses?[ref])
                 .toList();
             final isHighlighted = state.reference == null
                 ? false
-                : ref.contains(state.reference!);
+                : state.reference!.contains(ref);
 
             return Padding(
-              //
-              // These paddings are set from app level customization settings,
-              // but they need to be here even if its ugly
-              //
               padding: EdgeInsets.only(
                 left:
                     thisPaneIndex == 0 ? screen.width * paneTheme.xPadding : 0,
@@ -197,22 +179,17 @@ class _ParallelView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       spacing: spacing,
-      children: [
-        ...verses.map((v) {
-          if (v == null) return const Expanded(child: SizedBox());
+      children: verses.map((v) {
+        if (v == null) return const Expanded(child: SizedBox());
 
-          final spans = v.segments.expand((s) => s.spans).toList();
-
-          final verseWidget = VerseWidget(
-            reference: ref,
-            segments: v.segments,
-            spans: spans,
+        // Verse owns all its data now — no span extraction needed here
+        return Expanded(
+          child: VerseWidget(
+            verse: v,
             isHighlighted: isHighlighted,
-          );
-
-          return Expanded(child: verseWidget);
-        }),
-      ],
+          ),
+        );
+      }).toList(),
     );
   }
 }

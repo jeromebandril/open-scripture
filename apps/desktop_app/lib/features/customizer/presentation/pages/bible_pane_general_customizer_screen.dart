@@ -336,10 +336,12 @@ class _BiblePaneGeneralCustomizerScreenState
             flex: 1,
             child: SettingSection.single(
               title: 'Preview',
-              child: Center(
-                  child: const BiblePanePreview(
-                mode: DisplayMode.list,
-              )),
+              // TODO: remove placeholder
+              child: SizedBox(), //BiblePanePreview(mode: _previewMode),
+              // child: Center(
+              //     child: const BiblePanePreview(
+              //   mode: DisplayMode.list,
+              // )),
             ),
           )
       ],

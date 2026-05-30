@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../../../domain/entities/bible_download_progress.dart';
+import '../../../../../../shared/domain/entities/bible_download_progress.dart';
 import '../../../../domain/repositories/bible_manager_repository.dart';
 import '../../../../../../core/infrastructure/event_bus/install_notifier.dart';
 

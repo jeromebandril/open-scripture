@@ -1,12 +1,12 @@
 import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:open_scripture/core/infrastructure/event_bus/resolved_search_intent_bus.dart';
 import 'package:open_scripture/features/bible_searchbar/search/domain/entities/search_intent.dart';
+import 'package:open_scripture/features/bible_searchbar/search/domain/repositories/search_repository.dart';
 import 'package:open_scripture/features/bible_searchbar/search/domain/search_intent_resolver.dart';
-import 'package:open_scripture/shared/entities/bible_ref.dart';
-
-import '../../domain/repositories/search_repository.dart';
+import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
 
 part 'search_event.dart';
 part 'search_state.dart';
@@ -14,11 +14,11 @@ part 'search_state.dart';
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
   SearchBloc({
     required SearchRepository repo,
-    required SearchIntentResolver resolver,
+    required SearchIntentResolver intentResolver,
     required ResolvedSearchIntentBus searchIntentBus,
   })  : _searchIntentBus = searchIntentBus,
         _repo = repo,
-        _resolver = resolver,
+        _resolver = intentResolver,
         super(const SearchIdle()) {
     on<SearchParseIntent>(_onParseIntent);
     on<SearchUpdateRef>(_onUpdateRef);
@@ -35,7 +35,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     final intent = _resolver.resolve(event.query);
     switch (intent) {
       case ReferenceIntent():
-        final result = await _repo.parseBibleRef(intent.rawQuery);
+        final result = await _repo.parse(intent.rawQuery);
         result.fold(
           (f) => emit(SearchError(
             message: f.details,
@@ -55,7 +55,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         final current = state;
         if (current is! SearchReferenceResult) return;
         final refinedRef = current.ref
-            .copyWith(verseStart: intent.verseNumber, verseEnd: null);
+            .copyWith(verseStart: () => intent.verseNumber, verseEnd: null);
         emit(SearchReferenceResult(ref: refinedRef));
         _searchIntentBus
             .emit(ResolvedReferenceIntent(ref: refinedRef, isVerseLevel: true));

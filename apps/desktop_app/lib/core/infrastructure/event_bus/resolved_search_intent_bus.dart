@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import '../../../shared/entities/bible_ref.dart';
+import '../../../shared/domain/entities/bible_ref.dart';
 
 class ResolvedSearchIntentBus {
   final _controller = StreamController<ResolvedSearchIntent>.broadcast();

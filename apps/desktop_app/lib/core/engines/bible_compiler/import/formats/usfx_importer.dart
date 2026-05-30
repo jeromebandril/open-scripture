@@ -1,35 +1,32 @@
-import 'package:open_scripture/shared/data/models/segment_key.dart';
-import 'package:open_scripture/shared/data/models/verse_span_model.dart';
-import 'package:open_scripture/shared/entities/bible_ref.dart';
-import 'package:open_scripture/core/engines/bible_compiler/import/bible_importer.dart';
+import 'package:open_scripture/core/engines/bible_compiler/domain/models/canonical_bible_package.dart';
+import 'package:open_scripture/core/engines/bible_compiler/domain/models/payload_issue.dart';
+import 'package:open_scripture/core/engines/bible_compiler/source/packages/source_package.dart';
 import 'package:xml/xml.dart';
 import 'package:xml/xpath.dart';
-
-import '../../../../../shared/entities/bible_meta.dart';
-import '../../../../../shared/entities/book.dart';
-import '../../../../../shared/entities/verse_segment.dart';
-import '../../../../../shared/entities/verse_span.dart';
-import '../../domain/models/canonical_bible_package.dart';
-import '../../domain/models/payload_issue.dart';
-import '../../source/packages/source_package.dart';
+import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
+import 'package:open_scripture/core/engines/bible_compiler/import/bible_importer.dart';
+import 'package:open_scripture/shared/domain/entities/verse.dart';
+import 'package:open_scripture/shared/domain/entities/bible_book.dart';
+import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
+import 'package:open_scripture/shared/domain/entities/localized_book.dart';
 
 const Map<String, SpanType> usfxTagToSpanType = {
   // Basic character formatting
   'b': SpanType.bold,
   'i': SpanType.italic,
-  'add': SpanType.add,
+  'add': SpanType.added,
   'u': SpanType.underline,
   'sc': SpanType.smallCaps,
   'sup': SpanType.superscript,
 
   // Jesus words / red letter
-  'wj': SpanType.wordOfJesus,
+  'wj': SpanType.redLetter,
   'rq': SpanType.redLetter,
 
   // Notes & references
   'f': SpanType.footnote,
   'x': SpanType.crossReference,
-  'w': SpanType.strongWords,
+  'w': SpanType.strongs,
   'ref': SpanType.reference,
 
   // Poetry / structure
@@ -49,19 +46,15 @@ class UsfxImporter implements BibleImporter {
   Future<bool> canImport(SourcePackage package) async {
     final entries = await package.listEntries();
     final paths = entries.map((e) => e.path.toLowerCase()).toList();
-
     final hasMetadata = paths.any((p) => p.endsWith('metadata.xml'));
     if (!hasMetadata) return false;
-
-    final hasXml = paths.any((p) => p.endsWith('.xml'));
-    return hasXml;
+    return paths.any((p) => p.endsWith('.xml'));
   }
 
   @override
   Future<CanonicalBiblePackage> importFrom(SourcePackage package) async {
     final issues = <PayloadIssue>[];
 
-    // 1) Resolve entry paths
     final entryPaths =
         (await package.listEntries()).map((e) => e.path).toList();
 
@@ -76,45 +69,34 @@ class UsfxImporter implements BibleImporter {
           'USFX: no USFX content XML found in package.');
     }
 
-    // 2) Parse metadata once
     final metadataContent = await package.readText(metadataPath);
     final metadataXml = XmlDocument.parse(metadataContent);
 
-    // 3) Parse bible content (single file) OR merge multiple files
-    // If multiple content files exist, we merge results.
-    final allSegments = <VerseSegment>[];
-    final allSpans = <VerseSpanModel>[];
+    // Parse verse content across all content files
+    final allVerses = <Verse>[];
     for (final path in usfxPaths) {
       final bibleContent = await package.readText(path);
       final bibleXml = XmlDocument.parse(bibleContent);
-
-      final (segments, spans) = _parseVersesWithSpans(
-        bibleXml: bibleXml,
-        bookOsisIdFromUsfx: true,
-      );
-      allSegments.addAll(segments);
-      allSpans.addAll(spans);
+      final verses = _parseVerses(bibleXml);
+      allVerses.addAll(verses);
     }
 
-    // 4) Build BibleMeta + Books from metadata
-    final bibleMeta = _parseBibleMeta(metadataXml, issues);
-    final books = _parseBooks(metadataXml, issues);
+    final translation = _parseBibleTranslation(metadataXml, issues);
+    final localizedBooks = _parseLocalizedBooks(metadataXml, issues);
 
-    // 5) Canonical header
     final packageId = await package.fingerprint();
     final header = CanonicalBibleHeader(
       packageId: packageId,
       sourceFormat: BibleSourceFormat.usfx,
       schemaVersion: _canonicalSchemaVersion,
-      origin: package.displayName, // feature can override; see note below
+      origin: package.displayName,
       originDescription: 'Imported from ${package.displayName}',
     );
 
     final data = CanonicalBibleData(
-      bibleMeta: bibleMeta,
-      books: books,
-      segments: allSegments,
-      spans: allSpans,
+      bibleTranslation: translation,
+      books: localizedBooks,
+      verses: allVerses,
     );
 
     return CanonicalBiblePackage(
@@ -124,6 +106,10 @@ class UsfxImporter implements BibleImporter {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // Path resolution
+  // ---------------------------------------------------------------------------
+
   String? _pickMetadataPath(List<String> paths) {
     for (final p in paths) {
       if (p.toLowerCase().endsWith('metadata.xml')) return p;
@@ -132,16 +118,13 @@ class UsfxImporter implements BibleImporter {
   }
 
   List<String> _pickUsfxContentPaths(List<String> paths) {
-    // Common names: usfx.xml, bible.xml, or any xml containing "usfx"
-    // Start with likely candidates, then fallback to “all xml except metadata.xml”.
     final lower = paths.map((p) => p.toLowerCase()).toList();
-
     final candidates = <String>[];
+
     for (var i = 0; i < paths.length; i++) {
       final p = lower[i];
       if (!p.endsWith('.xml')) continue;
       if (p.endsWith('metadata.xml')) continue;
-
       if (p.contains('usfx') ||
           p.endsWith('usfx.xml') ||
           p.endsWith('bible.xml')) {
@@ -151,68 +134,75 @@ class UsfxImporter implements BibleImporter {
 
     if (candidates.isNotEmpty) return candidates;
 
-    // Fallback: all xml except metadata.xml
-    final fallback = <String>[];
-    for (var i = 0; i < paths.length; i++) {
-      final p = lower[i];
-      if (p.endsWith('.xml') && !p.endsWith('metadata.xml')) {
-        fallback.add(paths[i]);
-      }
-    }
-    return fallback;
+    // Fallback: all xml except metadata
+    return [
+      for (var i = 0; i < paths.length; i++)
+        if (lower[i].endsWith('.xml') && !lower[i].endsWith('metadata.xml'))
+          paths[i]
+    ];
   }
+
+  // ---------------------------------------------------------------------------
+  // Metadata parsing -> BibleTranslation
+  // ---------------------------------------------------------------------------
 
   String _text(XmlDocument doc, String path) {
     final nodes = doc.xpath(path);
-    if (nodes.isEmpty) return '';
-    return nodes.first.innerText;
+    return nodes.isEmpty ? '' : nodes.first.innerText;
   }
 
-  BibleMeta _parseBibleMeta(
+  BibleTranslation _parseBibleTranslation(
       XmlDocument metadataXml, List<PayloadIssue> issues) {
-    String required(String path, String pointer) {
-      final v = _text(metadataXml, path).trim();
+    String required(String xpath, String pointer) {
+      final v = _text(metadataXml, xpath).trim();
       if (v.isEmpty) {
         issues.add(PayloadIssue(
           severity: IssueSeverity.warning,
           code: 'missing_metadata',
-          message: 'Missing metadata at $path',
+          message: 'Missing metadata at $xpath',
           pointer: pointer,
         ));
       }
       return v;
     }
 
-    final bibleName = required('//identification/name', 'BibleMeta.bibleName');
-    final bibleNameLocal =
-        required('//identification/nameLocal', 'BibleMeta.bibleNameLocal');
+    final name = required('//identification/name', 'BibleTranslation.name');
+    final nameLocal =
+        required('//identification/nameLocal', 'BibleTranslation.localName');
     final abbreviation = required(
-        '//identification/abbreviationLocal', 'BibleMeta.abbreviation');
-    final langEngName = required('//language/name', 'BibleMeta.langEngName');
+        '//identification/abbreviationLocal', 'BibleTranslation.abbreviation');
+    final langEngName =
+        required('//language/name', 'BibleTranslation.langEngName');
     final langNativeName =
-        required('//language/nameLocal', 'BibleMeta.langNativeName');
-    final langIso = required('//language/iso', 'BibleMeta.langIsoCode');
-    final desc =
-        required('//identification/description', 'BibleMeta.description');
-    final rights = required('//copyright/statement', 'BibleMeta.copyright');
+        required('//language/nameLocal', 'BibleTranslation.langNativeName');
+    final langIso = required('//language/iso', 'BibleTranslation.langIsoCode');
+    final description = required(
+        '//identification/description', 'BibleTranslation.description');
+    final copyright =
+        required('//copyright/statement', 'BibleTranslation.copyright');
 
-    return BibleMeta(
-      id: null,
+    return BibleTranslation(
+      localId: null,
       extId: abbreviation,
-      bibleNameLocal: bibleNameLocal,
-      bibleName: bibleName,
+      name: name,
+      localName: nameLocal,
       abbreviation: abbreviation,
-      originSource: null,
-      originFormat: formatId,
-      description: desc,
-      copyright: rights,
+      langIsoCode: langIso,
       langEngName: langEngName,
       langNativeName: langNativeName,
-      langIsoCode: langIso,
+      originSource: null,
+      originFormat: formatId,
+      description: description,
+      copyright: copyright,
     );
   }
 
-  List<Book> _parseBooks(XmlDocument metadataXml, List<PayloadIssue> issues) {
+  // ---------------------------------------------------------------------------
+  // Metadata parsing -> LocalizedBook list
+  // ---------------------------------------------------------------------------
+
+  List<LocalizedBook> _parseLocalizedBooks(
+      XmlDocument metadataXml, List<PayloadIssue> issues) {
     final bookNodes = metadataXml
         .findAllElements('bookNames')
         .expand((bn) => bn.findElements('book'))
@@ -223,7 +213,8 @@ class UsfxImporter implements BibleImporter {
           'USFX: No <bookNames>/<book> in metadata.xml');
     }
 
-    final books = <Book>[];
+    final books = <LocalizedBook>[];
+
     for (final b in bookNodes) {
       final code = b.getAttribute('code')?.trim();
       if (code == null || code.isEmpty) {
@@ -231,7 +222,18 @@ class UsfxImporter implements BibleImporter {
           severity: IssueSeverity.warning,
           code: 'book_missing_code',
           message: 'Book entry missing required attribute "code"',
-          pointer: 'Books',
+          pointer: 'LocalizedBook',
+        ));
+        continue;
+      }
+
+      final bibleBook = BibleBook.fromProgrammaticId(code);
+      if (bibleBook == null) {
+        issues.add(PayloadIssue(
+          severity: IssueSeverity.warning,
+          code: 'book_unknown_code',
+          message: 'Unknown book code "$code" - skipping',
+          pointer: 'LocalizedBook($code)',
         ));
         continue;
       }
@@ -248,64 +250,66 @@ class UsfxImporter implements BibleImporter {
           severity: IssueSeverity.warning,
           code: 'book_missing_name',
           message: 'Book $code has empty <short> or <long> name',
-          pointer: 'Book($code)',
+          pointer: 'LocalizedBook($code)',
         ));
       }
 
-      books.add(Book(
-        usfxId: code,
+      books.add(LocalizedBook(
+        book: bibleBook,
         longName: longName.isNotEmpty ? longName : shortName,
         shortName: shortName,
-        abbr: (abbr == null || abbr.isEmpty) ? null : abbr,
+        abbreviation: (abbr == null || abbr.isEmpty) ? null : abbr,
       ));
     }
 
     return books;
   }
 
-  (List<VerseSegment> segments, List<VerseSpanModel> spans)
-      _parseVersesWithSpans({
-    required XmlDocument bibleXml,
-    required bool bookOsisIdFromUsfx,
-  }) {
-    final root = bibleXml.rootElement; // <usfx>
-    final bookNodes = root.findElements("book").toList(growable: false);
+  // ---------------------------------------------------------------------------
+  // Bible content parsing -> List<Verse>
+  // ---------------------------------------------------------------------------
+
+  List<Verse> _parseVerses(XmlDocument bibleXml) {
+    final root = bibleXml.rootElement;
+    final bookNodes = root.findElements('book').toList(growable: false);
 
     if (bookNodes.isEmpty) {
       throw const FormatException(
           'USFX: No <book> nodes found in content XML.');
     }
 
-    final allSegments = <VerseSegment>[];
-    final allSpans = <VerseSpanModel>[];
-
-    for (final bookEl in bookNodes) {
-      final bookId = bookEl.getAttribute('id')?.trim();
-      if (bookId == null || bookId.isEmpty) {
-        throw const FormatException(
-            'USFX: <book> missing required attribute "id"');
-      }
-      final (segments, spans) = _parseVerseSegmentsForBook(bookEl, bookId);
-      allSegments.addAll(segments);
-      allSpans.addAll(spans);
-    }
-
-    return (allSegments, allSpans);
+    return [
+      for (final bookEl in bookNodes) ..._parseVersesForBook(bookEl),
+    ];
   }
 
-  (List<VerseSegment> segments, List<VerseSpanModel> spans)
-      _parseVerseSegmentsForBook(
-    XmlElement bookEl,
-    String bookUsfxId,
-  ) {
-    final segments = <VerseSegment>[];
-    final spans = <VerseSpanModel>[];
+  List<Verse> _parseVersesForBook(XmlElement bookEl) {
+    final bookId = bookEl.getAttribute('id')?.trim();
+    if (bookId == null || bookId.isEmpty) {
+      throw const FormatException(
+          'USFX: <book> missing required attribute "id"');
+    }
 
-    final buffer = StringBuffer();
+    final bibleBook = BibleBook.fromProgrammaticId(bookId);
+    if (bibleBook == null) {
+      // Unknown book - skip silently (caller can add an issue if desired)
+      return [];
+    }
+
+    // Accumulator for the current verse being built
     int? chapter;
-    int? verse;
+    int? verseNumber;
     bool inVerse = false;
     int segmentIndex = 0;
+
+    // Per-segment accumulators
+    final List<VerseSpan> currentSpans = [];
+
+    // Completed verses
+    final verses = <Verse>[];
+
+    // Inline text buffer for the current span/normal run
+    final buffer = StringBuffer();
     bool lastWasSpace = false;
 
     void appendNormalized(String s) {
@@ -313,7 +317,8 @@ class UsfxImporter implements BibleImporter {
         final ch = String.fromCharCode(rune);
         final isWs = ch.trim().isEmpty;
         if (isWs) {
-          if (!lastWasSpace && buffer.isNotEmpty) {
+          // Also allow a space if spans were already emitted before this text node
+          if (!lastWasSpace && (buffer.isNotEmpty || currentSpans.isNotEmpty)) {
             buffer.write(' ');
             lastWasSpace = true;
           }
@@ -324,32 +329,50 @@ class UsfxImporter implements BibleImporter {
       }
     }
 
-    void flushVerse() {
-      final text = buffer.toString().trim();
+    void flushNormalRun() {
+      final text = buffer.toString();
       buffer.clear();
-
-      if (chapter == null || verse == null) return;
-      if (text.isEmpty) return;
-
-      segments.add(VerseSegment(
-        segmentIndex: segmentIndex++,
-        paragraphStart: false,
-        subtitle: null,
-        ref: BibleRef(
-          bookUsfxId: bookUsfxId,
-          chapter: chapter!,
-          verseStart: verse!,
-        ),
-        textContent: text,
-        spans: const [],
-      ));
+      lastWasSpace = false;
+      if (text.isNotEmpty) {
+        currentSpans.add(VerseSpan(type: SpanType.normal, text: text));
+      }
     }
 
-    bool isFootnoteTag(String name) =>
-        name == 'f' || name == 'fr' || name == 'ft';
-    bool isCrossReferenceTag(String name) =>
-        name == 'x' || name == 'xo' || name == 'xt';
-    bool isSpanTag(String tag) => tag == 'w' || tag == 'add' || tag == 'wj';
+    void flushVerse() {
+      flushNormalRun();
+
+      if (chapter == null || verseNumber == null) return;
+      if (currentSpans.isEmpty) return;
+
+      final ref = BibleRef(
+        book: bibleBook,
+        chapter: chapter!,
+        verseStart: verseNumber,
+      );
+
+      verses.add(Verse(
+        translationId: bookId, // placeholder - caller stamps the real extId
+        ref: ref,
+        segments: [
+          VerseSegment(
+            segmentIndex: segmentIndex++,
+            spans: List.unmodifiable(currentSpans),
+          ),
+        ],
+      ));
+
+      currentSpans.clear();
+    }
+
+    bool isFootnoteOrCrossRef(String name) =>
+        name == 'f' ||
+        name == 'fr' ||
+        name == 'ft' ||
+        name == 'x' ||
+        name == 'xo' ||
+        name == 'xt';
+
+    bool isSpanTag(String tag) => usfxTagToSpanType.containsKey(tag);
 
     String? spanPayload(XmlElement el) {
       if (el.name.local == 'w') return el.getAttribute('s');
@@ -360,19 +383,22 @@ class UsfxImporter implements BibleImporter {
       if (node is XmlElement) {
         final tag = node.name.local;
 
-        if (isFootnoteTag(tag)) return;
-        if (isCrossReferenceTag(tag)) return;
+        // Always skip footnote/cross-reference subtrees
+        if (isFootnoteOrCrossRef(tag)) return;
 
         if (tag == 'c') {
           final id = node.getAttribute('id');
-          if (id != null) chapter = int.tryParse(id);
+          if (id != null) {
+            chapter = int.tryParse(id);
+            segmentIndex = 0;
+          }
           return;
         }
 
         if (tag == 'v') {
           if (inVerse) flushVerse();
           final id = node.getAttribute('id');
-          verse = id == null ? null : int.tryParse(id);
+          verseNumber = id == null ? null : int.tryParse(id);
           inVerse = true;
           segmentIndex = 0;
           return;
@@ -381,45 +407,56 @@ class UsfxImporter implements BibleImporter {
         if (tag == 've') {
           if (inVerse) flushVerse();
           inVerse = false;
-          verse = null;
+          verseNumber = null;
           return;
         }
 
         if (inVerse && isSpanTag(tag)) {
-          final start = buffer.length;
-          for (final child in node.children) {
-            walk(child);
+          // Flush any plain text accumulated before this span
+          flushNormalRun();
+
+          // Collect the text content of this element's subtree
+          final spanBuffer = StringBuffer();
+          void collectText(XmlNode n) {
+            if (n is XmlText) {
+              spanBuffer.write(n.value);
+            } else if (n is XmlElement && !isFootnoteOrCrossRef(n.name.local)) {
+              for (final child in n.children) {
+                collectText(child);
+              }
+            }
           }
-          final end = buffer.length;
 
-          if (end > start) {
-            final spanType = usfxTagToSpanType[tag];
-            if (spanType == null || chapter == null || verse == null) return;
+          for (final child in node.children) {
+            collectText(child);
+          }
 
-            spans.add(VerseSpanModel(
-              key: SegmentKey(
-                bookUsfxId: bookUsfxId,
-                chapter: chapter!,
-                verse: verse!,
-                segmentIndex: segmentIndex,
-              ),
-              startOffset: start,
-              endOffset: end,
+          // Collapse ALL internal whitespace sequences, not just leading/trailing
+          final spanText =
+              spanBuffer.toString().replaceAll(RegExp(r'\s+'), ' ').trim();
+
+          if (spanText.isNotEmpty) {
+            final spanType = usfxTagToSpanType[tag]!;
+            currentSpans.add(VerseSpan(
               type: spanType,
+              text: spanText,
               payload: spanPayload(node),
             ));
+            // Reset space tracking after a span
+            lastWasSpace = spanText.endsWith(' ');
           }
           return;
         }
 
+        // Generic element - recurse into children
         for (final child in node.children) {
           walk(child);
         }
         return;
       }
 
-      if (node is XmlText) {
-        if (inVerse) appendNormalized(node.value);
+      if (node is XmlText && inVerse) {
+        appendNormalized(node.value);
       }
     }
 
@@ -429,6 +466,6 @@ class UsfxImporter implements BibleImporter {
 
     if (inVerse) flushVerse();
 
-    return (segments, spans);
+    return verses;
   }
 }

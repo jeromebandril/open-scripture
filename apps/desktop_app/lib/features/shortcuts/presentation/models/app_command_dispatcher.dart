@@ -1,12 +1,12 @@
+import 'package:open_scripture/app/state/fullscreen_cubit.dart';
 import 'package:open_scripture/app/state/interface_visibility_cubit.dart';
-
-import '../../../../shared/entities/bible_ref.dart';
-import '../../../../app/state/fullscreen_cubit.dart';
-import '../../../bible_searchbar/search/presentation/state/search_bloc.dart';
-import '../../../bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
-import '../../../bible_display/bible_pane/domain/display_mode.dart';
-import '../../../bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
-import '../../domain/models/app_command.dart';
+import 'package:open_scripture/features/bible_display/bible_pane/domain/display_mode.dart';
+import 'package:open_scripture/features/bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
+import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
+import 'package:open_scripture/features/bible_searchbar/search/presentation/state/search_bloc.dart';
+import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
+import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
+import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
 
 typedef CommandHandler = void Function();
 
@@ -32,7 +32,7 @@ class AppCommandDispatcher {
     handler();
   }
 
-  List<int> _prevBibleId = [];
+  List<BibleId> _prevBibleId = [];
 
   late final Map<AppCommand, CommandHandler> _handlers = {
     // AppCommand.focusSearch: () => searchbarVisibilityCubit.set(true),
@@ -116,7 +116,7 @@ class AppCommandDispatcher {
 
       // Otherwise, move inside the current chapter bounds.
       final refs = bloc.state.unionRefs.toList();
-      final iCurr = refs.indexOf(ref.copyWith(verseEnd: null));
+      final iCurr = refs.indexOf(ref.copyWith(verseEnd: () => null));
       if (iCurr != -1 && iCurr + delta < refs.length && iCurr + delta >= 0) {
         bloc.add(BiblePaneJustChangeRef(ref: refs[iCurr + delta]));
       }
@@ -140,7 +140,7 @@ class AppCommandDispatcher {
       final newEnd = (delta < 0 && start == nextEnd) ? null : nextEnd;
       bloc.add(
         BiblePaneJustChangeRef(
-          ref: ref.copyWith(verseEnd: newEnd),
+          ref: ref.copyWith(verseEnd: () => newEnd),
         ),
       );
     });
