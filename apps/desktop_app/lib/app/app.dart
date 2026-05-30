@@ -8,7 +8,6 @@ import 'package:open_scripture/features/three_tap_navigator/presentation/state/t
 import 'state/fullscreen_cubit.dart';
 import 'state/interface_visibility_cubit.dart';
 import '../features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
-import '../features/bible_installer_manager/presentation/state/installer/installer_bloc.dart';
 import '../features/bible_searchbar/search/presentation/state/search_bloc.dart';
 import '../features/customizer/domain/entities/app_theme_settings.dart';
 import '../features/customizer/presentation/models/bible_pane_general_theme.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:open_scripture/features/bible_importer/presentation/pages/importer_page.dart';
-import 'package:open_scripture/features/bible_installer_manager/presentation/pages/library_manager_page.dart';
+import 'package:open_scripture/features/my_library/presentation/pages/library_manager_page.dart';
 import 'package:open_scripture/features/customizer/presentation/pages/bible_pane_customizer_screen.dart';
 import 'package:open_scripture/features/customizer/presentation/pages/global_customizer_screen.dart';
 import 'package:open_scripture/features/obs_live_overlay/presentation/pages/obs_live_overlay_page.dart';
@@ -39,7 +39,6 @@ final Map<String, SettingsRoute> settingsRoutes = {
   '/biblemanager/repo': SettingsRoute(
       icon: Icons.menu_book_sharp,
       name: 'Download & Install',
-      // builder: (_) => const BibleManagerWidget()),
       builder: (_) => const LibraryManagerPage()),
   '/biblemanager/importer': SettingsRoute(
       icon: Icons.file_download_outlined,
