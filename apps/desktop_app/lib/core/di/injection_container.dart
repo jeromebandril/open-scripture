@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:open_scripture/app/state/fullscreen_cubit.dart';
 import 'package:open_scripture/app/state/interface_visibility_cubit.dart';
+import 'package:open_scripture/core/engines/bible_compiler/import/formats/osis_importer.dart';
 // import 'package:open_scripture/core/di/init_common_features.dart';
 // import 'package:open_scripture/core/di/init_features_desktop.dart'
 //     if (dart.library.html) 'package:open_scripture/core/di/init_features_web.dart';
@@ -57,6 +58,9 @@ import 'package:open_scripture/features/shortcuts/domain/repositories/shortcuts_
 import 'package:open_scripture/features/shortcuts/presentation/models/app_command_dispatcher.dart';
 import 'package:open_scripture/features/shortcuts/presentation/state/shortcuts_cubit.dart';
 import 'package:open_scripture/features/text_scaler/presentation/state/text_scaler_cubit.dart';
+import 'package:open_scripture/features/three_tap_navigator/data/repository/three_tap_navigator_repository_impl.dart';
+import 'package:open_scripture/features/three_tap_navigator/domain/repository/three_tap_navigator_repository.dart';
+import 'package:open_scripture/features/three_tap_navigator/presentation/state/three_tap_navigator_cubit.dart';
 import 'package:open_scripture/features/window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import 'package:open_scripture/shared/data/datasources/bible_catalog_datasource/bible_catalog_datasource.dart';
 import 'package:open_scripture/shared/data/datasources/bible_catalog_datasource/local_bible_catalog_datasource_impl.dart';
@@ -112,7 +116,7 @@ Future<void> init() async {
 
   // init bible compiler
   sl.registerLazySingleton<ImporterRegistry>(
-    () => ImporterRegistry([UsfxImporter()]),
+    () => ImporterRegistry([UsfxImporter(), OsisImporter()]),
   );
   sl.registerLazySingleton<SourceFetcherService>(
     () => SourceFetcherServiceImpl(),
@@ -239,6 +243,14 @@ Future<void> init() async {
 
   // Importer
   sl.registerFactory(() => BibleImporterCubit(repo: sl(), notifier: sl()));
+
+  // Three tap nav
+
+  sl.registerLazySingleton<ThreeTapNavigatorRepository>(
+    () => ThreeTapNavigatorRepositoryImpl(
+        contentDataSource: sl(), booksLocalDataSource: sl()),
+  );
+  sl.registerLazySingleton(() => ThreeTapNavigatorCubit(repo: sl()));
 }
 
 /// Registers all dependencies in the correct order:
