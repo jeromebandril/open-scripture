@@ -74,7 +74,6 @@ import 'package:open_scripture/shared/data/repositories/bible_install_repository
 import 'package:open_scripture/shared/data/repositories/drift_bible_book_repository_impl.dart';
 import 'package:open_scripture/shared/data/services/bible_ref_parser_impl.dart';
 import 'package:open_scripture/shared/data/services/book_resolvers/chained_book_resolver.dart';
-import 'package:open_scripture/shared/data/services/book_resolvers/drift_book_resolver.dart';
 import 'package:open_scripture/shared/data/services/book_resolvers/programmatic_book_resolver.dart';
 import 'package:open_scripture/shared/data/services/source_fetcher_service.dart';
 import 'package:open_scripture/shared/domain/repositories/bible_book_repository.dart';
@@ -191,7 +190,7 @@ Future<void> init() async {
 
   // My Library
   sl.registerLazySingleton<MyLibraryCubit>(
-      () => MyLibraryCubit(repo: sl(), notifier: sl()));
+      () => MyLibraryCubit(repo: sl(), notifier: sl(), installRepo: sl()));
 
   // REmote controller
   sl.registerLazySingleton<SettingsDatasource<RemoteControllerSettings>>(

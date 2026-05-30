@@ -10,8 +10,7 @@ import '../../domain/entities/bible_source.dart';
 class BibleInstallRepositoryImpl implements BibleInstallRepository {
   final SourceFetcherService _fetcher;
   final ImporterRegistry _compiler;
-  final BibleInstallationDataSource
-      _localDataSource; // <-- Communicates only via the abstract interface
+  final BibleInstallationDataSource _localDataSource;
 
   BibleInstallRepositoryImpl(
       this._fetcher, this._compiler, this._localDataSource);
@@ -89,5 +88,10 @@ class BibleInstallRepositoryImpl implements BibleInstallRepository {
     } finally {
       await _fetcher.cleanup(source);
     }
+  }
+
+  @override
+  Future<void> uninstall(int bibleId) async {
+    await _localDataSource.uninstallBible(bibleId: bibleId);
   }
 }

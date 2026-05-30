@@ -105,7 +105,8 @@ class _BibleSelectorBody extends StatelessWidget {
                           clipBehavior: Clip.hardEdge,
                           child: ListTile(
                               selected: selected,
-                              title: Text(bible.localName, style: style),
+                              title: Text(bible.localName ?? bible.name,
+                                  style: style),
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [

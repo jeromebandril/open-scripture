@@ -13,7 +13,7 @@ class BibleTranslation extends Equatable {
   /// The unique code name across all engines (e.g., "KJV", "RSV")
   final BibleId extId;
   final String name;
-  final String localName;
+  final String? localName;
   final String abbreviation;
   final String? langIsoCode;
   final String? langEngName;
@@ -30,7 +30,7 @@ class BibleTranslation extends Equatable {
     this.localId,
     required this.extId,
     required this.name,
-    required this.localName,
+    this.localName,
     required this.abbreviation,
     this.langIsoCode,
     this.langEngName,

@@ -11,6 +11,8 @@ abstract class BibleInstallationDataSource {
     required List<BookInstallDto> books,
     required List<VerseSegmentInstallDto> segments,
   });
+
+  Future<void> uninstallBible({required int bibleId});
 }
 
 class DriftBibleInstallationDataSourceImpl
@@ -36,5 +38,10 @@ class DriftBibleInstallationDataSourceImpl
       books: books,
       segments: segments,
     );
+  }
+
+  @override
+  Future<void> uninstallBible({required int bibleId}) async {
+    await _dao.executeUninstallation(bibleId);
   }
 }

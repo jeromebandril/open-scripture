@@ -101,6 +101,10 @@ class BibleInstallationDao extends DatabaseAccessor<AppDb>
     });
   }
 
+  Future<void> executeUninstallation(int bibleId) async {
+    await (delete(db.bibles)..where((t) => t.id.equals(bibleId))).go();
+  }
+
   // --- Private Helpers ---
 
   Future<int> _getOrCreateLanguageId({
