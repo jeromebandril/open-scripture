@@ -90,7 +90,7 @@ class MyApp extends StatelessWidget {
                   BlocProvider(create: (_) => di.sl<FullscreenCubit>()..init()),
                   BlocProvider(create: (_) => di.sl<WindowStackManagerBloc>()),
                   BlocProvider(create: (_) => di.sl<SearchBloc>()),
-                  BlocProvider(create: (_) => di.sl<HistoryCubit>()),
+                  BlocProvider.value(value: di.sl<HistoryCubit>()),
                   BlocProvider(create: (_) => di.sl<ShortcutsCubit>()),
                   BlocProvider(
                       create: (context) => di.sl<InterfaceVisibilityCubit>()),
