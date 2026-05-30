@@ -103,7 +103,9 @@ class _HistoryItemState extends State<_HistoryItem> {
         '${widget.historyData.time.minute.toString().padLeft(2, '0')}:'
         '${widget.historyData.time.second.toString().padLeft(2, '0')}';
 
-    final refString = widget.historyData.ref.toString();
+    final refString = widget.size == HistoryListSize.small
+        ? widget.historyData.ref.toString()
+        : '${widget.historyData.ref.book.englishName} ${widget.historyData.ref.toStringChapterAndVerse()} ';
     // final refString = widget.size == HistoryListSize.small
     //     ? widget.historyData.ref.toString()
     //     : widget.historyData.ref.toString().replaceFirst(
