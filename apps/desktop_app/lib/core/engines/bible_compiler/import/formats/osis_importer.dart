@@ -10,6 +10,13 @@ import 'package:open_scripture/shared/domain/entities/verse.dart';
 import 'package:xml/xml.dart';
 import 'package:xml/xpath.dart';
 
+// helper class
+class _ActiveStyle {
+  final SpanType type;
+  final String? payload;
+  _ActiveStyle(this.type, this.payload);
+}
+
 final class OsisImporter implements BibleImporter {
   static const int _canonicalSchemaVersion = 1;
 
@@ -195,6 +202,7 @@ final class OsisImporter implements BibleImporter {
     final verses = <Verse>[];
     final currentSpans = <VerseSpan>[];
     final buffer = StringBuffer();
+    final styleStack = <_ActiveStyle>[];
 
     int? chapter;
     int? verseNumber;
@@ -202,14 +210,10 @@ final class OsisImporter implements BibleImporter {
     int segmentIndex = 0;
     bool lastWasSpace = false;
 
-    // ---- text accumulation ----
-
     void appendNormalized(String s) {
       for (final rune in s.runes) {
         final ch = String.fromCharCode(rune);
-        final isWs = ch.trim().isEmpty;
-        if (isWs) {
-          // Allow space when spans already exist - fixes inter-<w> spacing
+        if (ch.trim().isEmpty) {
           if (!lastWasSpace && (buffer.isNotEmpty || currentSpans.isNotEmpty)) {
             buffer.write(' ');
             lastWasSpace = true;
@@ -221,28 +225,34 @@ final class OsisImporter implements BibleImporter {
       }
     }
 
-    void flushNormalRun() {
+    void flushBuffer() {
       final text = buffer.toString();
       buffer.clear();
-      lastWasSpace = false;
       if (text.isNotEmpty) {
-        currentSpans.add(VerseSpan(type: SpanType.normal, text: text));
+        // Capture the state stack as a Set
+        final activeStyles = styleStack.map((s) => s.type).toSet();
+        // Keep the deepest non-null payload
+        final activePayload = styleStack.reversed
+            .map((s) => s.payload)
+            .firstWhere((p) => p != null, orElse: () => null);
+
+        currentSpans.add(VerseSpan(
+          text: text,
+          activeStyles: activeStyles,
+          payload: activePayload,
+        ));
       }
     }
 
     void flushVerse() {
-      flushNormalRun();
-      if (chapter == null || verseNumber == null || currentSpans.isEmpty) {
+      flushBuffer();
+      if (chapter == null || verseNumber == null || currentSpans.isEmpty)
         return;
-      }
 
       verses.add(Verse(
         translationId: translationId,
         ref: BibleRef(
-          book: bibleBook,
-          chapter: chapter!,
-          verseStart: verseNumber!,
-        ),
+            book: bibleBook, chapter: chapter!, verseStart: verseNumber!),
         segments: [
           VerseSegment(
             segmentIndex: segmentIndex++,
@@ -250,26 +260,14 @@ final class OsisImporter implements BibleImporter {
           ),
         ],
       ));
-
       currentSpans.clear();
+      lastWasSpace = false;
     }
 
-    // ---- walking ----
-
-    late void Function(XmlNode node) walk;
-
-    void collectSpanText(XmlNode n, StringBuffer out) {
-      if (n is XmlText) {
-        out.write(n.value);
-      } else if (n is XmlElement && !_isSkipped(n.name.local)) {
-        for (final child in n.children) collectSpanText(child, out);
-      }
-    }
-
+    late void Function(XmlNode) walk;
     walk = (XmlNode node) {
       if (node is XmlElement) {
         final tag = node.name.local;
-
         if (_isSkipped(tag)) return;
 
         // ---- chapter boundary ----
@@ -333,50 +331,25 @@ final class OsisImporter implements BibleImporter {
           return;
         }
 
-        if (!inVerse && tag == 'header') return;
-
-        // ---- inline span elements ----
-        if (inVerse && _isSpanElement(tag)) {
-          final st = _spanTypeFor(node);
-
-          // Unrecognized span - recurse so text is not lost
-          if (st == null) {
-            for (final child in node.children) walk(child);
-            return;
-          }
-
-          flushNormalRun();
-
-          final spanBuffer = StringBuffer();
-          for (final child in node.children) collectSpanText(child, spanBuffer);
-
-          final spanText =
-              spanBuffer.toString().replaceAll(RegExp(r'\s+'), ' ').trim();
-
-          if (spanText.isNotEmpty) {
-            currentSpans.add(VerseSpan(
-              type: st,
-              text: spanText,
-              payload: _spanPayload(node),
-            ));
-            lastWasSpace = spanText.endsWith(' ');
-          }
+        // Handle Spans with Style Stack
+        final st = _spanTypeFor(node);
+        if (st != null) {
+          flushBuffer();
+          styleStack.add(_ActiveStyle(st, _spanPayload(node)));
+          for (final child in node.children) walk(child);
+          flushBuffer();
+          styleStack.removeLast();
           return;
         }
 
-        // Default: recurse
         for (final child in node.children) walk(child);
         return;
       }
-
-      if (node is XmlText && inVerse) {
-        appendNormalized(node.value);
-      }
+      if (node is XmlText && inVerse) appendNormalized(node.value);
     };
 
     for (final child in bookDiv.children) walk(child);
     if (inVerse) flushVerse();
-
     return verses;
   }
 
@@ -386,9 +359,6 @@ final class OsisImporter implements BibleImporter {
 
   bool _isSkipped(String tag) =>
       tag == 'note' || tag == 'rdg' || tag == 'rdgGrp';
-
-  bool _isSpanElement(String tag) =>
-      tag == 'transChange' || tag == 'hi' || tag == 'w';
 
   SpanType? _spanTypeFor(XmlElement el) {
     return switch (el.name.local) {

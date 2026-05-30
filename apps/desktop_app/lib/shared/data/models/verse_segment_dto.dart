@@ -36,7 +36,7 @@ extension VerseSegmentDtoMapper on VerseSegmentDto {
       final Map<String, dynamic> spanMap = item as Map<String, dynamic>;
 
       return VerseSpan(
-        type: _parseSpanType(spanMap['type'] as String? ?? 'normal'),
+        activeStyles: _parseSetOfStyles(spanMap['activeStyles']),
         text: spanMap['text'] as String? ?? '',
         payload: spanMap['payload'] as String?,
       );
@@ -50,47 +50,12 @@ extension VerseSegmentDtoMapper on VerseSegmentDto {
     );
   }
 
-  /// Safely converts the string type from database JSON back into the Domain Enum.
-  SpanType _parseSpanType(String typeStr) {
-    try {
-      return SpanType.values.byName(typeStr);
-    } catch (_) {
-      return SpanType.normal;
-    }
+  Set<SpanType> _parseSetOfStyles(dynamic activeStyles) {
+    final List<dynamic> styleNames = activeStyles;
+    final Set<SpanType> styles = styleNames
+        .map((name) => SpanType.values.firstWhere((e) => e.name == name))
+        .toSet();
+
+    return styles;
   }
-
-  // Not needed anymore, fix is applied at the import level
-
-  // List<VerseSpan> _normalizeSpans(List<VerseSpan> spans) {
-  //   final result = <VerseSpan>[];
-
-  //   for (var i = 0; i < spans.length; i++) {
-  //     final span = spans[i];
-
-  //     // Fix 2: collapse XML line-wrap whitespace into single spaces
-  //     final cleanText =
-  //         span.text.replaceAll('\n', ' ').replaceAll(RegExp(r' +'), ' ');
-
-  //     // Fix 1: ensure a trailing space before the next word-starting span
-  //     final needsTrailingSpace = cleanText.isNotEmpty &&
-  //         !cleanText.endsWith(' ') &&
-  //         i + 1 < spans.length &&
-  //         spans[i + 1].text.isNotEmpty &&
-  //         !spans[i + 1].text.startsWith(' ') &&
-  //         !spans[i + 1].text.startsWith(',') &&
-  //         !spans[i + 1].text.startsWith('.') &&
-  //         !spans[i + 1].text.startsWith(';') &&
-  //         !spans[i + 1].text.startsWith(':') &&
-  //         !spans[i + 1].text.startsWith('!') &&
-  //         !spans[i + 1].text.startsWith('?');
-
-  //     result.add(VerseSpan(
-  //       type: span.type,
-  //       text: needsTrailingSpace ? '$cleanText ' : cleanText,
-  //       payload: span.payload,
-  //     ));
-  //   }
-
-  //   return result;
-  // }
 }

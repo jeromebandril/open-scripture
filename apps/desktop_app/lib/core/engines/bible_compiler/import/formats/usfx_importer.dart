@@ -54,7 +54,6 @@ class UsfxImporter implements BibleImporter {
   @override
   Future<CanonicalBiblePackage> importFrom(SourcePackage package) async {
     final issues = <PayloadIssue>[];
-
     final entryPaths =
         (await package.listEntries()).map((e) => e.path).toList();
 
@@ -77,31 +76,26 @@ class UsfxImporter implements BibleImporter {
     for (final path in usfxPaths) {
       final bibleContent = await package.readText(path);
       final bibleXml = XmlDocument.parse(bibleContent);
-      final verses = _parseVerses(bibleXml);
-      allVerses.addAll(verses);
+      allVerses.addAll(_parseVerses(bibleXml));
     }
 
     final translation = _parseBibleTranslation(metadataXml, issues);
     final localizedBooks = _parseLocalizedBooks(metadataXml, issues);
-
     final packageId = await package.fingerprint();
-    final header = CanonicalBibleHeader(
-      packageId: packageId,
-      sourceFormat: BibleSourceFormat.usfx,
-      schemaVersion: _canonicalSchemaVersion,
-      origin: package.displayName,
-      originDescription: 'Imported from ${package.displayName}',
-    );
-
-    final data = CanonicalBibleData(
-      bibleTranslation: translation,
-      books: localizedBooks,
-      verses: allVerses,
-    );
 
     return CanonicalBiblePackage(
-      header: header,
-      data: data,
+      header: CanonicalBibleHeader(
+        packageId: packageId,
+        sourceFormat: BibleSourceFormat.usfx,
+        schemaVersion: _canonicalSchemaVersion,
+        origin: package.displayName,
+        originDescription: 'Imported from ${package.displayName}',
+      ),
+      data: CanonicalBibleData(
+        bibleTranslation: translation,
+        books: localizedBooks,
+        verses: allVerses,
+      ),
       issues: issues,
     );
   }
@@ -123,8 +117,8 @@ class UsfxImporter implements BibleImporter {
 
     for (var i = 0; i < paths.length; i++) {
       final p = lower[i];
-      if (!p.endsWith('.xml')) continue;
-      if (p.endsWith('metadata.xml')) continue;
+      if (!p.endsWith('.xml') || p.endsWith('metadata.xml')) continue;
+
       if (p.contains('usfx') ||
           p.endsWith('usfx.xml') ||
           p.endsWith('bible.xml')) {
@@ -166,34 +160,26 @@ class UsfxImporter implements BibleImporter {
       return v;
     }
 
-    final name = required('//identification/name', 'BibleTranslation.name');
-    final nameLocal =
-        required('//identification/nameLocal', 'BibleTranslation.localName');
     final abbreviation = required(
         '//identification/abbreviationLocal', 'BibleTranslation.abbreviation');
-    final langEngName =
-        required('//language/name', 'BibleTranslation.langEngName');
-    final langNativeName =
-        required('//language/nameLocal', 'BibleTranslation.langNativeName');
-    final langIso = required('//language/iso', 'BibleTranslation.langIsoCode');
-    final description = required(
-        '//identification/description', 'BibleTranslation.description');
-    final copyright =
-        required('//copyright/statement', 'BibleTranslation.copyright');
 
     return BibleTranslation(
       localId: null,
       extId: abbreviation,
-      name: name,
-      localName: nameLocal,
+      name: required('//identification/name', 'BibleTranslation.name'),
+      localName:
+          required('//identification/nameLocal', 'BibleTranslation.localName'),
       abbreviation: abbreviation,
-      langIsoCode: langIso,
-      langEngName: langEngName,
-      langNativeName: langNativeName,
+      langIsoCode: required('//language/iso', 'BibleTranslation.langIsoCode'),
+      langEngName: required('//language/name', 'BibleTranslation.langEngName'),
+      langNativeName:
+          required('//language/nameLocal', 'BibleTranslation.langNativeName'),
       originSource: null,
       originFormat: formatId,
-      description: description,
-      copyright: copyright,
+      description: required(
+          '//identification/description', 'BibleTranslation.description'),
+      copyright:
+          required('//copyright/statement', 'BibleTranslation.copyright'),
     );
   }
 
@@ -240,7 +226,6 @@ class UsfxImporter implements BibleImporter {
 
       String textOrEmpty(String tag) =>
           b.getElement(tag)?.innerText.trim() ?? '';
-
       final longName = textOrEmpty('long');
       final shortName = textOrEmpty('short');
       final abbr = b.getElement('abbr')?.innerText.trim();
@@ -291,181 +276,184 @@ class UsfxImporter implements BibleImporter {
     }
 
     final bibleBook = BibleBook.fromProgrammaticId(bookId);
-    if (bibleBook == null) {
-      // Unknown book - skip silently (caller can add an issue if desired)
-      return [];
-    }
+    if (bibleBook == null) return []; // Unknown book - skip silently
 
-    // Accumulator for the current verse being built
-    int? chapter;
-    int? verseNumber;
-    bool inVerse = false;
-    int segmentIndex = 0;
-
-    // Per-segment accumulators
-    final List<VerseSpan> currentSpans = [];
-
-    // Completed verses
-    final verses = <Verse>[];
-
-    // Inline text buffer for the current span/normal run
-    final buffer = StringBuffer();
-    bool lastWasSpace = false;
-
-    void appendNormalized(String s) {
-      for (final rune in s.runes) {
-        final ch = String.fromCharCode(rune);
-        final isWs = ch.trim().isEmpty;
-        if (isWs) {
-          // Also allow a space if spans were already emitted before this text node
-          if (!lastWasSpace && (buffer.isNotEmpty || currentSpans.isNotEmpty)) {
-            buffer.write(' ');
-            lastWasSpace = true;
-          }
-        } else {
-          buffer.write(ch);
-          lastWasSpace = false;
-        }
-      }
-    }
-
-    void flushNormalRun() {
-      final text = buffer.toString();
-      buffer.clear();
-      lastWasSpace = false;
-      if (text.isNotEmpty) {
-        currentSpans.add(VerseSpan(type: SpanType.normal, text: text));
-      }
-    }
-
-    void flushVerse() {
-      flushNormalRun();
-
-      if (chapter == null || verseNumber == null) return;
-      if (currentSpans.isEmpty) return;
-
-      final ref = BibleRef(
-        book: bibleBook,
-        chapter: chapter!,
-        verseStart: verseNumber,
-      );
-
-      verses.add(Verse(
-        translationId: bookId, // placeholder - caller stamps the real extId
-        ref: ref,
-        segments: [
-          VerseSegment(
-            segmentIndex: segmentIndex++,
-            spans: List.unmodifiable(currentSpans),
-          ),
-        ],
-      ));
-
-      currentSpans.clear();
-    }
-
-    bool isFootnoteOrCrossRef(String name) =>
-        name == 'f' ||
-        name == 'fr' ||
-        name == 'ft' ||
-        name == 'x' ||
-        name == 'xo' ||
-        name == 'xt';
-
-    bool isSpanTag(String tag) => usfxTagToSpanType.containsKey(tag);
-
-    String? spanPayload(XmlElement el) {
-      if (el.name.local == 'w') return el.getAttribute('s');
-      return null;
-    }
-
-    void walk(XmlNode node) {
-      if (node is XmlElement) {
-        final tag = node.name.local;
-
-        // Always skip footnote/cross-reference subtrees
-        if (isFootnoteOrCrossRef(tag)) return;
-
-        if (tag == 'c') {
-          final id = node.getAttribute('id');
-          if (id != null) {
-            chapter = int.tryParse(id);
-            segmentIndex = 0;
-          }
-          return;
-        }
-
-        if (tag == 'v') {
-          if (inVerse) flushVerse();
-          final id = node.getAttribute('id');
-          verseNumber = id == null ? null : int.tryParse(id);
-          inVerse = true;
-          segmentIndex = 0;
-          return;
-        }
-
-        if (tag == 've') {
-          if (inVerse) flushVerse();
-          inVerse = false;
-          verseNumber = null;
-          return;
-        }
-
-        if (inVerse && isSpanTag(tag)) {
-          // Flush any plain text accumulated before this span
-          flushNormalRun();
-
-          // Collect the text content of this element's subtree
-          final spanBuffer = StringBuffer();
-          void collectText(XmlNode n) {
-            if (n is XmlText) {
-              spanBuffer.write(n.value);
-            } else if (n is XmlElement && !isFootnoteOrCrossRef(n.name.local)) {
-              for (final child in n.children) {
-                collectText(child);
-              }
-            }
-          }
-
-          for (final child in node.children) {
-            collectText(child);
-          }
-
-          // Collapse ALL internal whitespace sequences, not just leading/trailing
-          final spanText =
-              spanBuffer.toString().replaceAll(RegExp(r'\s+'), ' ').trim();
-
-          if (spanText.isNotEmpty) {
-            final spanType = usfxTagToSpanType[tag]!;
-            currentSpans.add(VerseSpan(
-              type: spanType,
-              text: spanText,
-              payload: spanPayload(node),
-            ));
-            // Reset space tracking after a span
-            lastWasSpace = spanText.endsWith(' ');
-          }
-          return;
-        }
-
-        // Generic element - recurse into children
-        for (final child in node.children) {
-          walk(child);
-        }
-        return;
-      }
-
-      if (node is XmlText && inVerse) {
-        appendNormalized(node.value);
-      }
-    }
-
-    for (final child in bookEl.children) {
-      walk(child);
-    }
-
-    if (inVerse) flushVerse();
-
-    return verses;
+    // Defer the heavy lifting to the stateful visitor class
+    final visitor = _UsfxBookVisitor(bookId: bookId, bibleBook: bibleBook);
+    return visitor.parse(bookEl);
   }
+}
+
+class _ActiveStyle {
+  final SpanType type;
+  final String? payload;
+  _ActiveStyle(this.type, this.payload);
+}
+
+class _UsfxBookVisitor {
+  final String bookId;
+  final BibleBook bibleBook;
+
+  int? _chapter;
+  int? _verseNumber;
+  bool _inVerse = false;
+  int _segmentIndex = 0;
+
+  // The style stack allows block elements (like <q> poetry) to span across multiple
+  // verses and chapters without swallowing the <c> and <v> milestone tags.
+  final List<_ActiveStyle> _styleStack = [];
+
+  final List<VerseSpan> _currentSpans = [];
+  final List<Verse> _verses = [];
+  final StringBuffer _buffer = StringBuffer();
+  bool _lastWasSpace = false;
+
+  _UsfxBookVisitor({required this.bookId, required this.bibleBook});
+
+  List<Verse> parse(XmlElement bookEl) {
+    for (final child in bookEl.children) {
+      _walk(child);
+    }
+    if (_inVerse) _flushVerse();
+    return _verses;
+  }
+
+  void _walk(XmlNode node) {
+    if (node is XmlElement) {
+      final tag = node.name.local;
+
+      if (_isFootnoteOrCrossRef(tag)) return;
+
+      if (tag == 'c') {
+        final id = node.getAttribute('id');
+        if (id != null) {
+          _chapter = int.tryParse(id);
+          _segmentIndex = 0;
+        }
+        // Fall through to parse potential children if <c> is a container
+      } else if (tag == 'v') {
+        if (_inVerse) _flushVerse();
+        final id = node.getAttribute('id');
+        _verseNumber = id == null ? null : int.tryParse(id);
+        _inVerse = true;
+        _segmentIndex = 0;
+        // Fall through to parse potential children if <v> is a container
+      } else if (tag == 've') {
+        if (_inVerse) _flushVerse();
+        _inVerse = false;
+        _verseNumber = null;
+      } else if (usfxTagToSpanType.containsKey(tag)) {
+        final spanType = usfxTagToSpanType[tag]!;
+        final payload = tag == 'w' ? node.getAttribute('s') : null;
+
+        // 1. Turn the style ON
+        _pushStyle(_ActiveStyle(spanType, payload));
+
+        // 2. Recurse normally (this prevents <c> and <v> from being swallowed)
+        for (final child in node.children) {
+          _walk(child);
+        }
+
+        // 3. Turn the style OFF
+        _popStyle();
+
+        return; // Children parsed, do not fall through to generic loop
+      }
+
+      // Generic element (e.g. <p> paragraphs) - recurse into children
+      for (final child in node.children) {
+        _walk(child);
+      }
+      return;
+    }
+
+    if (node is XmlText && _inVerse) {
+      _appendNormalized(node.value);
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // State Management
+  // ---------------------------------------------------------------------------
+
+  void _pushStyle(_ActiveStyle style) {
+    _flushBuffer(); // Save existing text before the style changes
+    _styleStack.add(style);
+  }
+
+  void _popStyle() {
+    _flushBuffer(); // Save text with the old style before reverting
+    if (_styleStack.isNotEmpty) {
+      _styleStack.removeLast();
+    }
+  }
+
+  void _appendNormalized(String s) {
+    for (final rune in s.runes) {
+      final ch = String.fromCharCode(rune);
+      if (ch.trim().isEmpty) {
+        // Allow a space if we haven't just appended one, and we are not at the very start of a verse
+        if (!_lastWasSpace &&
+            (_buffer.isNotEmpty || _currentSpans.isNotEmpty)) {
+          _buffer.write(' ');
+          _lastWasSpace = true;
+        }
+      } else {
+        _buffer.write(ch);
+        _lastWasSpace = false;
+      }
+    }
+  }
+
+  void _flushBuffer() {
+    final text = _buffer.toString();
+    _buffer.clear();
+
+    if (text.isNotEmpty) {
+      // Capture ALL active types currently in the stack
+      final activeStyles = _styleStack.map((s) => s.type).toSet();
+
+      // Capture the most relevant payload (e.g., the last one added)
+      final activePayload = _styleStack.reversed
+          .map((s) => s.payload)
+          .firstWhere((p) => p != null, orElse: () => null);
+
+      _currentSpans.add(VerseSpan(
+        text: text,
+        activeStyles: activeStyles,
+        payload: activePayload,
+      ));
+    }
+  }
+
+  void _flushVerse() {
+    _flushBuffer(); // Empty the text buffer into spans
+
+    // Prevent empty verses from being added
+    if (_chapter == null || _verseNumber == null || _currentSpans.isEmpty)
+      return;
+
+    _verses.add(Verse(
+      translationId: bookId,
+      ref: BibleRef(
+          book: bibleBook, chapter: _chapter!, verseStart: _verseNumber),
+      segments: [
+        VerseSegment(
+          segmentIndex: _segmentIndex++,
+          spans: List.unmodifiable(_currentSpans),
+        ),
+      ],
+    ));
+
+    _currentSpans.clear();
+    _lastWasSpace = false; // Reset space tracker for new verse
+  }
+
+  bool _isFootnoteOrCrossRef(String name) =>
+      name == 'f' ||
+      name == 'fr' ||
+      name == 'ft' ||
+      name == 'x' ||
+      name == 'xo' ||
+      name == 'xt';
 }

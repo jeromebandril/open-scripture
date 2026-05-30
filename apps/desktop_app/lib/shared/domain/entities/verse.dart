@@ -20,7 +20,7 @@ enum SpanType {
 
 /// The smallest unit of text. A purely immutable value object.
 class VerseSpan extends Equatable {
-  final SpanType type;
+  final Set<SpanType> activeStyles;
   final String text;
 
   /// Holds extra data: e.g., the Strong's number ("G2816"),
@@ -28,13 +28,13 @@ class VerseSpan extends Equatable {
   final String? payload;
 
   const VerseSpan({
-    required this.type,
+    required this.activeStyles,
     required this.text,
     this.payload,
   });
 
   @override
-  List<Object?> get props => [type, text, payload];
+  List<Object?> get props => [activeStyles, text, payload];
 }
 
 /// A structural block within a verse.

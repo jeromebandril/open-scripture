@@ -6,8 +6,6 @@ import 'package:open_scripture/shared/domain/entities/verse.dart';
 const _strongWordBold = 'H0430';
 
 class VerseSpanBuilder {
-  /// Converts a list of [VerseSpan] domain objects into Flutter [InlineSpan]s.
-  /// No offset arithmetic needed - each span already owns its text.
   static List<InlineSpan> build({
     required List<VerseSpan> spans,
     required BuildContext context,
@@ -22,55 +20,57 @@ class VerseSpanBuilder {
     return spans.map((span) {
       return TextSpan(
         text: span.text,
-        style: _styleFor(span, base, bTheme),
-        recognizer: span.type == SpanType.strongs && onWordTap != null
-            ? (TapGestureRecognizer()..onTap = () => onWordTap(span))
-            : null,
+        // Apply all styles cumulatively
+        style: _buildCombinedStyle(span, base, bTheme),
+        // Trigger tap if any style in the set is strongs
+        recognizer:
+            (span.activeStyles.contains(SpanType.strongs) && onWordTap != null)
+                ? (TapGestureRecognizer()..onTap = () => onWordTap(span))
+                : null,
       );
     }).toList();
   }
 
-  static TextStyle _styleFor(
+  static TextStyle _buildCombinedStyle(
     VerseSpan span,
     TextStyle base,
     BiblePaneGeneralTheme bTheme,
   ) {
-    return switch (span.type) {
-      SpanType.italic => base.merge(
-          const TextStyle(fontStyle: FontStyle.italic),
-        ),
-      SpanType.bold => base.merge(
-          const TextStyle(fontWeight: FontWeight.w600),
-        ),
-      SpanType.added => base.merge(TextStyle(
-          fontStyle: FontStyle.italic,
-          color: bTheme.addColor,
-        )),
-      SpanType.redLetter => base.merge(
-          TextStyle(color: bTheme.quoteColor),
-        ),
-      SpanType.strongs => base.merge(TextStyle(
+    TextStyle style = base;
+
+    // Apply styles in order of priority or accumulation
+    for (final type in span.activeStyles) {
+      style = style.merge(_getStyleForType(type, span, bTheme));
+    }
+
+    return style;
+  }
+
+  static TextStyle _getStyleForType(
+    SpanType type,
+    VerseSpan span,
+    BiblePaneGeneralTheme bTheme,
+  ) {
+    return switch (type) {
+      SpanType.italic => const TextStyle(fontStyle: FontStyle.italic),
+      SpanType.bold => const TextStyle(fontWeight: FontWeight.w600),
+      SpanType.added =>
+        TextStyle(fontStyle: FontStyle.italic, color: bTheme.addColor),
+      SpanType.redLetter => TextStyle(color: bTheme.quoteColor),
+      SpanType.strongs => TextStyle(
           decoration: bTheme.underlineStrongWords
               ? TextDecoration.underline
               : TextDecoration.none,
           decorationStyle: TextDecorationStyle.dotted,
           decorationColor: Colors.black26,
           fontWeight: span.payload == _strongWordBold ? FontWeight.w500 : null,
-        )),
-      SpanType.underline => base.merge(
-          const TextStyle(decoration: TextDecoration.underline),
         ),
-      SpanType.smallCaps => base.merge(
-          const TextStyle(fontFeatures: [FontFeature.enable('smcp')]),
-        ),
-      SpanType.superscript => base.merge(
-          // Flutter has no native superscript; approximate with smaller size.
-          // Replace with WidgetSpan + Transform if you need precision.
-          const TextStyle(fontSize: 10, height: 0.5),
-        ),
-      // footnote, crossReference, poetry, reference. No visual style yet,
-      // wire up when you build those interaction layers.
-      _ => base,
+      SpanType.underline =>
+        const TextStyle(decoration: TextDecoration.underline),
+      SpanType.smallCaps =>
+        const TextStyle(fontFeatures: [FontFeature.enable('smcp')]),
+      SpanType.superscript => const TextStyle(fontSize: 10, height: 0.5),
+      _ => const TextStyle(),
     };
   }
 }

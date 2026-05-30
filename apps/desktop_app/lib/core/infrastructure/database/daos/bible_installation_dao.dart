@@ -76,7 +76,8 @@ class BibleInstallationDao extends DatabaseAccessor<AppDb>
 
         final spansJsonString = jsonEncode(seg.spans
             .map((s) => {
-                  'type': s.type.name,
+                  'activeStyles':
+                      s.activeStyles.map((type) => type.name).toList(),
                   'text': s.text,
                   'payload': s.payload,
                 })
