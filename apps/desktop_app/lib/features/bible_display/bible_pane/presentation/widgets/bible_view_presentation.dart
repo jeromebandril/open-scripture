@@ -82,7 +82,7 @@ class BibleViewPresentation extends StatelessWidget {
                         children: [
                           if (isParallel)
                             Text(
-                              '(${entry.key})',
+                              entry.key.toString(),
                               textAlign: presentTheme.titleAlignment,
                               style: TextStyle(
                                 color: paneTheme.enableCustomTheme
@@ -141,8 +141,11 @@ class BibleViewPresentation extends StatelessWidget {
               ? const <InlineSpan>[]
               : verseSpans.first;
 
+      final subtitle =
+          '[${value.meta.name}${value.meta.langNativeName != null ? '- ${value.meta.langNativeName}' : ''}]';
+
       return MapEntry(
-        '${value.meta.name} - ${value.meta.langNativeName}',
+        subtitle,
         Text.rich(
           TextSpan(
             style: TextStyle(fontWeight: paneTheme.textFontWeight),
