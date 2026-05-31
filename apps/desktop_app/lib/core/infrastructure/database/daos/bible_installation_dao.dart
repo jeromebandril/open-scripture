@@ -18,8 +18,7 @@ class BibleInstallationDao extends DatabaseAccessor<AppDb>
 
   Future<int> executeInstallation({
     required String languageEnglishName,
-    required String
-        languageIsoCode, // Matching non-nullable DB schema requirement
+    required String languageIsoCode,
     required String? languageNativeName,
     required TranslationInstallDto translation,
     required List<BookInstallDto> books,

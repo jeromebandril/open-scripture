@@ -37,11 +37,11 @@ final Map<String, SettingsRoute> settingsRoutes = {
       name: 'Bible viewer',
       builder: (_) => const BiblePaneCustomizerScreen()),
   '/biblemanager/repo': SettingsRoute(
-      icon: Icons.menu_book_sharp,
-      name: 'Download & Install',
+      icon: Icons.local_library_rounded,
+      name: 'My Library',
       builder: (_) => const LibraryManagerPage()),
   '/biblemanager/importer': SettingsRoute(
-      icon: Icons.file_download_outlined,
+      icon: Icons.file_upload_outlined,
       name: 'Import',
       builder: (_) => const ImporterPage()),
   '/obsliveoverlay': SettingsRoute(
