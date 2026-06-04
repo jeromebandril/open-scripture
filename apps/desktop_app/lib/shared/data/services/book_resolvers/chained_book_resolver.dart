@@ -7,9 +7,9 @@ class ChainedBookResolver implements BookResolver {
   ChainedBookResolver(this._chain);
 
   @override
-  Future<BibleBook?> resolve(String input, int? languageId) async {
+  Future<BibleBook?> resolve(String input, int? bibleId) async {
     for (final resolver in _chain) {
-      final result = await resolver.resolve(input, languageId);
+      final result = await resolver.resolve(input, bibleId);
       if (result != null) return result;
     }
     // Fallback if no strategy in the chain could resolve the book.

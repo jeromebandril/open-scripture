@@ -8,24 +8,10 @@ class BibleRefInvalidFormatException extends InvalidInputException {
   const BibleRefInvalidFormatException(super.message);
 }
 
-class BibleRefUnknownBookException extends InvalidInputException {
-  const BibleRefUnknownBookException(super.message);
-}
-
 class BibleRefInvalidNumberException extends InvalidInputException {
   const BibleRefInvalidNumberException(super.message);
 }
 
 class BibleRefOutOfRangeException extends InvalidInputException {
   const BibleRefOutOfRangeException(super.message);
-}
-
-class BibleRefAmbiguousBookException implements Exception {
-  final String message;
-  final List<String> candidates;
-
-  BibleRefAmbiguousBookException(this.message, {required this.candidates});
-
-  @override
-  String toString() => '$message Candidates: ${candidates.join(", ")}';
 }

@@ -1,9 +1,9 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
-import 'package:open_scripture/shared/domain/services/bible_ref_parser.dart';
+import 'package:open_scripture/shared/domain/entities/bible_ref_partial.dart';
 import 'package:open_scripture/shared/error/failure.dart';
 import 'package:open_scripture/features/bible_searchbar/search/domain/repositories/search_repository.dart';
 import 'package:open_scripture/shared/utils/bible_ref_parser/bible_ref_parser_exceptions.dart';
+import 'package:open_scripture/shared/utils/bible_ref_parser/bible_ref_parser.dart';
 
 class SearchRepositoryImpl implements SearchRepository {
   final BibleRefParser _parser;
@@ -13,22 +13,16 @@ class SearchRepositoryImpl implements SearchRepository {
   }) : _parser = parser;
 
   @override
-  Future<Either<Failure, BibleRef>> parse(String query) async {
+  Future<Either<Failure, BibleRefPartial>> parse(String query) async {
     try {
       final ref = await _parser.parse(query);
       return Right(ref);
     } on BibleRefInvalidFormatException catch (e) {
       return Left(InvalidInputFailure(details: e.message));
-    } on BibleRefUnknownBookException catch (e) {
-      return Left(InvalidInputFailure(details: e.message));
     } on BibleRefInvalidNumberException catch (e) {
       return Left(InvalidInputFailure(details: e.message));
     } on BibleRefOutOfRangeException catch (e) {
       return Left(InvalidInputFailure(details: e.message));
-    } on BibleRefAmbiguousBookException catch (e) {
-      return Left(InvalidInputFailure(
-          details:
-              '${e.message} Possible candidates: ${e.candidates.join(', ')}'));
     } catch (e) {
       return Left(UnknownFailure(details: e.toString()));
     }

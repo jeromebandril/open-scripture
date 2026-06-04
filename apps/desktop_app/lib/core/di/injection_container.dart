@@ -15,7 +15,7 @@ import 'package:open_scripture/core/infrastructure/database/daos/bible_installat
 import 'package:open_scripture/core/infrastructure/database/daos/installed_bibles_dao.dart';
 import 'package:open_scripture/core/infrastructure/database/database.dart';
 import 'package:open_scripture/core/infrastructure/event_bus/install_notifier.dart';
-import 'package:open_scripture/core/infrastructure/event_bus/navigation_bus.dart';
+import 'package:open_scripture/core/infrastructure/event_bus/search_result_bus.dart';
 import 'package:open_scripture/core/infrastructure/event_bus/resolved_search_intent_bus.dart';
 import 'package:open_scripture/core/infrastructure/event_bus/selected_verse_bus.dart';
 import 'package:open_scripture/core/infrastructure/window/app_window_manager.dart';
@@ -72,15 +72,15 @@ import 'package:open_scripture/shared/data/repositories/bible_catalog_repository
 import 'package:open_scripture/shared/data/repositories/bible_content_repository_impl.dart';
 import 'package:open_scripture/shared/data/repositories/bible_install_repository_impl.dart';
 import 'package:open_scripture/shared/data/repositories/drift_bible_book_repository_impl.dart';
-import 'package:open_scripture/shared/data/services/bible_ref_parser_impl.dart';
+import 'package:open_scripture/shared/utils/bible_ref_parser/bible_ref_parser.dart';
 import 'package:open_scripture/shared/data/services/book_resolvers/chained_book_resolver.dart';
+import 'package:open_scripture/shared/data/services/book_resolvers/drift_book_resolver.dart';
 import 'package:open_scripture/shared/data/services/book_resolvers/programmatic_book_resolver.dart';
 import 'package:open_scripture/shared/data/services/source_fetcher_service.dart';
 import 'package:open_scripture/shared/domain/repositories/bible_book_repository.dart';
 import 'package:open_scripture/shared/domain/repositories/bible_catalog_repository.dart';
 import 'package:open_scripture/shared/domain/repositories/bible_content_repository.dart';
 import 'package:open_scripture/shared/domain/repositories/bible_install_repository.dart';
-import 'package:open_scripture/shared/domain/services/bible_ref_parser.dart';
 import 'package:open_scripture/shared/domain/services/book_resolver.dart';
 
 final sl = GetIt.instance;
@@ -123,16 +123,15 @@ Future<void> init() async {
 
   // init book resolver
   sl.registerLazySingleton<BookResolver>(() => ChainedBookResolver([
-        // DriftBookResolver(sl()),
+        DriftBookResolver(sl()),
         ProgrammaticIdResolver(),
       ]));
 
   // init bible ref parser
-  sl.registerLazySingleton<BibleRefParser>(
-      () => BibleRefParserImpl(bookResolver: sl()));
+  sl.registerLazySingleton<BibleRefParser>(() => BibleRefParser());
 
   // init globals
-  sl.registerLazySingleton(() => NavigationBus());
+  sl.registerLazySingleton(() => SearchResultBus());
   sl.registerLazySingleton(() => ResolvedSearchIntentBus());
   sl.registerLazySingleton(() => InstallNotifier());
   sl.registerLazySingleton<AppWindowManager>(() => WindowManagerImpl());
@@ -146,8 +145,11 @@ Future<void> init() async {
   // init multipane
   sl.registerLazySingleton<BiblePaneRepository>(() => BiblePaneRepositoryImpl(
       contentDatasource: sl(), catalogDatasource: sl()));
-  sl.registerLazySingleton<MultiPaneManagerCubit>(
-      () => MultiPaneManagerCubit(repo: sl(), searchIntentBus: sl()));
+  sl.registerLazySingleton<MultiPaneManagerCubit>(() => MultiPaneManagerCubit(
+      repo: sl(),
+      searchIntentBus: sl(),
+      bookResolver: sl(),
+      searchResultBus: sl()));
 
   // init customizer
   sl.registerLazySingleton<SettingsDatasource<CustomizerState>>(
@@ -185,7 +187,11 @@ Future<void> init() async {
   sl.registerLazySingleton(() => SearchIntentResolver());
   sl.registerLazySingleton<HistoryCubit>(() => HistoryCubit(navBus: sl()));
   sl.registerLazySingleton<SearchBloc>(
-    () => SearchBloc(repo: sl(), intentResolver: sl(), searchIntentBus: sl()),
+    () => SearchBloc(
+        repo: sl(),
+        intentResolver: sl(),
+        searchIntentBus: sl(),
+        searchResultBus: sl()),
   );
 
   // My Library

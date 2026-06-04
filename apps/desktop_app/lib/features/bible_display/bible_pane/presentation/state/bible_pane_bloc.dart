@@ -7,7 +7,7 @@ import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
 import 'package:open_scripture/shared/domain/entities/verse.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/domain/repositories/bible_pane_repository.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/domain/display_mode.dart';
-import 'package:open_scripture/core/infrastructure/event_bus/navigation_bus.dart';
+import 'package:open_scripture/core/infrastructure/event_bus/search_result_bus.dart';
 import 'package:open_scripture/core/infrastructure/event_bus/selected_verse_bus.dart';
 
 import '../../../../../shared/domain/entities/bible_ref.dart';
@@ -21,7 +21,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     required int paneId,
     required this.repo,
     SelectedVerseBus? notifier,
-    NavigationBus? navBus,
+    SearchResultBus? navBus,
   })  : _navBus = navBus,
         _overlayNotifier = notifier,
         super(BiblePaneState(
@@ -35,7 +35,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
   }
 
   final BiblePaneRepository repo;
-  final NavigationBus? _navBus;
+  final SearchResultBus? _navBus;
   final SelectedVerseBus? _overlayNotifier;
   // final _resolver = sl<BibleRefResolver>();
 
@@ -182,9 +182,8 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
       ));
 
       // return feedback to searchbar
-      _navBus?.emit(NavigationFeedback(
+      _navBus?.emit(SearchResultSuccess(
         ref: event.ref,
-        success: true,
         source: event.source,
       ));
 
@@ -240,9 +239,8 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     _sendTextToObsLiveOverlay(event.ref);
 
     if (event.saveHistory) {
-      _navBus?.emit(NavigationFeedback(
+      _navBus?.emit(SearchResultSuccess(
         ref: event.ref,
-        success: true,
         source: event.source,
       ));
     }

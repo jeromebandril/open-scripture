@@ -11,37 +11,37 @@ class DriftBookResolver implements BookResolver {
   DriftBookResolver(this._db);
 
   @override
-  Future<BibleBook?> resolve(String input, int? languageId) async {
-    throw UnimplementedError();
-    // final sanitizedInput = input.trim().toLowerCase();
-    // if (sanitizedInput.isEmpty) return null;
+  Future<BibleBook?> resolve(String input, int? bibleId) async {
+    // throw UnimplementedError();
+    final sanitizedInput = input.trim().toLowerCase();
+    if (sanitizedInput.isEmpty) return null;
 
-    // // For '1 Sam' matching '1 Samuel'
-    // final prefixMatch = '$sanitizedInput%';
-    // // For finding 'sos' inside 'sng, song, sos'
-    // final containsMatch = '%$sanitizedInput%';
+    // For '1 Sam' matching '1 Samuel'
+    final prefixMatch = '$sanitizedInput%';
+    // For finding 'sos' inside 'sng, song, sos'
+    final containsMatch = '%$sanitizedInput%';
 
-    // // Build the Drift query with a Join
-    // final query = _db.select(_db.localizedBookNames).join([
-    //   innerJoin(
-    //     _db.canonicalBooks,
-    //     _db.canonicalBooks.id.equalsExp(_db.localizedBookNames.bookId),
-    //   ),
-    // ])
-    //   ..where(_db.localizedBookNames.languageId.equals(languageId) &
-    //       (_db.localizedBookNames.longName.lower().like(prefixMatch) |
-    //           _db.localizedBookNames.shortName.lower().like(prefixMatch) |
-    //           _db.localizedBookNames.abbr.lower().like(prefixMatch) |
-    //           _db.localizedBookNames.aliases.lower().like(containsMatch)))
-    //   ..limit(1);
+    // Build the Drift query with a Join
+    final query = _db.select(_db.localizedBookNames).join([
+      innerJoin(
+        _db.canonicalBooks,
+        _db.canonicalBooks.id.equalsExp(_db.localizedBookNames.bookId),
+      ),
+    ])
+      ..where(_db.localizedBookNames.bibleId.equals(bibleId!) &
+          (_db.localizedBookNames.longName.lower().like(containsMatch) |
+              _db.localizedBookNames.shortName.lower().like(containsMatch) |
+              _db.localizedBookNames.abbr.lower().like(prefixMatch) |
+              _db.localizedBookNames.aliases.lower().like(containsMatch)))
+      ..limit(1);
 
-    // final result = await query.getSingleOrNull();
+    final result = await query.getSingleOrNull();
 
-    // if (result == null) return null;
+    if (result == null) return null;
 
-    // // Extract the strict programmatic token from the canonical table
-    // final canonicalRow = result.readTable(_db.canonicalBooks);
-    // return BibleBook.fromProgrammaticId(canonicalRow.bookToken);
+    // Extract the strict programmatic token from the canonical table
+    final canonicalRow = result.readTable(_db.canonicalBooks);
+    return BibleBook.fromProgrammaticId(canonicalRow.bookToken);
   }
 
   @override
