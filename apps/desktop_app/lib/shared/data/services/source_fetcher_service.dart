@@ -9,21 +9,21 @@ import 'package:path_provider/path_provider.dart';
 import '../../domain/entities/bible_source.dart';
 
 abstract interface class SourceFetcherService {
-  /// Resolves a declarative [BibleSource] into a physical, readable [SourcePackage].
+  /// Resolves a declarative [BibleSourceType] into a physical, readable [SourcePackage].
   /// If it's a remote source, this handles downloading it to a secure temporary cache.
-  Future<SourcePackage> resolveSource(BibleSource source);
+  Future<SourcePackage> resolveSource(BibleSourceType source);
 
   /// Cleans up any temporary files or cache allocations associated with the source.
   /// Call this in a `finally` block during your installation pipeline.
-  Future<void> cleanup(BibleSource source);
+  Future<void> cleanup(BibleSourceType source);
 }
 
 class SourceFetcherServiceImpl implements SourceFetcherService {
   // Track temporary download paths to clean them up accurately later
-  final Map<BibleSource, String> _tempFileTracker = {};
+  final Map<BibleSourceType, String> _tempFileTracker = {};
 
   @override
-  Future<SourcePackage> resolveSource(BibleSource source) async {
+  Future<SourcePackage> resolveSource(BibleSourceType source) async {
     return switch (source) {
       LocalFileSource() => _resolveLocalSource(source),
       RemoteNetworkSource() => await _resolveRemoteSource(source),
@@ -79,7 +79,7 @@ class SourceFetcherServiceImpl implements SourceFetcherService {
   }
 
   @override
-  Future<void> cleanup(BibleSource source) async {
+  Future<void> cleanup(BibleSourceType source) async {
     final trackedPath = _tempFileTracker.remove(source);
 
     // Local files aren't tracked and are kept safe

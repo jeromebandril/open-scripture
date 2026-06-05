@@ -19,6 +19,7 @@ import 'package:open_scripture/core/infrastructure/event_bus/search_result_bus.d
 import 'package:open_scripture/core/infrastructure/event_bus/resolved_search_intent_bus.dart';
 import 'package:open_scripture/core/infrastructure/event_bus/selected_verse_bus.dart';
 import 'package:open_scripture/core/infrastructure/window/app_window_manager.dart';
+import 'package:open_scripture/core/sword/sword_bridge.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/data/repositories/bible_pane_repository_impl.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/domain/repositories/bible_pane_repository.dart';
 import 'package:open_scripture/features/bible_display/bible_selector/presentation/cubit/bible_selector_cubit.dart';
@@ -64,8 +65,10 @@ import 'package:open_scripture/features/three_tap_navigator/presentation/state/t
 import 'package:open_scripture/features/window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import 'package:open_scripture/shared/data/datasources/bible_catalog_datasource/bible_catalog_datasource.dart';
 import 'package:open_scripture/shared/data/datasources/bible_catalog_datasource/local_bible_catalog_datasource_impl.dart';
+import 'package:open_scripture/shared/data/datasources/bible_catalog_datasource/sword_bible_catalog_datasource_impl.dart';
 import 'package:open_scripture/shared/data/datasources/bible_content_datasource/bible_content_datasourcee.dart';
 import 'package:open_scripture/shared/data/datasources/bible_content_datasource/drift_bible_content_datasource_impl.dart';
+import 'package:open_scripture/shared/data/datasources/bible_content_datasource/sword_bible_content_datasource_impl.dart';
 import 'package:open_scripture/shared/data/datasources/drift_bible_installation_datasource_impl.dart';
 import 'package:open_scripture/shared/data/datasources/drift_book_local_datasource_impl.dart';
 import 'package:open_scripture/shared/data/repositories/bible_catalog_repository_impl.dart';
@@ -86,6 +89,10 @@ import 'package:open_scripture/shared/domain/services/book_resolver.dart';
 final sl = GetIt.instance;
 
 Future<void> init() async {
+  // init sword bridge
+  sl.registerLazySingleton(() => SwordBridge(),
+      onCreated: (i) => i.init(r'C:\Users\jerom\sword'));
+
   // init database
   sl.registerLazySingleton<AppDb>(() => AppDb());
   sl.registerLazySingleton<BibleContentDao>(() => BibleContentDao(sl()));
@@ -95,9 +102,17 @@ Future<void> init() async {
 
   // init datasources
   sl.registerLazySingleton<BibleCatalogDatasource>(
-      () => LocalBibleCatalogDataSourceImpl(sl()));
+      () => LocalBibleCatalogDataSourceImpl(sl()),
+      instanceName: 'local_drift');
+  sl.registerLazySingleton<BibleCatalogDatasource>(
+      () => SwordBibleCatalogDatasourceImpl(swordBridge: sl()),
+      instanceName: 'local_sword');
   sl.registerLazySingleton<BibleContentDatasource>(
-      () => DriftBibleContentDataSourceImpl(dao: sl()));
+      () => DriftBibleContentDataSourceImpl(dao: sl()),
+      instanceName: 'local_drift');
+  sl.registerLazySingleton<BibleContentDatasource>(
+      () => SwordBibleContentDatasourceImpl(),
+      instanceName: 'local_sword');
   sl.registerLazySingleton<BibleBookLocalDataSource>(
       () => DriftBibleBookLocalDataSourceImpl(sl()));
   sl.registerLazySingleton<BibleInstallationDataSource>(
@@ -107,7 +122,13 @@ Future<void> init() async {
   sl.registerLazySingleton<BibleBookRepository>(
       () => BibleBookRepositoryImpl(sl()));
   sl.registerLazySingleton<BibleCatalogRepository>(
-      () => BibleCatalogRepositoryImpl(sl()));
+      () => BibleCatalogRepositoryImpl(
+          sl.get<BibleCatalogDatasource>(instanceName: 'local_drift')),
+      instanceName: 'local_drift');
+  sl.registerLazySingleton<BibleCatalogRepository>(
+      () => BibleCatalogRepositoryImpl(
+          sl.get<BibleCatalogDatasource>(instanceName: 'local_sword')),
+      instanceName: 'local_sword');
   sl.registerLazySingleton<BibleContentRepository>(
       () => BibleContentRepositoryImpl(sl()));
   sl.registerLazySingleton<BibleInstallRepository>(
@@ -143,13 +164,23 @@ Future<void> init() async {
   // init bible features
 
   // init multipane
-  sl.registerLazySingleton<BiblePaneRepository>(() => BiblePaneRepositoryImpl(
-      contentDatasource: sl(), catalogDatasource: sl()));
-  sl.registerLazySingleton<MultiPaneManagerCubit>(() => MultiPaneManagerCubit(
-      repo: sl(),
-      searchIntentBus: sl(),
-      bookResolver: sl(),
-      searchResultBus: sl()));
+  sl.registerLazySingleton<BiblePaneRepository>(
+      () => BiblePaneRepositoryImpl(
+          contentDatasource: sl.get(instanceName: 'local_drift'),
+          catalogDatasource:
+              sl.get<BibleCatalogDatasource>(instanceName: 'local_drift')),
+      instanceName: 'local_drift');
+  sl.registerLazySingleton<BiblePaneRepository>(
+      () => BiblePaneRepositoryImpl(
+          contentDatasource: sl.get(instanceName: 'local_sword'),
+          catalogDatasource:
+              sl.get<BibleCatalogDatasource>(instanceName: 'local_sword')),
+      instanceName: 'local_sword');
+  sl.registerLazySingleton<MultiPaneManagerCubit>(
+      () => MultiPaneManagerCubit(repos: [
+            sl.get<BiblePaneRepository>(instanceName: 'local_drift'),
+            sl.get<BiblePaneRepository>(instanceName: 'local_sword')
+          ], searchIntentBus: sl(), bookResolver: sl(), searchResultBus: sl()));
 
   // init customizer
   sl.registerLazySingleton<SettingsDatasource<CustomizerState>>(
@@ -196,7 +227,19 @@ Future<void> init() async {
 
   // My Library
   sl.registerLazySingleton<MyLibraryCubit>(
-      () => MyLibraryCubit(repo: sl(), notifier: sl(), installRepo: sl()));
+      () => MyLibraryCubit(
+          repo: sl.get<BibleCatalogRepository>(instanceName: 'local_drift'),
+          notifier: sl(),
+          installRepo: sl()),
+      instanceName: 'local_drift',
+      onCreated: (c) => c.getBibles());
+  sl.registerLazySingleton<MyLibraryCubit>(
+      () => MyLibraryCubit(
+          repo: sl.get<BibleCatalogRepository>(instanceName: 'local_sword'),
+          notifier: sl(),
+          installRepo: null),
+      instanceName: 'local_sword',
+      onCreated: (c) => c.getBibles());
 
   // REmote controller
   sl.registerLazySingleton<SettingsDatasource<RemoteControllerSettings>>(
@@ -213,7 +256,7 @@ Future<void> init() async {
         'search_bar': SearchBarHandler(bloc: sl<SearchBloc>()),
         'pane': PaneManagerHandler(
           multiPaneManagerCubit: sl<MultiPaneManagerCubit>(),
-          myLibraryCubit: sl<MyLibraryCubit>(),
+          myLibraryCubit: sl.get<MyLibraryCubit>(instanceName: 'local_drift'),
         ),
       },
     ),
@@ -253,7 +296,8 @@ Future<void> init() async {
 
   sl.registerLazySingleton<ThreeTapNavigatorRepository>(
     () => ThreeTapNavigatorRepositoryImpl(
-        contentDataSource: sl(), booksLocalDataSource: sl()),
+        contentDataSource: sl.get(instanceName: 'local_drift'),
+        booksLocalDataSource: sl()),
   );
   sl.registerLazySingleton(() => ThreeTapNavigatorCubit(repo: sl()));
 }

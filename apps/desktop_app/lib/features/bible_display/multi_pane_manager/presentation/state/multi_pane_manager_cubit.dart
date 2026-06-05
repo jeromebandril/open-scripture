@@ -19,22 +19,23 @@ const int _maxSplitsPaneX = 3;
 const double _minSizeFactor = 0.2;
 
 class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
-  final BiblePaneRepository _repo;
+  final List<BiblePaneRepository> _repos;
   final ResolvedSearchIntentBus _searchIntentBus;
   final SearchResultBus _searchResultBus;
   final BookResolver _bookResolver;
   final Map<int, PaneBlocComponents> _blocs = {};
 
   MultiPaneManagerCubit({
-    required BiblePaneRepository repo,
+    required List<BiblePaneRepository> repos,
     required ResolvedSearchIntentBus searchIntentBus,
     required BookResolver bookResolver,
     required SearchResultBus searchResultBus,
     int initialPaneId = 0,
   })  : _searchIntentBus = searchIntentBus,
-        _repo = repo,
+        _repos = repos,
         _bookResolver = bookResolver,
         _searchResultBus = searchResultBus,
+        assert(repos.isNotEmpty, 'repositories must not be empty'),
         super(PaneManagerState(
           panes: [PaneDescriptor(id: initialPaneId)],
           activePaneId: initialPaneId,
@@ -156,7 +157,7 @@ class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
       () => PaneBlocComponents(
         bloc: BiblePaneBloc(
           paneId: paneId,
-          repo: _repo,
+          repo: _repos.first, // default to first repo on creation
           navBus:
               sl.isRegistered<SearchResultBus>() ? sl<SearchResultBus>() : null,
           notifier: sl.isRegistered<SelectedVerseBus>()

@@ -16,7 +16,7 @@ class BibleInstallRepositoryImpl implements BibleInstallRepository {
       this._fetcher, this._compiler, this._localDataSource);
 
   @override
-  Stream<InstallProgress> install(BibleSource source) async* {
+  Stream<InstallProgress> install(BibleSourceType source) async* {
     try {
       // STEP 1: FETCH
       yield InstallProgress(

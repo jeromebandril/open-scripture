@@ -67,8 +67,8 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             title: 'Open Scripture',
             themeMode: state.app.mode,
-            darkTheme: dark,
-            theme: light,
+            darkTheme: dark.copyWith(splashFactory: NoSplash.splashFactory),
+            theme: light.copyWith(splashFactory: NoSplash.splashFactory),
             debugShowCheckedModeBanner: false,
             builder: (context, child) {
               return MultiBlocProvider(
@@ -84,14 +84,12 @@ class MyApp extends StatelessWidget {
                     BlocProvider(create: (_) => di.sl<RemoteControllerCubit>()),
                     // BlocProvider(create: (_) => di.sl<InstallerBloc>()),
                   ],
-                  BlocProvider(
-                      create: (_) => di.sl<MyLibraryCubit>()..getBibles()),
-                  BlocProvider(create: (_) => di.sl<MultiPaneManagerCubit>()),
+                  BlocProvider.value(value: di.sl<MultiPaneManagerCubit>()),
                   BlocProvider(create: (_) => di.sl<FullscreenCubit>()..init()),
                   BlocProvider(create: (_) => di.sl<WindowStackManagerBloc>()),
-                  BlocProvider(create: (_) => di.sl<SearchBloc>()),
+                  BlocProvider.value(value: di.sl<SearchBloc>()),
                   BlocProvider.value(value: di.sl<HistoryCubit>()),
-                  BlocProvider(create: (_) => di.sl<ShortcutsCubit>()),
+                  BlocProvider.value(value: di.sl<ShortcutsCubit>()),
                   BlocProvider(
                       create: (context) => di.sl<InterfaceVisibilityCubit>()),
                 ],

@@ -82,8 +82,9 @@ class BiblePane extends StatelessWidget {
                 //
                 BiblePaneStatus.selectBibles => BibleSelector(
                     bloc: blocComponents.bibleSelectorCubit,
-                    onConfirm: (bibleIds) {
-                      blocComponents.bloc.add(BiblePaneOpen(bibleIds));
+                    onConfirm: (bibleIds, repoType) {
+                      blocComponents.bloc
+                          .add(BiblePaneOpen(bibleIds, repoType: repoType));
                     },
                   ),
                 //

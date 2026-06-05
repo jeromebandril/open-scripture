@@ -7,6 +7,7 @@ import 'package:open_scripture/features/bible_searchbar/search/presentation/stat
 import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
 import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
 import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
+import 'package:open_scripture/shared/enums/bible_repository_type.dart';
 
 typedef CommandHandler = void Function();
 
@@ -33,6 +34,7 @@ class AppCommandDispatcher {
   }
 
   List<BibleId> _prevBibleId = [];
+  BibleRepositoryType _prevRepoType = BibleRepositoryType.intalled;
 
   late final Map<AppCommand, CommandHandler> _handlers = {
     // AppCommand.focusSearch: () => searchbarVisibilityCubit.set(true),
@@ -56,12 +58,13 @@ class AppCommandDispatcher {
       // undo/redo behavior: if the current pane has a bible, close it. otherwise, reopen the last closed bible.
       if (_prevBibleId.isNotEmpty &&
           pane.bloc.state.status == BiblePaneStatus.selectBibles) {
-        pane.bloc.add(BiblePaneOpen(_prevBibleId));
+        pane.bloc.add(BiblePaneOpen(_prevBibleId, repoType: _prevRepoType));
         _prevBibleId = [];
         return;
       }
 
       _prevBibleId = pane.bloc.state.openedBiblesIds;
+      _prevRepoType = _prevRepoType;
       if (_prevBibleId.isEmpty) return;
       pane.bloc.add(BiblePaneChooseBibles());
       pane.bibleSelectorCubit.set(_prevBibleId);

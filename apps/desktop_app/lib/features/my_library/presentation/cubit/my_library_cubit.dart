@@ -11,13 +11,13 @@ part 'my_library_state.dart';
 
 class MyLibraryCubit extends Cubit<MyLibraryState> {
   final BibleCatalogRepository _catalogRepo;
-  final BibleInstallRepository _installRepo;
+  final BibleInstallRepository? _installRepo;
   late final StreamSubscription _sub;
 
   MyLibraryCubit({
     required BibleCatalogRepository repo,
     required InstallNotifier notifier,
-    required BibleInstallRepository installRepo,
+    required BibleInstallRepository? installRepo,
   })  : _installRepo = installRepo,
         _catalogRepo = repo,
         super(MyLibraryState()) {
@@ -43,6 +43,7 @@ class MyLibraryCubit extends Cubit<MyLibraryState> {
   }
 
   Future<void> uninstall(int bibleId) async {
+    if (_installRepo == null) return;
     await _installRepo.uninstall(bibleId);
     getBibles();
   }

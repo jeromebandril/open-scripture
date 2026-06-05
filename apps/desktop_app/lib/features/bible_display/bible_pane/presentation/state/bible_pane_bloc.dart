@@ -9,6 +9,7 @@ import 'package:open_scripture/features/bible_display/bible_pane/domain/reposito
 import 'package:open_scripture/features/bible_display/bible_pane/domain/display_mode.dart';
 import 'package:open_scripture/core/infrastructure/event_bus/search_result_bus.dart';
 import 'package:open_scripture/core/infrastructure/event_bus/selected_verse_bus.dart';
+import 'package:open_scripture/shared/enums/bible_repository_type.dart';
 
 import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../models/parallel_bible_config.dart';
@@ -19,10 +20,11 @@ part 'bible_pane_state.dart';
 class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
   BiblePaneBloc({
     required int paneId,
-    required this.repo,
+    required BiblePaneRepository repo,
     SelectedVerseBus? notifier,
     SearchResultBus? navBus,
-  })  : _navBus = navBus,
+  })  : _repo = repo,
+        _navBus = navBus,
         _overlayNotifier = notifier,
         super(BiblePaneState(
             paneId: paneId, status: BiblePaneStatus.selectBibles)) {
@@ -34,10 +36,12 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     on<BiblePaneSetDisplayMode>(_onChangeDisplayMode);
   }
 
-  final BiblePaneRepository repo;
+  BiblePaneRepository _repo;
   final SearchResultBus? _navBus;
   final SelectedVerseBus? _overlayNotifier;
   // final _resolver = sl<BibleRefResolver>();
+
+  void changeRepository(BiblePaneRepository repo) => _repo = repo;
 
   // Add a bible translation to the content
   Future<void> _onBiblePaneOpen(
@@ -49,7 +53,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     final newMap = Map<BibleId, ParallelBibleData>.from(state.content.asMap);
 
     for (final id in event.bibleIds) {
-      final result = await repo.getBibleMetadata(bibleId: id);
+      final result = await _repo.getBibleMetadata(bibleId: id);
 
       result.fold(
         (f) {
@@ -84,6 +88,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
       content: () => ParallelBibleConfig.from(newMap),
       parallelOrder: () => event.bibleIds,
       isMixed: () => false,
+      repoType: () => event.repoType,
     ));
   }
 
@@ -133,7 +138,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     for (var id in state.openedBiblesIds) {
       final failureOrChapter =
           // event.withSpans ?
-          await repo.getChapterWithSpans(
+          await _repo.getChapterWithSpans(
         bibleId: id,
         ref: event.ref,
       );
@@ -153,7 +158,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
 
           // update bible info with verse counter
           // get the greatest count
-          final result = (await repo.getMaxVerse(
+          final result = (await _repo.getMaxVerse(
             ref: event.ref,
             book: event.ref.book,
           ))

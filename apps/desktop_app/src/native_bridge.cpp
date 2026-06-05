@@ -94,6 +94,8 @@ char* sword_list_modules() {
         std::string name = mod->getName();
         std::string desc = mod->getDescription();
         std::string type = mod->getType();
+        std::string lang = mod->getLanguage();
+        std::string keyText = mod->getKeyText();
         // Simple quote escaping
         auto escape = [](std::string s) {
             std::string out;
@@ -107,7 +109,9 @@ char* sword_list_modules() {
         json << "{"
              << "\"name\":\"" << escape(name) << "\","
              << "\"description\":\"" << escape(desc) << "\","
-             << "\"type\":\"" << escape(type) << "\""
+             << "\"type\":\"" << escape(type) << "\","
+             << "\"language\":\"" << escape(lang) << "\","
+             << "\"keyText\":\"" << escape(keyText) << "\""
              << "}";
     }
     json << "]";
