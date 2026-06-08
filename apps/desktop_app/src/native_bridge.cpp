@@ -95,7 +95,7 @@ char* sword_list_modules() {
         std::string desc = mod->getDescription();
         std::string type = mod->getType();
         std::string lang = mod->getLanguage();
-        std::string keyText = mod->getKeyText();
+        
         // Simple quote escaping
         auto escape = [](std::string s) {
             std::string out;
@@ -110,8 +110,7 @@ char* sword_list_modules() {
              << "\"name\":\"" << escape(name) << "\","
              << "\"description\":\"" << escape(desc) << "\","
              << "\"type\":\"" << escape(type) << "\","
-             << "\"language\":\"" << escape(lang) << "\","
-             << "\"keyText\":\"" << escape(keyText) << "\""
+             << "\"language\":\"" << escape(lang) << "\""
              << "}";
     }
     json << "]";
@@ -154,7 +153,7 @@ char* sword_list_bibles() {
              << "\"name\":\"" << escape(name) << "\","
              << "\"description\":\"" << escape(desc) << "\","
              << "\"type\":\"" << escape(type) << "\","
-             << "\"language\":\"" << escape(lang) << "\","
+             << "\"language\":\"" << escape(lang) << "\""
              << "}";
     }
     json << "]";
