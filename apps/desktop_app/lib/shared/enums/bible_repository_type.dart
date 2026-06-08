@@ -1,5 +1,5 @@
 enum BibleRepositoryType {
-  intalled,
+  installed,
   sword,
   onlineApi,
 }

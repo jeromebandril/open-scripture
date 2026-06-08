@@ -10,7 +10,7 @@ class VerseSegmentDto {
   final int segmentIndex;
   final bool paragraphStart;
   final String? heading;
-  final String spansJson;
+  final String? spansJson;
 
   VerseSegmentDto({
     required this.bibleId,
@@ -20,7 +20,7 @@ class VerseSegmentDto {
     required this.segmentIndex,
     required this.paragraphStart,
     this.heading,
-    required this.spansJson,
+    this.spansJson,
   });
 }
 
@@ -28,19 +28,23 @@ extension VerseSegmentDtoMapper on VerseSegmentDto {
   /// Maps the database-friendly DTO into a pure Domain Entity.
   /// Handles also the deserialization of the JSON rich-text spans.
   VerseSegment toDomain() {
+    late final List<VerseSpan> domainSpans;
     // Decode the raw JSON string from SQLite into a list of maps
-    final List<dynamic> decodedJson = jsonDecode(spansJson) as List<dynamic>;
+    if (spansJson == null) {
+      domainSpans = [];
+    } else {
+      final List<dynamic> decodedJson = jsonDecode(spansJson!) as List<dynamic>;
+      // Parse each raw JSON map into a pure Domain VerseSpan
+      domainSpans = decodedJson.map((dynamic item) {
+        final Map<String, dynamic> spanMap = item as Map<String, dynamic>;
 
-    // Parse each raw JSON map into a pure Domain VerseSpan
-    final List<VerseSpan> domainSpans = decodedJson.map((dynamic item) {
-      final Map<String, dynamic> spanMap = item as Map<String, dynamic>;
-
-      return VerseSpan(
-        activeStyles: _parseSetOfStyles(spanMap['activeStyles']),
-        text: spanMap['text'] as String? ?? '',
-        payload: spanMap['payload'] as String?,
-      );
-    }).toList();
+        return VerseSpan(
+          activeStyles: _parseSetOfStyles(spanMap['activeStyles']),
+          text: spanMap['text'] as String? ?? '',
+          payload: spanMap['payload'] as String?,
+        );
+      }).toList();
+    }
 
     return VerseSegment(
       segmentIndex: segmentIndex,

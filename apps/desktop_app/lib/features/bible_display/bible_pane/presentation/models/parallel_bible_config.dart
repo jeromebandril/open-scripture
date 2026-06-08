@@ -5,27 +5,29 @@ import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
 import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
 import 'package:open_scripture/shared/domain/entities/verse.dart';
 
+typedef ParallelBibleMap = Map<BibleId, BibleData>;
+
 class ParallelBibleConfig extends Equatable {
-  final Map<BibleId, ParallelBibleData> _config;
+  final ParallelBibleMap _config;
 
   const ParallelBibleConfig._(this._config);
 
   factory ParallelBibleConfig.from(
-    Map<BibleId, ParallelBibleData> map,
+    ParallelBibleMap map,
   ) {
     return ParallelBibleConfig._(Map.unmodifiable(map));
   }
 
-  ParallelBibleData? getParallelDataByBibleId(BibleId id) => _config[id];
+  BibleData? getParallelDataByBibleId(BibleId id) => _config[id];
 
   static const ParallelBibleConfig empty =
-      ParallelBibleConfig._(<BibleId, ParallelBibleData>{});
+      ParallelBibleConfig._(<BibleId, BibleData>{});
 
-  ParallelBibleData? operator [](BibleId id) => _config[id];
+  BibleData? operator [](BibleId id) => _config[id];
 
   Iterable<BibleId> get keys => _config.keys;
 
-  Map<BibleId, ParallelBibleData> get asMap => Map.unmodifiable(_config);
+  ParallelBibleMap get asMap => Map.unmodifiable(_config);
 
   bool get isContentEmpty {
     if (_config.isEmpty) return true;
@@ -85,17 +87,17 @@ class ParallelBibleConfig extends Equatable {
 }
 
 /// Group of ordered verses per Bible translation
-class ParallelBibleData extends Equatable {
+class BibleData extends Equatable {
   final BibleTranslation meta;
   final SplayTreeMap<BibleRef, Verse>? verses;
 
-  const ParallelBibleData({required this.meta, this.verses});
+  const BibleData({required this.meta, this.verses});
 
-  ParallelBibleData copyWith({
+  BibleData copyWith({
     BibleTranslation? meta,
     SplayTreeMap<BibleRef, Verse>? Function()? verses,
   }) {
-    return ParallelBibleData(
+    return BibleData(
       meta: meta ?? this.meta,
       verses: verses != null ? verses() : this.verses,
     );

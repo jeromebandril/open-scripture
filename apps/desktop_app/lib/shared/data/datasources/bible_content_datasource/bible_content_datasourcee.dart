@@ -1,9 +1,10 @@
 import 'package:open_scripture/shared/data/models/verse_segment_dto.dart';
+import 'package:open_scripture/shared/domain/entities/bible_book.dart';
 
 abstract class BibleContentDatasource {
   Future<List<VerseSegmentDto>> getChapterWithSpans(
     String bibleExtId,
-    String bookToken,
+    BibleBook book,
     int chapter,
   );
 

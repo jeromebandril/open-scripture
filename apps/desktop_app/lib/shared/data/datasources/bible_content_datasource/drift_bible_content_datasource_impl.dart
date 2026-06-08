@@ -1,6 +1,7 @@
 import 'package:open_scripture/core/infrastructure/database/daos/bible_content_dao.dart';
 import 'package:open_scripture/shared/data/datasources/bible_content_datasource/bible_content_datasourcee.dart';
 import 'package:open_scripture/shared/data/models/verse_segment_dto.dart';
+import 'package:open_scripture/shared/domain/entities/bible_book.dart';
 
 class DriftBibleContentDataSourceImpl implements BibleContentDatasource {
   final BibleContentDao _dao;
@@ -10,10 +11,10 @@ class DriftBibleContentDataSourceImpl implements BibleContentDatasource {
   @override
   Future<List<VerseSegmentDto>> getChapterWithSpans(
     String bibleExtId,
-    String bookToken,
+    BibleBook book,
     int chapter,
   ) async {
-    return _dao.getChapter(bibleExtId, bookToken, chapter);
+    return _dao.getChapter(bibleExtId, book.usfm, chapter);
   }
 
   @override

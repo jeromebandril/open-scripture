@@ -1,8 +1,10 @@
+import 'dart:ui';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_scripture/core/sword/sword_bridge.dart';
 import 'package:open_scripture/features/bible_searchbar/history/presentation/cubit/history_cubit.dart';
-import 'package:open_scripture/features/my_library/presentation/cubit/my_library_cubit.dart';
 import 'package:open_scripture/features/three_tap_navigator/presentation/state/three_tap_navigator_cubit.dart';
 
 import 'state/fullscreen_cubit.dart';
@@ -23,8 +25,43 @@ import '../features/window_stack_manager/presentation/state/window_stack_manager
 import '../core/di/injection_container.dart' as di;
 import 'app_shell.dart';
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late final AppLifecycleListener _lifecycleListener;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _lifecycleListener = AppLifecycleListener(
+      onExitRequested: _handleExitRequested,
+    );
+  }
+
+  Future<AppExitResponse> _handleExitRequested() async {
+    try {
+      // since I registered a dispose hook in di getIt:
+      await di.sl.resetLazySingleton<SwordBridge>();
+      // or call directly
+      // sl<SwordBridge>().shutdown();
+    } catch (e) {
+      print("Error during SWORD shutdown: $e");
+    }
+
+    return AppExitResponse.exit;
+  }
+
+  @override
+  void dispose() {
+    _lifecycleListener.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

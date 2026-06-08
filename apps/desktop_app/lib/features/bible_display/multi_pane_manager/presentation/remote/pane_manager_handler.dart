@@ -57,10 +57,8 @@ class PaneManagerHandler implements RemoteCommandCustomHandler {
     if (command.name == 'select_bibles') {
       final ids = (command.payload?['ids'] as List?)?.cast<BibleId>() ?? [];
       // TODO: support other repositories
-      _multiPaneManagerCubit
-          .activePane()
-          .bloc
-          .add(BiblePaneOpen(ids, repoType: BibleRepositoryType.intalled));
+      _multiPaneManagerCubit.activePane().bloc.add(BiblePaneOpen(
+          bibleIds: ids, repoType: BibleRepositoryType.installed));
     }
 
     return null;

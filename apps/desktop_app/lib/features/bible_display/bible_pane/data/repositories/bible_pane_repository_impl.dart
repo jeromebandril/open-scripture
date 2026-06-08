@@ -54,7 +54,7 @@ class BiblePaneRepositoryImpl implements BiblePaneRepository {
     try {
       final dtos = await _contentDatasource.getChapterWithSpans(
         bibleId,
-        ref.book.usfm,
+        ref.book,
         ref.chapter,
       );
 

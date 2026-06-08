@@ -118,6 +118,81 @@ char* sword_list_modules() {
     return alloc_string(json.str());
 }
 
+// Returns a JSON array string listing ONLY Bible modules ("type":"Biblical Texts").
+// Caller must free with sword_free_string().
+__declspec(dllexport)
+char* sword_list_bibles() {
+    if (!g_mgr) return alloc_string("[]");
+    std::ostringstream json;
+    json << "[";
+    bool first = true;
+
+    auto escape = [](std::string s) {
+        std::string out;
+        for (char c : s) {
+            if (c == '"')  out += "\\\"";
+            else if (c == '\\') out += "\\\\";
+            else out += c;
+        }
+        return out;
+    };
+
+    for (auto& [key, mod] : g_mgr->getModules()) {
+        std::string type = mod->getType();
+        
+        // Filter: SWORD tags Bibles explicitly as "Biblical Texts"
+        if (type != "Biblical Texts") continue;
+
+        if (!first) json << ",";
+        first = false;
+
+        std::string name = mod->getName();
+        std::string desc = mod->getDescription();
+        std::string lang = mod->getLanguage();
+
+        json << "{"
+             << "\"name\":\"" << escape(name) << "\","
+             << "\"description\":\"" << escape(desc) << "\","
+             << "\"type\":\"" << escape(type) << "\","
+             << "\"language\":\"" << escape(lang) << "\","
+             << "}";
+    }
+    json << "]";
+    return alloc_string(json.str());
+}
+
+// Returns a JSON object string for a single specific module.
+// If the module is not found, returns "{}".
+// Caller must free with sword_free_string().
+__declspec(dllexport)
+char* sword_get_module_info(const char* module_name) {
+    if (!g_mgr || !module_name) return alloc_string("{}");
+    
+    sword::SWModule* mod = g_mgr->getModule(module_name);
+    if (!mod) return alloc_string("{}");
+
+    auto escape = [](std::string s) {
+        std::string out;
+        for (char c : s) {
+            if (c == '"')  out += "\\\"";
+            else if (c == '\\') out += "\\\\";
+            else out += c;
+        }
+        return out;
+    };
+
+    std::ostringstream json;
+    json << "{"
+         << "\"name\":\"" << escape(mod->getName()) << "\","
+         << "\"description\":\"" << escape(mod->getDescription()) << "\","
+         << "\"type\":\"" << escape(mod->getType()) << "\","
+         << "\"language\":\"" << escape(mod->getLanguage()) << "\","
+         << "\"keyText\":\"" << escape(mod->getKeyText()) << "\""
+         << "}";
+
+    return alloc_string(json.str());
+}
+
 // Looks up a single verse by module name and OSIS key (e.g. "John 3:16").
 // Returns the verse text as a plain UTF-8 string.
 // Returns an empty string if the module or key is not found.
@@ -157,6 +232,74 @@ char* sword_get_verse(const char* module_name, const char* osis_key) {
     }
     catch (...) {
         return alloc_string("BRIDGE_EXCEPTION: An unhandled native exception occurred.");
+    }
+}
+
+// Returns a JSON array string of all verses in a given chapter.
+// Format: [{"verse":1,"text":"In the beginning..."},...]
+// Caller must free with sword_free_string().
+__declspec(dllexport)
+char* sword_get_chapter(const char* module_name, const char* book, int chapter) {
+    if (!g_mgr || !module_name || !book) return alloc_string("[]");
+    sword::SWModule* mod = g_mgr->getModule(module_name);
+    if (!mod) return alloc_string("[]");
+
+    try {
+        // Save original key position to avoid corrupting engine state
+        std::string original_key = mod->getKeyText();
+
+        sword::VerseKey* vk = dynamic_cast<sword::VerseKey*>(mod->getKey());
+        if (!vk) return alloc_string("[]");
+
+        vk->setBookName(book);
+        vk->setChapter(chapter);
+        vk->setVerse(1);
+
+        std::ostringstream json;
+        json << "[";
+        bool first = true;
+
+        auto escape = [](std::string s) {
+            std::string out;
+            for (char c : s) {
+                if (c == '"')        out += "\\\"";
+                else if (c == '\\')  out += "\\\\";
+                else if (c == '\n')  out += "\\n"; // Escape literal newlines
+                else if (c == '\r')  out += "\\r"; // Escape carriage returns
+                else if (c == '\t')  out += "\\t"; // Escape tabs
+                else if (static_cast<unsigned char>(c) < 32) {
+                    // Drop any other weird non-printable control characters
+                    continue; 
+                }
+                else out += c;
+            }
+            return out;
+        };
+
+        // Loop through the chapter until SWORD moves to the next chapter
+        while (vk->getChapter() == chapter) {
+            if (!first) json << ",";
+            first = false;
+
+            sword::SWBuf rendered = mod->renderText();
+            int verseNum = vk->getVerse();
+
+            json << "{"
+                 << "\"verse\":" << verseNum << ","
+                 << "\"text\":\"" << escape(rendered.c_str()) << "\""
+                 << "}";
+
+            (*mod)++; // Advance to the next verse
+        }
+
+        // Restore original position
+        mod->setKey(original_key.c_str());
+
+        json << "]";
+        return alloc_string(json.str());
+    } 
+    catch (...) {
+        return alloc_string("[]");
     }
 }
 

@@ -9,6 +9,7 @@ import 'package:open_scripture/features/bible_display/bible_pane/domain/reposito
 import 'package:open_scripture/features/bible_display/bible_pane/domain/display_mode.dart';
 import 'package:open_scripture/core/infrastructure/event_bus/search_result_bus.dart';
 import 'package:open_scripture/core/infrastructure/event_bus/selected_verse_bus.dart';
+import 'package:open_scripture/shared/domain/repositories/bible_pane_repository_factory.dart';
 import 'package:open_scripture/shared/enums/bible_repository_type.dart';
 
 import '../../../../../shared/domain/entities/bible_ref.dart';
@@ -20,10 +21,10 @@ part 'bible_pane_state.dart';
 class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
   BiblePaneBloc({
     required int paneId,
-    required BiblePaneRepository repo,
+    required BibleRepositoryFactory repositoryFactory,
     SelectedVerseBus? notifier,
     SearchResultBus? navBus,
-  })  : _repo = repo,
+  })  : _repositoryFactory = repositoryFactory,
         _navBus = navBus,
         _overlayNotifier = notifier,
         super(BiblePaneState(
@@ -31,29 +32,33 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     on<BiblePaneOpen>(_onBiblePaneOpen);
     on<BiblePaneDisplayChapter>(_onBiblePaneDisplayChapter);
     on<BiblePaneJustChangeRef>(_onChangeRef);
-    on<BiblePaneChooseBibles>(_onClosePane);
+    on<BiblePaneChooseBibles>(_onOpenBibleSelection);
     // on<BiblePaneDisplayVerses>(_onDisplayVerses);
     on<BiblePaneSetDisplayMode>(_onChangeDisplayMode);
   }
 
-  BiblePaneRepository _repo;
   final SearchResultBus? _navBus;
   final SelectedVerseBus? _overlayNotifier;
+  final BibleRepositoryFactory _repositoryFactory;
   // final _resolver = sl<BibleRefResolver>();
 
-  void changeRepository(BiblePaneRepository repo) => _repo = repo;
+  BiblePaneRepository get _repo => _repositoryFactory.get(state.repoType);
 
   // Add a bible translation to the content
   Future<void> _onBiblePaneOpen(
     BiblePaneOpen event,
     Emitter<BiblePaneState> emit,
   ) async {
+    print(event.bibleIds);
+    print(event.repoType);
     emit(state.copyWith(status: () => BiblePaneStatus.loading));
 
-    final newMap = Map<BibleId, ParallelBibleData>.from(state.content.asMap);
+    final repo = _repositoryFactory.get(event.repoType);
+
+    final newMap = ParallelBibleMap.from(state.content.asMap);
 
     for (final id in event.bibleIds) {
-      final result = await _repo.getBibleMetadata(bibleId: id);
+      final result = await repo.getBibleMetadata(bibleId: id);
 
       result.fold(
         (f) {
@@ -66,14 +71,12 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
         },
         (bm) {
           // Add only new translations
-          if (newMap[id] == null) {
-            newMap[id] = ParallelBibleData(meta: bm);
+          if (newMap[id] != null) return;
+          newMap[id] = BibleData(meta: bm);
 
-            // fetch and update content if reference is not null
-            if (state.reference != null) {
-              add(BiblePaneDisplayChapter(ref: state.reference!));
-            }
-          }
+          // fetch and update content if reference is not null
+          if (state.reference == null) return;
+          add(BiblePaneDisplayChapter(ref: state.reference!));
         },
       );
     }
@@ -131,7 +134,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
   ) async {
     if (state.openedBiblesIds.isEmpty) return;
 
-    final newMap = Map<BibleId, ParallelBibleData>.from(state.content.asMap);
+    final newMap = ParallelBibleMap.from(state.content.asMap);
     bool isSuccess = false;
     int verseCount = 0;
 
@@ -169,7 +172,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
 
           // set content of the pane
           newMap[id] = newMap[id]!.copyWith(
-            verses: () => ParallelBibleData.versesToMap(verses),
+            verses: () => BibleData.versesToMap(verses),
           );
         },
       );
@@ -253,10 +256,18 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     emit(state.copyWith(reference: () => event.ref));
   }
 
-  Future<void> _onClosePane(
+  Future<void> _onOpenBibleSelection(
     BiblePaneChooseBibles event,
     Emitter<BiblePaneState> emit,
   ) async {
+    if (state.openedBiblesIds.isNotEmpty &&
+        state.status == BiblePaneStatus.selectBibles) {
+      emit(state.copyWith(
+        status: () => BiblePaneStatus.ready,
+      ));
+      return;
+    }
+
     emit(state.copyWith(
       status: () => BiblePaneStatus.selectBibles,
       //content: () => ParallelBibleConfig.empty,

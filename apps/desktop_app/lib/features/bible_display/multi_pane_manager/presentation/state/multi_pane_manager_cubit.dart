@@ -8,7 +8,6 @@ import 'package:open_scripture/features/bible_display/bible_selector/presentatio
 import 'package:open_scripture/shared/domain/services/book_resolver.dart';
 
 import '../../../../text_scaler/presentation/state/text_scaler_cubit.dart';
-import '../../../bible_pane/domain/repositories/bible_pane_repository.dart';
 import '../../../bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../models/multi_pane_data.dart';
 import '../pane_animation_constants.dart';
@@ -19,23 +18,19 @@ const int _maxSplitsPaneX = 3;
 const double _minSizeFactor = 0.2;
 
 class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
-  final List<BiblePaneRepository> _repos;
   final ResolvedSearchIntentBus _searchIntentBus;
   final SearchResultBus _searchResultBus;
   final BookResolver _bookResolver;
   final Map<int, PaneBlocComponents> _blocs = {};
 
   MultiPaneManagerCubit({
-    required List<BiblePaneRepository> repos,
     required ResolvedSearchIntentBus searchIntentBus,
     required BookResolver bookResolver,
     required SearchResultBus searchResultBus,
     int initialPaneId = 0,
   })  : _searchIntentBus = searchIntentBus,
-        _repos = repos,
         _bookResolver = bookResolver,
         _searchResultBus = searchResultBus,
-        assert(repos.isNotEmpty, 'repositories must not be empty'),
         super(PaneManagerState(
           panes: [PaneDescriptor(id: initialPaneId)],
           activePaneId: initialPaneId,
@@ -155,17 +150,9 @@ class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
     _blocs.putIfAbsent(
       paneId,
       () => PaneBlocComponents(
-        bloc: BiblePaneBloc(
-          paneId: paneId,
-          repo: _repos.first, // default to first repo on creation
-          navBus:
-              sl.isRegistered<SearchResultBus>() ? sl<SearchResultBus>() : null,
-          notifier: sl.isRegistered<SelectedVerseBus>()
-              ? sl<SelectedVerseBus>()
-              : null,
-        ),
+        bloc: sl<BiblePaneBloc>(param1: paneId),
         textScalerCubit: sl<TextScalerCubit>(),
-        bibleSelectorCubit: sl<BibleSelectorCubit>(),
+        // bibleSelectorCubit: sl<BibleSelectorCubit>(),
       ),
     );
   }

@@ -19,7 +19,7 @@ class BibleContentRepositoryImpl implements BibleContentRepository {
   ) async {
     final dtos = await _dataSource.getChapterWithSpans(
       bibleId,
-      book.usfm,
+      book,
       chapter,
     );
 

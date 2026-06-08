@@ -11,7 +11,7 @@ class BiblePaneOpen extends BiblePaneEvent {
   final List<BibleId> bibleIds;
   final BibleRepositoryType repoType;
 
-  const BiblePaneOpen(this.bibleIds, {required this.repoType});
+  const BiblePaneOpen({required this.bibleIds, required this.repoType});
 
   @override
   List<Object> get props => [bibleIds];

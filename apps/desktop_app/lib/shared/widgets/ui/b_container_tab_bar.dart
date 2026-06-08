@@ -11,6 +11,7 @@ class BContainerTabBar extends StatefulWidget {
     this.viewBackgroundColor,
     this.onTabChanged,
     this.scrollableView = false,
+    this.initialIndex = 0,
   }) : assert(tabs.length == views.length,
             "Tabs and views must have the same length");
 
@@ -21,6 +22,7 @@ class BContainerTabBar extends StatefulWidget {
   final Color? viewBackgroundColor;
   final void Function(int index)? onTabChanged;
   final bool scrollableView;
+  final int initialIndex;
 
   @override
   State<BContainerTabBar> createState() => _BContainerTabBarState();
@@ -33,7 +35,11 @@ class _BContainerTabBarState extends State<BContainerTabBar>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: widget.tabs.length, vsync: this);
+    _tabController = TabController(
+      length: widget.tabs.length,
+      vsync: this,
+      initialIndex: widget.initialIndex,
+    );
     _tabController.addListener(() {
       if (!_tabController.indexIsChanging) {
         widget.onTabChanged?.call(_tabController.index);

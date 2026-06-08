@@ -12,18 +12,27 @@ class SwordBibleCatalogDatasourceImpl implements BibleCatalogDatasource {
 
   @override
   Future<TranslationInstallDto> getBible(String extId) {
-    // TODO: implement getBible
-    throw UnimplementedError();
+    final moduleJson = _swordBridge.getModuleInfo(extId);
+    final m = jsonDecode(moduleJson);
+
+    return Future.value(TranslationInstallDto(
+      extId: m['name'],
+      name: m['name'],
+      abbreviation: m['name'],
+      description: m['description'],
+      langNativeName: m['language'],
+    ));
   }
 
   @override
   Future<List<TranslationInstallDto>> getBibles() {
-    final modulesJson = _swordBridge.listModules();
+    final modulesJson = _swordBridge.listBibles();
+
     final modules = jsonDecode(modulesJson) as List;
     final translations = modules.map((m) => TranslationInstallDto(
-          extId: m['keyText'],
+          extId: m['name'],
           name: m['name'],
-          abbreviation: m['keyText'],
+          abbreviation: m['name'],
           description: m['description'],
           langNativeName: m['language'],
         ));

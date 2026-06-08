@@ -33,9 +33,6 @@ class AppCommandDispatcher {
     handler();
   }
 
-  List<BibleId> _prevBibleId = [];
-  BibleRepositoryType _prevRepoType = BibleRepositoryType.intalled;
-
   late final Map<AppCommand, CommandHandler> _handlers = {
     // AppCommand.focusSearch: () => searchbarVisibilityCubit.set(true),
     AppCommand.closeWhatever: () {
@@ -54,20 +51,8 @@ class AppCommandDispatcher {
     AppCommand.removeVerseFromSelection: () => _extendSelection(-1),
     AppCommand.changeBible: () {
       final pane = paneManagerCubit.activePane();
-
-      // undo/redo behavior: if the current pane has a bible, close it. otherwise, reopen the last closed bible.
-      if (_prevBibleId.isNotEmpty &&
-          pane.bloc.state.status == BiblePaneStatus.selectBibles) {
-        pane.bloc.add(BiblePaneOpen(_prevBibleId, repoType: _prevRepoType));
-        _prevBibleId = [];
-        return;
-      }
-
-      _prevBibleId = pane.bloc.state.openedBiblesIds;
-      _prevRepoType = _prevRepoType;
-      if (_prevBibleId.isEmpty) return;
       pane.bloc.add(BiblePaneChooseBibles());
-      pane.bibleSelectorCubit.set(_prevBibleId);
+      // pane.bibleSelectorCubit.set(_prevBibleId);
     },
     AppCommand.switchDisplayMode: () => _cycleDisplayMode(),
     AppCommand.displayChapterOfSelected: () => _displayChapterOfSelected(),

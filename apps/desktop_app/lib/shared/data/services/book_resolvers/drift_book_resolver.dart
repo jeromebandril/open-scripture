@@ -12,6 +12,7 @@ class DriftBookResolver implements BookResolver {
 
   @override
   Future<BibleBook?> resolve(String input, int? bibleId) async {
+    if (bibleId == null) return null;
     // throw UnimplementedError();
     final sanitizedInput = input.trim().toLowerCase();
     if (sanitizedInput.isEmpty) return null;

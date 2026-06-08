@@ -22,6 +22,7 @@ import 'package:open_scripture/core/infrastructure/window/app_window_manager.dar
 import 'package:open_scripture/core/sword/sword_bridge.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/data/repositories/bible_pane_repository_impl.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/domain/repositories/bible_pane_repository.dart';
+import 'package:open_scripture/features/bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
 import 'package:open_scripture/features/bible_display/bible_selector/presentation/cubit/bible_selector_cubit.dart';
 import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/remote/pane_manager_handler.dart';
 import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
@@ -74,7 +75,11 @@ import 'package:open_scripture/shared/data/datasources/drift_book_local_datasour
 import 'package:open_scripture/shared/data/repositories/bible_catalog_repository_impl.dart';
 import 'package:open_scripture/shared/data/repositories/bible_content_repository_impl.dart';
 import 'package:open_scripture/shared/data/repositories/bible_install_repository_impl.dart';
+import 'package:open_scripture/shared/data/repositories/bible_pane_repository_factory_impl.dart';
 import 'package:open_scripture/shared/data/repositories/drift_bible_book_repository_impl.dart';
+import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
+import 'package:open_scripture/shared/domain/repositories/bible_pane_repository_factory.dart';
+import 'package:open_scripture/shared/enums/bible_repository_type.dart';
 import 'package:open_scripture/shared/utils/bible_ref_parser/bible_ref_parser.dart';
 import 'package:open_scripture/shared/data/services/book_resolvers/chained_book_resolver.dart';
 import 'package:open_scripture/shared/data/services/book_resolvers/drift_book_resolver.dart';
@@ -91,7 +96,8 @@ final sl = GetIt.instance;
 Future<void> init() async {
   // init sword bridge
   sl.registerLazySingleton(() => SwordBridge(),
-      onCreated: (i) => i.init(r'C:\Users\jerom\sword'));
+      onCreated: (i) => i.init(r'C:\Users\jerom\sword'),
+      dispose: (i) => i.shutdown());
 
   // init database
   sl.registerLazySingleton<AppDb>(() => AppDb());
@@ -111,7 +117,7 @@ Future<void> init() async {
       () => DriftBibleContentDataSourceImpl(dao: sl()),
       instanceName: 'local_drift');
   sl.registerLazySingleton<BibleContentDatasource>(
-      () => SwordBibleContentDatasourceImpl(),
+      () => SwordBibleContentDatasourceImpl(swordBridge: sl()),
       instanceName: 'local_sword');
   sl.registerLazySingleton<BibleBookLocalDataSource>(
       () => DriftBibleBookLocalDataSourceImpl(sl()));
@@ -133,6 +139,37 @@ Future<void> init() async {
       () => BibleContentRepositoryImpl(sl()));
   sl.registerLazySingleton<BibleInstallRepository>(
       () => BibleInstallRepositoryImpl(sl(), sl(), sl()));
+
+  // Bible Pane
+  sl.registerLazySingleton<BiblePaneRepository>(
+      () => BiblePaneRepositoryImpl(
+          contentDatasource: sl.get(instanceName: 'local_drift'),
+          catalogDatasource:
+              sl.get<BibleCatalogDatasource>(instanceName: 'local_drift')),
+      instanceName: 'local_drift');
+  sl.registerLazySingleton<BiblePaneRepository>(
+      () => BiblePaneRepositoryImpl(
+          contentDatasource: sl.get(instanceName: 'local_sword'),
+          catalogDatasource:
+              sl.get<BibleCatalogDatasource>(instanceName: 'local_sword')),
+      instanceName: 'local_sword');
+  sl.registerLazySingleton<BibleRepositoryFactory>(
+    () => BibleRepositoryFactoryImpl({
+      BibleRepositoryType.installed: () =>
+          sl.get<BiblePaneRepository>(instanceName: 'local_drift'),
+      BibleRepositoryType.sword: () =>
+          sl.get<BiblePaneRepository>(instanceName: 'local_sword'),
+    }),
+  );
+  sl.registerFactoryParam<BiblePaneBloc, int, void>(
+    (paneId, _) => BiblePaneBloc(
+      repositoryFactory: sl<BibleRepositoryFactory>(),
+      paneId: paneId,
+      navBus: sl.isRegistered<SearchResultBus>() ? sl<SearchResultBus>() : null,
+      notifier:
+          sl.isRegistered<SelectedVerseBus>() ? sl<SelectedVerseBus>() : null,
+    ),
+  );
 
   // init bible compiler
   sl.registerLazySingleton<ImporterRegistry>(
@@ -164,23 +201,8 @@ Future<void> init() async {
   // init bible features
 
   // init multipane
-  sl.registerLazySingleton<BiblePaneRepository>(
-      () => BiblePaneRepositoryImpl(
-          contentDatasource: sl.get(instanceName: 'local_drift'),
-          catalogDatasource:
-              sl.get<BibleCatalogDatasource>(instanceName: 'local_drift')),
-      instanceName: 'local_drift');
-  sl.registerLazySingleton<BiblePaneRepository>(
-      () => BiblePaneRepositoryImpl(
-          contentDatasource: sl.get(instanceName: 'local_sword'),
-          catalogDatasource:
-              sl.get<BibleCatalogDatasource>(instanceName: 'local_sword')),
-      instanceName: 'local_sword');
-  sl.registerLazySingleton<MultiPaneManagerCubit>(
-      () => MultiPaneManagerCubit(repos: [
-            sl.get<BiblePaneRepository>(instanceName: 'local_drift'),
-            sl.get<BiblePaneRepository>(instanceName: 'local_sword')
-          ], searchIntentBus: sl(), bookResolver: sl(), searchResultBus: sl()));
+  sl.registerLazySingleton<MultiPaneManagerCubit>(() => MultiPaneManagerCubit(
+      searchIntentBus: sl(), bookResolver: sl(), searchResultBus: sl()));
 
   // init customizer
   sl.registerLazySingleton<SettingsDatasource<CustomizerState>>(
@@ -194,7 +216,10 @@ Future<void> init() async {
   // init windows tack manager
   sl.registerFactory(() => WindowStackManagerBloc());
 
-  sl.registerFactory(() => BibleSelectorCubit());
+  sl.registerFactoryParam<BibleSelectorCubit, List<BibleId>,
+      BibleRepositoryType>((selectedIds,
+          repoType) =>
+      BibleSelectorCubit(selectedBiblesIds: selectedIds, repoType: repoType));
 
   //
   sl.registerLazySingleton(
