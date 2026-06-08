@@ -3,6 +3,7 @@ import 'package:open_scripture/shared/data/models/bible_install_dto.dart';
 import 'package:open_scripture/shared/data/services/source_fetcher_service.dart';
 import 'package:open_scripture/shared/domain/entities/bible_download_progress.dart';
 import 'package:open_scripture/shared/data/datasources/drift_bible_installation_datasource_impl.dart';
+import 'package:open_scripture/shared/enums/bible_repository_type.dart';
 
 import '../../domain/repositories/bible_install_repository.dart';
 import '../../domain/entities/bible_source.dart';
@@ -36,10 +37,12 @@ class BibleInstallRepositoryImpl implements BibleInstallRepository {
       final translation = canonicalPackage.data.bibleTranslation;
 
       final translationDto = TranslationInstallDto(
-        extId: translation.extId,
+        extId: translation.extId.externalId,
         name: translation.name,
         abbreviation: translation.abbreviation,
         description: translation.description,
+        // TODO: I'm confused, i think this is useless here. I should create another DTO
+        repoType: BibleRepositoryType.installed,
       );
 
       final bookDtos = canonicalPackage.data.books

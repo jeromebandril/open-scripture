@@ -5,6 +5,7 @@ import 'package:open_scripture/shared/data/datasources/bible_content_datasource/
 import 'package:open_scripture/shared/data/models/bible_install_dto.dart';
 import 'package:open_scripture/shared/data/models/verse_segment_dto.dart';
 import 'package:open_scripture/shared/domain/entities/bible_book.dart';
+import 'package:open_scripture/shared/domain/entities/bible_id.dart';
 import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
 import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
 import 'package:open_scripture/shared/domain/entities/verse.dart';
@@ -25,7 +26,7 @@ class BiblePaneRepositoryImpl implements BiblePaneRepository {
     required BibleId bibleId,
   }) async {
     try {
-      final details = await _libraryDatasource.getBible(bibleId);
+      final details = await _libraryDatasource.getBible(bibleId.externalId);
       return Right(details.toDomain());
     } catch (e) {
       return Left(NoLocalDataFailure());
@@ -53,7 +54,7 @@ class BiblePaneRepositoryImpl implements BiblePaneRepository {
   }) async {
     try {
       final dtos = await _contentDatasource.getChapterWithSpans(
-        bibleId,
+        bibleId.externalId,
         ref.book,
         ref.chapter,
       );
@@ -69,7 +70,7 @@ class BiblePaneRepositoryImpl implements BiblePaneRepository {
           ..sort((a, b) => a.segmentIndex.compareTo(b.segmentIndex));
 
         return Verse(
-          translationId: bibleId,
+          translationId: bibleId.externalId,
           ref: BibleRef(
             book: ref.book,
             chapter: ref.chapter,

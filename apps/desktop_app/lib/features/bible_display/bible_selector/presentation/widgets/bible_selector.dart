@@ -148,7 +148,7 @@ class _FooterConfirmButton extends StatelessWidget {
               .read<MultiPaneManagerCubit>()
               .activePane()
               .bloc
-              .add(BiblePaneOpen(bibleIds: selectedIds, repoType: repoType))
+              .add(BiblePaneOpen(bibleIds: selectedIds))
           : null,
       autofocus: true,
       child: const Row(

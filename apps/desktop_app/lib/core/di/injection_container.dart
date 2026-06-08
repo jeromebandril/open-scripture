@@ -77,6 +77,7 @@ import 'package:open_scripture/shared/data/repositories/bible_content_repository
 import 'package:open_scripture/shared/data/repositories/bible_install_repository_impl.dart';
 import 'package:open_scripture/shared/data/repositories/bible_pane_repository_factory_impl.dart';
 import 'package:open_scripture/shared/data/repositories/drift_bible_book_repository_impl.dart';
+import 'package:open_scripture/shared/domain/entities/bible_id.dart';
 import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
 import 'package:open_scripture/shared/domain/repositories/bible_pane_repository_factory.dart';
 import 'package:open_scripture/shared/enums/bible_repository_type.dart';

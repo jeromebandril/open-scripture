@@ -1,10 +1,9 @@
 import 'package:drift/drift.dart';
 import 'package:open_scripture/core/infrastructure/database/database.dart';
 import 'package:open_scripture/shared/data/models/book_dto.dart';
-import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
 
 abstract class BibleBookLocalDataSource {
-  Future<List<BookDto>> getBooksForBible(BibleId bibleId);
+  Future<List<BookDto>> getBooksForBible(String bibleId);
   Future<List<BookDto>> searchBookByName(String query, int languageId);
 }
 
@@ -14,7 +13,7 @@ class DriftBibleBookLocalDataSourceImpl implements BibleBookLocalDataSource {
   DriftBibleBookLocalDataSourceImpl(this._db);
 
   @override
-  Future<List<BookDto>> getBooksForBible(BibleId bibleId) async {
+  Future<List<BookDto>> getBooksForBible(String bibleId) async {
     final query = _db.select(_db.localizedBookNames).join([
       innerJoin(
         _db.canonicalBooks,

@@ -3,7 +3,7 @@ import 'package:open_scripture/features/three_tap_navigator/domain/repository/th
 import 'package:open_scripture/shared/data/datasources/bible_content_datasource/bible_content_datasourcee.dart';
 import 'package:open_scripture/shared/data/datasources/drift_book_local_datasource_impl.dart';
 import 'package:open_scripture/shared/data/models/book_dto.dart';
-import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
+import 'package:open_scripture/shared/domain/entities/bible_id.dart';
 import 'package:open_scripture/shared/domain/entities/localized_book.dart';
 import 'package:open_scripture/shared/error/failure.dart';
 
@@ -22,7 +22,8 @@ class ThreeTapNavigatorRepositoryImpl implements ThreeTapNavigatorRepository {
     required BibleId bibleId,
   }) async {
     try {
-      final dtos = await _booksLocalDataSource.getBooksForBible(bibleId);
+      final dtos =
+          await _booksLocalDataSource.getBooksForBible(bibleId.externalId);
       final books = dtos.map((dto) => dto.toDomain()).toList();
       return Right(books);
     } catch (e) {

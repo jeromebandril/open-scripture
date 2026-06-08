@@ -1,8 +1,5 @@
 import 'package:equatable/equatable.dart';
-
-/// Correponds to [extId] (external id)
-/// and not to localId (e.g. the database row id)
-typedef BibleId = String;
+import 'package:open_scripture/shared/domain/entities/bible_id.dart';
 
 /// Represents the metadata for a specific Bible translation (e.g., KJV, RVR60).
 /// Use [extId] is the unique id
@@ -44,7 +41,7 @@ class BibleTranslation extends Equatable {
 
   BibleTranslation copyWith({
     int? localId,
-    String? extId,
+    BibleId? extId,
     String? name,
     String? localName,
     String? abbreviation,

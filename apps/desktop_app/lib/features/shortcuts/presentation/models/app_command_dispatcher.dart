@@ -6,8 +6,6 @@ import 'package:open_scripture/features/bible_display/multi_pane_manager/present
 import 'package:open_scripture/features/bible_searchbar/search/presentation/state/search_bloc.dart';
 import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
 import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
-import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
-import 'package:open_scripture/shared/enums/bible_repository_type.dart';
 
 typedef CommandHandler = void Function();
 

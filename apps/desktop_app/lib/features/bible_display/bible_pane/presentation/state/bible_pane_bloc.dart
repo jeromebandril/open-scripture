@@ -3,7 +3,7 @@ import 'dart:collection';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
+import 'package:open_scripture/shared/domain/entities/bible_id.dart';
 import 'package:open_scripture/shared/domain/entities/verse.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/domain/repositories/bible_pane_repository.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/domain/display_mode.dart';
@@ -49,11 +49,9 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     BiblePaneOpen event,
     Emitter<BiblePaneState> emit,
   ) async {
-    print(event.bibleIds);
-    print(event.repoType);
     emit(state.copyWith(status: () => BiblePaneStatus.loading));
-
-    final repo = _repositoryFactory.get(event.repoType);
+    final repoType = event.bibleIds.first.repoType;
+    final repo = _repositoryFactory.get(repoType);
 
     final newMap = ParallelBibleMap.from(state.content.asMap);
 
@@ -91,7 +89,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
       content: () => ParallelBibleConfig.from(newMap),
       parallelOrder: () => event.bibleIds,
       isMixed: () => false,
-      repoType: () => event.repoType,
+      repoType: () => repoType,
     ));
   }
 

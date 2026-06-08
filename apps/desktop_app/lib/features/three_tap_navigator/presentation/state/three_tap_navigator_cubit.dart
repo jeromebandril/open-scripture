@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:open_scripture/shared/domain/entities/bible_id.dart';
 import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
 import 'package:open_scripture/features/three_tap_navigator/domain/repository/three_tap_navigator_repository.dart';
-import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
 import 'package:open_scripture/shared/domain/entities/localized_book.dart';
 
 part 'three_tap_navigator_state.dart';

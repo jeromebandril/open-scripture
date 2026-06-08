@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
+import 'package:open_scripture/shared/domain/entities/bible_id.dart';
 import 'package:open_scripture/shared/enums/bible_repository_type.dart';
 
 part 'bible_selector_state.dart';
@@ -10,28 +10,30 @@ class BibleSelectorCubit extends Cubit<BibleSelectorState> {
     List<BibleId> selectedBiblesIds = const [],
     BibleRepositoryType repoType = BibleRepositoryType.installed,
   }) : super(
-          BibleSelectorState(
-            selectedBiblesIds: selectedBiblesIds,
-            repoType: repoType,
-          ),
+          BibleSelectorState(selectedBiblesIds: selectedBiblesIds),
         );
 
   void select(BibleId bibleId) {
-    final currentIds = List<BibleId>.from(state.selectedBiblesIds);
+    final current = List<BibleId>.from(state.selectedBiblesIds);
 
-    if (currentIds.contains(bibleId)) {
-      currentIds.remove(bibleId);
-    } else {
-      currentIds.add(bibleId);
+    // Deselect if already selected
+    if (current.any((b) => b == bibleId)) {
+      current.removeWhere((b) => b == bibleId);
+      emit(BibleSelectorState(selectedBiblesIds: current));
+      return;
     }
 
-    // 4. Emit the brand new list
-    emit(state.copyWith(selectedBiblesIds: currentIds));
+    // Different source: clear and start fresh with this one
+    if (state.activeRepoType != null &&
+        bibleId.repoType != state.activeRepoType) {
+      emit(BibleSelectorState(selectedBiblesIds: [bibleId]));
+      return;
+    }
+
+    current.add(bibleId);
+    emit(BibleSelectorState(selectedBiblesIds: current));
   }
 
   void setSelected(List<BibleId> selected) =>
       emit(state.copyWith(selectedBiblesIds: selected));
-
-  void setRepoType(BibleRepositoryType repoType) =>
-      emit(state.copyWith(repoType: repoType, selectedBiblesIds: []));
 }

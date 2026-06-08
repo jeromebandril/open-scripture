@@ -1,5 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:open_scripture/shared/domain/entities/bible_book.dart';
+import 'package:open_scripture/shared/domain/entities/bible_id.dart';
 import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
 import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
 import 'package:open_scripture/shared/domain/entities/verse.dart';

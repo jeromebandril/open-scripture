@@ -1,6 +1,8 @@
 import 'package:open_scripture/core/engines/bible_compiler/domain/models/canonical_bible_package.dart';
 import 'package:open_scripture/core/engines/bible_compiler/domain/models/payload_issue.dart';
 import 'package:open_scripture/core/engines/bible_compiler/source/packages/source_package.dart';
+import 'package:open_scripture/shared/domain/entities/bible_id.dart';
+import 'package:open_scripture/shared/enums/bible_repository_type.dart';
 import 'package:xml/xml.dart';
 import 'package:xml/xpath.dart';
 import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
@@ -165,7 +167,10 @@ class UsfxImporter implements BibleImporter {
 
     return BibleTranslation(
       localId: null,
-      extId: abbreviation,
+      extId: BibleId(
+        repoType: BibleRepositoryType.undefined,
+        externalId: abbreviation,
+      ),
       name: required('//identification/name', 'BibleTranslation.name'),
       localName:
           required('//identification/nameLocal', 'BibleTranslation.localName'),

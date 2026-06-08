@@ -3,10 +3,12 @@ import 'package:open_scripture/core/engines/bible_compiler/domain/models/payload
 import 'package:open_scripture/core/engines/bible_compiler/import/bible_importer.dart';
 import 'package:open_scripture/core/engines/bible_compiler/source/packages/source_package.dart';
 import 'package:open_scripture/shared/domain/entities/bible_book.dart';
+import 'package:open_scripture/shared/domain/entities/bible_id.dart';
 import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
 import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
 import 'package:open_scripture/shared/domain/entities/localized_book.dart';
 import 'package:open_scripture/shared/domain/entities/verse.dart';
+import 'package:open_scripture/shared/enums/bible_repository_type.dart';
 import 'package:xml/xml.dart';
 import 'package:xml/xpath.dart';
 
@@ -39,7 +41,7 @@ final class OsisImporter implements BibleImporter {
 
     final translation = _parseBibleTranslation(doc, issues);
     final (books, verses) =
-        _parseBooksAndVerses(doc, issues, translation.extId);
+        _parseBooksAndVerses(doc, issues, translation.extId.externalId);
 
     final packageId = await package.fingerprint();
     final header = CanonicalBibleHeader(
@@ -103,7 +105,10 @@ final class OsisImporter implements BibleImporter {
 
     return BibleTranslation(
       localId: null,
-      extId: safeId,
+      extId: BibleId(
+        repoType: BibleRepositoryType.undefined,
+        externalId: safeId,
+      ),
       name: safeTitle,
       localName: safeTitle,
       abbreviation: safeId,

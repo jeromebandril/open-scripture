@@ -1,8 +1,8 @@
 import 'package:open_scripture/shared/data/datasources/bible_content_datasource/bible_content_datasourcee.dart';
 import 'package:open_scripture/shared/data/models/verse_segment_dto.dart';
 import 'package:open_scripture/shared/domain/entities/bible_book.dart';
+import 'package:open_scripture/shared/domain/entities/bible_id.dart';
 import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
-import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
 import 'package:open_scripture/shared/domain/entities/verse.dart';
 import 'package:open_scripture/shared/domain/repositories/bible_content_repository.dart';
 
@@ -18,7 +18,7 @@ class BibleContentRepositoryImpl implements BibleContentRepository {
     int chapter,
   ) async {
     final dtos = await _dataSource.getChapterWithSpans(
-      bibleId,
+      bibleId.externalId,
       book,
       chapter,
     );
@@ -34,7 +34,7 @@ class BibleContentRepositoryImpl implements BibleContentRepository {
         ..sort((a, b) => a.segmentIndex.compareTo(b.segmentIndex));
 
       return Verse(
-        translationId: bibleId,
+        translationId: bibleId.externalId,
         ref: BibleRef(
           book: book,
           chapter: chapter,
