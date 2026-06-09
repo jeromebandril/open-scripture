@@ -66,8 +66,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         // If there is no prior reference in state, the intent is a no-op.
         final current = state;
         if (current is! SearchReferenceResult) return;
-        final refinedRef = current.ref
-            .copyWith(verseStart: () => intent.verseNumber, verseEnd: null);
+        final refinedRef = current.ref.copyWith(
+            verseStart: () => intent.verseNumber, verseEnd: () => null);
         emit(SearchReferenceResult(ref: refinedRef));
         _searchIntentBus
             .emit(ResolvedRefIntent(ref: refinedRef, isVerseLevel: true));
