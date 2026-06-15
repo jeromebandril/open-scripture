@@ -77,6 +77,8 @@ import 'package:open_scripture/shared/data/repositories/bible_content_repository
 import 'package:open_scripture/shared/data/repositories/bible_install_repository_impl.dart';
 import 'package:open_scripture/shared/data/repositories/bible_pane_repository_factory_impl.dart';
 import 'package:open_scripture/shared/data/repositories/drift_bible_book_repository_impl.dart';
+import 'package:open_scripture/shared/data/services/bible_installer_strategy/canonical_bible_installer_strategy.dart';
+import 'package:open_scripture/shared/data/services/bible_installer_strategy/sword_bible_installer_strategy.dart';
 import 'package:open_scripture/shared/domain/entities/bible_id.dart';
 import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
 import 'package:open_scripture/shared/domain/repositories/bible_pane_repository_factory.dart';
@@ -138,8 +140,20 @@ Future<void> init() async {
       instanceName: 'local_sword');
   sl.registerLazySingleton<BibleContentRepository>(
       () => BibleContentRepositoryImpl(sl()));
+
+// 1. Register the Strategies
+  sl.registerLazySingleton<CanonicalInstallerStrategy>(() =>
+      CanonicalInstallerStrategy(
+          fetcher: sl(), compiler: sl(), localDataSource: sl()));
+  sl.registerLazySingleton<SwordInstallerStrategy>(() => SwordInstallerStrategy(
+      fetcher: sl(), swordBridge: sl(), swordBasePath: ''));
+
   sl.registerLazySingleton<BibleInstallRepository>(
-      () => BibleInstallRepositoryImpl(sl(), sl(), sl()));
+    () => BibleInstallRepositoryImpl({
+      BibleRepositoryType.installed: sl<CanonicalInstallerStrategy>(),
+      BibleRepositoryType.sword: sl<SwordInstallerStrategy>(),
+    }),
+  );
 
   // Bible Pane
   sl.registerLazySingleton<BiblePaneRepository>(

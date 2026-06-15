@@ -5,6 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:open_scripture/shared/domain/entities/bible_source.dart';
 import 'package:open_scripture/shared/domain/repositories/bible_install_repository.dart';
+import 'package:open_scripture/shared/enums/bible_repository_type.dart';
 
 import '../../../../core/infrastructure/event_bus/install_notifier.dart';
 import '../../../../shared/domain/entities/bible_download_progress.dart';
@@ -66,7 +67,7 @@ class BibleImporterCubit extends Cubit<BibleImporterState> {
     ));
 
     final src = LocalFileSource(filePath: path, displayName: name);
-    final stream = _repo.install(src);
+    final stream = _repo.install(src, state.targetType);
 
     _sub = stream.listen(
       (p) {

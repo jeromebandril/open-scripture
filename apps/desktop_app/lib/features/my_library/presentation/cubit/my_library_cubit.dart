@@ -6,6 +6,7 @@ import 'package:open_scripture/core/infrastructure/event_bus/install_notifier.da
 import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
 import 'package:open_scripture/shared/domain/repositories/bible_catalog_repository.dart';
 import 'package:open_scripture/shared/domain/repositories/bible_install_repository.dart';
+import 'package:open_scripture/shared/enums/bible_repository_type.dart';
 
 part 'my_library_state.dart';
 
@@ -44,7 +45,7 @@ class MyLibraryCubit extends Cubit<MyLibraryState> {
 
   Future<void> uninstall(int bibleId) async {
     if (_installRepo == null) return;
-    await _installRepo.uninstall(bibleId);
+    await _installRepo.uninstall(bibleId, state.repoType);
     getBibles();
   }
 

@@ -7,6 +7,7 @@ import 'package:open_scripture/features/customizer/presentation/pages/global_cus
 import 'package:open_scripture/features/obs_live_overlay/presentation/pages/obs_live_overlay_page.dart';
 import 'package:open_scripture/features/remote_controller/presentation/pages/remote_controller_page.dart';
 import 'package:open_scripture/features/settings_window/presentation/pages/about_setting_page.dart';
+import 'package:open_scripture/features/my_library/presentation/widgets/sword_modules_manager_page.dart';
 
 import '../../../shortcuts/presentation/pages/shortcuts_screen.dart';
 

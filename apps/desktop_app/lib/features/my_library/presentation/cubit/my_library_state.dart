@@ -13,18 +13,21 @@ final class MyLibraryState extends Equatable {
     this.bibles = const [],
     this.errorMessage,
     this.selectedBibleIndex,
+    this.repoType = BibleRepositoryType.installed,
   });
 
   final MyLibraryStatus status;
   final List<BibleTranslation> bibles;
   final int? selectedBibleIndex;
   final String? errorMessage;
+  final BibleRepositoryType repoType;
 
   MyLibraryState copywith({
     MyLibraryStatus? status,
     List<BibleTranslation>? bibles,
     String? Function()? errorMessage,
     int? Function()? selectedBibleIndex,
+    BibleRepositoryType? repoType,
   }) {
     return MyLibraryState(
       status: status ?? this.status,
@@ -33,9 +36,16 @@ final class MyLibraryState extends Equatable {
       selectedBibleIndex: selectedBibleIndex != null
           ? selectedBibleIndex()
           : this.selectedBibleIndex,
+      repoType: repoType ?? this.repoType,
     );
   }
 
   @override
-  List<Object?> get props => [status, bibles, selectedBibleIndex, errorMessage];
+  List<Object?> get props => [
+        status,
+        bibles,
+        selectedBibleIndex,
+        errorMessage,
+        repoType,
+      ];
 }

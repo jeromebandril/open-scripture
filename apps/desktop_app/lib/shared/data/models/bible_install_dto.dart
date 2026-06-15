@@ -8,7 +8,7 @@ import 'package:open_scripture/shared/enums/bible_repository_type.dart';
 class TranslationInstallDto {
   final int? id;
   final String extId;
-  final BibleRepositoryType repoType;
+  final BibleRepositoryType? repoType;
   final String name;
   final String? localName;
   final String abbreviation;
@@ -33,7 +33,7 @@ class TranslationInstallDto {
     this.originFormat,
     this.description,
     this.copyright,
-    required this.repoType,
+    this.repoType,
   });
 }
 
@@ -54,9 +54,11 @@ extension TranslationInstallDtoMapper on TranslationInstallDto {
   }
 
   BibleTranslation toDomain() {
+    assert(repoType != null,
+        'repository type cannot be null when converting into domain');
     return BibleTranslation(
       localId: id,
-      extId: BibleId(repoType: repoType, externalId: extId),
+      extId: BibleId(repoType: repoType!, externalId: extId),
       name: name,
       localName: localName,
       abbreviation: abbreviation,
