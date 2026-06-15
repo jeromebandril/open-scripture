@@ -1,27 +1,23 @@
-import 'dart:io';
-
-import 'package:open_scripture/core/engines/bible_compiler/source/packages/source_package.dart';
-import 'package:open_scripture/core/sword/sword_bridge.dart';
+import 'package:open_scripture/core/engines/settings/settings_repository.dart';
+import 'package:open_scripture/features/bible_importer/domain/entities/bible_importer_settings.dart';
+import 'package:open_scripture/shared/data/datasources/bible_installation_datasource/sword_bible_installation_datasource_impl.dart';
 import 'package:open_scripture/shared/data/services/source_fetcher_service.dart';
 import 'package:open_scripture/shared/domain/entities/bible_download_progress.dart';
 import 'package:open_scripture/shared/domain/entities/bible_source.dart';
 import 'package:open_scripture/shared/domain/services/bible_installer_strategy.dart';
-import 'package:path/path.dart' as p;
 
 class SwordInstallerStrategy implements BibleInstallerStrategy {
   final SourceFetcherService _fetcher;
-  final SwordBridge _swordBridge;
-
-  /// TODO: this should come from the configuration
-  final String _swordBasePath;
+  final SettingsRepository<BibleImporterSettings> _settingsRepo;
+  final SwordInstallationDatasource _localDatasource;
 
   SwordInstallerStrategy(
       {required SourceFetcherService fetcher,
-      required SwordBridge swordBridge,
-      required String swordBasePath})
-      : _fetcher = fetcher,
-        _swordBridge = swordBridge,
-        _swordBasePath = swordBasePath;
+      required SettingsRepository<BibleImporterSettings> settingsRepo,
+      required SwordInstallationDatasource localDatasource})
+      : _localDatasource = localDatasource,
+        _fetcher = fetcher,
+        _settingsRepo = settingsRepo;
 
   @override
   Stream<InstallProgress> install(BibleSourceType source) async* {
@@ -32,35 +28,28 @@ class SwordInstallerStrategy implements BibleInstallerStrategy {
       // 1. Resolve source to the same agnostic package
       final sourcePackage = await _fetcher.resolveSource(source);
 
+      // Fetch the path from settings
+      final settingsResult = await _settingsRepo.loadSettings();
+      final String basePath = settingsResult.fold(
+        (failure) =>
+            throw Exception('Could not resolve installation path settings.'),
+        (settings) => settings.swordInstallationPath,
+      );
+
       yield const InstallProgress(
           stage: InstallStage.installing,
           message: 'Extracting Sword module...');
 
-      if (sourcePackage.kind == SourcePackageKind.zip) {
-        final entries = await sourcePackage.listEntries();
-
-        for (final entry in entries) {
-          // Read bytes via your agnostic SourcePackage interface
-          final fileBytes = await sourcePackage.readBytes(entry.path);
-
-          // Map internal zip paths straight to the local sword directory layout
-          final targetPath = p.join(_swordBasePath, entry.path);
-          final targetFile = File(targetPath);
-
-          await targetFile.create(recursive: true);
-          await targetFile.writeAsBytes(fileBytes);
-        }
-      } else {
-        throw UnsupportedError(
-            'Sword modules must be processed from a compressed archive archive.');
-      }
+      await _localDatasource.extractAndInstallModule(
+        package: sourcePackage,
+        targetBasePath: basePath,
+      );
 
       yield const InstallProgress(
           stage: InstallStage.installing,
           message: 'Synchronizing Sword engine...');
-      // TODO: implement this method, as a workaround for now
-      // delete the cache file in the modules path
-      // await _swordBridge.refreshModules();
+
+      await _localDatasource.clearEngineCache(basePath: basePath);
 
       yield const InstallProgress(
           stage: InstallStage.done,
@@ -74,10 +63,23 @@ class SwordInstallerStrategy implements BibleInstallerStrategy {
 
   @override
   Future<void> uninstall(dynamic bibleId) async {
-    final moduleName = bibleId.toString().toLowerCase();
+    if (bibleId is! String) {
+      throw ArgumentError.value(bibleId, 'bibleId',
+          'Expected a String, but received a ${bibleId.runtimeType}.');
+    }
 
-    // TODO:
-    // 1. Delete target files from mods.d and modules/ directories
-    // 2. Refresh SwordBridge
+    // Resolve your platform-agnostic base directory path
+    final settingsResult = await _settingsRepo.loadSettings();
+    final String basePath = settingsResult.fold(
+      (failure) => throw Exception(
+          'Could not resolve installation path settings for uninstallation.'),
+      (settings) => settings.swordInstallationPath,
+    );
+
+    // Normalize the module ID (SWORD IDs are typically uppercase in code but lowercase in file systems)
+    final String moduleCode = bibleId.toString().trim();
+
+    await _localDatasource.deleteModuleFiles(
+        moduleCode: moduleCode, basePath: basePath);
   }
 }

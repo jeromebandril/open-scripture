@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_scripture/core/di/injection_container.dart';
+import 'package:open_scripture/features/bible_importer/presentation/state/bible_importer_cubit/bible_importer_cubit.dart';
 import 'package:open_scripture/features/bible_importer/presentation/widgets/importer.dart';
+import 'package:open_scripture/features/settings_window/presentation/widgets/setting.dart';
+import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_option.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
+import 'package:open_scripture/shared/enums/bible_repository_type.dart';
 import 'package:open_scripture/shared/theme/tokens.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -14,22 +20,36 @@ class ImporterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(42, 0, 42, 42),
-      child: Column(
-        children: [
-          SettingSection(
-            title: 'Importer',
+    return BlocProvider(
+      create: (context) => sl<BibleImporterCubit>(),
+      child: Builder(builder: (context) {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(42, 0, 42, 42),
+          child: Column(
             children: [
-              const Text('Compatible bible formats: USFX, OSIS'),
-              const ImporterWidget(),
+              SettingSection(
+                title: 'Importer',
+                children: [
+                  SettingInputOption<BibleRepositoryType>(
+                    value: context
+                        .select((BibleImporterCubit c) => c.state.targetType),
+                    onChanged: (mode) =>
+                        context.read<BibleImporterCubit>().setTargerType(mode),
+                    items: BibleRepositoryType.installableTypes
+                        .map((m) => DropdownMenuItem<BibleRepositoryType>(
+                            value: m, child: Text(m.name)))
+                        .toList(),
+                  ),
+                  const ImporterWidget(),
+                ],
+              ),
+              SettingSection(
+                  title: 'Recommended repositories',
+                  children: [const _ListOfBibleRepositories()]),
             ],
           ),
-          SettingSection(
-              title: 'Recommended repositories',
-              children: [const _ListOfBibleRepositories()]),
-        ],
-      ),
+        );
+      }),
     );
   }
 }

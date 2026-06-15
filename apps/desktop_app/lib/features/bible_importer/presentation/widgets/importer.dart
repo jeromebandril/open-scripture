@@ -1,31 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/features/bible_importer/presentation/state/bible_importer_cubit.dart';
-import 'package:open_scripture/shared/enums/bible_repository_type.dart';
-
-import '../../../../core/di/injection_container.dart';
+import 'package:open_scripture/features/bible_importer/presentation/state/bible_importer_cubit/bible_importer_cubit.dart';
 
 class ImporterWidget extends StatelessWidget {
   const ImporterWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<BibleImporterCubit>(),
-      child: Center(
-        child: BlocBuilder<BibleImporterCubit, BibleImporterState>(
-          builder: (context, state) {
-            return _XmlImportDropZoneUi(
-              isDragOver: false,
-              isLoading: state.status == BibleImporterStatus.running,
-              errorText: state.errorMessage,
-              onChoosePressed: () {
-                context.read<BibleImporterCubit>().pickFile();
-              },
-            );
+    return BlocBuilder<BibleImporterCubit, BibleImporterState>(
+      builder: (context, state) {
+        return _XmlImportDropZoneUi(
+          isDragOver: false,
+          isLoading: state.status == BibleImporterStatus.running,
+          errorText: state.errorMessage,
+          onChoosePressed: () {
+            context.read<BibleImporterCubit>().pickFile();
           },
-        ),
-      ),
+        );
+      },
     );
   }
 }

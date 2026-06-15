@@ -26,7 +26,11 @@ import 'package:open_scripture/features/bible_display/bible_pane/presentation/st
 import 'package:open_scripture/features/bible_display/bible_selector/presentation/cubit/bible_selector_cubit.dart';
 import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/remote/pane_manager_handler.dart';
 import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
-import 'package:open_scripture/features/bible_importer/presentation/state/bible_importer_cubit.dart';
+import 'package:open_scripture/features/bible_importer/data/datasources/bible_importer_settings_datasource.dart';
+import 'package:open_scripture/features/bible_importer/data/repositories/bible_importer_settings_repository_impl.dart';
+import 'package:open_scripture/features/bible_importer/domain/entities/bible_importer_settings.dart';
+import 'package:open_scripture/features/bible_importer/presentation/state/bible_importer_cubit/bible_importer_cubit.dart';
+import 'package:open_scripture/features/bible_importer/presentation/state/bible_importer_settings_cubit/bible_importer_settings_cubit.dart';
 import 'package:open_scripture/features/bible_searchbar/history/presentation/cubit/history_cubit.dart';
 import 'package:open_scripture/features/bible_searchbar/search/data/repositories/search_repository_impl.dart';
 import 'package:open_scripture/features/bible_searchbar/search/domain/repositories/search_repository.dart';
@@ -70,7 +74,8 @@ import 'package:open_scripture/shared/data/datasources/bible_catalog_datasource/
 import 'package:open_scripture/shared/data/datasources/bible_content_datasource/bible_content_datasourcee.dart';
 import 'package:open_scripture/shared/data/datasources/bible_content_datasource/drift_bible_content_datasource_impl.dart';
 import 'package:open_scripture/shared/data/datasources/bible_content_datasource/sword_bible_content_datasource_impl.dart';
-import 'package:open_scripture/shared/data/datasources/drift_bible_installation_datasource_impl.dart';
+import 'package:open_scripture/shared/data/datasources/bible_installation_datasource/drift_bible_installation_datasource_impl.dart';
+import 'package:open_scripture/shared/data/datasources/bible_installation_datasource/sword_bible_installation_datasource_impl.dart';
 import 'package:open_scripture/shared/data/datasources/drift_book_local_datasource_impl.dart';
 import 'package:open_scripture/shared/data/repositories/bible_catalog_repository_impl.dart';
 import 'package:open_scripture/shared/data/repositories/bible_content_repository_impl.dart';
@@ -97,11 +102,6 @@ import 'package:open_scripture/shared/domain/services/book_resolver.dart';
 final sl = GetIt.instance;
 
 Future<void> init() async {
-  // init sword bridge
-  sl.registerLazySingleton(() => SwordBridge(),
-      onCreated: (i) => i.init(r'C:\Users\jerom\sword'),
-      dispose: (i) => i.shutdown());
-
   // init database
   sl.registerLazySingleton<AppDb>(() => AppDb());
   sl.registerLazySingleton<BibleContentDao>(() => BibleContentDao(sl()));
@@ -126,6 +126,8 @@ Future<void> init() async {
       () => DriftBibleBookLocalDataSourceImpl(sl()));
   sl.registerLazySingleton<BibleInstallationDataSource>(
       () => DriftBibleInstallationDataSourceImpl(sl()));
+  sl.registerLazySingleton<SwordInstallationDatasource>(
+      () => SwordBibleInstallationDatasourceImpl(swordBridge: sl()));
 
   // init repositories
   sl.registerLazySingleton<BibleBookRepository>(
@@ -146,7 +148,7 @@ Future<void> init() async {
       CanonicalInstallerStrategy(
           fetcher: sl(), compiler: sl(), localDataSource: sl()));
   sl.registerLazySingleton<SwordInstallerStrategy>(() => SwordInstallerStrategy(
-      fetcher: sl(), swordBridge: sl(), swordBasePath: ''));
+      fetcher: sl(), settingsRepo: sl(), localDatasource: sl()));
 
   sl.registerLazySingleton<BibleInstallRepository>(
     () => BibleInstallRepositoryImpl({
@@ -277,7 +279,7 @@ Future<void> init() async {
       () => MyLibraryCubit(
           repo: sl.get<BibleCatalogRepository>(instanceName: 'local_sword'),
           notifier: sl(),
-          installRepo: null),
+          installRepo: sl()),
       instanceName: 'local_sword',
       onCreated: (c) => c.getBibles());
 
@@ -330,16 +332,41 @@ Future<void> init() async {
   sl.registerFactory(() => ObsLiveOverlayCubit(repo: sl(), notifier: sl()));
 
   // Importer
+  sl.registerLazySingleton<SettingsDatasource<BibleImporterSettings>>(
+      () => BibleImporterSettingsDatasourceImpl());
+  sl.registerLazySingleton<SettingsRepository<BibleImporterSettings>>(
+      () => BibleImporterSettingsRepositoryImpl(datasource: sl()));
+  sl.registerLazySingleton(() => BibleImporterSettingsCubit(repo: sl()));
   sl.registerFactory(() => BibleImporterCubit(repo: sl(), notifier: sl()));
 
   // Three tap nav
-
   sl.registerLazySingleton<ThreeTapNavigatorRepository>(
     () => ThreeTapNavigatorRepositoryImpl(
         contentDataSource: sl.get(instanceName: 'local_drift'),
         booksLocalDataSource: sl()),
   );
   sl.registerLazySingleton(() => ThreeTapNavigatorCubit(repo: sl()));
+
+  // Init Sword Bridge
+  sl.registerSingletonAsync(
+    () async {
+      final settingsRepo = sl<SettingsRepository<BibleImporterSettings>>();
+      final settingsResult = await settingsRepo.loadSettings();
+
+      final modulePath = settingsResult.fold(
+        (failure) => '',
+        (settings) => settings.swordInstallationPath,
+      );
+
+      final bridge = SwordBridge();
+      bridge.init(modulePath);
+
+      return bridge;
+    },
+    dispose: (bridge) => bridge.shutdown(),
+  );
+
+  await sl.allReady();
 }
 
 /// Registers all dependencies in the correct order:

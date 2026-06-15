@@ -2,7 +2,7 @@ import 'package:open_scripture/core/engines/bible_compiler/import/importer_regis
 import 'package:open_scripture/shared/data/models/bible_install_dto.dart';
 import 'package:open_scripture/shared/data/services/source_fetcher_service.dart';
 import 'package:open_scripture/shared/domain/entities/bible_download_progress.dart';
-import 'package:open_scripture/shared/data/datasources/drift_bible_installation_datasource_impl.dart';
+import 'package:open_scripture/shared/data/datasources/bible_installation_datasource/drift_bible_installation_datasource_impl.dart';
 import 'package:open_scripture/shared/domain/entities/bible_source.dart';
 import 'package:open_scripture/shared/domain/services/bible_installer_strategy.dart';
 
@@ -92,6 +92,11 @@ class CanonicalInstallerStrategy implements BibleInstallerStrategy {
 
   @override
   Future<void> uninstall(dynamic bibleId) async {
-    await _localDataSource.uninstallBible(bibleId: bibleId as int);
+    if (bibleId is! int) {
+      throw ArgumentError.value(bibleId, 'bibleId',
+          'Expected an int, but received a ${bibleId.runtimeType}.');
+    }
+
+    await _localDataSource.uninstallBible(bibleId: bibleId);
   }
 }

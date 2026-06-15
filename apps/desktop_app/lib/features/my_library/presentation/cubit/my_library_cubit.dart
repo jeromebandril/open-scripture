@@ -43,9 +43,12 @@ class MyLibraryCubit extends Cubit<MyLibraryState> {
     });
   }
 
-  Future<void> uninstall(int bibleId) async {
+  Future<void> uninstall(BibleTranslation bible) async {
     if (_installRepo == null) return;
-    await _installRepo.uninstall(bibleId, state.repoType);
+    await _installRepo.uninstall(
+      bible.localId ?? bible.extId.externalId,
+      bible.extId.repoType,
+    );
     getBibles();
   }
 

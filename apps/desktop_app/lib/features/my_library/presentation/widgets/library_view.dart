@@ -179,7 +179,7 @@ class _InstalledBiblesRow extends StatelessWidget {
             ),
             TextButton(
               onPressed: () =>
-                  context.read<MyLibraryCubit>().uninstall(bibleMeta.localId!),
+                  context.read<MyLibraryCubit>().uninstall(bibleMeta),
               child: Row(
                 spacing: 8,
                 children: [
