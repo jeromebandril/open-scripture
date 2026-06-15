@@ -34,7 +34,7 @@ class ImporterPage extends StatelessWidget {
                     value: context
                         .select((BibleImporterCubit c) => c.state.targetType),
                     onChanged: (mode) =>
-                        context.read<BibleImporterCubit>().setTargerType(mode),
+                        context.read<BibleImporterCubit>().setTargetType(mode),
                     items: BibleRepositoryType.installableTypes
                         .map((m) => DropdownMenuItem<BibleRepositoryType>(
                             value: m, child: Text(m.name)))

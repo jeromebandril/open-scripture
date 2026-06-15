@@ -113,7 +113,7 @@ class BibleImporterCubit extends Cubit<BibleImporterState> {
     }
   }
 
-  void setTargerType(BibleRepositoryType? targetType) {
+  void setTargetType(BibleRepositoryType? targetType) {
     emit(state.copyWith(targetType: targetType));
   }
 }
