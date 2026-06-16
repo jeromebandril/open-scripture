@@ -56,6 +56,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     final newMap = ParallelBibleMap.from(state.content.asMap);
 
     for (final id in event.bibleIds) {
+      // check if bible actually exists
       final result = await repo.getBibleMetadata(bibleId: id);
 
       result.fold(

@@ -192,13 +192,23 @@ char* sword_get_module_info(const char* module_name) {
         return out;
     };
 
+    std::string name    = safeStr(mod->getName());
+    std::string desc    = safeStr(mod->getDescription());
+    std::string lang    = safeStr(mod->getLanguage());
+    std::string about   = safeStr(mod->getConfigEntry("About"));
+    std::string source  = safeStr(mod->getConfigEntry("TextSource"));
+    std::string abbr    = safeStr(mod->getConfigEntry("Abbreviation"));
+    std::string version = safeStr(mod->getConfigEntry("Version"));
+
     std::ostringstream json;
     json << "{"
-         << "\"name\":\"" << escape(mod->getName()) << "\","
-         << "\"description\":\"" << escape(mod->getDescription()) << "\","
-         << "\"type\":\"" << escape(mod->getType()) << "\","
-         << "\"language\":\"" << escape(mod->getLanguage()) << "\","
-         << "\"keyText\":\"" << escape(mod->getKeyText()) << "\""
+         << "\"name\":\"" << escape(name) << "\","
+         << "\"desc\":\"" << escape(desc) << "\","
+         << "\"lang_iso_code\":\"" << escape(lang) << "\","
+         << "\"about\":\"" << escape(about) << "\","
+         << "\"source\":\"" << escape(source) << "\","
+         << "\"abbr\":\"" << escape(abbr) << "\","
+         << "\"version\":\"" << escape(version) << "\""
          << "}";
 
     return alloc_string(json.str());
