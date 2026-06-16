@@ -50,6 +50,10 @@ char* alloc_string(const char* str) {
     return out;
 }
 
+// Helper to safely convert a potentially-null const char* to std::string
+static std::string safeStr(const char* s, const std::string& fallback = "") {
+    return (s != nullptr) ? std::string(s) : fallback;
+}
 
 // Public C API 
 
@@ -145,15 +149,23 @@ char* sword_list_bibles() {
         if (!first) json << ",";
         first = false;
 
-        std::string name = mod->getName();
-        std::string desc = mod->getDescription();
-        std::string lang = mod->getLanguage();
+        std::string name    = safeStr(mod->getName());
+        std::string desc    = safeStr(mod->getDescription());
+        std::string lang    = safeStr(mod->getLanguage());
+        std::string about   = safeStr(mod->getConfigEntry("About"));
+        std::string source  = safeStr(mod->getConfigEntry("TextSource"));
+        std::string abbr    = safeStr(mod->getConfigEntry("Abbreviation"));
+        std::string version = safeStr(mod->getConfigEntry("Version"));
 
         json << "{"
-             << "\"name\":\"" << escape(name) << "\","
-             << "\"description\":\"" << escape(desc) << "\","
              << "\"type\":\"" << escape(type) << "\","
-             << "\"language\":\"" << escape(lang) << "\""
+             << "\"name\":\"" << escape(name) << "\","
+             << "\"desc\":\"" << escape(desc) << "\","
+             << "\"lang_iso_code\":\"" << escape(lang) << "\","
+             << "\"about\":\"" << escape(about) << "\","
+             << "\"source\":\"" << escape(source) << "\","
+             << "\"abbr\":\"" << escape(abbr) << "\","
+             << "\"version\":\"" << escape(version) << "\""
              << "}";
     }
     json << "]";

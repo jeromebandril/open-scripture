@@ -56,6 +56,17 @@ extension TranslationInstallDtoMapper on TranslationInstallDto {
     );
   }
 
+  static TranslationInstallDto fromSwordEngine(dynamic m) {
+    return TranslationInstallDto(
+      extId: m['name'],
+      name: m['desc'],
+      abbreviation: m['name'],
+      description: m['about'],
+      langIsoCode: m['lang_iso_code'],
+      repoType: BibleRepositoryType.sword,
+    );
+  }
+
   BibleTranslation toDomain() {
     assert(repoType != null,
         'repository type cannot be null when converting into domain');

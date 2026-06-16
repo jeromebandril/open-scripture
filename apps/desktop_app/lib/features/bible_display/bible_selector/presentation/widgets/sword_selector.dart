@@ -80,9 +80,9 @@ class _SwordSelectorBody extends StatelessWidget {
                                   .colorScheme
                                   .surfaceContainerLowest,
                               selected: selected,
-                              title: Text(bible.name),
+                              title: Text(bible.abbreviation),
                               subtitle: Text(
-                                bible.description ?? 'No description available',
+                                bible.name,
                                 style: TextStyle(
                                   color: Theme.of(context)
                                       .colorScheme

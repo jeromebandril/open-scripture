@@ -16,14 +16,7 @@ class SwordBibleCatalogDatasourceImpl implements BibleCatalogDatasource {
     final moduleJson = _swordBridge.getModuleInfo(extId);
     final m = jsonDecode(moduleJson);
 
-    return Future.value(TranslationInstallDto(
-      extId: m['name'],
-      name: m['name'],
-      abbreviation: m['name'],
-      description: m['description'],
-      langNativeName: m['language'],
-      repoType: BibleRepositoryType.sword,
-    ));
+    return Future.value(TranslationInstallDtoMapper.fromSwordEngine(m));
   }
 
   @override
@@ -31,14 +24,8 @@ class SwordBibleCatalogDatasourceImpl implements BibleCatalogDatasource {
     final modulesJson = _swordBridge.listBibles();
 
     final modules = jsonDecode(modulesJson) as List;
-    final translations = modules.map((m) => TranslationInstallDto(
-          extId: m['name'],
-          name: m['name'],
-          abbreviation: m['name'],
-          description: m['description'],
-          langNativeName: m['language'],
-          repoType: BibleRepositoryType.sword,
-        ));
+    final translations =
+        modules.map((m) => TranslationInstallDtoMapper.fromSwordEngine(m));
 
     return Future.value(translations.toList());
   }

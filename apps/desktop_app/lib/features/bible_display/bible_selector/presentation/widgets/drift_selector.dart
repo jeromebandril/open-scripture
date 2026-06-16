@@ -78,7 +78,7 @@ class DriftCatalogSelector extends StatelessWidget {
                                     .colorScheme
                                     .surfaceContainerLowest,
                                 selected: selected,
-                                title: Text(bible.abbreviation),
+                                title: Text(bible.name),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
