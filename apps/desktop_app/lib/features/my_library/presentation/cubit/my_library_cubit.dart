@@ -49,6 +49,7 @@ class MyLibraryCubit extends Cubit<MyLibraryState> {
       bible.localId ?? bible.extId.externalId,
       bible.extId.repoType,
     );
+    emit(state.copywith(selectedBibleIndex: () => null));
     getBibles();
   }
 
