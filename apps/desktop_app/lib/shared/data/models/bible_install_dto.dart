@@ -56,6 +56,25 @@ extension TranslationInstallDtoMapper on TranslationInstallDto {
     );
   }
 
+  static TranslationInstallDto fromDomain(BibleTranslation domain) {
+    return TranslationInstallDto(
+      id: domain.localId,
+      extId: domain.extId.externalId,
+      name: domain.name,
+      localName: domain.localName,
+      abbreviation: domain.abbreviation,
+      langIsoCode: domain.langIsoCode,
+      langEngName: domain.langEngName,
+      langNativeName: domain.langNativeName,
+      originSource: domain.originSource,
+      originFormat: domain.originFormat,
+      description: domain.description,
+      copyright: domain.copyright,
+      repoType:
+          domain.isAlreadyInstalled ? BibleRepositoryType.localDatabase : null,
+    );
+  }
+
   static TranslationInstallDto fromSwordEngine(dynamic m) {
     return TranslationInstallDto(
       extId: m['name'],

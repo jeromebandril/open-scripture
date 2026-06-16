@@ -37,9 +37,13 @@ class BibleInstallationDao extends DatabaseAccessor<AppDb>
         BiblesCompanion.insert(
           extId: translation.extId,
           bName: translation.name,
+          nameLocal: Value(translation.localName),
           abbreviation: translation.abbreviation,
           bDescription: Value(translation.description),
           languageId: languageId,
+          copyright: Value(translation.copyright),
+          originFormat: Value(translation.originFormat),
+          originSource: Value(translation.originSource),
         ),
         mode: InsertMode.insertOrReplace,
       );

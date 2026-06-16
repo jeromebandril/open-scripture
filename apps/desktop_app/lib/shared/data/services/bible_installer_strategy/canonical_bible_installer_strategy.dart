@@ -39,13 +39,8 @@ class CanonicalInstallerStrategy implements BibleInstallerStrategy {
 
       final translation = canonicalPackage.data.bibleTranslation;
 
-      // Notice: We removed the repoType. The localDataSource already knows it's the canonical repo!
-      final translationDto = TranslationInstallDto(
-        extId: translation.extId.externalId,
-        name: translation.name,
-        abbreviation: translation.abbreviation,
-        description: translation.description,
-      );
+      final translationDto =
+          TranslationInstallDtoMapper.fromDomain(translation);
 
       final bookDtos = canonicalPackage.data.books
           .map((b) => BookInstallDto(
