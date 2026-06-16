@@ -1,20 +1,21 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:open_scripture/shared/constants.dart';
 import 'package:open_scripture/shared/data/datasources/bible_catalog_datasource/bible_catalog_datasource.dart';
 import 'package:open_scripture/shared/data/models/bible_install_dto.dart';
 import 'package:open_scripture/shared/enums/bible_repository_type.dart';
 
 class RemoteBibleCatalogDatasourceImpl implements BibleCatalogDatasource {
-  final String baseUrl;
   List<TranslationInstallDto>? _cachedTranslations;
 
-  RemoteBibleCatalogDatasourceImpl({required this.baseUrl});
+  RemoteBibleCatalogDatasourceImpl();
 
   @override
   Future<List<TranslationInstallDto>> getBibles() async {
     if (_cachedTranslations != null) return _cachedTranslations!;
 
-    final response = await http.get(Uri.parse('$baseUrl/translations.json'));
+    final response =
+        await http.get(Uri.parse('$kApiGetBibleV2Url/translations.json'));
     if (response.statusCode != 200) {
       throw Exception('Failed to load translations from API');
     }

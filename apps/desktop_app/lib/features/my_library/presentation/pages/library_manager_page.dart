@@ -27,6 +27,10 @@ class _LibrariesPageState extends State<LibrariesPage> {
         value: di.sl.get<MyLibraryCubit>(instanceName: 'local_sword'),
         child: const LibraryManagerPage(title: 'Sword modules'),
       ),
+      BlocProvider.value(
+        value: di.sl.get<MyLibraryCubit>(instanceName: 'remote_getbiblev2'),
+        child: const LibraryManagerPage(title: 'Get Bible v2'),
+      ),
     ];
   }
 
@@ -34,8 +38,8 @@ class _LibrariesPageState extends State<LibrariesPage> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(42, 0, 42, 42),
-      child:
-          BContainerTabBar(tabs: ['Installed', 'Sword Modules'], views: _pages),
+      child: BContainerTabBar(
+          tabs: ['Installed', 'Sword Modules', 'Get Gible v2'], views: _pages),
     );
   }
 }

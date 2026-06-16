@@ -70,9 +70,11 @@ import 'package:open_scripture/features/three_tap_navigator/presentation/state/t
 import 'package:open_scripture/features/window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import 'package:open_scripture/shared/data/datasources/bible_catalog_datasource/bible_catalog_datasource.dart';
 import 'package:open_scripture/shared/data/datasources/bible_catalog_datasource/local_bible_catalog_datasource_impl.dart';
+import 'package:open_scripture/shared/data/datasources/bible_catalog_datasource/remote_bible_catalog_datasource_impl.dart';
 import 'package:open_scripture/shared/data/datasources/bible_catalog_datasource/sword_bible_catalog_datasource_impl.dart';
 import 'package:open_scripture/shared/data/datasources/bible_content_datasource/bible_content_datasourcee.dart';
 import 'package:open_scripture/shared/data/datasources/bible_content_datasource/drift_bible_content_datasource_impl.dart';
+import 'package:open_scripture/shared/data/datasources/bible_content_datasource/remote_bible_ccontent_datasource_impl.dart';
 import 'package:open_scripture/shared/data/datasources/bible_content_datasource/sword_bible_content_datasource_impl.dart';
 import 'package:open_scripture/shared/data/datasources/bible_installation_datasource/drift_bible_installation_datasource_impl.dart';
 import 'package:open_scripture/shared/data/datasources/bible_installation_datasource/sword_bible_installation_datasource_impl.dart';
@@ -118,12 +120,18 @@ Future<void> init() async {
   sl.registerLazySingleton<BibleCatalogDatasource>(
       () => SwordBibleCatalogDatasourceImpl(swordBridge: sl()),
       instanceName: 'local_sword');
+  sl.registerLazySingleton<BibleCatalogDatasource>(
+      () => RemoteBibleCatalogDatasourceImpl(),
+      instanceName: 'remote_getbiblev2');
   sl.registerLazySingleton<BibleContentDatasource>(
       () => DriftBibleContentDataSourceImpl(dao: sl()),
       instanceName: 'local_drift');
   sl.registerLazySingleton<BibleContentDatasource>(
       () => SwordBibleContentDatasourceImpl(swordBridge: sl()),
       instanceName: 'local_sword');
+  sl.registerLazySingleton<BibleContentDatasource>(
+      () => RemoteBibleContentDatasourceImpl(),
+      instanceName: 'remote_getbiblev2');
   sl.registerLazySingleton<BibleBookLocalDataSource>(
       () => DriftBibleBookLocalDataSourceImpl(sl()));
   sl.registerLazySingleton<BibleInstallationDataSource>(
@@ -142,6 +150,10 @@ Future<void> init() async {
       () => BibleCatalogRepositoryImpl(
           sl.get<BibleCatalogDatasource>(instanceName: 'local_sword')),
       instanceName: 'local_sword');
+  sl.registerLazySingleton<BibleCatalogRepository>(
+      () => BibleCatalogRepositoryImpl(
+          sl.get<BibleCatalogDatasource>(instanceName: 'remote_getbiblev2')),
+      instanceName: 'remote_getbiblev2');
   sl.registerLazySingleton<BibleContentRepository>(
       () => BibleContentRepositoryImpl(sl()));
 
@@ -172,12 +184,20 @@ Future<void> init() async {
           catalogDatasource:
               sl.get<BibleCatalogDatasource>(instanceName: 'local_sword')),
       instanceName: 'local_sword');
+  sl.registerLazySingleton<BiblePaneRepository>(
+      () => BiblePaneRepositoryImpl(
+          contentDatasource: sl.get(instanceName: 'remote_getbiblev2'),
+          catalogDatasource: sl.get<BibleCatalogDatasource>(
+              instanceName: 'remote_getbiblev2')),
+      instanceName: 'remote_getbiblev2');
   sl.registerLazySingleton<BibleRepositoryFactory>(
     () => BibleRepositoryFactoryImpl({
       BibleRepositoryType.localDatabase: () =>
           sl.get<BiblePaneRepository>(instanceName: 'local_drift'),
       BibleRepositoryType.sword: () =>
           sl.get<BiblePaneRepository>(instanceName: 'local_sword'),
+      BibleRepositoryType.cloudAPI: () =>
+          sl.get<BiblePaneRepository>(instanceName: 'remote_getbiblev2'),
     }),
   );
   sl.registerFactoryParam<BiblePaneBloc, int, void>(
@@ -283,6 +303,14 @@ Future<void> init() async {
           notifier: sl(),
           installRepo: sl()),
       instanceName: 'local_sword',
+      onCreated: (c) => c.getBibles());
+  sl.registerLazySingleton<MyLibraryCubit>(
+      () => MyLibraryCubit(
+            repo: sl.get<BibleCatalogRepository>(
+                instanceName: 'remote_getbiblev2'),
+            notifier: sl(),
+          ),
+      instanceName: 'remote_getbiblev2',
       onCreated: (c) => c.getBibles());
 
   // REmote controller

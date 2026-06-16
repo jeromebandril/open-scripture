@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:open_scripture/shared/domain/entities/bible_book.dart';
 import 'package:open_scripture/shared/domain/entities/verse.dart';
 
 class VerseSegmentDto {
@@ -22,6 +23,34 @@ class VerseSegmentDto {
     this.heading,
     this.spansJson,
   });
+
+  factory VerseSegmentDto.fromGetBibleApiV2({
+    required Map<String, dynamic> verseData,
+    required BibleBook book,
+    required bibleExtId,
+  }) {
+    final int chapter = verseData['chapter'] as int;
+    final int verseNum = verseData['verse'] as int;
+
+    String verseText = verseData['text'] as String;
+    bool isParagraphStart =
+        verseText.startsWith('\n') || verseText.startsWith('\r\n');
+    verseText = verseText.trim();
+
+    final String encodedSpans = jsonEncode([
+      {"text": verseText, "activeStyles": []}
+    ]);
+
+    return VerseSegmentDto(
+      bibleId: bibleExtId.hashCode,
+      bookToken: book.osis,
+      chapterNumber: chapter,
+      verseNumber: verseNum,
+      segmentIndex: 0,
+      paragraphStart: isParagraphStart,
+      spansJson: encodedSpans,
+    );
+  }
 }
 
 extension VerseSegmentDtoMapper on VerseSegmentDto {

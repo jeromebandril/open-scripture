@@ -18,7 +18,7 @@ class MyLibraryCubit extends Cubit<MyLibraryState> {
   MyLibraryCubit({
     required BibleCatalogRepository repo,
     required InstallNotifier notifier,
-    required BibleInstallRepository? installRepo,
+    BibleInstallRepository? installRepo,
   })  : _installRepo = installRepo,
         _catalogRepo = repo,
         super(MyLibraryState()) {

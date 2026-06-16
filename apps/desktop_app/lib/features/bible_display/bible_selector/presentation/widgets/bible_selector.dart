@@ -4,6 +4,7 @@ import 'package:open_scripture/core/di/injection_container.dart' as di;
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
 import 'package:open_scripture/features/bible_display/bible_selector/presentation/cubit/bible_selector_cubit.dart';
 import 'package:open_scripture/features/bible_display/bible_selector/presentation/widgets/drift_selector.dart';
+import 'package:open_scripture/features/bible_display/bible_selector/presentation/widgets/remote_selector.dart';
 import 'package:open_scripture/features/bible_display/bible_selector/presentation/widgets/sword_selector.dart';
 import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import 'package:open_scripture/features/customizer/presentation/models/bible_pane_general_theme.dart';
@@ -28,14 +29,13 @@ class _BibleSelectorState extends State<BibleSelector> {
   static const _repoTypes = [
     BibleRepositoryType.localDatabase,
     BibleRepositoryType.sword,
-    null, // TODO: implement the api list
+    BibleRepositoryType.cloudAPI,
   ];
   @override
   void initState() {
     super.initState();
 
     final repoType = context.read<BiblePaneBloc>().state.repoType;
-    print(repoType);
     final i = _repoTypes.indexOf(repoType);
     if (i < 0) return;
     _initialIndex = i;
@@ -100,13 +100,12 @@ class _BibleSelectorState extends State<BibleSelector> {
                         Theme.of(context).colorScheme.surfaceContainerHigh,
                     tabs: const ['Installed', 'Sword', 'Get Bible v2'],
                     onTabChanged: (i) {
-                      if (_repoTypes[i] == null) return;
                       setState(() => _tabIndex = i);
                     },
                     views: const [
                       DriftCatalogSelector(),
                       SwordSelector(),
-                      Placeholder(),
+                      RemoteSelector(),
                     ],
                   ),
                 ),
