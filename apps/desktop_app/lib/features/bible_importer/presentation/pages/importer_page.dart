@@ -49,7 +49,7 @@ class ImporterPage extends StatelessWidget {
                           .setTargetType(mode),
                       items: BibleRepositoryType.installableTypes
                           .map((m) => DropdownMenuItem<BibleRepositoryType>(
-                              value: m, child: Text(m.name)))
+                              value: m, child: Text(m.label)))
                           .toList(),
                     ),
                   ),
