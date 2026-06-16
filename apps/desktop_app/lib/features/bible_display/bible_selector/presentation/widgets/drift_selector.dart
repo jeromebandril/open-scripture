@@ -4,6 +4,7 @@ import 'package:open_scripture/core/di/injection_container.dart' as di;
 import 'package:open_scripture/features/bible_display/bible_selector/presentation/cubit/bible_selector_cubit.dart';
 import 'package:open_scripture/features/bible_display/bible_selector/presentation/widgets/empty_catalog.dart';
 import 'package:open_scripture/features/my_library/presentation/cubit/my_library_cubit.dart';
+import 'package:open_scripture/shared/enums/bible_repository_type.dart';
 import 'package:open_scripture/shared/theme/tokens.dart';
 
 class DriftCatalogSelector extends StatelessWidget {
@@ -15,7 +16,8 @@ class DriftCatalogSelector extends StatelessWidget {
         context.select((BibleSelectorCubit b) => b.state.selectedBiblesIds);
 
     return BlocProvider.value(
-      value: di.sl.get<MyLibraryCubit>(instanceName: 'local_drift'),
+      value: di.sl.get<MyLibraryCubit>(
+          instanceName: BibleRepositoryType.localDatabase.name),
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.sm),
         child: Column(

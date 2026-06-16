@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/core/di/injection_container.dart';
 import 'package:open_scripture/features/bible_display/bible_selector/presentation/cubit/bible_selector_cubit.dart';
 import 'package:open_scripture/features/my_library/presentation/cubit/my_library_cubit.dart';
+import 'package:open_scripture/shared/enums/bible_repository_type.dart';
 import 'package:open_scripture/shared/theme/tokens.dart';
 
 class SwordSelector extends StatelessWidget {
@@ -11,7 +12,8 @@ class SwordSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-      value: sl.get<MyLibraryCubit>(instanceName: 'local_sword'),
+      value:
+          sl.get<MyLibraryCubit>(instanceName: BibleRepositoryType.sword.name),
       child: _SwordSelectorBody(),
     );
   }

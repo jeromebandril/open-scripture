@@ -26,11 +26,8 @@ class _BibleSelectorState extends State<BibleSelector> {
   late final int _initialIndex;
   int _tabIndex = 0;
 
-  static const _repoTypes = [
-    BibleRepositoryType.localDatabase,
-    BibleRepositoryType.sword,
-    BibleRepositoryType.cloudAPI,
-  ];
+  static const _repoTypes = BibleRepositoryType.selectable;
+
   @override
   void initState() {
     super.initState();
@@ -98,7 +95,7 @@ class _BibleSelectorState extends State<BibleSelector> {
                     scrollableView: true,
                     viewBackgroundColor:
                         Theme.of(context).colorScheme.surfaceContainerHigh,
-                    tabs: const ['Installed', 'Sword', 'Get Bible v2'],
+                    tabs: _repoTypes.map((r) => r.label).toList(),
                     onTabChanged: (i) {
                       setState(() => _tabIndex = i);
                     },
