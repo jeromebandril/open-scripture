@@ -75,7 +75,7 @@ class _BibleSelectorState extends State<BibleSelector> {
                       'Select bibles',
                       style: TextStyle(
                         fontSize: 28,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         color: useCustom
                             ? paneTheme.textColor
                             : Theme.of(context).colorScheme.onSurfaceVariant,

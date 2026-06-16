@@ -19,8 +19,13 @@ class BibleImporterSettingsRepositoryImpl
   }
 
   @override
-  Future<Either<Failure, void>> saveSettings(BibleImporterSettings settings) {
-    // TODO: implement saveSettings
-    throw UnimplementedError();
+  Future<Either<Failure, void>> saveSettings(
+      BibleImporterSettings settings) async {
+    try {
+      await _datasource.saveSettings(settings);
+      return Right(null);
+    } catch (e) {
+      return Left(UnknownFailure());
+    }
   }
 }

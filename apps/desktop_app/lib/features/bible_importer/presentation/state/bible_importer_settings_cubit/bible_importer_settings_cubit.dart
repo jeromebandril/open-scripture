@@ -2,50 +2,43 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/core/engines/settings/settings_repository.dart';
 import 'package:open_scripture/features/bible_importer/domain/entities/bible_importer_settings.dart';
+import 'package:open_scripture/shared/domain/services/bible_importer_settings_service.dart';
 
 part 'bible_importer_settings_state.dart';
 
 class BibleImporterSettingsCubit extends Cubit<BibleImporterSettingsState> {
-  final SettingsRepository<BibleImporterSettings> _repo;
+  final BibleImporterSettingsService _settingsService;
 
   BibleImporterSettingsCubit(
-      {required SettingsRepository<BibleImporterSettings> repo})
-      : _repo = repo,
+      {required BibleImporterSettingsService settingsService})
+      : _settingsService = settingsService,
         super(BibleImporterSettingsState());
 
-  Timer? _saveDebounce;
-
-  void updateSettings(
-      BibleImporterSettings Function(BibleImporterSettings) settings) {
-    emit(BibleImporterSettingsState(settings: settings(state.settings)));
-    _scheduleSave();
-  }
-
   void loadSettings() {
-    _repo.loadSettings().then((either) => either.fold(
-          (l) => print('no settings found'),
-          (r) => emit(BibleImporterSettingsState(settings: r)),
-        ));
+    emit(state.copyWith(
+      settings: _settingsService.current,
+      status: BibleImporterSettingsStatus.ready,
+    ));
   }
 
-  void saveSettings() {
-    _repo.saveSettings(state.settings).then((either) => either.fold(
-          (l) => print('error saving settings'),
-          (r) => print('settings saved'),
-        ));
-  }
+  Future<void> updateInstallationPath(String newPath) async {
+    emit(state.copyWith(status: BibleImporterSettingsStatus.loading));
 
-  void _scheduleSave() {
-    _saveDebounce?.cancel();
-    _saveDebounce = Timer(const Duration(seconds: 30), saveSettings);
+    final result = await _settingsService.updatePath(newPath);
+
+    result.fold(
+        (f) => emit(state.copyWith(
+              status: BibleImporterSettingsStatus.error,
+            )),
+        (_) => emit(state.copyWith(
+              settings: _settingsService.current,
+              status: BibleImporterSettingsStatus.ready,
+            )));
   }
 
   @override
   Future<void> close() async {
-    _saveDebounce?.cancel();
-    saveSettings();
     await super.close();
   }
 }

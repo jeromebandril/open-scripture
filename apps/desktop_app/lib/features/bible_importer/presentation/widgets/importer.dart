@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/bible_importer/presentation/state/bible_importer_cubit/bible_importer_cubit.dart';
+import 'package:open_scripture/shared/enums/bible_repository_type.dart';
 
 class ImporterWidget extends StatelessWidget {
   const ImporterWidget({super.key});
@@ -123,7 +124,16 @@ class _XmlImportDropZoneUi extends StatelessWidget {
                     TextButton.icon(
                       onPressed: isLoading ? null : onChoosePressed,
                       icon: const Icon(Icons.folder_open),
-                      label: const Text('Choose a ZIP or XML file'),
+                      label:
+                          BlocBuilder<BibleImporterCubit, BibleImporterState>(
+                        builder: (context, state) {
+                          if (state.targetType == BibleRepositoryType.sword) {
+                            return const Text(
+                                'Choose a valid ZIP file from the official Crosswire Repository');
+                          }
+                          return const Text('Choose a ZIP or XML file');
+                        },
+                      ),
                     ),
                   ],
                 ),

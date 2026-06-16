@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/core/di/injection_container.dart';
 import 'package:open_scripture/features/bible_importer/presentation/state/bible_importer_cubit/bible_importer_cubit.dart';
 import 'package:open_scripture/features/bible_importer/presentation/widgets/importer.dart';
+import 'package:open_scripture/features/bible_importer/presentation/widgets/sword_path_selector.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_option.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
@@ -23,6 +24,9 @@ class ImporterPage extends StatelessWidget {
     return BlocProvider(
       create: (context) => sl<BibleImporterCubit>(),
       child: Builder(builder: (context) {
+        final targetType =
+            context.select((BibleImporterCubit c) => c.state.targetType);
+
         return SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(42, 0, 42, 42),
           child: Column(
@@ -30,22 +34,30 @@ class ImporterPage extends StatelessWidget {
               SettingSection(
                 title: 'Importer',
                 children: [
-                  SettingInputOption<BibleRepositoryType>(
-                    value: context
-                        .select((BibleImporterCubit c) => c.state.targetType),
-                    onChanged: (mode) =>
-                        context.read<BibleImporterCubit>().setTargetType(mode),
-                    items: BibleRepositoryType.installableTypes
-                        .map((m) => DropdownMenuItem<BibleRepositoryType>(
-                            value: m, child: Text(m.name)))
-                        .toList(),
+                  Setting(
+                    label: 'Import type',
+                    description:
+                        'Select what type of datasource you are importing to',
+                    child: SettingInputOption<BibleRepositoryType>(
+                      value: targetType,
+                      onChanged: (mode) => context
+                          .read<BibleImporterCubit>()
+                          .setTargetType(mode),
+                      items: BibleRepositoryType.installableTypes
+                          .map((m) => DropdownMenuItem<BibleRepositoryType>(
+                              value: m, child: Text(m.name)))
+                          .toList(),
+                    ),
                   ),
+                  if (targetType == BibleRepositoryType.sword)
+                    const SwordPathSelector(),
                   const ImporterWidget(),
                 ],
               ),
-              SettingSection(
-                  title: 'Recommended repositories',
-                  children: [const _ListOfBibleRepositories()]),
+              SettingSection(title: 'Recommended repositories', children: [
+                const _ListOfBibleRepositories(),
+                const _ListOfBibleRepositories(),
+              ]),
             ],
           ),
         );

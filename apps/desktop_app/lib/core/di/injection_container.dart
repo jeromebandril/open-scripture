@@ -82,11 +82,13 @@ import 'package:open_scripture/shared/data/repositories/bible_content_repository
 import 'package:open_scripture/shared/data/repositories/bible_install_repository_impl.dart';
 import 'package:open_scripture/shared/data/repositories/bible_pane_repository_factory_impl.dart';
 import 'package:open_scripture/shared/data/repositories/drift_bible_book_repository_impl.dart';
+import 'package:open_scripture/shared/data/services/bible_importer_settings_service_impl.dart';
 import 'package:open_scripture/shared/data/services/bible_installer_strategy/canonical_bible_installer_strategy.dart';
 import 'package:open_scripture/shared/data/services/bible_installer_strategy/sword_bible_installer_strategy.dart';
 import 'package:open_scripture/shared/domain/entities/bible_id.dart';
 import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
 import 'package:open_scripture/shared/domain/repositories/bible_pane_repository_factory.dart';
+import 'package:open_scripture/shared/domain/services/bible_importer_settings_service.dart';
 import 'package:open_scripture/shared/enums/bible_repository_type.dart';
 import 'package:open_scripture/shared/utils/bible_ref_parser/bible_ref_parser.dart';
 import 'package:open_scripture/shared/data/services/book_resolvers/chained_book_resolver.dart';
@@ -148,7 +150,7 @@ Future<void> init() async {
       CanonicalInstallerStrategy(
           fetcher: sl(), compiler: sl(), localDataSource: sl()));
   sl.registerLazySingleton<SwordInstallerStrategy>(() => SwordInstallerStrategy(
-      fetcher: sl(), settingsRepo: sl(), localDatasource: sl()));
+      fetcher: sl(), localDatasource: sl(), settingsService: sl()));
 
   sl.registerLazySingleton<BibleInstallRepository>(
     () => BibleInstallRepositoryImpl({
@@ -336,7 +338,8 @@ Future<void> init() async {
       () => BibleImporterSettingsDatasourceImpl());
   sl.registerLazySingleton<SettingsRepository<BibleImporterSettings>>(
       () => BibleImporterSettingsRepositoryImpl(datasource: sl()));
-  sl.registerLazySingleton(() => BibleImporterSettingsCubit(repo: sl()));
+  sl.registerLazySingleton(
+      () => BibleImporterSettingsCubit(settingsService: sl()));
   sl.registerFactory(() => BibleImporterCubit(repo: sl(), notifier: sl()));
 
   // Three tap nav
@@ -348,23 +351,17 @@ Future<void> init() async {
   sl.registerLazySingleton(() => ThreeTapNavigatorCubit(repo: sl()));
 
   // Init Sword Bridge
-  sl.registerSingletonAsync(
-    () async {
-      final settingsRepo = sl<SettingsRepository<BibleImporterSettings>>();
-      final settingsResult = await settingsRepo.loadSettings();
+  sl.registerSingleton<SwordBridge>(SwordBridge());
 
-      final modulePath = settingsResult.fold(
-        (failure) => '',
-        (settings) => settings.swordInstallationPath,
-      );
-
-      final bridge = SwordBridge();
-      bridge.init(modulePath);
-
-      return bridge;
-    },
-    dispose: (bridge) => bridge.shutdown(),
-  );
+  sl.registerSingletonAsync<BibleImporterSettingsService>(() async {
+    final service = BibleImporterSettingsServiceImpl(
+      settingsRepo: sl<SettingsRepository<BibleImporterSettings>>(),
+      bridge: sl<SwordBridge>(),
+      installNotifier: sl(),
+    );
+    await service.initialize();
+    return service;
+  });
 
   await sl.allReady();
 }

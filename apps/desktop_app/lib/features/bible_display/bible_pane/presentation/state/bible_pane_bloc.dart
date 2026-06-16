@@ -71,10 +71,6 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
           // Add only new translations
           if (newMap[id] != null) return;
           newMap[id] = BibleData(meta: bm);
-
-          // fetch and update content if reference is not null
-          if (state.reference == null) return;
-          add(BiblePaneDisplayChapter(ref: state.reference!));
         },
       );
     }
@@ -91,6 +87,10 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
       isMixed: () => false,
       repoType: () => repoType,
     ));
+
+    // fetch and update content if reference is not null
+    if (state.reference == null) return;
+    add(BiblePaneDisplayChapter(ref: state.reference!));
   }
 
   /// Display passed bible refs directly
