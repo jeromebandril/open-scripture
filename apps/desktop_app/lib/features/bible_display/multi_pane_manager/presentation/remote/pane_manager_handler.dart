@@ -1,6 +1,7 @@
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/domain/display_mode.dart';
 import 'package:open_scripture/features/my_library/presentation/cubit/my_library_cubit.dart';
+import 'package:open_scripture/shared/domain/entities/bible_id.dart';
 import 'package:shared/rc_protocol/rc_protocol.dart';
 
 import '../../../../../core/engines/remote_controller/models/remote_command_custom_handler.dart';
@@ -44,8 +45,8 @@ class PaneManagerHandler implements RemoteCommandCustomHandler {
             _multiPaneManagerCubit.activePane().bloc.state.openedBiblesIds,
         'bibles': _myLibraryCubit.state.bibles
             .map((b) => {
-                  'id': b.id,
-                  'name': b.bibleName,
+                  'id': b.localId,
+                  'name': b.name,
                   'abbreviation': b.abbreviation,
                   'language': b.langEngName,
                 })
@@ -53,8 +54,13 @@ class PaneManagerHandler implements RemoteCommandCustomHandler {
       };
     }
     if (command.name == 'select_bibles') {
-      final ids = (command.payload?['ids'] as List?)?.cast<int>() ?? [];
-      _multiPaneManagerCubit.activePane().bloc.add(BiblePaneOpen(ids));
+      // TODO: this is surely broken, because I'm not syncing it with the refactors
+      final ids = (command.payload?['ids'] as List?)?.cast<BibleId>() ?? [];
+      // TODO: support other repositories
+      _multiPaneManagerCubit
+          .activePane()
+          .bloc
+          .add(BiblePaneOpen(bibleIds: ids));
     }
 
     return null;

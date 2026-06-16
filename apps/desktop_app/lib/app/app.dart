@@ -1,14 +1,15 @@
+import 'dart:ui';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_scripture/core/sword/sword_bridge.dart';
 import 'package:open_scripture/features/bible_searchbar/history/presentation/cubit/history_cubit.dart';
-import 'package:open_scripture/features/my_library/presentation/cubit/my_library_cubit.dart';
 import 'package:open_scripture/features/three_tap_navigator/presentation/state/three_tap_navigator_cubit.dart';
 
 import 'state/fullscreen_cubit.dart';
 import 'state/interface_visibility_cubit.dart';
 import '../features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
-import '../features/bible_installer_manager/presentation/state/installer/installer_bloc.dart';
 import '../features/bible_searchbar/search/presentation/state/search_bloc.dart';
 import '../features/customizer/domain/entities/app_theme_settings.dart';
 import '../features/customizer/presentation/models/bible_pane_general_theme.dart';
@@ -24,8 +25,43 @@ import '../features/window_stack_manager/presentation/state/window_stack_manager
 import '../core/di/injection_container.dart' as di;
 import 'app_shell.dart';
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late final AppLifecycleListener _lifecycleListener;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _lifecycleListener = AppLifecycleListener(
+      onExitRequested: _handleExitRequested,
+    );
+  }
+
+  Future<AppExitResponse> _handleExitRequested() async {
+    try {
+      // since I registered a dispose hook in di getIt:
+      await di.sl.resetLazySingleton<SwordBridge>();
+      // or call directly
+      // sl<SwordBridge>().shutdown();
+    } catch (e) {
+      print("Error during SWORD shutdown: $e");
+    }
+
+    return AppExitResponse.exit;
+  }
+
+  @override
+  void dispose() {
+    _lifecycleListener.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,8 +104,8 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             title: 'Open Scripture',
             themeMode: state.app.mode,
-            darkTheme: dark,
-            theme: light,
+            darkTheme: dark.copyWith(splashFactory: NoSplash.splashFactory),
+            theme: light.copyWith(splashFactory: NoSplash.splashFactory),
             debugShowCheckedModeBanner: false,
             builder: (context, child) {
               return MultiBlocProvider(
@@ -83,16 +119,14 @@ class MyApp extends StatelessWidget {
                     BlocProvider(
                         create: (_) => di.sl<RemoteControllerSettingsCubit>()),
                     BlocProvider(create: (_) => di.sl<RemoteControllerCubit>()),
-                    BlocProvider(create: (_) => di.sl<InstallerBloc>()),
+                    // BlocProvider(create: (_) => di.sl<InstallerBloc>()),
                   ],
-                  BlocProvider(
-                      create: (_) => di.sl<MyLibraryCubit>()..getBibles()),
-                  BlocProvider(create: (_) => di.sl<MultiPaneManagerCubit>()),
+                  BlocProvider.value(value: di.sl<MultiPaneManagerCubit>()),
                   BlocProvider(create: (_) => di.sl<FullscreenCubit>()..init()),
                   BlocProvider(create: (_) => di.sl<WindowStackManagerBloc>()),
-                  BlocProvider(create: (_) => di.sl<SearchBloc>()),
-                  BlocProvider(create: (_) => di.sl<HistoryCubit>()),
-                  BlocProvider(create: (_) => di.sl<ShortcutsCubit>()),
+                  BlocProvider.value(value: di.sl<SearchBloc>()),
+                  BlocProvider.value(value: di.sl<HistoryCubit>()),
+                  BlocProvider.value(value: di.sl<ShortcutsCubit>()),
                   BlocProvider(
                       create: (context) => di.sl<InterfaceVisibilityCubit>()),
                 ],

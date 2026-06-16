@@ -2,25 +2,25 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/core/infrastructure/event_bus/navigation_bus.dart';
+import 'package:open_scripture/core/infrastructure/event_bus/search_result_bus.dart';
 import 'package:open_scripture/features/bible_searchbar/history/domain/entities/history_entry.dart';
 
 part 'history_state.dart';
 
 class HistoryCubit extends Cubit<HistoryState> {
   HistoryCubit({
-    NavigationBus? navBus,
+    SearchResultBus? navBus,
   })  : _navBus = navBus,
         super(const HistoryState()) {
     _sub = _navBus?.stream.listen((event) => _add(event));
   }
 
-  final NavigationBus? _navBus;
-  StreamSubscription<NavigationFeedback>? _sub;
+  final SearchResultBus? _navBus;
+  StreamSubscription<SearchResultEvent>? _sub;
 
-  void _add(NavigationFeedback event) {
+  void _add(SearchResultEvent event) {
     if (event.source != IntentSource.searchbar) return;
-    if (!event.success) return;
+    if (event is! SearchResultSuccess) return;
 
     final entry = HistoryEntry(ref: event.ref, time: DateTime.now());
     final updatedHistory = [entry, ...state.history];

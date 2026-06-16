@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/features/bible_installer_manager/presentation/state/installer/installer_bloc.dart';
 import 'package:open_scripture/features/obs_live_overlay/presentation/state/obs_overlay/obs_live_overlay_cubit.dart';
 import 'package:open_scripture/features/remote_controller/presentation/state/remote_controller/remote_controller_cubit.dart';
 import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcuts_scope_suppressed.dart';
@@ -80,7 +79,7 @@ class _WindowStackManagerHostState extends State<WindowStackManagerHost> {
                       value: context.read<ObsLiveOverlaySettingsCubit>()),
                   BlocProvider.value(
                       value: context.read<ObsLiveOverlayCubit>()),
-                  BlocProvider.value(value: context.read<InstallerBloc>()),
+                  // BlocProvider.value(value: context.read<InstallerBloc>()),
                   BlocProvider.value(
                       value: context.read<RemoteControllerCubit>()),
                   BlocProvider.value(

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/app/state/interface_visibility_cubit.dart';
-import 'package:open_scripture/core/infrastructure/book_resolver/book_resolver.dart';
 import 'package:open_scripture/features/bible_searchbar/history/presentation/cubit/history_cubit.dart';
 import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
 import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_view.dart';
 
-import '../../../../../core/di/injection_container.dart';
 import '../../../../bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../../../../bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../../../../shortcuts/presentation/models/app_command_shortcuts.dart';
@@ -105,17 +103,16 @@ class _HistoryItemState extends State<_HistoryItem> {
         '${widget.historyData.time.minute.toString().padLeft(2, '0')}:'
         '${widget.historyData.time.second.toString().padLeft(2, '0')}';
 
-    final resolver = sl<BibleRefResolver>();
-
     final refString = widget.size == HistoryListSize.small
         ? widget.historyData.ref.toString()
-        : widget.historyData.ref.toString().replaceFirst(
-              widget.historyData.ref.bookUsfxId,
-              resolver
-                      .resolveBook(widget.historyData.ref.bookUsfxId)
-                      ?.fullName ??
-                  'error',
-            );
+        : '${widget.historyData.ref.book.englishName} ${widget.historyData.ref.toStringChapterAndVerse()} ';
+    // final refString = widget.size == HistoryListSize.small
+    //     ? widget.historyData.ref.toString()
+    //     : widget.historyData.ref.toString().replaceFirst(
+    //           widget.historyData.ref.book,
+    //           resolver.resolveBook(widget.historyData.ref.book)?.fullName ??
+    //               'error',
+    //         );
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),

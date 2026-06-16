@@ -1,28 +1,26 @@
-import 'package:open_scripture/core/infrastructure/book_resolver/book_resolver.dart';
-import 'package:open_scripture/shared/data/models/verse_span_model.dart';
-import 'package:open_scripture/core/engines/bible_compiler/import/bible_importer.dart';
 import 'package:open_scripture/core/engines/bible_compiler/domain/models/canonical_bible_package.dart';
 import 'package:open_scripture/core/engines/bible_compiler/domain/models/payload_issue.dart';
-
+import 'package:open_scripture/core/engines/bible_compiler/import/bible_importer.dart';
+import 'package:open_scripture/core/engines/bible_compiler/source/packages/source_package.dart';
+import 'package:open_scripture/shared/domain/entities/bible_book.dart';
+import 'package:open_scripture/shared/domain/entities/bible_id.dart';
+import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
+import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
+import 'package:open_scripture/shared/domain/entities/localized_book.dart';
+import 'package:open_scripture/shared/domain/entities/verse.dart';
+import 'package:open_scripture/shared/enums/bible_repository_type.dart';
 import 'package:xml/xml.dart';
 import 'package:xml/xpath.dart';
 
-import 'package:open_scripture/shared/entities/bible_meta.dart';
-import 'package:open_scripture/shared/entities/book.dart';
-import 'package:open_scripture/shared/entities/verse_segment.dart';
-import 'package:open_scripture/shared/entities/verse_span.dart';
-import 'package:open_scripture/shared/entities/bible_ref.dart';
-import 'package:open_scripture/shared/data/models/segment_key.dart';
-
-import '../../../../di/injection_container.dart';
-import '../../source/packages/source_package.dart';
-
-// good luck future me, parsing bible is a pain
+// helper class
+class _ActiveStyle {
+  final SpanType type;
+  final String? payload;
+  _ActiveStyle(this.type, this.payload);
+}
 
 final class OsisImporter implements BibleImporter {
   static const int _canonicalSchemaVersion = 1;
-
-  final _resolver = sl<BibleRefResolver>();
 
   @override
   String get formatId => 'OSIS';
@@ -30,7 +28,6 @@ final class OsisImporter implements BibleImporter {
   @override
   Future<bool> canImport(SourcePackage package) async {
     if (!await package.exists('main')) return false;
-
     final text = await package.readText('main');
     return text.contains('<osis') && text.contains('OSIS/namespace');
   }
@@ -42,13 +39,10 @@ final class OsisImporter implements BibleImporter {
     final xmlText = await package.readText('main');
     final doc = XmlDocument.parse(xmlText);
 
-    // 1) Metadata
-    final bibleMeta = _parseBibleMeta(doc, issues);
+    final translation = _parseBibleTranslation(doc, issues);
+    final (books, verses) =
+        _parseBooksAndVerses(doc, issues, translation.extId.externalId);
 
-    // 2) Books + verse content
-    final (books, segments, spans) = _parseBooksAndVerses(doc, issues);
-
-    // 3) Header
     final packageId = await package.fingerprint();
     final header = CanonicalBibleHeader(
       packageId: packageId,
@@ -58,90 +52,90 @@ final class OsisImporter implements BibleImporter {
       originDescription: 'Imported from ${package.displayName}',
     );
 
-    final data = CanonicalBibleData(
-      bibleMeta: bibleMeta,
-      books: books,
-      segments: segments,
-      spans: [],
-    );
-
-    // _attachSpansToSegmentsIfSupported(segments, spans);
-
     return CanonicalBiblePackage(
       header: header,
-      data: data,
+      data: CanonicalBibleData(
+        bibleTranslation: translation,
+        books: books,
+        verses: verses,
+      ),
       issues: issues,
     );
   }
 
-  // -------------------------
-  // Metadata parsing
-  // -------------------------
+  // ---------------------------------------------------------------------------
+  // Metadata → BibleTranslation
+  // ---------------------------------------------------------------------------
 
-  // Handle OSIS default namespace: xpath may require local-name().
-  String _firstText(XmlDocument doc, String xpathExpr) {
-    final nodes = doc.xpath(xpathExpr);
-    if (nodes.isEmpty) return '';
-    return nodes.first.innerText.trim();
+  String _firstText(XmlDocument doc, String xpath) {
+    final nodes = doc.xpath(xpath);
+    return nodes.isEmpty ? '' : nodes.first.innerText.trim();
   }
 
-  BibleMeta _parseBibleMeta(XmlDocument doc, List<PayloadIssue> issues) {
-    final title = _firstText(doc,
-        "//*[local-name()='work'][@osisWork][1]/*[local-name()='title'][1]");
-    final publisher = _firstText(doc,
-        "//*[local-name()='work'][@osisWork][1]/*[local-name()='publisher'][1]");
-    final identifier = _firstText(doc,
-        "//*[local-name()='work'][@osisWork][1]/*[local-name()='identifier'][1]");
-    final lang = _firstText(doc,
-        "//*[local-name()='work'][@osisWork][1]/*[local-name()='language'][1]");
-    final desc = _firstText(doc,
-        "//*[local-name()='work'][@osisWork][1]/*[local-name()='description'][1]");
-    final rights = _firstText(doc,
-        "//*[local-name()='work'][@osisWork][1]/*[local-name()='rights'][1]");
-
-    // Fallbacks
-    final safeTitle = title.isEmpty ? 'Untitled' : title;
-
-    if (title.isEmpty) {
-      issues.add(const PayloadIssue(
-        severity: IssueSeverity.warning,
-        code: 'missing_title',
-        message: 'Missing OSIS title in header/work.',
-        pointer: 'BibleMeta.bibleName',
-      ));
+  BibleTranslation _parseBibleTranslation(
+    XmlDocument doc,
+    List<PayloadIssue> issues,
+  ) {
+    String get(String xpath, String pointer) {
+      final v = _firstText(doc, xpath);
+      if (v.isEmpty) {
+        issues.add(PayloadIssue(
+          severity: IssueSeverity.warning,
+          code: 'missing_metadata',
+          message: 'Missing OSIS metadata at $xpath',
+          pointer: pointer,
+        ));
+      }
+      return v;
     }
 
-    return BibleMeta(
-      id: null,
-      extId: identifier,
-      bibleNameLocal: safeTitle,
-      bibleName: safeTitle,
-      abbreviation: identifier.isEmpty ? safeTitle : identifier,
+    const workBase = "//*[local-name()='work'][@osisWork][1]";
+
+    final title =
+        get("$workBase/*[local-name()='title'][1]", 'BibleTranslation.name');
+    final identifier = get(
+        "$workBase/*[local-name()='identifier'][1]", 'BibleTranslation.extId');
+    final lang = get("$workBase/*[local-name()='language'][1]",
+        'BibleTranslation.langIsoCode');
+    final desc = _firstText(doc, "$workBase/*[local-name()='description'][1]");
+    final rights = _firstText(doc, "$workBase/*[local-name()='rights'][1]");
+
+    final safeTitle = title.isEmpty ? 'Untitled' : title;
+    final safeId = identifier.isEmpty ? safeTitle : identifier;
+
+    return BibleTranslation(
+      localId: null,
+      extId: BibleId(
+        repoType: BibleRepositoryType.undefined,
+        externalId: safeId,
+      ),
+      name: safeTitle,
+      localName: safeTitle,
+      abbreviation: safeId,
+      langIsoCode: lang,
+      langEngName: lang,
+      langNativeName: lang,
       originSource: null,
       originFormat: formatId,
       description: desc,
       copyright: rights,
-      langEngName: lang,
-      langNativeName: lang,
-      langIsoCode: lang,
     );
   }
 
-  // -------------------------
-  // Books + verses parsing
-  // -------------------------
+  // ---------------------------------------------------------------------------
+  // Books + verses
+  // ---------------------------------------------------------------------------
 
-  (List<Book> books, List<VerseSegment> segments, List<VerseSpanModel> spans)
-      _parseBooksAndVerses(XmlDocument doc, List<PayloadIssue> issues) {
-    final books = <Book>[];
-    final segments = <VerseSegment>[];
-    final spans = <VerseSpanModel>[];
+  (List<LocalizedBook>, List<Verse>) _parseBooksAndVerses(
+    XmlDocument doc,
+    List<PayloadIssue> issues,
+    String translationId,
+  ) {
+    final books = <LocalizedBook>[];
+    final verses = <Verse>[];
 
-    // OSIS structure:
-    // <osisText> <div type="bookGroup"> <div type="book" osisID="Gen"> ...
     final bookDivs = doc.xpath(
-      "//*[local-name()='osisText']"
-      "//*[local-name()='div'][@type='book']",
+      "//*[local-name()='osisText']//*[local-name()='div'][@type='book']",
     );
 
     if (bookDivs.isEmpty) {
@@ -162,79 +156,70 @@ final class OsisImporter implements BibleImporter {
         continue;
       }
 
-      // Book title: <title type="main" short="Genesis">The First Book ...</title>
-      final titleEl = node
-          .findElements(
-              'title') // may fail due to namespace; so do local-name scan
-          .firstWhere(
-            (e) => e.name.local == 'title',
-            orElse: () => XmlElement(XmlName('title')),
-          );
+      final bibleBook = BibleBook.fromProgrammaticId(osisBookId);
+      if (bibleBook == null) {
+        issues.add(PayloadIssue(
+          severity: IssueSeverity.warning,
+          code: 'book_unknown_code',
+          message: 'Unknown OSIS book ID "$osisBookId" - skipping.',
+          pointer: 'LocalizedBook($osisBookId)',
+        ));
+        continue;
+      }
 
-      // Namespace-safe: search direct children by local-name
-      final titleNodes = node.children.whereType<XmlElement>().where(
-            (e) => e.name.local == 'title',
-          );
+      // Title: namespace-safe scan of direct children
+      final titleNodes = node.children
+          .whereType<XmlElement>()
+          .where((e) => e.name.local == 'title');
       final mainTitle =
           titleNodes.isEmpty ? '' : titleNodes.first.innerText.trim();
       final shortAttr =
           titleNodes.isEmpty ? null : titleNodes.first.getAttribute('short');
 
+      final longName = mainTitle.isNotEmpty ? mainTitle : osisBookId;
       final shortName = (shortAttr ?? mainTitle).trim();
-      final longName = mainTitle.isNotEmpty ? mainTitle : shortName;
 
-      books.add(Book(
-        osisId: _normalizeBookId(osisBookId),
-        longName: longName.isEmpty ? shortName : longName,
-        shortName: shortName.isEmpty ? osisBookId : shortName,
-        abbr: null,
+      books.add(LocalizedBook(
+        book: bibleBook,
+        longName: longName,
+        shortName: shortName.isEmpty ? longName : shortName,
+        abbreviation: null, // OSIS does not carry abbreviations
       ));
 
-      // Parse verses inside this book div.
-      final (bookSegments, bookSpans) =
-          _parseVersesInBookDiv(node, osisBookId, issues);
-      segments.addAll(bookSegments);
-      spans.addAll(bookSpans);
+      verses.addAll(
+        _parseVersesInBookDiv(node, bibleBook, translationId, issues),
+      );
     }
 
-    return (books, segments, spans);
+    return (books, verses);
   }
 
-  String _normalizeBookId(String osisId) {
-    return osisId.toUpperCase();
-  }
+  // ---------------------------------------------------------------------------
+  // Verse content for a single book div
+  // ---------------------------------------------------------------------------
 
-  int? _parseChapterFromOsisId(String? osisId) {
-    if (osisId == null) return null;
-    // "Gen.1" or "Gen.1.1"
-    final parts = osisId.split('.');
-    if (parts.length < 2) return null;
-    return int.tryParse(parts[1]);
-  }
-
-  (List<VerseSegment>, List<VerseSpanModel>) _parseVersesInBookDiv(
+  List<Verse> _parseVersesInBookDiv(
     XmlElement bookDiv,
-    String bookOsisId,
+    BibleBook bibleBook,
+    String translationId,
     List<PayloadIssue> issues,
   ) {
-    final segments = <VerseSegment>[];
-    final spans = <VerseSpanModel>[];
-    final bookUsfxId = _resolver.resolveBook(bookOsisId)!.usfxId;
+    final verses = <Verse>[];
+    final currentSpans = <VerseSpan>[];
+    final buffer = StringBuffer();
+    final styleStack = <_ActiveStyle>[];
 
     int? chapter;
-    int? verse;
+    int? verseNumber;
     bool inVerse = false;
     int segmentIndex = 0;
-
-    final buffer = StringBuffer();
     bool lastWasSpace = false;
 
     void appendNormalized(String s) {
       for (final rune in s.runes) {
         final ch = String.fromCharCode(rune);
-        final isWs = ch.trim().isEmpty;
-        if (isWs) {
-          if (!lastWasSpace && buffer.isNotEmpty) {
+        if (ch.trim().isEmpty) {
+          if (!lastWasSpace && (buffer.isNotEmpty || currentSpans.isNotEmpty)) {
             buffer.write(' ');
             lastWasSpace = true;
           }
@@ -245,218 +230,176 @@ final class OsisImporter implements BibleImporter {
       }
     }
 
-    void flushVerse() {
-      final text = buffer.toString().trim();
+    void flushBuffer() {
+      final text = buffer.toString();
       buffer.clear();
+      if (text.isNotEmpty) {
+        // Capture the state stack as a Set
+        final activeStyles = styleStack.map((s) => s.type).toSet();
+        // Keep the deepest non-null payload
+        final activePayload = styleStack.reversed
+            .map((s) => s.payload)
+            .firstWhere((p) => p != null, orElse: () => null);
 
-      if (chapter == null || verse == null) return;
-      if (text.isEmpty) return;
+        currentSpans.add(VerseSpan(
+          text: text,
+          activeStyles: activeStyles,
+          payload: activePayload,
+        ));
+      }
+    }
 
-      segments.add(VerseSegment(
-        segmentIndex: segmentIndex++,
-        paragraphStart: false,
-        subtitle: null,
+    void flushVerse() {
+      flushBuffer();
+      if (chapter == null || verseNumber == null || currentSpans.isEmpty)
+        return;
+
+      verses.add(Verse(
+        translationId: translationId,
         ref: BibleRef(
-          bookUsfxId: bookUsfxId,
-          chapter: chapter!,
-          verseStart: verse!,
-        ),
-        textContent: text,
-        spans: const [],
+            book: bibleBook, chapter: chapter!, verseStart: verseNumber!),
+        segments: [
+          VerseSegment(
+            segmentIndex: segmentIndex++,
+            spans: List.unmodifiable(currentSpans),
+          ),
+        ],
       ));
+      currentSpans.clear();
+      lastWasSpace = false;
     }
 
-    bool isSpanElement(XmlElement el) {
-      final name = el.name.local;
-
-      // Common OSIS span-ish tags:
-      // - <transChange type="added">...</transChange>
-      // - <hi type="bold|italic|...">...</hi>
-      // - <w lemma="strong:H0430">...</w>
-      return name == 'transChange' || name == 'hi' || name == 'w';
-    }
-
-    SpanType? spanTypeFor(XmlElement el) {
-      switch (el.name.local) {
-        case 'transChange':
-          if ((el.getAttribute('type') ?? '').toLowerCase() == 'added') {
-            return SpanType.add;
-          }
-          return null;
-
-        case 'hi':
-          final t = (el.getAttribute('type') ?? '').toLowerCase();
-          if (t.contains('bold')) return SpanType.bold;
-          if (t.contains('italic')) return SpanType.italic;
-          return null;
-
-        case 'w':
-          // Usually denotes a word with lemma/morphology.
-          return SpanType.strongWords;
-
-        default:
-          return null;
-      }
-    }
-
-    String? spanPayload(XmlElement el) {
-      if (el.name.local == 'w') {
-        // OSIS may encode lemma like "strong:H0430" or "Strong:H0430"
-        return el.getAttribute('lemma') ?? el.getAttribute('morph');
-      }
-      return null;
-    }
-
-    // OSIS verse boundaries:
-    // <chapter ... n="1" />
-    // <verse osisID="Gen.1.1" n="1" /> ... <verse eID="Gen.1.1.seID..." />
-    //
-    // We'll treat:
-    // - <chapter n="..."> as setting chapter
-    // - <verse ... n="..."> (or osisID parse) as start marker, flush previous
-    // - <verse eID="..."> as end marker, flush current
-    void walk(XmlNode node) {
+    late void Function(XmlNode) walk;
+    walk = (XmlNode node) {
       if (node is XmlElement) {
         final tag = node.name.local;
+        if (_isSkipped(tag)) return;
 
+        // ---- chapter boundary ----
         if (tag == 'chapter') {
-          // milestone chapter: <chapter n="1"/>
-          final nn = node.getAttribute('n');
-          if (nn != null) {
-            chapter = int.tryParse(nn);
-          }
+          final n = node.getAttribute('n');
+          if (n != null) chapter = int.tryParse(n);
 
-          // container chapter: <chapter osisID="Gen.1">...</chapter>
-          final parsedChapter =
-              _parseChapterFromOsisId(node.getAttribute('osisID'));
-          if (parsedChapter != null) chapter = parsedChapter;
+          final parsed = _chapterFromOsisId(node.getAttribute('osisID'));
+          if (parsed != null) chapter = parsed;
 
-          // IMPORTANT: traverse children (container chapters)
-          for (final child in node.children) {
-            walk(child);
-          }
+          for (final child in node.children) walk(child);
           return;
         }
 
+        // ---- verse boundary ----
         if (tag == 'verse') {
           final osisId = node.getAttribute('osisID');
-          final hasEndMilestone = node.getAttribute('eID') != null;
-          final hasStartMilestone = node.getAttribute('sID') != null;
-          final isSelfClosing =
-              node.children.isEmpty; // milestone <verse ... />
+          final hasEnd = node.getAttribute('eID') != null;
+          final hasStart = node.getAttribute('sID') != null;
+          final isMilestone = node.children.isEmpty;
 
-          if (hasEndMilestone) {
+          // End milestone
+          if (hasEnd) {
             if (inVerse) flushVerse();
             inVerse = false;
-            verse = null;
+            verseNumber = null;
             return;
           }
 
-          // Milestone start (KJV style)
-          if (hasStartMilestone || (isSelfClosing && osisId != null)) {
+          // Start milestone (KJV-style)
+          if (hasStart || (isMilestone && osisId != null)) {
             if (inVerse) flushVerse();
-
-            verse = node.getAttribute('n') != null
-                ? int.tryParse(node.getAttribute('n')!)
-                : _parseVerseFromOsisId(osisId);
-
-            final parsedChapter = _parseChapterFromOsisId(osisId);
+            final n = node.getAttribute('n');
+            verseNumber =
+                n != null ? int.tryParse(n) : _verseFromOsisId(osisId);
+            final parsedChapter = _chapterFromOsisId(osisId);
             if (parsedChapter != null) chapter = parsedChapter;
-
-            inVerse = verse != null;
+            inVerse = verseNumber != null;
             segmentIndex = 0;
             return;
           }
 
-          // Container verse (Tagalog style): <verse osisID="Gen.1.1"> ... </verse>
+          // Container verse (Tagalog-style)
           if (osisId != null) {
-            if (inVerse) flushVerse(); // safety
-
-            final parsedChapter = _parseChapterFromOsisId(osisId);
+            if (inVerse) flushVerse();
+            final parsedChapter = _chapterFromOsisId(osisId);
             if (parsedChapter != null) chapter = parsedChapter;
-
-            verse = _parseVerseFromOsisId(osisId);
-            inVerse = verse != null;
-
-            // IMPORTANT: reset segment index for this verse
+            verseNumber = _verseFromOsisId(osisId);
+            inVerse = verseNumber != null;
             segmentIndex = 0;
 
-            // Traverse children to collect text/spans
-            for (final child in node.children) {
-              walk(child);
-            }
+            for (final child in node.children) walk(child);
 
-            // Verse ends at closing tag
             if (inVerse) flushVerse();
             inVerse = false;
-            verse = null;
+            verseNumber = null;
             return;
           }
 
-          // Otherwise: traverse
-        }
-
-        // Skip header
-        if (!inVerse && tag == 'header') return;
-
-        // Span capture
-        if (inVerse && isSpanElement(node)) {
-          final start = buffer.length;
-          for (final child in node.children) {
-            walk(child);
-          }
-          final end = buffer.length;
-
-          final st = spanTypeFor(node);
-          if (st != null && end > start && chapter != null && verse != null) {
-            spans.add(VerseSpanModel(
-              key: SegmentKey(
-                bookUsfxId: bookUsfxId,
-                chapter: chapter!,
-                verse: verse!,
-                segmentIndex: segmentIndex,
-              ),
-              startOffset: start,
-              endOffset: end,
-              type: st,
-              payload: spanPayload(node),
-            ));
-          }
+          for (final child in node.children) walk(child);
           return;
         }
 
-        // Default traversal
-        for (final child in node.children) {
-          walk(child);
+        // Handle Spans with Style Stack
+        final st = _spanTypeFor(node);
+        if (st != null) {
+          flushBuffer();
+          styleStack.add(_ActiveStyle(st, _spanPayload(node)));
+          for (final child in node.children) walk(child);
+          flushBuffer();
+          styleStack.removeLast();
+          return;
         }
+
+        for (final child in node.children) walk(child);
         return;
       }
+      if (node is XmlText && inVerse) appendNormalized(node.value);
+    };
 
-      if (node is XmlText) {
-        if (inVerse) appendNormalized(node.value);
-      }
-    }
-
-    for (final child in bookDiv.children) {
-      walk(child);
-    }
+    for (final child in bookDiv.children) walk(child);
     if (inVerse) flushVerse();
-
-    return (segments, spans);
+    return verses;
   }
 
-  int? _parseVerseFromOsisId(String? osisId) {
+  // ---------------------------------------------------------------------------
+  // Span helpers
+  // ---------------------------------------------------------------------------
+
+  bool _isSkipped(String tag) =>
+      tag == 'note' || tag == 'rdg' || tag == 'rdgGrp';
+
+  SpanType? _spanTypeFor(XmlElement el) {
+    return switch (el.name.local) {
+      'transChange' => (el.getAttribute('type') ?? '').toLowerCase() == 'added'
+          ? SpanType.added
+          : null,
+      'hi' => switch ((el.getAttribute('type') ?? '').toLowerCase()) {
+          final t when t.contains('bold') => SpanType.bold,
+          final t when t.contains('italic') => SpanType.italic,
+          _ => null,
+        },
+      'w' => SpanType.strongs,
+      _ => null,
+    };
+  }
+
+  String? _spanPayload(XmlElement el) {
+    if (el.name.local == 'w') {
+      return el.getAttribute('lemma') ?? el.getAttribute('morph');
+    }
+    return null;
+  }
+
+  // ---------------------------------------------------------------------------
+  // OSIS ID helpers
+  // ---------------------------------------------------------------------------
+
+  int? _chapterFromOsisId(String? osisId) {
     if (osisId == null) return null;
-    // Example: "Gen.1.2"
     final parts = osisId.split('.');
-    if (parts.length < 3) return null;
-    return int.tryParse(parts[2]);
+    return parts.length >= 2 ? int.tryParse(parts[1]) : null;
   }
 
-  void _attachSpansToSegmentsIfSupported(
-    List<VerseSegment> segments,
-    List<VerseSpanModel> spans,
-  ) {
-    throw UnimplementedError();
+  int? _verseFromOsisId(String? osisId) {
+    if (osisId == null) return null;
+    final parts = osisId.split('.');
+    return parts.length >= 3 ? int.tryParse(parts[2]) : null;
   }
 }

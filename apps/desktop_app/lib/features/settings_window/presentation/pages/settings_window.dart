@@ -45,7 +45,7 @@ class _SettingsWindowState extends State<SettingsWindow> {
       origin: AnimationOrigin.center,
       child: Container(
         constraints: const BoxConstraints(
-          maxWidth: 1270,
+          maxWidth: 1050,
           maxHeight: 800,
         ),
         decoration: BoxDecoration(

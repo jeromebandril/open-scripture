@@ -1,70 +1,57 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:crypto/crypto.dart';
-import 'package:path/path.dart' as p;
+import 'package:open_scripture/core/engines/bible_compiler/source/packages/source_package.dart';
 
-import 'source_package.dart';
-
-final class FileSourcePackage implements SourcePackage {
-  final File _file;
-
+class FileSourcePackage implements SourcePackage {
+  final File file;
   @override
   final String displayName;
 
-  FileSourcePackage._(this._file, {required this.displayName});
-
-  factory FileSourcePackage.fromFilePath(String path) {
-    final file = File(path);
-    return FileSourcePackage._(
-      file,
-      displayName: p.basename(path),
-    );
-  }
+  FileSourcePackage({required this.file, required this.displayName});
 
   @override
   SourcePackageKind get kind => SourcePackageKind.file;
 
   @override
+  Future<String> fingerprint() async {
+    // Generate a quick SHA-256 fingerprint of the file path + size for caching/idempotency
+    final length = await file.length();
+    final bytes = utf8.encode('${file.path}_$length');
+    return sha256.convert(bytes).toString();
+  }
+
+  @override
   Future<List<PackageEntry>> listEntries() async {
-    final stat = await _file.stat();
-    return [PackageEntry(path: 'main', size: stat.size)];
+    // A single raw file package exposes exactly one readable entry
+    return [
+      PackageEntry(path: 'root', size: await file.length()),
+    ];
   }
 
   @override
   Future<bool> exists(String entryPath) async {
-    if (entryPath != 'main') return false;
-    return _file.exists();
+    return await file.exists();
   }
 
   @override
   Future<Uint8List> readBytes(String entryPath) async {
-    if (entryPath != 'main') {
-      throw ArgumentError.value(
-          entryPath, 'entryPath', 'Only "main" is valid for file packages.');
-    }
-    final bytes = await _file.readAsBytes();
-    return Uint8List.fromList(bytes);
+    return await file.readAsBytes();
   }
 
   @override
   Future<String> readText(String entryPath, {Encoding encoding = utf8}) async {
-    final bytes = await readBytes(entryPath);
-    return encoding.decode(bytes);
+    return await file.readAsString(encoding: encoding);
   }
 
   @override
   Future<String?> tryReadText(String entryPath,
       {Encoding encoding = utf8}) async {
-    final ok = await exists(entryPath);
-    if (!ok) return null;
-    return readText(entryPath, encoding: encoding);
-  }
-
-  @override
-  Future<String> fingerprint() async {
-    final bytes = await _file.readAsBytes();
-    return sha256.convert(bytes).toString();
+    try {
+      return await readText(entryPath, encoding: encoding);
+    } catch (_) {
+      return null;
+    }
   }
 }

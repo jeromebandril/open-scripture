@@ -37,7 +37,6 @@ class BiblePane extends StatelessWidget {
       providers: [
         BlocProvider.value(value: blocComponents.bloc),
         BlocProvider.value(value: blocComponents.textScalerCubit),
-        BlocProvider.value(value: blocComponents.bibleSelectorCubit),
         BlocProvider(create: (_) => SelectedWordCubit()),
       ],
       //
@@ -80,12 +79,7 @@ class BiblePane extends StatelessWidget {
                 //
                 // INITIAL
                 //
-                BiblePaneStatus.selectBibles => BibleSelector(
-                    bloc: blocComponents.bibleSelectorCubit,
-                    onConfirm: (bibleIds) {
-                      blocComponents.bloc.add(BiblePaneOpen(bibleIds));
-                    },
-                  ),
+                BiblePaneStatus.selectBibles => BibleSelector(),
                 //
                 // LOADING SCREEN
                 //

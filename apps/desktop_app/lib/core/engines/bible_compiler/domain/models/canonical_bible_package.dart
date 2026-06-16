@@ -1,8 +1,7 @@
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/shared/data/models/verse_span_model.dart';
-import 'package:open_scripture/shared/entities/bible_meta.dart';
-import 'package:open_scripture/shared/entities/book.dart';
-import 'package:open_scripture/shared/entities/verse_segment.dart';
+import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
+import 'package:open_scripture/shared/domain/entities/localized_book.dart';
+import 'package:open_scripture/shared/domain/entities/verse.dart';
 
 import 'payload_issue.dart';
 
@@ -50,18 +49,16 @@ class CanonicalBibleHeader extends Equatable {
 }
 
 final class CanonicalBibleData extends Equatable {
-  final BibleMeta bibleMeta;
-  final List<Book> books;
-  final List<VerseSegment> segments;
-  final List<VerseSpanModel> spans;
+  final BibleTranslation bibleTranslation;
+  final List<LocalizedBook> books;
+  final List<Verse> verses;
 
   const CanonicalBibleData({
+    required this.bibleTranslation,
     required this.books,
-    required this.bibleMeta,
-    required this.segments,
-    required this.spans,
+    required this.verses,
   });
 
   @override
-  List<Object?> get props => [bibleMeta, books, segments, spans];
+  List<Object?> get props => [bibleTranslation, books, verses];
 }

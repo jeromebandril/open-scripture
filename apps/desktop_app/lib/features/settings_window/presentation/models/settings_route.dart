@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:open_scripture/features/bible_importer/presentation/pages/importer_page.dart';
+import 'package:open_scripture/features/my_library/presentation/pages/library_manager_page.dart';
 import 'package:open_scripture/features/customizer/presentation/pages/bible_pane_customizer_screen.dart';
 import 'package:open_scripture/features/customizer/presentation/pages/global_customizer_screen.dart';
 import 'package:open_scripture/features/obs_live_overlay/presentation/pages/obs_live_overlay_page.dart';
 import 'package:open_scripture/features/remote_controller/presentation/pages/remote_controller_page.dart';
 import 'package:open_scripture/features/settings_window/presentation/pages/about_setting_page.dart';
 
-import '../../../bible_installer_manager/presentation/pages/translation_manager.dart';
 import '../../../shortcuts/presentation/pages/shortcuts_screen.dart';
 
 enum SettingsSection {
@@ -37,11 +37,11 @@ final Map<String, SettingsRoute> settingsRoutes = {
       name: 'Bible viewer',
       builder: (_) => const BiblePaneCustomizerScreen()),
   '/biblemanager/repo': SettingsRoute(
-      icon: Icons.menu_book_sharp,
-      name: 'Download & Install',
-      builder: (_) => const BibleManagerWidget()),
+      icon: Icons.local_library_rounded,
+      name: 'My Library',
+      builder: (_) => const LibrariesPage()),
   '/biblemanager/importer': SettingsRoute(
-      icon: Icons.file_download_outlined,
+      icon: Icons.file_upload_outlined,
       name: 'Import',
       builder: (_) => const ImporterPage()),
   '/obsliveoverlay': SettingsRoute(

@@ -19,6 +19,7 @@ class BiblePaneState extends Equatable {
     required this.errorMessage,
     required this.dMode,
     required this.verseCount,
+    required this.repoType,
   }) : _unionRefs = unionRefs;
 
   factory BiblePaneState({
@@ -31,6 +32,7 @@ class BiblePaneState extends Equatable {
     String? errorMessage,
     DisplayMode dMode = DisplayMode.list,
     int? verseCount,
+    BibleRepositoryType repoType = BibleRepositoryType.localDatabase,
   }) {
     return BiblePaneState._(
       paneId: paneId,
@@ -43,6 +45,7 @@ class BiblePaneState extends Equatable {
       errorMessage: errorMessage,
       dMode: dMode,
       verseCount: verseCount,
+      repoType: repoType,
     );
   }
 
@@ -55,6 +58,7 @@ class BiblePaneState extends Equatable {
   final String? errorMessage;
   final DisplayMode dMode;
   final int? verseCount;
+  final BibleRepositoryType repoType;
 
   final SplayTreeSet<BibleRef> _unionRefs;
   SplayTreeSet<BibleRef> get unionRefs => SplayTreeSet.of(_unionRefs);
@@ -71,6 +75,7 @@ class BiblePaneState extends Equatable {
     String? Function()? errorMessage,
     DisplayMode Function()? dMode,
     int? Function()? verseCount,
+    BibleRepositoryType Function()? repoType,
   }) {
     return BiblePaneState(
       paneId: paneId != null ? paneId() : this.paneId,
@@ -83,6 +88,7 @@ class BiblePaneState extends Equatable {
       errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
       dMode: dMode != null ? dMode() : this.dMode,
       verseCount: verseCount != null ? verseCount() : this.verseCount,
+      repoType: repoType != null ? repoType() : this.repoType,
     );
   }
 
@@ -97,5 +103,6 @@ class BiblePaneState extends Equatable {
         errorMessage,
         dMode,
         verseCount,
+        repoType,
       ];
 }

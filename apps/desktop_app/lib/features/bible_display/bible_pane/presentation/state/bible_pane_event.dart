@@ -8,9 +8,9 @@ sealed class BiblePaneEvent extends Equatable {
 }
 
 class BiblePaneOpen extends BiblePaneEvent {
-  final List<int> bibleIds;
+  final List<BibleId> bibleIds;
 
-  const BiblePaneOpen(this.bibleIds);
+  const BiblePaneOpen({required this.bibleIds});
 
   @override
   List<Object> get props => [bibleIds];
