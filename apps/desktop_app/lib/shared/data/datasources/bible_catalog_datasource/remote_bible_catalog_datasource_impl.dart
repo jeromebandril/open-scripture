@@ -28,7 +28,7 @@ class RemoteBibleCatalogDatasourceImpl implements BibleCatalogDatasource {
         name: data['translation'] as String,
         abbreviation: data['abbreviation'] as String,
         description: data['language'] as String,
-        repoType: BibleRepositoryType.onlineApi,
+        repoType: BibleRepositoryType.cloudAPI,
       );
     }).toList();
 

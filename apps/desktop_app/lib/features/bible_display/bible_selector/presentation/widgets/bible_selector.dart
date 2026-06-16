@@ -26,7 +26,7 @@ class _BibleSelectorState extends State<BibleSelector> {
   int _tabIndex = 0;
 
   static const _repoTypes = [
-    BibleRepositoryType.installed,
+    BibleRepositoryType.localDatabase,
     BibleRepositoryType.sword,
     null, // TODO: implement the api list
   ];

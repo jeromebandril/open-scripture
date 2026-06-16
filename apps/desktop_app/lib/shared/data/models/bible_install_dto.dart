@@ -49,7 +49,7 @@ extension TranslationInstallDtoMapper on TranslationInstallDto {
       originFormat: bible.originFormat,
       description: bible.bDescription,
       copyright: bible.copyright,
-      repoType: BibleRepositoryType.installed,
+      repoType: BibleRepositoryType.localDatabase,
     );
   }
 

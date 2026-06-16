@@ -13,7 +13,7 @@ final class MyLibraryState extends Equatable {
     this.bibles = const [],
     this.errorMessage,
     this.selectedBibleIndex,
-    this.repoType = BibleRepositoryType.installed,
+    this.repoType = BibleRepositoryType.localDatabase,
   });
 
   final MyLibraryStatus status;

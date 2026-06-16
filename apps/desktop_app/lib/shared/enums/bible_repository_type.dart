@@ -1,11 +1,11 @@
 enum BibleRepositoryType {
-  installed,
+  localDatabase,
   sword,
-  onlineApi,
+  cloudAPI,
   undefined;
 
   static const installableTypes = [
-    BibleRepositoryType.installed,
+    BibleRepositoryType.localDatabase,
     BibleRepositoryType.sword,
   ];
 }

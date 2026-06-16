@@ -154,7 +154,7 @@ Future<void> init() async {
 
   sl.registerLazySingleton<BibleInstallRepository>(
     () => BibleInstallRepositoryImpl({
-      BibleRepositoryType.installed: sl<CanonicalInstallerStrategy>(),
+      BibleRepositoryType.localDatabase: sl<CanonicalInstallerStrategy>(),
       BibleRepositoryType.sword: sl<SwordInstallerStrategy>(),
     }),
   );
@@ -174,7 +174,7 @@ Future<void> init() async {
       instanceName: 'local_sword');
   sl.registerLazySingleton<BibleRepositoryFactory>(
     () => BibleRepositoryFactoryImpl({
-      BibleRepositoryType.installed: () =>
+      BibleRepositoryType.localDatabase: () =>
           sl.get<BiblePaneRepository>(instanceName: 'local_drift'),
       BibleRepositoryType.sword: () =>
           sl.get<BiblePaneRepository>(instanceName: 'local_sword'),

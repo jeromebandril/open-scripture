@@ -32,7 +32,7 @@ class BiblePaneState extends Equatable {
     String? errorMessage,
     DisplayMode dMode = DisplayMode.list,
     int? verseCount,
-    BibleRepositoryType repoType = BibleRepositoryType.installed,
+    BibleRepositoryType repoType = BibleRepositoryType.localDatabase,
   }) {
     return BiblePaneState._(
       paneId: paneId,

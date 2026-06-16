@@ -13,7 +13,7 @@ class BibleImporterState extends Equatable {
     this.errorMessage,
     this.progress,
     this.fileName,
-    this.targetType = BibleRepositoryType.installed,
+    this.targetType = BibleRepositoryType.localDatabase,
   });
 
   final BibleImporterStatus status;

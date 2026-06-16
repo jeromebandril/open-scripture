@@ -8,7 +8,7 @@ part 'bible_selector_state.dart';
 class BibleSelectorCubit extends Cubit<BibleSelectorState> {
   BibleSelectorCubit({
     List<BibleId> selectedBiblesIds = const [],
-    BibleRepositoryType repoType = BibleRepositoryType.installed,
+    BibleRepositoryType repoType = BibleRepositoryType.localDatabase,
   }) : super(
           BibleSelectorState(selectedBiblesIds: selectedBiblesIds),
         );
