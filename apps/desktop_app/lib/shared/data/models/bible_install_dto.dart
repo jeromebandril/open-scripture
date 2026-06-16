@@ -38,7 +38,7 @@ class TranslationInstallDto {
 }
 
 extension TranslationInstallDtoMapper on TranslationInstallDto {
-  static TranslationInstallDto fromDatabase(Bible bible) {
+  static TranslationInstallDto fromDatabase(Bible bible, Language lang) {
     return TranslationInstallDto(
       id: bible.id,
       extId: bible.extId,
@@ -50,6 +50,9 @@ extension TranslationInstallDtoMapper on TranslationInstallDto {
       description: bible.bDescription,
       copyright: bible.copyright,
       repoType: BibleRepositoryType.localDatabase,
+      langIsoCode: lang.isoCode,
+      langEngName: lang.engName,
+      langNativeName: lang.nativeName,
     );
   }
 

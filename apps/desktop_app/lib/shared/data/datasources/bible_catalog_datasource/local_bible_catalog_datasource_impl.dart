@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart';
 import 'package:open_scripture/core/infrastructure/database/database.dart';
 import 'package:open_scripture/shared/data/datasources/bible_catalog_datasource/bible_catalog_datasource.dart';
 import 'package:open_scripture/shared/data/models/bible_install_dto.dart';
@@ -9,18 +10,36 @@ class LocalBibleCatalogDataSourceImpl implements BibleCatalogDatasource {
 
   @override
   Future<List<TranslationInstallDto>> getBibles() async {
-    // Assuming you have a basic query or DAO to get all bibles
-    final rows = await db.select(db.bibles).get();
-    return rows.map(TranslationInstallDtoMapper.fromDatabase).toList();
+    final rows = await (db.select(db.bibles).join([
+      innerJoin(
+        db.languages,
+        db.languages.id.equalsExp(db.bibles.languageId),
+      ),
+    ])).get();
+
+    return rows
+        .map((row) => TranslationInstallDtoMapper.fromDatabase(
+              row.readTable(db.bibles),
+              row.readTable(db.languages),
+            ))
+        .toList();
   }
 
   @override
   Future<TranslationInstallDto> getBible(String extId) async {
-    final row = await (db.select(db.bibles)
-          ..where((b) => b.extId.equals(extId)))
+    final row = await (db.select(db.bibles).join([
+      innerJoin(
+        db.languages,
+        db.languages.id.equalsExp(db.bibles.languageId),
+      ),
+    ])
+          ..where(db.bibles.extId.equals(extId)))
         .getSingle();
 
-    return TranslationInstallDtoMapper.fromDatabase(row);
+    return TranslationInstallDtoMapper.fromDatabase(
+      row.readTable(db.bibles),
+      row.readTable(db.languages),
+    );
   }
 
   @override
