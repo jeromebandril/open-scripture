@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/core/sword/sword_bridge.dart';
+import 'package:open_scripture/core/lifecycle/app_lifecycle.dart';
 import 'package:open_scripture/features/bible_searchbar/history/presentation/cubit/history_cubit.dart';
 import 'package:open_scripture/features/three_tap_navigator/presentation/state/three_tap_navigator_cubit.dart';
 
@@ -46,14 +46,10 @@ class _MyAppState extends State<MyApp> {
 
   Future<AppExitResponse> _handleExitRequested() async {
     try {
-      // since I registered a dispose hook in di getIt:
-      await di.sl.resetLazySingleton<SwordBridge>();
-      // or call directly
-      // sl<SwordBridge>().shutdown();
+      await di.sl<AppLifecycleService>().onExitRequested();
     } catch (e) {
-      print("Error during SWORD shutdown: $e");
+      print("Error during shutdown: $e");
     }
-
     return AppExitResponse.exit;
   }
 

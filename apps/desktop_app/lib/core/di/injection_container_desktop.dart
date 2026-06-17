@@ -11,6 +11,8 @@ import 'package:open_scripture/core/infrastructure/database/daos/bible_installat
 import 'package:open_scripture/core/infrastructure/database/daos/installed_bibles_dao.dart';
 import 'package:open_scripture/core/infrastructure/database/database.dart';
 import 'package:open_scripture/core/infrastructure/event_bus/selected_verse_bus.dart';
+import 'package:open_scripture/core/lifecycle/app_lifecycle.dart';
+import 'package:open_scripture/core/lifecycle/app_lifecycle_desktop_impl.dart';
 import 'package:open_scripture/core/sword/sword_bridge.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/data/repositories/bible_pane_repository_impl.dart';
 import 'package:open_scripture/features/bible_display/bible_pane/domain/repositories/bible_pane_repository.dart';
@@ -77,6 +79,10 @@ import 'package:open_scripture/shared/domain/services/book_resolver.dart';
 // dart format off
 
 Future<void> init(GetIt sl) async {
+  sl.registerLazySingleton<AppLifecycleService>(
+    () => DesktopAppLifecycleService(bridge: sl<SwordBridge>()),
+  );
+
   // Database
   sl.registerLazySingleton<AppDb>(() => AppDb());
   sl.registerLazySingleton<BibleContentDao>(() => BibleContentDao(sl()));
