@@ -12,9 +12,7 @@ import 'package:open_scripture/shared/domain/services/book_resolver.dart';
 import 'package:open_scripture/shared/enums/bible_repository_type.dart';
 
 Future<void> init(GetIt sl) async {
-  sl.registerLazySingleton<AppLifecycleService>(
-    () => WebLifecycleService(windowManager: sl()),
-  );
+  sl.registerLazySingleton<AppLifecycleService>(() => WebLifecycleService());
 
   // Book resolver
   sl.registerLazySingleton<BookResolver>(() => ProgrammaticIdResolver());
