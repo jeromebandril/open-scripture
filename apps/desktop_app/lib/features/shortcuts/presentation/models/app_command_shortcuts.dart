@@ -83,11 +83,11 @@ const Map<AppCommand, SingleActivator> appCommandShortcuts = {
 
   // Multi-Pane Management
   AppCommand.nextPane: kIsWeb
-      ? SingleActivator(LogicalKeyboardKey.period, control: true)
+      ? SingleActivator(LogicalKeyboardKey.period, alt: true)
       : SingleActivator(LogicalKeyboardKey.tab, control: true),
 
   AppCommand.prevPane: kIsWeb
-      ? SingleActivator(LogicalKeyboardKey.comma, control: true)
+      ? SingleActivator(LogicalKeyboardKey.comma, alt: true)
       : SingleActivator(LogicalKeyboardKey.tab, control: true, shift: true),
 
   AppCommand.addPane: kIsWeb
