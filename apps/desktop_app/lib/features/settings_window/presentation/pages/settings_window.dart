@@ -8,11 +8,11 @@ import '../models/settings_route.dart';
 import 'parts/sidebar_navigator.dart';
 
 class SettingsWindow extends StatefulWidget {
-  final SettingsSection initialRoute;
+  final SettingsPage initialPage;
   final Function()? onClose;
 
   const SettingsWindow({
-    required this.initialRoute,
+    required this.initialPage,
     this.onClose,
     super.key,
   });
@@ -29,7 +29,7 @@ class _SettingsWindowState extends State<SettingsWindow> {
   @override
   void initState() {
     super.initState();
-    _selectedRoute = routeFor(widget.initialRoute);
+    _selectedRoute = widget.initialPage.route;
   }
 
   void _goTo(String route) {
@@ -42,9 +42,10 @@ class _SettingsWindowState extends State<SettingsWindow> {
   @override
   Widget build(BuildContext context) {
     return AppRevealAnimation(
+      origin: AnimationOrigin.center,
       child: Container(
         constraints: const BoxConstraints(
-          maxWidth: 1270,
+          maxWidth: 1050,
           maxHeight: 800,
         ),
         decoration: BoxDecoration(
@@ -66,12 +67,14 @@ class _SettingsWindowState extends State<SettingsWindow> {
                     .add(WindowStackManagerClose()),
                 child: Navigator(
                   key: _navKey,
-                  initialRoute: routeFor(widget.initialRoute),
+                  initialRoute: widget.initialPage.route,
                   onGenerateRoute: (routeSettings) {
-                    final name = routeSettings.name ?? '/';
-                    final setting = settingsRoutes[name];
+                    final path = routeSettings.name ?? '/';
+                    final page = SettingsPage.fromRoutePath(path);
+                    final builder =
+                        page != null ? settingsBuilders[page] : null;
 
-                    if (setting?.builder == null) {
+                    if (builder == null) {
                       return MaterialPageRoute(
                         builder: (_) => const Center(child: Text('Uknown')),
                         settings: routeSettings,
@@ -82,10 +85,7 @@ class _SettingsWindowState extends State<SettingsWindow> {
                       transitionDuration: Duration.zero,
                       reverseTransitionDuration: Duration.zero,
                       settings: routeSettings,
-                      pageBuilder: (BuildContext context,
-                              Animation<double> animation,
-                              Animation<double> secondaryAnimation) =>
-                          setting!.builder(context),
+                      pageBuilder: (context, _, __) => builder(context),
                     );
                   },
                 ),

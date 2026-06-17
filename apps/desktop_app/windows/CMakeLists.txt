@@ -52,6 +52,9 @@ add_subdirectory(${FLUTTER_MANAGED_DIR})
 # Application build; see runner/CMakeLists.txt.
 add_subdirectory("runner")
 
+# Native sword bridge
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../src" native_bridge_build)
+
 
 # Generated plugin build rules, which manage building the plugins and adding
 # them to the application.

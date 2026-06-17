@@ -1,20 +1,18 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:open_scripture/core/engines/settings/settings_datasource.dart';
+import 'package:open_scripture/core/engines/settings/datasource/settings_datasource_desktop.dart';
 
 import '../../domain/entities/overlay_settings.dart';
 
 class OverlaySettingsDatasourceImpl
-    extends SettingsDatasource<OverlaySettings> {
-  OverlaySettingsDatasourceImpl({this.fileName = 'overlay_settings.json'});
-
-  final String fileName;
+    extends SettingsDatasourceDesktopBase<OverlaySettings> {
+  final String _fileName = 'overlay_settings.json';
 
   @override
   Future<OverlaySettings> loadSettings() async {
     try {
-      final file = await settingsFile(fileName: fileName);
+      final file = await settingsFile(fileName: _fileName);
 
       if (!await file.exists()) {
         const defaults = OverlaySettings();
@@ -30,7 +28,6 @@ class OverlaySettingsDatasourceImpl
         }
         return OverlaySettings.fromJson(decoded);
       } catch (e) {
-        print(e);
         // Backup the corrupted file for debugging
         final backupPath =
             '${file.path}.corrupt.${DateTime.now().millisecondsSinceEpoch}';
@@ -51,7 +48,7 @@ class OverlaySettingsDatasourceImpl
   @override
   Future<void> saveSettings(OverlaySettings settings) async {
     try {
-      final file = await settingsFile(fileName: fileName);
+      final file = await settingsFile(fileName: _fileName);
       final tmp = File('${file.path}.tmp');
 
       final jsonString =

@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/app/state/interface_visibility_cubit.dart';
-import 'package:open_scripture/core/infrastructure/book_resolver/book_resolver.dart';
 import 'package:open_scripture/features/bible_searchbar/search/presentation/state/search_bloc.dart';
 import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import 'package:open_scripture/features/three_tap_navigator/presentation/state/three_tap_navigator_cubit.dart';
+import 'package:open_scripture/shared/domain/entities/bible_book.dart';
+import 'package:open_scripture/shared/domain/entities/bible_id.dart';
+import 'package:open_scripture/shared/domain/entities/localized_book.dart';
 import 'package:open_scripture/shared/widgets/custom_icon_button.dart';
 import 'package:open_scripture/shared/widgets/dropdown_menu_anchor.dart';
-
-import '../../../../shared/entities/book.dart';
-import '../../../../injection_container.dart';
 
 class ThreeTapNavigatorTrigger extends StatefulWidget {
   const ThreeTapNavigatorTrigger({super.key});
@@ -73,9 +72,9 @@ class _ThreeTapNavigatorOverlay extends StatefulWidget {
 }
 
 class _ThreeTapNavigatorOverlayState extends State<_ThreeTapNavigatorOverlay> {
-  Book? book;
+  LocalizedBook? book;
   int? chpt;
-  late final int? bibleId;
+  late final BibleId? bibleId;
 
   int _turn() {
     if (book == null && chpt == null) return 0;
@@ -113,7 +112,6 @@ class _ThreeTapNavigatorOverlayState extends State<_ThreeTapNavigatorOverlay> {
   Widget build(BuildContext context) {
     int turn = _turn();
     final bloc = context.read<ThreeTapNavigatorCubit>();
-    final resolver = sl<BibleRefResolver>();
 
     return bibleId == null
         ? Center(child: Text('Open a bible first'))
@@ -167,19 +165,20 @@ class _ThreeTapNavigatorOverlayState extends State<_ThreeTapNavigatorOverlay> {
                     child: Stack(
                       children: [
                         if (turn == 0)
-                          _GridSelector<Book>(
+                          _GridSelector<LocalizedBook>(
                             items: state.books
                                 .map((b) => _GridSelectorItem(
                                       value: b,
-                                      text: b.usfxId!,
+                                      text: b.book.usfm,
                                       color: () {
-                                        final t = resolver.getGroup(b.usfxId!);
+                                        final t = b.book.testament;
 
-                                        if (t == 'OT') {
+                                        if (t == Testament.oldTestament) {
                                           return Theme.of(context)
                                               .colorScheme
                                               .tertiary;
-                                        } else if (t == 'NT') {
+                                        } else if (t ==
+                                            Testament.newTestament) {
                                           return Theme.of(context)
                                               .colorScheme
                                               .primary;
@@ -193,7 +192,7 @@ class _ThreeTapNavigatorOverlayState extends State<_ThreeTapNavigatorOverlay> {
                                 .toList(),
                             onSelect: (b) {
                               setState(() => book = b);
-                              bloc.getMaxChapter(b.id!);
+                              bloc.getChapterBoundary(b.book.usfm);
                             },
                           ),
                         if (turn == 1)
@@ -204,7 +203,7 @@ class _ThreeTapNavigatorOverlayState extends State<_ThreeTapNavigatorOverlay> {
                                     value: i + 1, text: '${i + 1}')),
                             onSelect: (c) {
                               setState(() => chpt = c);
-                              bloc.getMaxVerse(book!.id!, c);
+                              bloc.getVerseBoundary(book!.book.usfm, c);
                             },
                           ),
                         if (turn == 2)
@@ -215,7 +214,7 @@ class _ThreeTapNavigatorOverlayState extends State<_ThreeTapNavigatorOverlay> {
                                     value: i + 1, text: '${i + 1}')),
                             onSelect: (v) {
                               context.read<SearchBloc>().add(SearchParseIntent(
-                                  '${book!.usfxId} $chpt:$v'));
+                                  '${book!.book.usfm} $chpt:$v'));
                               widget.onEnd?.call();
                             },
                           )

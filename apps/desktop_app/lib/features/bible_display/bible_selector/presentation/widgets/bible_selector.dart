@@ -1,180 +1,167 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/features/bible_installer_manager/presentation/state/installed_bibles/installed_bibles_bloc.dart';
+import 'package:open_scripture/core/di/injection_container.dart' as di;
+import 'package:open_scripture/features/bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
+import 'package:open_scripture/features/bible_display/bible_selector/presentation/cubit/bible_selector_cubit.dart';
+import 'package:open_scripture/features/bible_display/bible_selector/presentation/widgets/drift_selector.dart';
+import 'package:open_scripture/features/bible_display/bible_selector/presentation/widgets/remote_selector.dart';
+import 'package:open_scripture/features/bible_display/bible_selector/presentation/widgets/sword_selector.dart';
+import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
+import 'package:open_scripture/features/customizer/presentation/models/bible_pane_general_theme.dart';
 import 'package:open_scripture/features/customizer/presentation/state/customizer_cubit.dart';
+import 'package:open_scripture/shared/enums/bible_repository_type.dart';
+import 'package:open_scripture/shared/theme/tokens.dart';
+import 'package:open_scripture/shared/widgets/ui/b_container_tab_bar.dart';
 
-import '../../../../../injection_container.dart';
-import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
-import '../state/bible_selector_bloc.dart';
+class BibleSelector extends StatefulWidget {
+  final BibleSelectorCubit? bloc;
 
-class BibleSelector extends StatelessWidget {
-  final void Function(List<int> selectedBibleId) onConfirm;
-  final BibleSelectorBloc? bloc;
-
-  const BibleSelector({required this.onConfirm, this.bloc, super.key});
+  const BibleSelector({this.bloc, super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: bloc ?? sl<BibleSelectorBloc>()
-        ..add(BibleSelectorInit()),
-      child: _BibleSelectorBody(onConfirm: onConfirm),
-    );
-  }
+  State<BibleSelector> createState() => _BibleSelectorState();
 }
 
-class _BibleSelectorBody extends StatelessWidget {
-  final void Function(List<int> selectedBibleId) onConfirm;
+class _BibleSelectorState extends State<BibleSelector> {
+  late final int _initialIndex;
+  int _tabIndex = 0;
 
-  const _BibleSelectorBody({required this.onConfirm});
+  static const _repoTypes = BibleRepositoryType.platformEnabled;
+  final allSelectorWidgets = const {
+    BibleRepositoryType.localDatabase: DriftCatalogSelector(),
+    BibleRepositoryType.sword: SwordSelector(),
+    BibleRepositoryType.cloudAPI: RemoteSelector(),
+  };
+  List<Widget> get enabledSelectorWidgets {
+    return _repoTypes
+        .map((type) => allSelectorWidgets[type])
+        .whereType<Widget>()
+        .toList();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    final repoType = context.read<BiblePaneBloc>().state.repoType;
+    final i = _repoTypes.indexOf(repoType);
+    // defaults to zero
+    _initialIndex = i < 0 ? 0 : i;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final selectedIds = context.select(
-      (BibleSelectorBloc b) => b.state.selectedBibleIds,
-    );
-
-    final useCustom = context.select(
-      (CustomizerCubit b) => b.state.pane.enableCustomTheme,
-    );
+    final useCustom =
+        context.select((CustomizerCubit b) => b.state.pane.enableCustomTheme);
     final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
-    // final height = MediaQuery.sizeOf(context).height;
 
-    return BlocBuilder<InstalledBiblesBloc, InstalledBiblesState>(
-      builder: (context, state) {
-        Widget body;
-        switch (state.status) {
-          case InstalledBiblesStatus.loading || InstalledBiblesStatus.initial:
-            body = const Center(child: CircularProgressIndicator());
-            break;
-
-          case InstalledBiblesStatus.error:
-            body = Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(state.errorMessage ?? 'Failed to load bibles'),
-                  const SizedBox(height: 12),
-                  ElevatedButton(
-                    //context.read<BibleSelectorBloc>().add(const BibleSelectorRetry()),
-                    onPressed: () => print('Retry'),
-                    child: const Text('Retry'),
-                  ),
-                ],
-              ),
-            );
-            break;
-
-          case InstalledBiblesStatus.loaded:
-            if (state.installedBibles.isEmpty) {
-              body = Text('Go to <Settings> to install a bible',
-                  textAlign: TextAlign.center);
-              break;
-            }
-
-            body = Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+    return BlocProvider(
+      create: (_) =>
+          widget.bloc ??
+          di.sl<BibleSelectorCubit>(
+            param1: context.read<BiblePaneBloc>().state.openedBiblesIds,
+            param2: context.read<BiblePaneBloc>().state.repoType,
+          ),
+      child: Builder(builder: (context) {
+        return Center(
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 24),
+            width: 400,
+            height: 580,
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: AppSpacing.md,
               children: [
-                Text(' Select bibles',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w900,
-                      color: useCustom
-                          ? paneTheme.textColor
-                          : Theme.of(context).colorScheme.onSurfaceVariant,
-                    )),
-                const SizedBox(height: 18),
-                Theme(
-                  data: Theme.of(context)
-                      .copyWith(splashFactory: NoSplash.splashFactory),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(maxHeight: 500),
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: state.installedBibles.length,
-                      itemBuilder: (context, index) {
-                        final bible = state.installedBibles[index];
-                        final selected = selectedIds.contains(bible.id);
-                        final style = TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface,
-                        );
-
-                        return Card(
-                          clipBehavior: Clip.hardEdge,
-                          child: ListTile(
-                              selected: selected,
-                              title: Text(bible.bibleNameLocal, style: style),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    bible.abbreviation,
-                                    style: style,
-                                  ),
-                                  Text(
-                                    bible.langEngName ??
-                                        bible.langNativeName ??
-                                        bible.langIsoCode ??
-                                        '',
-                                    style: style.copyWith(
-                                        color: style.color!.withAlpha(125)),
-                                  ),
-                                ],
-                              ),
-                              isThreeLine: true,
-                              trailing: selected
-                                  ? Text(
-                                      '${selectedIds.indexOf(bible.id!) + 1}',
-                                      style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 24,
-                                      ),
-                                    )
-                                  : null,
-                              onTap: () => context
-                                  .read<BibleSelectorBloc>()
-                                  .add(BibleSelectorSelect(bible.id!))),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 18),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  spacing: 8,
+                //
+                // Header
+                //
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: AppSpacing.xs,
                   children: [
-                    ElevatedButton(
-                      onPressed: selectedIds.isEmpty
-                          ? null
-                          : () => onConfirm(selectedIds),
-                      autofocus: true,
-                      child: const SizedBox(
-                        width: 80,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          spacing: 4,
-                          children: [
-                            Text('Confirm'),
-                            Icon(Icons.arrow_forward_rounded)
-                          ],
-                        ),
+                    Text(
+                      'Select bibles',
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w600,
+                        color: useCustom
+                            ? paneTheme.textColor
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    Text(
+                      'Choose one source and multiple bibles for parallel view',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
                 ),
+                //
+                // Tabs & Views
+                //
+                Expanded(
+                  child: BContainerTabBar(
+                    initialIndex: _initialIndex,
+                    scrollableView: true,
+                    viewBackgroundColor:
+                        Theme.of(context).colorScheme.surfaceContainerHigh,
+                    tabs: _repoTypes.map((r) => r.label).toList(),
+                    onTabChanged: (i) {
+                      setState(() => _tabIndex = i);
+                    },
+                    views: enabledSelectorWidgets,
+                  ),
+                ),
+                _FooterConfirmButton(
+                  tabIndex: _tabIndex,
+                  repoTypes: _repoTypes,
+                ),
               ],
-            );
-            break;
-        }
-        return Center(
-          child: SizedBox(width: 400, child: body),
+            ),
+          ),
         );
-      },
+      }),
+    );
+  }
+}
+
+/// Reads selectedIds from the cubit and enables/disables based on
+/// the active tab's repo type being available.
+class _FooterConfirmButton extends StatelessWidget {
+  const _FooterConfirmButton({
+    required this.tabIndex,
+    required this.repoTypes,
+  });
+
+  final int tabIndex;
+  final List<BibleRepositoryType?> repoTypes;
+
+  @override
+  Widget build(BuildContext context) {
+    final selectedIds =
+        context.select((BibleSelectorCubit b) => b.state.selectedBiblesIds);
+
+    final repoType = repoTypes[tabIndex];
+    final canConfirm = selectedIds.isNotEmpty && repoType != null;
+
+    return ElevatedButton(
+      onPressed: canConfirm
+          ? () => context
+              .read<MultiPaneManagerCubit>()
+              .activePane()
+              .bloc
+              .add(BiblePaneOpen(bibleIds: selectedIds))
+          : null,
+      autofocus: true,
+      child: const Row(
+        mainAxisSize: MainAxisSize.min,
+        spacing: 4,
+        children: [
+          Text('Confirm'),
+          Icon(Icons.arrow_forward_rounded),
+        ],
+      ),
     );
   }
 }

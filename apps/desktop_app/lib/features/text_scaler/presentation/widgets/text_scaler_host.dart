@@ -1,10 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/text_scaler/presentation/state/text_scaler_cubit.dart';
 
-import '../../../../injection_container.dart';
+import '../../../../core/di/injection_container.dart';
 
 const sensitivity = 0.05;
 const lowerLimit = 1.0;
@@ -105,7 +106,8 @@ class _TextScalerHostState extends State<TextScalerHost> {
 
   /// To handle zooming with scroll wheel
   void _onPointerSignal(PointerSignalEvent signal) {
-    if (HardwareKeyboard.instance.isControlPressed &&
+    if ((HardwareKeyboard.instance.isControlPressed ||
+            (kIsWeb && HardwareKeyboard.instance.isAltPressed)) &&
         signal is PointerScrollEvent) {
       // * prevent a possible scrollable child to scroll while zooming:
       // by jumping to the initial offset of when ctrl was pressed

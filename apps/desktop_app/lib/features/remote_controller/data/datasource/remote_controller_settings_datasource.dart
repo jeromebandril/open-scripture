@@ -1,20 +1,18 @@
 import 'dart:convert';
 import 'dart:io';
 
-import '../../../../core/engines/settings/settings_datasource.dart';
+import 'package:open_scripture/core/engines/settings/datasource/settings_datasource_desktop.dart';
+
 import '../../domain/entities/remote_controller_settings.dart';
 
 class RemoteControllerSettingsDatasource
-    extends SettingsDatasource<RemoteControllerSettings> {
-  RemoteControllerSettingsDatasource(
-      {this.fileName = 'remote_controller_settings.json'});
-
-  final String fileName;
+    extends SettingsDatasourceDesktopBase<RemoteControllerSettings> {
+  final String _fileName = 'remote_controller_settings.json';
 
   @override
   Future<RemoteControllerSettings> loadSettings() async {
     try {
-      final file = await settingsFile(fileName: fileName);
+      final file = await settingsFile(fileName: _fileName);
 
       if (!await file.exists()) {
         const defaults = RemoteControllerSettings();
@@ -51,7 +49,7 @@ class RemoteControllerSettingsDatasource
   @override
   Future<void> saveSettings(RemoteControllerSettings settings) async {
     try {
-      final file = await settingsFile(fileName: fileName);
+      final file = await settingsFile(fileName: _fileName);
       final tmp = File('${file.path}.tmp');
 
       final jsonString =

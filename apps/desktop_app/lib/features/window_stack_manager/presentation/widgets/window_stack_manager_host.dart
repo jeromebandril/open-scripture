@@ -1,6 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/features/bible_installer_manager/presentation/state/installed_bibles/installed_bibles_bloc.dart';
 import 'package:open_scripture/features/obs_live_overlay/presentation/state/obs_overlay/obs_live_overlay_cubit.dart';
 import 'package:open_scripture/features/remote_controller/presentation/state/remote_controller/remote_controller_cubit.dart';
 import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcuts_scope_suppressed.dart';
@@ -74,16 +74,19 @@ class _WindowStackManagerHostState extends State<WindowStackManagerHost> {
             ///
             child: MultiBlocProvider(
               providers: [
+                if (!kIsWeb) ...[
+                  BlocProvider.value(
+                      value: context.read<ObsLiveOverlaySettingsCubit>()),
+                  BlocProvider.value(
+                      value: context.read<ObsLiveOverlayCubit>()),
+                  // BlocProvider.value(value: context.read<InstallerBloc>()),
+                  BlocProvider.value(
+                      value: context.read<RemoteControllerCubit>()),
+                  BlocProvider.value(
+                      value: context.read<RemoteControllerSettingsCubit>()),
+                ],
                 BlocProvider.value(
                     value: context.read<WindowStackManagerBloc>()),
-                BlocProvider.value(value: context.read<ObsLiveOverlayCubit>()),
-                BlocProvider.value(
-                    value: context.read<ObsLiveOverlaySettingsCubit>()),
-                BlocProvider.value(value: context.read<InstalledBiblesBloc>()),
-                BlocProvider.value(
-                    value: context.read<RemoteControllerCubit>()),
-                BlocProvider.value(
-                    value: context.read<RemoteControllerSettingsCubit>()),
               ],
               child: BlockSemantics(
                 blocking: true,
@@ -117,7 +120,7 @@ class _WindowStackManagerHostState extends State<WindowStackManagerHost> {
     _barrierEntry ??= OverlayEntry(
       builder: (_) => Column(
         children: [
-          if (!isFullscreen)
+          if (!isFullscreen && !kIsWeb)
             const Material(child: Titlebar(showMenuBar: false)),
           const Expanded(
             child: ModalBarrier(

@@ -1,13 +1,11 @@
+import 'package:open_scripture/app/state/fullscreen_cubit.dart';
 import 'package:open_scripture/app/state/interface_visibility_cubit.dart';
-
-import '../../../../shared/entities/bible_ref.dart';
-import '../../../../app/state/fullscreen_cubit.dart';
-import '../../../bible_searchbar/search/presentation/state/search_bloc.dart';
-import '../../../bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
-import '../../../bible_display/bible_pane/domain/display_mode.dart';
-import '../../../bible_display/bible_selector/presentation/state/bible_selector_bloc.dart';
-import '../../../bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
-import '../../domain/models/app_command.dart';
+import 'package:open_scripture/features/bible_display/bible_pane/domain/display_mode.dart';
+import 'package:open_scripture/features/bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
+import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
+import 'package:open_scripture/features/bible_searchbar/search/presentation/state/search_bloc.dart';
+import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
+import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
 
 typedef CommandHandler = void Function();
 
@@ -33,8 +31,6 @@ class AppCommandDispatcher {
     handler();
   }
 
-  List<int> _prevBibleId = [];
-
   late final Map<AppCommand, CommandHandler> _handlers = {
     // AppCommand.focusSearch: () => searchbarVisibilityCubit.set(true),
     AppCommand.closeWhatever: () {
@@ -44,7 +40,10 @@ class AppCommandDispatcher {
     AppCommand.toggleToolbar: () {
       interfaceVisibilityCubit.toggleToolbar();
     },
-    AppCommand.toggleFullscreen: () => fullscreenCubit.toggle(),
+    AppCommand.toggleFullscreen: () {
+      print('toggle fullscreen triggered~');
+      fullscreenCubit.toggle();
+    },
     AppCommand.nextPane: () => _cyclePane(1),
     AppCommand.prevPane: () => _cyclePane(-1),
     AppCommand.prevVerse: () => _moveVerse(-1),
@@ -53,20 +52,8 @@ class AppCommandDispatcher {
     AppCommand.removeVerseFromSelection: () => _extendSelection(-1),
     AppCommand.changeBible: () {
       final pane = paneManagerCubit.activePane();
-
-      // undo/redo behavior: if the current pane has a bible, close it. otherwise, reopen the last closed bible.
-      if (_prevBibleId.isNotEmpty &&
-          pane.bloc.state.status == BiblePaneStatus.selectBibles) {
-        pane.bloc.add(BiblePaneOpen(_prevBibleId));
-        _prevBibleId = [];
-        return;
-      }
-
-      _prevBibleId = pane.bloc.state.openedBiblesIds;
-      if (_prevBibleId.isEmpty) return;
       pane.bloc.add(BiblePaneChooseBibles());
-      pane.bibleSelectorCubit
-          .add(BibleSelectorSetSelected(selectedBibleIds: _prevBibleId));
+      // pane.bibleSelectorCubit.set(_prevBibleId);
     },
     AppCommand.switchDisplayMode: () => _cycleDisplayMode(),
     AppCommand.displayChapterOfSelected: () => _displayChapterOfSelected(),
@@ -118,7 +105,7 @@ class AppCommandDispatcher {
 
       // Otherwise, move inside the current chapter bounds.
       final refs = bloc.state.unionRefs.toList();
-      final iCurr = refs.indexOf(ref.copyWith(verseEnd: null));
+      final iCurr = refs.indexOf(ref.copyWith(verseEnd: () => null));
       if (iCurr != -1 && iCurr + delta < refs.length && iCurr + delta >= 0) {
         bloc.add(BiblePaneJustChangeRef(ref: refs[iCurr + delta]));
       }
@@ -142,7 +129,7 @@ class AppCommandDispatcher {
       final newEnd = (delta < 0 && start == nextEnd) ? null : nextEnd;
       bloc.add(
         BiblePaneJustChangeRef(
-          ref: ref.copyWith(verseEnd: newEnd),
+          ref: ref.copyWith(verseEnd: () => newEnd),
         ),
       );
     });

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../injection_container.dart';
+import '../../../../core/di/injection_container.dart';
 import '../../../window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import '../state/font_loader_cubit.dart';
 

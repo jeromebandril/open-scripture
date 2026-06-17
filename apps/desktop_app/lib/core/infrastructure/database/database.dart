@@ -1,21 +1,27 @@
-import 'dart:io';
 import 'package:drift/drift.dart';
-import 'package:drift/native.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as p;
+import 'package:open_scripture/core/infrastructure/database/daos/bible_content_dao.dart';
+import 'package:open_scripture/core/infrastructure/database/daos/bible_installation_dao.dart';
+import 'package:open_scripture/core/infrastructure/database/daos/installed_bibles_dao.dart';
+import 'package:open_scripture/shared/domain/entities/bible_book.dart';
+
+import 'db_connect/db_connect.dart';
 
 part 'database.g.dart';
 
 @DriftDatabase(
   include: {
     'tables/core_tables.drift',
-    'tables/verse_fts5.drift',
-    'queries/core_queries.drift',
-    'queries/add_queries.drift',
+    // TODO: disable for the moment, until refactor is complete
+    // 'tables/verse_fts5.drift',
   },
+  daos: [
+    BibleInstallationDao,
+    BibleContentDao,
+    InstalledBiblesDao,
+  ],
 )
 class AppDb extends _$AppDb {
-  AppDb() : super(_openConnection());
+  AppDb() : super(openConnection());
 
   @override
   int get schemaVersion => 1;
@@ -24,36 +30,22 @@ class AppDb extends _$AppDb {
   MigrationStrategy get migration => MigrationStrategy(
         onCreate: (m) async {
           await m.createAll();
+
+          // Pre-fill the canonical lookup table instantly
+          await batch((b) {
+            final companions = BibleBook.values.map((book) {
+              return CanonicalBooksCompanion.insert(
+                bookToken: book.canonical,
+                bookOrder: book.osisIndex,
+              );
+            }).toList();
+
+            b.insertAll(canonicalBooks, companions);
+          });
         },
-        onUpgrade: (m, from, to) async {
-          // upgrade step-by-step
-          if (from < 2) {
-            // changes introduced in v2
-            // await m.addColumn(table, table.newColumn);
-            // await m.createTable(newTable);
-            // await m.createIndex(someIndex);
-            // await customStatement('UPDATE ...');
-          }
-          if (from < 3) {
-            // changes introduced in v3
-          }
-        },
+        onUpgrade: (m, from, to) async {},
         beforeOpen: (details) async {
           await customStatement('PRAGMA foreign_keys = ON;');
-          // runs after create/upgrade, before DB is used
-          // good place for PRAGMAs, sanity checks, seed data, etc.
         },
       );
-}
-
-LazyDatabase _openConnection() {
-  // the LazyDatabase util lets us find the right location for the file async.
-  return LazyDatabase(() async {
-    // put the database file, called db.sqlite here, into the documents folder
-    // for your app.
-    final dbFolder = await getApplicationSupportDirectory();
-    final file = File(p.join(dbFolder.path, 'data/open_scripture.sqlite'));
-
-    return NativeDatabase.createInBackground(file);
-  });
 }

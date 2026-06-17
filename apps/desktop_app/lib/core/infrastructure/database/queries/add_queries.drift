@@ -1,6 +1,0 @@
-import '../tables/core_tables.drift';
-
-resolveBookNameToId:
-SELECT b.id
-FROM books AS b
-WHERE b.bibleId = :bibleId AND (b.usfxId = :bname OR shortName = :bname);

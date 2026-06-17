@@ -1,116 +1,76 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:open_scripture/features/customizer/presentation/models/bible_pane_general_theme.dart';
+import 'package:open_scripture/shared/domain/entities/verse.dart';
 
-import '../../../../../shared/entities/verse_span.dart';
-
-const strongWordBold = 'H0430';
+const _strongWordBold = 'H0430';
 
 class VerseSpanBuilder {
-  static TextSpan build({
-    required String text,
+  static List<InlineSpan> build({
     required List<VerseSpan> spans,
-    TextStyle? baseStyle,
-    required void Function(VerseSpan span, String slice)? onWordTap,
     required BuildContext context,
+    TextStyle? baseStyle,
+    void Function(VerseSpan span)? onWordTap,
   }) {
+    if (spans.isEmpty) return const [];
+
     final bTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
+    final base = baseStyle ?? const TextStyle();
 
-    baseStyle ??= const TextStyle();
+    return spans.map((span) {
+      return TextSpan(
+        text: span.text,
+        // Apply all styles cumulatively
+        style: _buildCombinedStyle(span, base, bTheme),
+        // Trigger tap if any style in the set is strongs
+        recognizer:
+            (span.activeStyles.contains(SpanType.strongs) && onWordTap != null)
+                ? (TapGestureRecognizer()..onTap = () => onWordTap(span))
+                : null,
+      );
+    }).toList();
+  }
 
-    if (spans.isEmpty) {
-      return TextSpan(text: text, style: baseStyle);
+  static TextStyle _buildCombinedStyle(
+    VerseSpan span,
+    TextStyle base,
+    BiblePaneGeneralTheme bTheme,
+  ) {
+    TextStyle style = base;
+
+    // Apply styles in order of priority or accumulation
+    for (final type in span.activeStyles) {
+      style = style.merge(_getStyleForType(type, span, bTheme));
     }
 
-    // 1) Collect boundaries
-    final boundaries = <int>{0, text.length};
-    for (final s in spans) {
-      boundaries.add(s.startOffset.clamp(0, text.length));
-      boundaries.add(s.endOffset.clamp(0, text.length));
-    }
+    return style;
+  }
 
-    final points = boundaries.toList()..sort();
-
-    // Helper: get active spans for an interval
-    List<VerseSpan> activeAt(int start, int end) {
-      return spans
-          .where((s) => s.startOffset <= start && s.endOffset >= end)
-          .toList();
-    }
-
-    // EDIT HERE TO APPLY STYLES
-    TextStyle applyStyles(TextStyle base, List<VerseSpan> active) {
-      var style = base;
-
-      for (final s in active) {
-        switch (s.type) {
-          case SpanType.italic:
-            style = style.merge(TextStyle(fontStyle: FontStyle.italic));
-            break;
-          case SpanType.add:
-            style = style.merge(TextStyle(
-              fontStyle: FontStyle.italic,
-              color: bTheme.addColor,
-            ));
-            break;
-          case SpanType.bold:
-            style = style.merge(const TextStyle(fontWeight: FontWeight.w600));
-            break;
-          case SpanType.wordOfJesus:
-            // "small caps" isn't directly supported everywhere; approximate
-            style = style.merge(TextStyle(color: bTheme.quoteColor));
-            break;
-
-          case SpanType.strongWords:
-            style = style.merge(TextStyle(
-              decoration: bTheme.underlineStrongWords
-                  ? TextDecoration.underline
-                  : TextDecoration.none,
-              decorationStyle: TextDecorationStyle.dotted,
-              decorationColor:
-                  Colors.black26, //Theme.of(context).colorScheme.tertiaryFixed,
-              fontWeight: s.payload == strongWordBold ? FontWeight.w500 : null,
-            ));
-            break;
-          default:
-            break;
-        }
-      }
-
-      return style;
-    }
-
-    // 2) Build children spans
-    final children = <InlineSpan>[];
-
-    for (var i = 0; i < points.length - 1; i++) {
-      final start = points[i];
-      final end = points[i + 1];
-      if (start >= end) continue;
-
-      final slice = text.substring(start, end);
-      if (slice.isEmpty) continue;
-
-      final active = activeAt(start, end);
-      final style = applyStyles(baseStyle, active);
-
-      // Optional: attach a recognizer for specific span types (e.g. "w")
-      TapGestureRecognizer? recognizer;
-      final tappable =
-          active.where((s) => s.type == SpanType.strongWords).toList();
-      if (tappable.isNotEmpty && onWordTap != null) {
-        final first = tappable.first;
-        recognizer = TapGestureRecognizer()
-          ..onTap = () => onWordTap(first, slice);
-      }
-
-      children.add(TextSpan(
-        text: slice,
-        style: style,
-        recognizer: recognizer,
-      ));
-    }
-
-    return TextSpan(children: children, style: baseStyle);
+  static TextStyle _getStyleForType(
+    SpanType type,
+    VerseSpan span,
+    BiblePaneGeneralTheme bTheme,
+  ) {
+    return switch (type) {
+      SpanType.italic => const TextStyle(fontStyle: FontStyle.italic),
+      SpanType.bold => const TextStyle(fontWeight: FontWeight.w600),
+      SpanType.added =>
+        TextStyle(fontStyle: FontStyle.italic, color: bTheme.addColor),
+      SpanType.redLetter => TextStyle(color: bTheme.quoteColor),
+      SpanType.strongs => TextStyle(
+          decoration: bTheme.underlineStrongWords
+              ? TextDecoration.underline
+              : TextDecoration.none,
+          decorationStyle: TextDecorationStyle.dotted,
+          decorationColor: Colors.black26,
+          fontWeight: span.payload == _strongWordBold ? FontWeight.w500 : null,
+        ),
+      SpanType.underline =>
+        const TextStyle(decoration: TextDecoration.underline),
+      SpanType.smallCaps =>
+        const TextStyle(fontFeatures: [FontFeature.enable('smcp')]),
+      SpanType.superscript => const TextStyle(fontSize: 10, height: 0.5),
+      _ => const TextStyle(),
+    };
   }
 }

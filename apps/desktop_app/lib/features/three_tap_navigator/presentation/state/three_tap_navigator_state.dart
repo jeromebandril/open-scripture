@@ -1,10 +1,6 @@
 part of 'three_tap_navigator_cubit.dart';
 
-enum ThreeTapNavigatorStatus {
-  init,
-  error,
-  loaded,
-}
+enum ThreeTapNavigatorStatus { init, error, loaded }
 
 class ThreeTapNavigatorState extends Equatable {
   const ThreeTapNavigatorState({
@@ -17,14 +13,14 @@ class ThreeTapNavigatorState extends Equatable {
 
   final ThreeTapNavigatorStatus status;
   final BibleRef? ref;
-  final List<Book> books;
+  final List<LocalizedBook> books;
   final int maxChapter;
   final int maxVerse;
 
   ThreeTapNavigatorState copyWith({
     ThreeTapNavigatorStatus? status,
     BibleRef? ref,
-    List<Book>? books,
+    List<LocalizedBook>? books,
     int? maxChapter,
     int? maxVerse,
   }) {
@@ -38,11 +34,5 @@ class ThreeTapNavigatorState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [
-        status,
-        ref,
-        books,
-        maxChapter,
-        maxVerse,
-      ];
+  List<Object?> get props => [status, ref, books, maxChapter, maxVerse];
 }

@@ -1,6 +1,8 @@
 import 'dart:async';
 
-import '../../../shared/entities/bible_ref.dart';
+import 'package:open_scripture/shared/domain/entities/bible_ref_partial.dart';
+
+import '../../../shared/domain/entities/bible_ref.dart';
 
 class ResolvedSearchIntentBus {
   final _controller = StreamController<ResolvedSearchIntent>.broadcast();
@@ -12,10 +14,15 @@ class ResolvedSearchIntentBus {
 
 sealed class ResolvedSearchIntent {}
 
-class ResolvedReferenceIntent extends ResolvedSearchIntent {
+class ResolvedRefIntent extends ResolvedSearchIntent {
   final BibleRef ref;
   final bool isVerseLevel;
-  ResolvedReferenceIntent({required this.ref, required this.isVerseLevel});
+  ResolvedRefIntent({required this.ref, required this.isVerseLevel});
+}
+
+class ResolvedPartialRefIntent extends ResolvedSearchIntent {
+  final BibleRefPartial ref;
+  ResolvedPartialRefIntent({required this.ref});
 }
 
 class ResolvedStringSearchIntent extends ResolvedSearchIntent {

@@ -1,14 +1,14 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/core/infrastructure/event_bus/navigation_bus.dart';
+import 'package:open_scripture/core/infrastructure/event_bus/search_result_bus.dart';
 import 'package:open_scripture/core/infrastructure/event_bus/resolved_search_intent_bus.dart';
-import 'package:open_scripture/injection_container.dart';
+import 'package:open_scripture/core/di/injection_container.dart';
 import 'package:open_scripture/core/infrastructure/event_bus/selected_verse_bus.dart';
+import 'package:open_scripture/features/bible_display/bible_selector/presentation/cubit/bible_selector_cubit.dart';
+import 'package:open_scripture/shared/domain/services/book_resolver.dart';
 
 import '../../../../text_scaler/presentation/state/text_scaler_cubit.dart';
-import '../../../bible_pane/domain/repositories/bible_pane_repository.dart';
 import '../../../bible_pane/presentation/state/bible_pane_bloc.dart';
-import '../../../bible_selector/presentation/state/bible_selector_bloc.dart';
 import '../models/multi_pane_data.dart';
 import '../pane_animation_constants.dart';
 
@@ -18,44 +18,27 @@ const int _maxSplitsPaneX = 3;
 const double _minSizeFactor = 0.2;
 
 class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
+  final ResolvedSearchIntentBus _searchIntentBus;
+  final SearchResultBus _searchResultBus;
+  final BookResolver _bookResolver;
+  final Map<int, PaneBlocComponents> _blocs = {};
+
   MultiPaneManagerCubit({
-    required BiblePaneRepository repo,
     required ResolvedSearchIntentBus searchIntentBus,
+    required BookResolver bookResolver,
+    required SearchResultBus searchResultBus,
     int initialPaneId = 0,
-  })  : _resolvedSearchIntentBus = searchIntentBus,
-        _repo = repo,
+  })  : _searchIntentBus = searchIntentBus,
+        _bookResolver = bookResolver,
+        _searchResultBus = searchResultBus,
         super(PaneManagerState(
           panes: [PaneDescriptor(id: initialPaneId)],
           activePaneId: initialPaneId,
         )) {
     _ensureBloc(initialPaneId);
 
-    _resolvedSearchIntentBus.stream.listen((intent) {
-      final bloc = activePane().bloc;
-
-      final event = switch (intent) {
-        ResolvedReferenceIntent(:final ref, isVerseLevel: false) =>
-          BiblePaneDisplayChapter(
-            ref: ref,
-            source: IntentSource.searchbar,
-          ),
-        ResolvedReferenceIntent(:final ref, isVerseLevel: true) =>
-          BiblePaneJustChangeRef(
-            ref: ref,
-            source: IntentSource.searchbar,
-            saveHistory: false,
-          ),
-        ResolvedStringSearchIntent(:final results) =>
-          BiblePaneDisplayVerses(results),
-      };
-
-      bloc.add(event);
-    });
+    _searchIntentBus.stream.listen(_routeSearchIntent);
   }
-
-  final BiblePaneRepository _repo;
-  final ResolvedSearchIntentBus _resolvedSearchIntentBus;
-  final Map<int, PaneBlocComponents> _blocs = {};
 
   PaneBlocComponents paneBlocsFor(int paneId) => _blocs[paneId]!;
   PaneBlocComponents activePane() => paneBlocsFor(state.activePaneId);
@@ -167,14 +150,9 @@ class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
     _blocs.putIfAbsent(
       paneId,
       () => PaneBlocComponents(
-        bloc: BiblePaneBloc(
-          paneId: paneId,
-          repo: _repo,
-          navBus: sl<NavigationBus>(),
-          notifier: sl<SelectedVerseBus>(),
-        ),
+        bloc: sl<BiblePaneBloc>(param1: paneId),
         textScalerCubit: sl<TextScalerCubit>(),
-        bibleSelectorCubit: sl<BibleSelectorBloc>(),
+        // bibleSelectorCubit: sl<BibleSelectorCubit>(),
       ),
     );
   }
@@ -207,7 +185,48 @@ class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
       await b.close();
     }
     _blocs.clear();
-    _resolvedSearchIntentBus.dispose();
+    _searchIntentBus.dispose();
     return super.close();
+  }
+
+  void _routeSearchIntent(ResolvedSearchIntent intent) async {
+    final bloc = activePane().bloc;
+
+    late final BiblePaneEvent event;
+    switch (intent) {
+      case ResolvedRefIntent(:final ref, isVerseLevel: false):
+        event = BiblePaneDisplayChapter(
+          ref: ref,
+          source: IntentSource.searchbar,
+        );
+      case ResolvedRefIntent(:final ref, isVerseLevel: true):
+        event = BiblePaneJustChangeRef(
+          ref: ref,
+          source: IntentSource.searchbar,
+          saveHistory: false,
+        );
+      case ResolvedStringSearchIntent(:final results):
+        event = BiblePaneDisplayVerses(results);
+      case ResolvedPartialRefIntent():
+        // resolve book
+        final bibleLocalId =
+            bloc.state.content.asMap.values.firstOrNull?.meta.localId;
+        final book =
+            await _bookResolver.resolve(intent.ref.bookToken, bibleLocalId);
+        if (book == null) {
+          _searchResultBus.emit(SearchResultError(
+            source: IntentSource.searchbar,
+            message: 'Could not resolve book from "${intent.ref.bookToken}"',
+          ));
+          return;
+        }
+        final ref = intent.ref.toFullRef(book);
+        event = BiblePaneDisplayChapter(
+          ref: ref,
+          source: IntentSource.searchbar,
+        );
+    }
+
+    bloc.add(event);
   }
 }
