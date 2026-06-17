@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:open_scripture/core/engines/settings/datasource/settings_datasource.dart';
+import 'package:open_scripture/core/engines/settings/datasource/settings_datasource_desktop.dart';
 import 'package:open_scripture/features/customizer/presentation/state/customizer_cubit.dart';
 
 class CustomizerDatasourceDesktopImpl
-    extends SettingsDatasource<CustomizerState> {
+    extends SettingsDatasourceDesktopBase<CustomizerState> {
   final String fileName = 'settings.json';
 
   @override

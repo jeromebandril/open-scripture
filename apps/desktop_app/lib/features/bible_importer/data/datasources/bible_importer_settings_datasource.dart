@@ -7,7 +7,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 class BibleImporterSettingsDatasourceImpl
-    extends SettingsDatasource<BibleImporterSettings> {
+    extends SettingsDatasourceDesktopBase<BibleImporterSettings> {
   final String _fileName = 'bible_importer_settings.json';
 
   Future<String> _getDefaultSwordPath() async {

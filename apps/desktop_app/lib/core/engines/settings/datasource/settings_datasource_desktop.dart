@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'package:open_scripture/core/engines/settings/datasource/settings_datasource.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
-abstract class SettingsDatasource<T> {
+abstract class SettingsDatasourceDesktopBase<T>
+    implements SettingsDatasource<T> {
   Future<File> settingsFile({required String fileName}) async {
     final dir = await getApplicationSupportDirectory();
     final settingsDir = Directory(p.join(dir.path, 'settings'));
@@ -11,7 +13,4 @@ abstract class SettingsDatasource<T> {
     }
     return File(p.join(settingsDir.path, fileName));
   }
-
-  Future<void> saveSettings(T settings);
-  Future<T> loadSettings();
 }

@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:open_scripture/core/engines/settings/datasource/settings_datasource.dart';
+import 'package:open_scripture/core/engines/settings/datasource/settings_datasource_desktop.dart';
 
 import '../../domain/entities/overlay_settings.dart';
 
 class OverlaySettingsDatasourceImpl
-    extends SettingsDatasource<OverlaySettings> {
+    extends SettingsDatasourceDesktopBase<OverlaySettings> {
   final String _fileName = 'overlay_settings.json';
 
   @override

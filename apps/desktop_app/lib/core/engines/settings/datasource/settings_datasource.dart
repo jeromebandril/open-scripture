@@ -1,2 +1,4 @@
-export 'settings_datasource_desktop.dart'
-    if (dart.library.html) 'settings_datasource_web.dart';
+abstract class SettingsDatasource<T> {
+  Future<void> saveSettings(T settings);
+  Future<T> loadSettings();
+}

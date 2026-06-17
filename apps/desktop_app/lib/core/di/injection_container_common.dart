@@ -1,7 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:open_scripture/app/state/fullscreen_cubit.dart';
 import 'package:open_scripture/app/state/interface_visibility_cubit.dart';
-import 'package:open_scripture/core/engines/settings/datasource/settings_datasource_desktop.dart';
 import 'package:open_scripture/core/engines/settings/settings_repository.dart';
 import 'package:open_scripture/core/infrastructure/event_bus/install_notifier.dart';
 import 'package:open_scripture/core/infrastructure/event_bus/resolved_search_intent_bus.dart';
@@ -18,7 +17,6 @@ import 'package:open_scripture/features/bible_searchbar/search/data/repositories
 import 'package:open_scripture/features/bible_searchbar/search/domain/repositories/search_repository.dart';
 import 'package:open_scripture/features/bible_searchbar/search/domain/search_intent_resolver.dart';
 import 'package:open_scripture/features/bible_searchbar/search/presentation/state/search_bloc.dart';
-import 'package:open_scripture/features/customizer/data/datasources/customizer_datasource_desktop_impl.dart';
 import 'package:open_scripture/features/customizer/data/repo/customizer_repo_impl.dart';
 import 'package:open_scripture/features/customizer/presentation/state/customizer_cubit.dart';
 import 'package:open_scripture/features/font_loader/presentation/state/font_loader_cubit.dart';

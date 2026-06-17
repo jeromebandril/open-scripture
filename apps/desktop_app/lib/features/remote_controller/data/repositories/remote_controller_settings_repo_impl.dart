@@ -1,5 +1,5 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:open_scripture/core/engines/settings/datasource/settings_datasource_desktop.dart';
+import 'package:open_scripture/core/engines/settings/datasource/settings_datasource.dart';
 
 import '../../../../core/engines/settings/settings_repository.dart';
 import '../../../../shared/error/failure.dart';

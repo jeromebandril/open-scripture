@@ -1,5 +1,5 @@
 import 'package:get_it/get_it.dart';
-import 'package:open_scripture/core/engines/settings/datasource/settings_datasource_desktop.dart';
+import 'package:open_scripture/core/engines/settings/datasource/settings_datasource.dart';
 import 'package:open_scripture/core/lifecycle/app_lifecycle.dart';
 import 'package:open_scripture/core/lifecycle/app_lifecycle_web_impl.dart';
 import 'package:open_scripture/features/customizer/data/datasources/customizer_datasource_web_impl.dart';
