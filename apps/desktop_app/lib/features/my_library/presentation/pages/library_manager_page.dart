@@ -14,7 +14,7 @@ class LibrariesPage extends StatefulWidget {
 }
 
 class _LibrariesPageState extends State<LibrariesPage> {
-  static const _repoTypes = BibleRepositoryType.selectable;
+  static const _repoTypes = BibleRepositoryType.platformEnabled;
 
   final _pageConfigs =
       _repoTypes.map((r) => (instanceName: r.name, title: r.label)).toList();

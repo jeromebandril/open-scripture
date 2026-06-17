@@ -26,7 +26,7 @@ class _BibleSelectorState extends State<BibleSelector> {
   late final int _initialIndex;
   int _tabIndex = 0;
 
-  static const _repoTypes = BibleRepositoryType.selectable;
+  static const _repoTypes = BibleRepositoryType.platformEnabled;
   final allSelectorWidgets = const {
     BibleRepositoryType.localDatabase: DriftCatalogSelector(),
     BibleRepositoryType.sword: SwordSelector(),

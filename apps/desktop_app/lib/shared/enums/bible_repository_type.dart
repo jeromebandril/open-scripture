@@ -25,7 +25,7 @@ enum BibleRepositoryType {
   ];
 
   /// Central source of truth for platform capabilities.
-  static const selectable = kIsWeb
+  static const platformEnabled = kIsWeb
       ? [
           BibleRepositoryType.cloudAPI,
         ]
