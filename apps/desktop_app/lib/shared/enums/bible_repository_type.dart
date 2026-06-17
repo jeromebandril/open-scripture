@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 enum BibleRepositoryType {
   localDatabase(
     label: 'Installed',
@@ -22,9 +24,14 @@ enum BibleRepositoryType {
     BibleRepositoryType.sword,
   ];
 
-  static const selectable = [
-    BibleRepositoryType.localDatabase,
-    BibleRepositoryType.sword,
-    BibleRepositoryType.cloudAPI,
-  ];
+  /// Central source of truth for platform capabilities.
+  static const selectable = kIsWeb
+      ? [
+          BibleRepositoryType.cloudAPI,
+        ]
+      : [
+          BibleRepositoryType.localDatabase,
+          BibleRepositoryType.sword,
+          BibleRepositoryType.cloudAPI,
+        ];
 }

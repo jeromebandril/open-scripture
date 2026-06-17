@@ -27,6 +27,17 @@ class _BibleSelectorState extends State<BibleSelector> {
   int _tabIndex = 0;
 
   static const _repoTypes = BibleRepositoryType.selectable;
+  final allSelectorWidgets = const {
+    BibleRepositoryType.localDatabase: DriftCatalogSelector(),
+    BibleRepositoryType.sword: SwordSelector(),
+    BibleRepositoryType.cloudAPI: RemoteSelector(),
+  };
+  List<Widget> get enabledSelectorWidgets {
+    return _repoTypes
+        .map((type) => allSelectorWidgets[type])
+        .whereType<Widget>()
+        .toList();
+  }
 
   @override
   void initState() {
@@ -34,8 +45,8 @@ class _BibleSelectorState extends State<BibleSelector> {
 
     final repoType = context.read<BiblePaneBloc>().state.repoType;
     final i = _repoTypes.indexOf(repoType);
-    if (i < 0) return;
-    _initialIndex = i;
+    // defaults to zero
+    _initialIndex = i < 0 ? 0 : i;
   }
 
   @override
@@ -99,11 +110,7 @@ class _BibleSelectorState extends State<BibleSelector> {
                     onTabChanged: (i) {
                       setState(() => _tabIndex = i);
                     },
-                    views: const [
-                      DriftCatalogSelector(),
-                      SwordSelector(),
-                      RemoteSelector(),
-                    ],
+                    views: enabledSelectorWidgets,
                   ),
                 ),
                 _FooterConfirmButton(
