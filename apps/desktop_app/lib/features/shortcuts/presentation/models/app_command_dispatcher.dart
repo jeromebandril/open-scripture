@@ -40,7 +40,10 @@ class AppCommandDispatcher {
     AppCommand.toggleToolbar: () {
       interfaceVisibilityCubit.toggleToolbar();
     },
-    AppCommand.toggleFullscreen: () => fullscreenCubit.toggle(),
+    AppCommand.toggleFullscreen: () {
+      print('toggle fullscreen triggered~');
+      fullscreenCubit.toggle();
+    },
     AppCommand.nextPane: () => _cyclePane(1),
     AppCommand.prevPane: () => _cyclePane(-1),
     AppCommand.prevVerse: () => _moveVerse(-1),

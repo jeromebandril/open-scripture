@@ -8,4 +8,7 @@ abstract class AppWindowManager {
   Future<bool> isMaximized() async => false;
   Future<void> unmaximize() async {}
   void toggleExitGuard(bool preventExit) {}
+
+  /// Called when fullscreen state changes externally (e.g. F11, Escape)
+  void Function(bool isFullScreen)? onFullScreenChanged;
 }

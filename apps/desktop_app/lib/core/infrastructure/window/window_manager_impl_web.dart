@@ -5,16 +5,16 @@ import 'package:web/web.dart' as web;
 
 class WindowManagerImpl extends AppWindowManager {
   @override
-  Future<bool> isFullScreen() async {
-    return web.document.fullscreenElement != null;
+  Future<bool> isFullScreen() {
+    return Future.value(web.document.fullscreenElement != null);
   }
 
   @override
   Future<void> setFullScreen(bool value) async {
     if (value) {
-      web.document.documentElement?.requestFullscreen();
+      await (web.document.documentElement?.requestFullscreen())?.toDart;
     } else {
-      web.document.exitFullscreen();
+      await web.document.exitFullscreen().toDart;
     }
   }
 
