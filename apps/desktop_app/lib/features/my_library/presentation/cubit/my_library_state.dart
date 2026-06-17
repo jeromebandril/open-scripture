@@ -14,6 +14,7 @@ final class MyLibraryState extends Equatable {
     this.errorMessage,
     this.selectedBibleIndex,
     this.repoType = BibleRepositoryType.localDatabase,
+    this.filterQuery = '',
   });
 
   final MyLibraryStatus status;
@@ -21,6 +22,19 @@ final class MyLibraryState extends Equatable {
   final int? selectedBibleIndex;
   final String? errorMessage;
   final BibleRepositoryType repoType;
+  final String filterQuery;
+
+  List<BibleTranslation> get filteredBibles {
+    if (filterQuery.isEmpty) return bibles;
+    final q = filterQuery.toLowerCase();
+    return bibles.where((b) {
+      return b.name.toLowerCase().contains(q) ||
+          b.abbreviation.toLowerCase().contains(q) ||
+          (b.langEngName?.toLowerCase().contains(q) ?? false) ||
+          (b.langNativeName?.toLowerCase().contains(q) ?? false) ||
+          (b.langIsoCode?.toLowerCase().contains(q) ?? false);
+    }).toList();
+  }
 
   MyLibraryState copywith({
     MyLibraryStatus? status,
@@ -28,6 +42,7 @@ final class MyLibraryState extends Equatable {
     String? Function()? errorMessage,
     int? Function()? selectedBibleIndex,
     BibleRepositoryType? repoType,
+    String? filterQuery,
   }) {
     return MyLibraryState(
       status: status ?? this.status,
@@ -37,6 +52,7 @@ final class MyLibraryState extends Equatable {
           ? selectedBibleIndex()
           : this.selectedBibleIndex,
       repoType: repoType ?? this.repoType,
+      filterQuery: filterQuery ?? this.filterQuery,
     );
   }
 
@@ -47,5 +63,6 @@ final class MyLibraryState extends Equatable {
         selectedBibleIndex,
         errorMessage,
         repoType,
+        filterQuery,
       ];
 }

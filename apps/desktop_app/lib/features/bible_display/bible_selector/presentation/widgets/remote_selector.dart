@@ -35,11 +35,16 @@ class _RemoteSelectorBody extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         spacing: AppSpacing.md,
         children: [
+          Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: const _FilterInput()),
           //
           // List
           //
           BlocBuilder<MyLibraryCubit, MyLibraryState>(
             builder: (context, state) {
+              final bibles = state.filteredBibles;
+
               return switch (state.status) {
                 MyLibraryStatus.loading ||
                 MyLibraryStatus.initial =>
@@ -53,16 +58,16 @@ class _RemoteSelectorBody extends StatelessWidget {
                       child: Text(state.errorMessage ?? 'Uknown Error'),
                     ),
                   ),
-                MyLibraryStatus.ready => state.bibles.isEmpty
+                MyLibraryStatus.ready => bibles.isEmpty
                     ? const Padding(
                         padding: EdgeInsets.symmetric(vertical: 24),
                         child: Center(child: Text('Found nothing')),
                       )
                     : ListView.builder(
                         shrinkWrap: true,
-                        itemCount: state.bibles.length,
+                        itemCount: bibles.length,
                         itemBuilder: (context, index) {
-                          final bible = state.bibles[index];
+                          final bible = bibles[index];
                           final selected = selectedIds.contains(bible.extId);
 
                           return Card(
@@ -113,6 +118,32 @@ class _RemoteSelectorBody extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _FilterInput extends StatefulWidget {
+  const _FilterInput();
+
+  @override
+  State<_FilterInput> createState() => _FilterInputState();
+}
+
+class _FilterInputState extends State<_FilterInput> {
+  final _filterController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _filterController.text = context.read<MyLibraryCubit>().state.filterQuery;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: _filterController,
+      decoration: InputDecoration(hintText: 'Filter'),
+      onChanged: (v) => context.read<MyLibraryCubit>().filter(v),
     );
   }
 }

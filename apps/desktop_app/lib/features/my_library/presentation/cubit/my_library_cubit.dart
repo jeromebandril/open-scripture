@@ -62,4 +62,6 @@ class MyLibraryCubit extends Cubit<MyLibraryState> {
     await _sub.cancel();
     return super.close();
   }
+
+  void filter(String query) => emit(state.copywith(filterQuery: query));
 }
