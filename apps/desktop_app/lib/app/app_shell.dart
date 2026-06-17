@@ -35,7 +35,7 @@ class AppShell extends StatelessWidget {
     final showHistory = context
         .select((InterfaceVisibilityCubit i) => i.state.isHistoryVisible);
     final screen = MediaQuery.of(context).size;
-    final enableDynamicInterface = isFullscreen && !showMenuBar;
+    final enableDynamicInterface = (isFullscreen || kIsWeb) && !showMenuBar;
 
     // ShortcusHost must be at the very root after the MaterialApp
     return ShortcutsHost(
