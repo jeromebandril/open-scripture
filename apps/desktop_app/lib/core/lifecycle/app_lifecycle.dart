@@ -1,3 +1,4 @@
 abstract class AppLifecycleService {
-  Future<void> onExitRequested();
+  /// return true to exit the app
+  Future<bool> onExitRequested();
 }

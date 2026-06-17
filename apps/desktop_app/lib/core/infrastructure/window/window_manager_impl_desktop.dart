@@ -1,7 +1,7 @@
 import 'package:open_scripture/core/infrastructure/window/app_window_manager.dart';
 import 'package:window_manager/window_manager.dart';
 
-class WindowManagerImpl implements AppWindowManager {
+class WindowManagerImpl extends AppWindowManager {
   @override
   Future<void> init() => windowManager.ensureInitialized();
   @override

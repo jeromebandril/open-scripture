@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_scripture/core/infrastructure/window/app_window_manager.dart';
 import 'package:open_scripture/core/lifecycle/app_lifecycle.dart';
 import 'package:open_scripture/features/bible_searchbar/history/presentation/cubit/history_cubit.dart';
 import 'package:open_scripture/features/three_tap_navigator/presentation/state/three_tap_navigator_cubit.dart';
@@ -39,6 +40,9 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
 
+    // TODO: maybe I can place this in AppLifeCycle.onStartup()
+    di.sl<AppWindowManager>().toggleExitGuard(true);
+
     _lifecycleListener = AppLifecycleListener(
       onExitRequested: _handleExitRequested,
     );
@@ -46,7 +50,8 @@ class _MyAppState extends State<MyApp> {
 
   Future<AppExitResponse> _handleExitRequested() async {
     try {
-      await di.sl<AppLifecycleService>().onExitRequested();
+      final canExit = await di.sl<AppLifecycleService>().onExitRequested();
+      return canExit ? AppExitResponse.exit : AppExitResponse.cancel;
     } catch (e) {
       print("Error during shutdown: $e");
     }

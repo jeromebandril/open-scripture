@@ -6,7 +6,8 @@ class DesktopAppLifecycleService implements AppLifecycleService {
   DesktopAppLifecycleService({required SwordBridge bridge}) : _bridge = bridge;
 
   @override
-  Future<void> onExitRequested() async {
+  Future<bool> onExitRequested() async {
     _bridge.shutdown();
+    return true;
   }
 }

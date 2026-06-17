@@ -13,7 +13,7 @@ import 'package:open_scripture/shared/enums/bible_repository_type.dart';
 
 Future<void> init(GetIt sl) async {
   sl.registerLazySingleton<AppLifecycleService>(
-    () => NoOpAppLifecycleService(),
+    () => WebLifecycleService(windowManager: sl()),
   );
 
   // Book resolver

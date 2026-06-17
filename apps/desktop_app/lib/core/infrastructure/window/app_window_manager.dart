@@ -7,4 +7,5 @@ abstract class AppWindowManager {
   Future<void> setFullScreen(bool value) async {}
   Future<bool> isMaximized() async => false;
   Future<void> unmaximize() async {}
+  void toggleExitGuard(bool preventExit) {}
 }
