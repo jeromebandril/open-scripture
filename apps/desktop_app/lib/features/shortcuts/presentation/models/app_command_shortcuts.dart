@@ -49,12 +49,11 @@ const Map<AppCommand, SingleActivator> appCommandShortcuts = {
       : SingleActivator(LogicalKeyboardKey.keyB,
           control: true, shift: true, includeRepeats: false),
 
-  AppCommand.switchDisplayMode: SingleActivator(
-    LogicalKeyboardKey.keyD,
-    control: true,
-    shift: true,
-    includeRepeats: false,
-  ),
+  AppCommand.switchDisplayMode: kIsWeb
+      ? SingleActivator(LogicalKeyboardKey.keyD,
+          alt: true, includeRepeats: false)
+      : SingleActivator(LogicalKeyboardKey.keyD,
+          control: true, shift: true, includeRepeats: false),
 
   AppCommand.closeWhatever: SingleActivator(
     LogicalKeyboardKey.escape,
@@ -84,17 +83,16 @@ const Map<AppCommand, SingleActivator> appCommandShortcuts = {
 
   // Multi-Pane Management
   AppCommand.nextPane: kIsWeb
-      ? SingleActivator(LogicalKeyboardKey.period, control: true) // Ctrl + .
+      ? SingleActivator(LogicalKeyboardKey.period, control: true)
       : SingleActivator(LogicalKeyboardKey.tab, control: true),
 
   AppCommand.prevPane: kIsWeb
-      ? SingleActivator(LogicalKeyboardKey.comma, control: true) // Ctrl + ,
+      ? SingleActivator(LogicalKeyboardKey.comma, control: true)
       : SingleActivator(LogicalKeyboardKey.tab, control: true, shift: true),
 
-  AppCommand.addPane: SingleActivator(
-    LogicalKeyboardKey.backslash,
-    control: true,
-  ),
+  AppCommand.addPane: kIsWeb
+      ? SingleActivator(LogicalKeyboardKey.backslash, alt: true)
+      : SingleActivator(LogicalKeyboardKey.backslash, control: true),
 
   AppCommand.removePane: kIsWeb
       ? SingleActivator(LogicalKeyboardKey.keyW,
