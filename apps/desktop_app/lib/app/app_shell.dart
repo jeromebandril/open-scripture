@@ -50,7 +50,7 @@ class AppShell extends StatelessWidget {
               //
               // Titlebar with controls
               //
-              if (showMenuBar || !isFullscreen)
+              if (showMenuBar || (!isFullscreen && !kIsWeb))
                 Titlebar(
                   showMenuBar: true,
                   showLogo: !isFullscreen && !kIsWeb,
