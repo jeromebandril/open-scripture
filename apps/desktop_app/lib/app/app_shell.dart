@@ -44,94 +44,66 @@ class AppShell extends StatelessWidget {
         // Bloc Listner to show a small floating notification
         // when user go full screen mode
         //
-        body: BlocListener<FullscreenCubit, bool>(
-          listenWhen: (prev, curr) => !prev && curr,
-          listener: (context, state) {
-            context.showFloatingNotification(
-              Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  spacing: 8,
-                  children: [
-                    Text('Press'),
-                    ShortcutView(
-                        fillColor: Theme.of(context).colorScheme.onSurface,
-                        textColor: Theme.of(context).colorScheme.surface,
-                        borderColor:
-                            Theme.of(context).colorScheme.surface.withAlpha(80),
-                        activator:
-                            appCommandShortcuts[AppCommand.toggleFullscreen]),
-                    Text('to exit fullscreen'),
-                  ]),
-            );
-          },
-          // backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-          //
-          // Manages the stacks of windosw that may occur when opening
-          // popups or secondary pages in the form of a window (e.g. settings menu)
-          //
-          child: WindowStackManagerHost(
-            child: Column(
-              children: [
-                //
-                // Titlebar with controls
-                //
-                if (showMenuBar || !isFullscreen)
-                  Titlebar(
-                    showMenuBar: true,
-                    showLogo: !isFullscreen && !kIsWeb,
-                    showButtons: !isFullscreen && !kIsWeb,
-                    leftItems: [
-                      const ToolbarButton(),
-                    ],
-                    centerItems: [
-                      const _AppHeader(),
-                    ],
-                    rightItems: kIsWeb
-                        ? null
-                        : [
-                            const ObsLiveOverlayIndicator(),
-                            const RemoteControllerIndicator(),
-                          ],
-                  ),
-                //
-                // Main screen/workspace
-                //
-                Expanded(
-                  child: Stack(
-                    children: [
-                      //
-                      // Bible Panes
-                      //
-                      Positioned.fill(child: const MultiPaneContainer()),
-                      //
-                      // Dynamic/fullscreen only interfaces
-                      //
-                      if (enableDynamicInterface) ...[
-                        //
-                        // Dynamic searchbar
-                        //
-                        const DynamicSearchbar(),
-                        //
-                        // Dynamic History viewer
-                        //
-                        if (enableDynamicInterface)
-                          FloatingPanel(
-                            visible: showHistory,
-                            top: screen.height * 0.08 + 100,
-                            left: 0,
-                            right: 0,
-                            width: 350,
-                            height: 250,
-                            child: const HistoryList(size: HistoryListSize.big),
-                          )
-                      ],
-                    ],
-                  ),
+        body: WindowStackManagerHost(
+          child: Column(
+            children: [
+              //
+              // Titlebar with controls
+              //
+              if (showMenuBar || !isFullscreen)
+                Titlebar(
+                  showMenuBar: true,
+                  showLogo: !isFullscreen && !kIsWeb,
+                  showButtons: !isFullscreen && !kIsWeb,
+                  leftItems: [
+                    const ToolbarButton(),
+                  ],
+                  centerItems: [
+                    const _AppHeader(),
+                  ],
+                  rightItems: kIsWeb
+                      ? null
+                      : [
+                          const ObsLiveOverlayIndicator(),
+                          const RemoteControllerIndicator(),
+                        ],
                 ),
-              ],
-            ),
+              //
+              // Main screen/workspace
+              //
+              Expanded(
+                child: Stack(
+                  children: [
+                    //
+                    // Bible Panes
+                    //
+                    Positioned.fill(child: const MultiPaneContainer()),
+                    //
+                    // Dynamic/fullscreen only interfaces
+                    //
+                    if (enableDynamicInterface) ...[
+                      //
+                      // Dynamic searchbar
+                      //
+                      const DynamicSearchbar(),
+                      //
+                      // Dynamic History viewer
+                      //
+                      if (enableDynamicInterface)
+                        FloatingPanel(
+                          visible: showHistory,
+                          top: screen.height * 0.08 + 100,
+                          left: 0,
+                          right: 0,
+                          width: 350,
+                          height: 250,
+                          child: const HistoryList(size: HistoryListSize.big),
+                        )
+                    ],
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),

@@ -31,6 +31,7 @@ class _ShortcutsHostState extends State<ShortcutsHost> {
     _search = FocusNode(debugLabel: 'searchbar');
     _history = FocusNode(debugLabel: 'history');
     _uiEffectDispatcher = UiEffectDispatcher(
+      context: context,
       rootFocusNode: _root,
       searchFocusNode: _search,
       historyFocusNode: _history,
