@@ -41,7 +41,7 @@ import 'package:open_scripture/shared/enums/bible_repository_type.dart';
 import 'package:open_scripture/shared/utils/bible_ref_parser/bible_ref_parser.dart';
 
 Future<void> init(GetIt sl) async {
-  // Datasources
+  //  Datasources
   sl.registerLazySingleton<BibleCatalogDatasource>(
       () => RemoteBibleCatalogDatasourceImpl(),
       instanceName: BibleRepositoryType.cloudAPI.name);
@@ -93,10 +93,7 @@ Future<void> init(GetIt sl) async {
   sl.registerLazySingleton<MultiPaneManagerCubit>(() => MultiPaneManagerCubit(
       searchIntentBus: sl(), bookResolver: sl(), searchResultBus: sl()));
 
-  // init customizer
-  sl.registerLazySingleton<SettingsDatasource<CustomizerState>>(
-    () => CustomizerDatasourceImpl(),
-  );
+  // init Customizer
   sl.registerLazySingleton<SettingsRepository<CustomizerState>>(
     () => CustomizerRepoImpl(localDatasource: sl()),
   );

@@ -3,7 +3,7 @@ import 'package:open_scripture/core/engines/settings/datasource/settings_datasou
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:open_scripture/features/customizer/presentation/state/customizer_cubit.dart';
 
-class CustomizerDatasourceImpl extends SettingsDatasource<CustomizerState> {
+class CustomizerDatasourceWebImpl extends SettingsDatasource<CustomizerState> {
   @override
   String get prefsKey => 'customizer_settings';
 

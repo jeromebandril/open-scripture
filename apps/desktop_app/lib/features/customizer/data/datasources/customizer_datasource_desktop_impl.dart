@@ -4,7 +4,8 @@ import 'dart:io';
 import 'package:open_scripture/core/engines/settings/datasource/settings_datasource.dart';
 import 'package:open_scripture/features/customizer/presentation/state/customizer_cubit.dart';
 
-class CustomizerDatasourceImpl extends SettingsDatasource<CustomizerState> {
+class CustomizerDatasourceDesktopImpl
+    extends SettingsDatasource<CustomizerState> {
   final String fileName = 'settings.json';
 
   @override

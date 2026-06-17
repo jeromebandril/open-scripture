@@ -23,6 +23,8 @@ import 'package:open_scripture/features/bible_importer/presentation/state/bible_
 import 'package:open_scripture/features/bible_importer/presentation/state/bible_importer_settings_cubit/bible_importer_settings_cubit.dart';
 import 'package:open_scripture/features/bible_searchbar/search/presentation/remote/search_handler.dart';
 import 'package:open_scripture/features/bible_searchbar/search/presentation/state/search_bloc.dart';
+import 'package:open_scripture/features/customizer/data/datasources/customizer_datasource_desktop_impl.dart';
+import 'package:open_scripture/features/customizer/presentation/state/customizer_cubit.dart';
 import 'package:open_scripture/features/my_library/presentation/cubit/my_library_cubit.dart';
 import 'package:open_scripture/features/obs_live_overlay/data/datasource/overlay_file_system.dart';
 import 'package:open_scripture/features/obs_live_overlay/data/datasource/overlay_server_manager.dart';
@@ -194,6 +196,12 @@ Future<void> init(GetIt sl) async {
     ),
     instanceName: BibleRepositoryType.sword.name,
     onCreated: (c) => c.getBibles(),
+  );
+
+
+  // init customizer
+  sl.registerLazySingleton<SettingsDatasource<CustomizerState>>(
+    () => CustomizerDatasourceDesktopImpl(),
   );
 
   // Remote controller
