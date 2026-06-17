@@ -38,8 +38,7 @@ const Map<AppCommand, SingleActivator> appCommandShortcuts = {
           control: true, includeRepeats: false),
 
   AppCommand.toggleFullscreen: kIsWeb
-      ? SingleActivator(LogicalKeyboardKey.keyF,
-          alt: true, includeRepeats: false)
+      ? SingleActivator(LogicalKeyboardKey.f11)
       : SingleActivator(LogicalKeyboardKey.keyF,
           control: true, includeRepeats: false),
 
