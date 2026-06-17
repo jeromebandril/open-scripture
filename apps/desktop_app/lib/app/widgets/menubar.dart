@@ -36,7 +36,7 @@ class MyMenuBar extends StatelessWidget {
             context.read<WindowStackManagerBloc>().add(
                   WindowStackManagerOpen.selfManaged(
                     widget: SettingsWindow(
-                      initialRoute: SettingsSection.appearance,
+                      initialPage: SettingsPage.globalAppearance,
                     ),
                   ),
                 );

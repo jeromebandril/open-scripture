@@ -24,7 +24,7 @@ class RemoteControllerIndicator extends StatelessWidget {
             context.read<WindowStackManagerBloc>().add(
                   WindowStackManagerOpen.selfManaged(
                     widget: SettingsWindow(
-                      initialRoute: SettingsSection.remoteController,
+                      initialPage: SettingsPage.remoteController,
                     ),
                   ),
                 );

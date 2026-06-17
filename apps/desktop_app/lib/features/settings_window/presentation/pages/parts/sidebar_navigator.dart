@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-
-import '../../../../../shared/theme/tokens.dart';
-import '../../models/settings_route.dart';
+import 'package:open_scripture/features/settings_window/presentation/models/settings_route.dart';
+import 'package:open_scripture/shared/theme/tokens.dart';
 
 class SidebarNavigator extends StatelessWidget {
   final double width;
@@ -15,17 +14,9 @@ class SidebarNavigator extends StatelessWidget {
     required this.onSelectRoute,
   });
 
-  String _titleForGroup(String key) => switch (key) {
-        'appearance' => 'Appearance',
-        'biblemanager' => 'Bible Manager',
-        'shortcuts' => 'Shortcuts',
-        'about' => 'About',
-        _ => key,
-      };
-
   @override
   Widget build(BuildContext context) {
-    final groups = groupedSettingsRoutes(settingsRoutes);
+    final navigationMenu = sidebarNavigation;
 
     return Flexible(
       flex: 1,
@@ -47,27 +38,29 @@ class SidebarNavigator extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
             ),
-            SizedBox(
-              height: 18,
-            ),
-            //
-            // All navigation buttons
-            //
-            ...groups.entries.expand((g) sync* {
-              // Group header
-              yield Padding(
-                padding: const EdgeInsets.only(left: 12, top: 12, bottom: 6),
-                child: Text(
-                  _titleForGroup(g.key),
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+            const SizedBox(height: 18),
+            ...navigationMenu.entries.expand((entry) {
+              final group = entry.key;
+              final pages = entry.value;
+
+              // If a platform has hidden all pages in this group, don't show the header at all
+              if (pages.isEmpty) return const <Widget>[];
+
+              return [
+                // Group Header Text
+                Padding(
+                  padding: const EdgeInsets.only(left: 12, top: 12, bottom: 6),
+                  child: Text(
+                    group.title,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ),
-              );
 
-              // Group items
-              yield Container(
+                // Group Section Box
+                Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(AppRadius.sm),
                     color:
@@ -75,17 +68,19 @@ class SidebarNavigator extends StatelessWidget {
                   ),
                   child: Column(
                     children: [
-                      for (final r in g.value)
+                      for (final page in pages)
                         _NavigationButton(
-                          r.value.name,
-                          icon: r.value.icon,
-                          route: r.key,
-                          isSelected: r.key == selectedRoute,
-                          onTap: () => onSelectRoute(r.key),
+                          page.name,
+                          icon: page.icon,
+                          route: page.route,
+                          isSelected: page.route == selectedRoute,
+                          onTap: () => onSelectRoute(page.route),
                         )
                     ],
-                  ));
-            })
+                  ),
+                ),
+              ];
+            }),
           ],
         ),
       ),
@@ -132,7 +127,7 @@ class _NavigationButton extends StatelessWidget {
                 size: 16,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
-              SizedBox(width: 16),
+              const SizedBox(width: 16),
               Expanded(child: Text(text, overflow: TextOverflow.ellipsis)),
             ],
           ),

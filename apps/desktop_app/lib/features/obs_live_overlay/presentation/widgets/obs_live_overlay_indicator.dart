@@ -26,7 +26,7 @@ class ObsLiveOverlayIndicator extends StatelessWidget {
             context.read<WindowStackManagerBloc>().add(
                   WindowStackManagerOpen.selfManaged(
                     widget: SettingsWindow(
-                      initialRoute: SettingsSection.obsLiveOverlay,
+                      initialPage: SettingsPage.obsLiveOverlay,
                     ),
                   ),
                 );

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:open_scripture/features/bible_importer/presentation/pages/importer_page.dart';
 import 'package:open_scripture/features/my_library/presentation/pages/library_manager_page.dart';
@@ -9,96 +10,114 @@ import 'package:open_scripture/features/settings_window/presentation/pages/about
 
 import '../../../shortcuts/presentation/pages/shortcuts_screen.dart';
 
-enum SettingsSection {
-  appearance,
-  bibleManager,
-  shortcuts,
-  about,
-  remoteController,
-  obsLiveOverlay,
+enum SettingsGroup {
+  appearance('Appearance'),
+  bibleManager('Bible Manager'),
+  tools('Tools'),
+  others('Others');
+
+  final String title;
+  const SettingsGroup(this.title);
 }
 
-String routeFor(SettingsSection s) => switch (s) {
-      SettingsSection.appearance => '/appearance/global',
-      SettingsSection.bibleManager => '/biblemanager/repo',
-      SettingsSection.shortcuts => '/shortcuts',
-      SettingsSection.about => '/about',
-      SettingsSection.remoteController => '/remotecontroller',
-      SettingsSection.obsLiveOverlay => '/obsliveoverlay'
-    };
+enum SettingsPage {
+  globalAppearance(
+    route: '/appearance/global',
+    name: 'Global',
+    icon: Icons.settings_rounded,
+    group: SettingsGroup.appearance,
+  ),
+  bibleViewer(
+    route: '/appearance/bibleview',
+    name: 'Bible viewer',
+    icon: Icons.palette_rounded,
+    group: SettingsGroup.appearance,
+  ),
+  library(
+    route: '/biblemanager/library',
+    name: 'My Library',
+    icon: Icons.local_library_rounded,
+    group: SettingsGroup.bibleManager,
+  ),
+  importer(
+    route: '/biblemanager/importer',
+    name: 'Import',
+    icon: Icons.file_upload_outlined,
+    group: SettingsGroup.bibleManager,
+  ),
+  obsLiveOverlay(
+    route: '/obsliveoverlay',
+    name: 'OBS Live Overlay (beta)',
+    icon: Icons.live_tv_rounded,
+    group: SettingsGroup.tools,
+  ),
+  remoteController(
+    route: '/remotecontroller',
+    name: 'Remote Controller (beta)',
+    icon: Icons.stay_current_portrait_rounded,
+    group: SettingsGroup.tools,
+  ),
+  shortcuts(
+    route: '/shortcuts',
+    name: 'Shortcuts',
+    icon: Icons.keyboard,
+    group: SettingsGroup.others,
+  ),
+  about(
+    route: '/about',
+    name: 'About',
+    icon: Icons.info_outline,
+    group: SettingsGroup.others,
+  );
 
-final Map<String, SettingsRoute> settingsRoutes = {
-  '/appearance/global': SettingsRoute(
-      icon: Icons.settings_rounded,
-      name: 'Global',
-      builder: (_) => const GlobalCustomizerScreen()),
-  '/appearance/bibleview': SettingsRoute(
-      icon: Icons.palette_rounded,
-      name: 'Bible viewer',
-      builder: (_) => const BiblePaneCustomizerScreen()),
-  '/biblemanager/repo': SettingsRoute(
-      icon: Icons.local_library_rounded,
-      name: 'My Library',
-      builder: (_) => const LibrariesPage()),
-  '/biblemanager/importer': SettingsRoute(
-      icon: Icons.file_upload_outlined,
-      name: 'Import',
-      builder: (_) => const ImporterPage()),
-  '/obsliveoverlay': SettingsRoute(
-      icon: Icons.live_tv_rounded,
-      name: 'OBS Live Overlay (beta)',
-      builder: (_) => const ObsLiveOverlayPage()),
-  '/remotecontroller': SettingsRoute(
-      icon: Icons.stay_current_portrait_rounded,
-      name: 'Remote Controller (beta)',
-      builder: (_) => const RemoteControllerPage()),
-  '/shortcuts': SettingsRoute(
-      icon: Icons.keyboard,
-      name: 'Shortcuts',
-      builder: (_) => const ShortcutsScreen()),
-  '/about': SettingsRoute(
-      icon: Icons.info_outline,
-      name: 'About',
-      builder: (_) => const AboutSettingsPage()),
+  final String route;
+  final String name;
+  final IconData icon;
+  final SettingsGroup group;
+
+  const SettingsPage({
+    required this.route,
+    required this.name,
+    required this.icon,
+    required this.group,
+  });
+
+  bool get isSupportedOnPlatform {
+    if (kIsWeb) {
+      return this != SettingsPage.importer &&
+          this != SettingsPage.obsLiveOverlay &&
+          this != SettingsPage.remoteController;
+    }
+    return true;
+  }
+
+  static SettingsPage? fromRoutePath(String path) {
+    for (final page in values) {
+      if (page.route == path) return page;
+    }
+    return null;
+  }
+}
+
+final Map<SettingsPage, WidgetBuilder> settingsBuilders = {
+  SettingsPage.globalAppearance: (_) => const GlobalCustomizerScreen(),
+  SettingsPage.bibleViewer: (_) => const BiblePaneCustomizerScreen(),
+  SettingsPage.library: (_) => const LibrariesPage(),
+  SettingsPage.importer: (_) => const ImporterPage(),
+  SettingsPage.obsLiveOverlay: (_) => const ObsLiveOverlayPage(),
+  SettingsPage.remoteController: (_) => const RemoteControllerPage(),
+  SettingsPage.shortcuts: (_) => const ShortcutsScreen(),
+  SettingsPage.about: (_) => const AboutSettingsPage(),
 };
 
-class SettingsRoute {
-  final IconData? icon;
-  final String name;
-  final WidgetBuilder builder;
+/// Generate the Sidebar Menu dynamically
+Map<SettingsGroup, List<SettingsPage>> get sidebarNavigation {
+  final Map<SettingsGroup, List<SettingsPage>> menu = {};
 
-  SettingsRoute({
-    this.icon,
-    required this.name,
-    required this.builder,
-  });
-}
-
-String parentSegment(String route) {
-  final segs = route.split('/').where((s) => s.isNotEmpty).toList();
-
-  if (segs.length == 1) return 'Others';
-
-  return segs.isEmpty ? '' : segs.first;
-}
-
-Map<String, List<MapEntry<String, SettingsRoute>>> groupedSettingsRoutes(
-  Map<String, SettingsRoute> routes,
-) {
-  final entries = routes.entries.toList();
-
-  // entries.sort((a, b) {
-  //   final pa = parentSegment(a.key);
-  //   final pb = parentSegment(b.key);
-  //   final c1 = pa.compareTo(pb);
-  //   if (c1 != 0) return c1;
-  //   return a.value.name.compareTo(b.value.name);
-  // });
-
-  final Map<String, List<MapEntry<String, SettingsRoute>>> groups = {};
-  for (final e in entries) {
-    final p = parentSegment(e.key);
-    groups.putIfAbsent(p, () => []).add(e);
+  for (final page in SettingsPage.values) {
+    if (!page.isSupportedOnPlatform) continue;
+    menu.putIfAbsent(page.group, () => []).add(page);
   }
-  return groups;
+
+  return menu;
 }
