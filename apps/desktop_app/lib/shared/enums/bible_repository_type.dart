@@ -10,9 +10,6 @@ enum BibleRepositoryType {
   cloudAPI(
     label: 'Get Bible v2',
     description: 'Bibles from api.getbible.net/v2',
-  ),
-  undefined(
-    label: 'Undefined',
   );
 
   const BibleRepositoryType({required this.label, this.description});

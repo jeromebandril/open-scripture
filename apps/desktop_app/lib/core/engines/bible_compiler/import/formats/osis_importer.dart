@@ -106,7 +106,7 @@ final class OsisImporter implements BibleImporter {
     return BibleTranslation(
       localId: null,
       extId: BibleId(
-        repoType: BibleRepositoryType.undefined,
+        repoType: BibleRepositoryType.localDatabase,
         externalId: safeId,
       ),
       name: safeTitle,

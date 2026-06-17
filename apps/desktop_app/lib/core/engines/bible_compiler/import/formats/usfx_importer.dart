@@ -168,7 +168,7 @@ class UsfxImporter implements BibleImporter {
     return BibleTranslation(
       localId: null,
       extId: BibleId(
-        repoType: BibleRepositoryType.undefined,
+        repoType: BibleRepositoryType.localDatabase,
         externalId: abbreviation,
       ),
       name: required('//identification/name', 'BibleTranslation.name'),
