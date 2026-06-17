@@ -51,10 +51,6 @@ class _BibleSelectorState extends State<BibleSelector> {
 
   @override
   Widget build(BuildContext context) {
-    final useCustom =
-        context.select((CustomizerCubit b) => b.state.pane.enableCustomTheme);
-    final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
-
     return BlocProvider(
       create: (_) =>
           widget.bloc ??
@@ -75,28 +71,7 @@ class _BibleSelectorState extends State<BibleSelector> {
                 //
                 // Header
                 //
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: AppSpacing.xs,
-                  children: [
-                    Text(
-                      'Select bibles',
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w600,
-                        color: useCustom
-                            ? paneTheme.textColor
-                            : Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                    Text(
-                      'Choose one source and multiple bibles for parallel view',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
+                const _Header(),
                 //
                 // Tabs & Views
                 //
@@ -126,6 +101,40 @@ class _BibleSelectorState extends State<BibleSelector> {
   }
 }
 
+class _Header extends StatelessWidget {
+  const _Header();
+
+  @override
+  Widget build(BuildContext context) {
+    final useCustom =
+        context.select((CustomizerCubit b) => b.state.pane.enableCustomTheme);
+    final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: AppSpacing.xs,
+      children: [
+        Text(
+          'Select bibles',
+          style: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.w600,
+            color: useCustom
+                ? paneTheme.textColor
+                : Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+        Text(
+          'Choose one source and multiple bibles for parallel view',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 /// Reads selectedIds from the cubit and enables/disables based on
 /// the active tab's repo type being available.
 class _FooterConfirmButton extends StatelessWidget {
@@ -145,23 +154,33 @@ class _FooterConfirmButton extends StatelessWidget {
     final repoType = repoTypes[tabIndex];
     final canConfirm = selectedIds.isNotEmpty && repoType != null;
 
-    return ElevatedButton(
-      onPressed: canConfirm
-          ? () => context
-              .read<MultiPaneManagerCubit>()
-              .activePane()
-              .bloc
-              .add(BiblePaneOpen(bibleIds: selectedIds))
-          : null,
-      autofocus: true,
-      child: const Row(
-        mainAxisSize: MainAxisSize.min,
-        spacing: 4,
-        children: [
-          Text('Confirm'),
-          Icon(Icons.arrow_forward_rounded),
-        ],
-      ),
+    return Row(
+      children: [
+        if (selectedIds.isNotEmpty)
+          TextButton(
+              onPressed: () =>
+                  context.read<BibleSelectorCubit>().setSelected([]),
+              child: Text('Unselect All (${selectedIds.length})')),
+        const Spacer(),
+        ElevatedButton(
+          onPressed: canConfirm
+              ? () => context
+                  .read<MultiPaneManagerCubit>()
+                  .activePane()
+                  .bloc
+                  .add(BiblePaneOpen(bibleIds: selectedIds))
+              : null,
+          autofocus: true,
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            spacing: 4,
+            children: [
+              Text('Confirm'),
+              Icon(Icons.arrow_forward_rounded),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
