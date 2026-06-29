@@ -76,7 +76,7 @@ class _AppInputOptionState<T> extends State<AppInputOption<T>> {
           menuHeight: widget.maxMenuHeight,
           trigger: _DropdownTrigger(
             key: _triggerKey,
-            leading: widget.leading,
+            leading: widget.leading ?? _selected?.leading,
             label: _selected?.label,
             hint: widget.hint,
             enabled: widget.enabled,
@@ -127,20 +127,43 @@ class _DropdownTrigger extends StatelessWidget {
         onTap: onTap,
         child: InputDecorator(
           isFocused: isOpen,
-          isEmpty: label == null,
+          isEmpty: false,
           decoration: InputDecoration(
             enabled: enabled,
-            hintText: hint,
-            prefix: leading,
-            suffixIcon: AnimatedRotation(
-              turns: isOpen ? 0.5 : 0,
-              duration: const Duration(milliseconds: 100),
-              child: const Icon(Icons.keyboard_arrow_down),
-            ),
           ),
-          child: label != null
-              ? Text(label!, style: theme.textTheme.bodyMedium)
-              : const SizedBox.shrink(),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              if (leading != null) ...[
+                leading!,
+                const SizedBox(width: AppSpacing.sm),
+              ],
+              Expanded(
+                child: label != null
+                    ? Text(
+                        label!,
+                        style: theme.textTheme.bodyMedium,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      )
+                    : Text(
+                        hint ?? '',
+                        style: theme.inputDecorationTheme.hintStyle ??
+                            theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.disabledColor,
+                            ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+              ),
+              const SizedBox(width: AppSpacing.xs),
+              AnimatedRotation(
+                turns: isOpen ? 0.5 : 0,
+                duration: const Duration(milliseconds: 100),
+                child: const Icon(Icons.keyboard_arrow_down, size: 18),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -161,7 +184,8 @@ class _DropdownMenu<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+      padding:
+          const EdgeInsets.symmetric(vertical: AppSpacing.xs + AppSpacing.xs),
       shrinkWrap: true,
       itemCount: items.length,
       itemBuilder: (context, index) {
@@ -189,6 +213,9 @@ class _DropdownMenu<T> extends StatelessWidget {
 
         return ListTile(
           dense: true,
+          visualDensity: VisualDensity.compact,
+          contentPadding: const EdgeInsets.symmetric(
+              vertical: AppSpacing.xs2, horizontal: AppSpacing.sm),
           selected: isSelected,
           leading: item.leading,
           title: Text(item.label),

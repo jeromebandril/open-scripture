@@ -62,7 +62,7 @@ class _BibleViewPresentationCustomizerScreenState
                     },
                     items: AppTextAlign.values
                         .map((ta) => AppDropdownItem<AppTextAlign>(
-                            value: ta, label: ta.wire))
+                            value: ta, label: ta.wire, leading: Icon(ta.icon)))
                         .toList(),
                   )),
               Setting(
@@ -77,7 +77,7 @@ class _BibleViewPresentationCustomizerScreenState
                     },
                     items: AppTextAlign.values
                         .map((ta) => AppDropdownItem<AppTextAlign>(
-                            value: ta, label: ta.wire))
+                            value: ta, label: ta.wire, leading: Icon(ta.icon)))
                         .toList(),
                   )),
               Setting(

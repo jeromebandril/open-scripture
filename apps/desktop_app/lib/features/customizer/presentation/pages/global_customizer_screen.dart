@@ -10,6 +10,19 @@ import 'package:open_scripture/features/settings_window/presentation/widgets/set
 
 import '../state/customizer_cubit.dart';
 
+extension _ThemeModeIcons on ThemeMode {
+  IconData get icon {
+    switch (this) {
+      case ThemeMode.system:
+        return Icons.brightness_medium;
+      case ThemeMode.light:
+        return Icons.light_mode_rounded;
+      case ThemeMode.dark:
+        return Icons.dark_mode_rounded;
+    }
+  }
+}
+
 class GlobalCustomizerScreen extends StatefulWidget {
   const GlobalCustomizerScreen({super.key});
 
@@ -46,8 +59,8 @@ class _GlobalCustomizerScreenState extends State<GlobalCustomizerScreen> {
                           appTheme: (a) => a.copyWith(mode: mode));
                     },
                     items: ThemeMode.values
-                        .map((m) =>
-                            AppDropdownItem<ThemeMode>(value: m, label: m.name))
+                        .map((m) => AppDropdownItem<ThemeMode>(
+                            value: m, label: m.name, leading: Icon(m.icon)))
                         .toList(),
                   )),
               Setting(

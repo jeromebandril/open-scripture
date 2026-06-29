@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 enum AppTextAlign { left, center }
 
 extension AppTextAlignWire on AppTextAlign {
@@ -18,6 +20,17 @@ extension AppTextAlignWire on AppTextAlign {
         return AppTextAlign.center;
       default:
         return AppTextAlign.left;
+    }
+  }
+}
+
+extension AppTextAlignIcon on AppTextAlign {
+  IconData get icon {
+    switch (this) {
+      case AppTextAlign.left:
+        return Icons.align_horizontal_left_rounded;
+      case AppTextAlign.center:
+        return Icons.align_horizontal_center_rounded;
     }
   }
 }
