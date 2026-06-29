@@ -48,7 +48,8 @@ abstract final class AppPopupMenuTheme {
         }
         return SystemMouseCursors.click;
       }),
-      menuPadding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+      menuPadding: const EdgeInsets.symmetric(
+          vertical: AppSpacing.sm, horizontal: AppSpacing.sm),
       position: PopupMenuPosition.under,
     );
   }

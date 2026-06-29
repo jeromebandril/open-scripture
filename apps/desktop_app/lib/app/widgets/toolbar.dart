@@ -69,7 +69,7 @@ class ToolbarMenu extends StatelessWidget {
         context.select((MultiPaneManagerCubit c) => c.activePane());
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.start,

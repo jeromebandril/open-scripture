@@ -55,7 +55,7 @@ class DropdownMenuAnchor extends StatefulWidget {
     //  Behaviour
     this.dismissOnOutsideTap = true,
     //  Decoration
-    this.menuPadding = const EdgeInsets.all(8),
+    this.menuPadding,
     this.menuColor,
     this.onDismiss,
   });
@@ -90,7 +90,7 @@ class DropdownMenuAnchor extends StatefulWidget {
   final bool dismissOnOutsideTap;
 
   /// Override default menu container decoration.
-  final EdgeInsetsGeometry menuPadding;
+  final EdgeInsetsGeometry? menuPadding;
   final Color? menuColor;
 
   @override
@@ -159,7 +159,7 @@ class _DropdownMenuAnchorState extends State<DropdownMenuAnchor> {
         shape: popupTheme.shape,
         clipBehavior: Clip.antiAlias,
         child: Padding(
-          padding: popupTheme.menuPadding ?? widget.menuPadding,
+          padding: widget.menuPadding ?? popupTheme.menuPadding!,
           child: SizedBox(width: resolvedWidth, child: widget.menuContent),
         ),
       ),
