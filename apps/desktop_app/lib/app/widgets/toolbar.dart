@@ -43,7 +43,7 @@ class _ToolbarButtonState extends State<ToolbarButton> {
           _menuVisible.value = state.isToolMenuVisible,
       child: DropdownMenuAnchor(
         menuVisible: _menuVisible,
-        menuWidth: 400, // absolute width
+        menuWidth: 430, // absolute width
         menuHeightFraction: 0.4, // responsive height
         onDismiss: () => context
             .read<InterfaceVisibilityCubit>()
@@ -82,6 +82,7 @@ class ToolbarMenu extends StatelessWidget {
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: AppSpacing.xs,
               children: [
                 //
                 // GLOBAL controls
@@ -105,6 +106,7 @@ class ToolbarMenu extends StatelessWidget {
                 ),
                 _Control(
                   command: AppCommand.toggleToolbar,
+                  addInfo: '(only when fullscreen)',
                   child: BlocBuilder<InterfaceVisibilityCubit,
                       InterfaceVisibilityState>(builder: (context, state) {
                     return TextButton.icon(
@@ -200,18 +202,24 @@ class ToolbarMenu extends StatelessWidget {
 }
 
 class _Control extends StatelessWidget {
-  const _Control({required this.command, required this.child});
+  const _Control({required this.command, required this.child, this.addInfo});
 
   final Widget child;
   final AppCommand command;
+  final String? addInfo;
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         child,
-        ShortcutView(activator: appCommandShortcuts[command], fontSize: 9),
+        if (addInfo != null)
+          Text(
+            addInfo!,
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        Spacer(),
+        ShortcutView(activator: appCommandShortcuts[command], fontSize: 12),
       ],
     );
   }
