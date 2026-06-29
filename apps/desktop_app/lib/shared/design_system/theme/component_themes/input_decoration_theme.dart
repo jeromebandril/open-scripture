@@ -14,7 +14,12 @@ abstract final class AppInputDecorationTheme {
     final Color fill = isLight
         ? AppColors.surfaceContainerLowest
         : AppColors.surfaceContainerLowestDark;
+    final Color fillDisabled = isLight
+        ? AppColors.surfaceContainerHigh
+        : AppColors.surfaceContainerHighDark;
     final Color border = isLight ? AppColors.outline : AppColors.outlineDark;
+    final Color borderDisabled =
+        isLight ? AppColors.outlineVariant : AppColors.outlineVariantDark;
     final Color hintColor = isLight ? AppColors.grey400 : AppColors.grey600;
     final Color labelColor =
         isLight ? AppColors.onSurfaceVariant : AppColors.onSurfaceVariantDark;
@@ -26,7 +31,10 @@ abstract final class AppInputDecorationTheme {
 
     return InputDecorationTheme(
       filled: true,
-      fillColor: fill,
+      fillColor: WidgetStateColor.resolveWith((states) {
+        if (states.contains(WidgetState.disabled)) return fillDisabled;
+        return fill;
+      }),
       hintStyle: AppTypography.bodyMd.copyWith(color: hintColor),
       labelStyle: AppTypography.bodyMd.copyWith(color: labelColor),
       floatingLabelStyle: AppTypography.labelSm.copyWith(color: primaryColor),
@@ -54,9 +62,7 @@ abstract final class AppInputDecorationTheme {
       ),
       disabledBorder: OutlineInputBorder(
         borderRadius: AppRadius.input,
-        borderSide: BorderSide(
-          color: isLight ? AppColors.grey200 : AppColors.grey700,
-        ),
+        borderSide: BorderSide(color: borderDisabled),
       ),
       contentPadding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.lg,

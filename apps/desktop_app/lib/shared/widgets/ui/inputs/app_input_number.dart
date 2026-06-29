@@ -88,6 +88,9 @@ class _AppInputNumberState extends State<AppInputNumber> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      mouseCursor: widget.enabled
+          ? SystemMouseCursors.text
+          : SystemMouseCursors.forbidden,
       enabled: widget.enabled,
       textAlign: TextAlign.end,
       controller: _controller,

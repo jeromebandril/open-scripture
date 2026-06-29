@@ -55,6 +55,9 @@ class _AppInputTextState extends State<AppInputText> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      mouseCursor: widget.enabled
+          ? SystemMouseCursors.text
+          : SystemMouseCursors.forbidden,
       controller: _controller,
       focusNode: widget.focusNode,
       enabled: widget.enabled,
