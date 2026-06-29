@@ -44,7 +44,7 @@ class _ToolbarButtonState extends State<ToolbarButton> {
       child: DropdownMenuAnchor(
         menuVisible: _menuVisible,
         menuWidth: 430, // absolute width
-        menuHeightFraction: 0.4, // responsive height
+        menuHeight: 600,
         onDismiss: () => context
             .read<InterfaceVisibilityCubit>()
             .setVisibility(toolmenu: false),

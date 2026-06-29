@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:open_scripture/app/widgets/app_reveal_animation.dart';
+import 'package:open_scripture/shared/constants.dart';
+import 'package:open_scripture/shared/design_system/design_system.dart';
 
 /// A reusable widget that wraps any [trigger] and pops an overlay menu
 /// below it, animated with [AppRevealAnimation] (for consistent animation
@@ -44,9 +46,9 @@ class DropdownMenuAnchor extends StatefulWidget {
     required this.menuContent,
     // Size
     this.menuWidth,
-    this.menuHeight,
+    required this.menuHeight,
     this.menuWidthFraction = 0.25,
-    this.menuHeightFraction = 0.4,
+    // this.menuHeightFraction = 0.4,
     // Layout
     this.menuGap = 5.0,
     this.menuAlignment = Alignment.topLeft,
@@ -69,13 +71,13 @@ class DropdownMenuAnchor extends StatefulWidget {
   final Widget menuContent;
 
   final double? menuWidth;
-  final double? menuHeight;
+  final double menuHeight;
 
   /// Fraction of screen width used when [menuWidth] is null.
   final double menuWidthFraction;
 
   /// Fraction of screen height used when [menuHeight] is null.
-  final double menuHeightFraction;
+  // final double menuHeightFraction;
 
   /// Vertical gap between the trigger bottom and the menu top.
   final double menuGap;
@@ -139,8 +141,9 @@ class _DropdownMenuAnchorState extends State<DropdownMenuAnchor> {
 
     final resolvedWidth =
         widget.menuWidth ?? screen.width * widget.menuWidthFraction;
-    final resolvedHeight =
-        widget.menuHeight ?? screen.height * widget.menuHeightFraction;
+    final resolvedHeight = widget.menuHeight
+        .clamp(0, screen.height - kWindowsTitleBarHeight - AppSpacing.xl3)
+        .toDouble();
 
     final dx = widget.menuAlignment == Alignment.topRight
         ? info.childSize.width - resolvedWidth
