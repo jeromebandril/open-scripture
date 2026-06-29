@@ -31,7 +31,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                   title: 'OBS Live Overlay (beta)',
                   children: [
                     Text(
-                        'When activated, the app will feed the selected reference to a local web server, which can be used by OBS program to display in real time an overlay with the verse content.'),
+                        'Hosts a customizable local web page, which can be used by the OBS program to display in real time an overlay with the selected verse content.'),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -65,8 +65,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                   children: [
                     Setting(
                         label: 'Enable OBS Live Overlay',
-                        description:
-                            'Host a web page that OBS can listen to display as overlay graphic',
+                        description: 'Enable/Disable obs live overlay feature',
                         child: AppInputBool(
                           enabled: !(state.isRunning || state.busy),
                           value: enableFeature,
@@ -81,7 +80,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                         // Not implemented yet, just a placeholder for now
                         label: 'Enable auto start',
                         description:
-                            'Automatically start the OBS Live Overlay when the app starts',
+                            'Automatically start this feature at app startup (not available yet)',
                         child: AppInputBool(
                           enabled: false, //state.isRunning || state.busy,
                           value: false,
@@ -97,11 +96,13 @@ class ObsLiveOverlayPage extends StatelessWidget {
                     Setting(
                         label: 'Enable manual control',
                         description:
-                            'Decide if to pass the selected verse to the overlay manually',
+                            'Decide if to pass the selected verse to the overlay manually (not available yet)',
                         child: AppInputBool(
-                          enabled: !(state.isRunning || state.busy),
-                          value: ctx.select((ObsLiveOverlaySettingsCubit c) =>
-                              c.state.settings.enableManualControl),
+                          enabled: false,
+                          value: false,
+                          // enabled: !(state.isRunning || state.busy),
+                          // value: ctx.select((ObsLiveOverlaySettingsCubit c) =>
+                          //     c.state.settings.enableManualControl),
                           onChanged: (val) {
                             ctx
                                 .read<ObsLiveOverlaySettingsCubit>()
@@ -128,7 +129,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                     Setting(
                         label: 'URL',
                         description:
-                            'Copy this link and paste it into OBS Web source scene or preview in a browser',
+                            'Copy this link and paste it into OBS Web source scene. You can also preview it by pasting it in a browser searchbar',
                         settingWidth: 300,
                         child: Builder(builder: (context) {
                           final url = context.select(

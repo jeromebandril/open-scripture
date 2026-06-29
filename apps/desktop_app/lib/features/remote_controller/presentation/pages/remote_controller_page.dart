@@ -48,7 +48,7 @@ class _RemoteControllerPageState extends State<RemoteControllerPage> {
                         title: 'Remote Controller (beta)',
                         children: [
                           Text(
-                              'This feature allows you to control the app remotely from another device. To use it, open the following URL on your phone:'),
+                              'Allows you to control this app remotely from your phone. To use it, make sure to be connected in the same network.'),
                           Column(
                             spacing: AppSpacing.lg,
                             children: [
@@ -113,8 +113,7 @@ class _RemoteControllerPageState extends State<RemoteControllerPage> {
                   children: [
                     Setting(
                         label: 'Enable Remote Controller',
-                        description:
-                            'Control the app from another device on the same network. When enabled, a web server will be hosted on your machine.',
+                        description: 'Enable/Disable remote controller feature',
                         child: AppInputBool(
                           enabled: !(state.isRunning || state.isBusy),
                           value: context.select(
@@ -129,7 +128,7 @@ class _RemoteControllerPageState extends State<RemoteControllerPage> {
                         )),
                     Setting(
                         label: 'Port',
-                        description: 'Preferred port for the web page host',
+                        description: 'Preferred connection port',
                         child: AppInputNumber(
                           enabled: !(state.isRunning || state.isBusy),
                           min: 49152,
@@ -180,7 +179,8 @@ class __ConnectionDetailsState extends State<_ConnectionDetails> {
                   return Column(
                     children: [
                       const Text('Scan this QR Code'),
-                      const Text('or copy the following URL to your phone:'),
+                      const Text('or copy this URL using the mobile app:'),
+                      const SizedBox(height: AppSpacing.sm),
                       SelectableText(serverUrl),
                       const SizedBox(height: AppSpacing.md),
                       if (_showQrCode)
