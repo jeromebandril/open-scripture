@@ -7,10 +7,10 @@ import 'package:open_scripture/shared/design_system/design_system.dart';
 
 import '../../../../shared/widgets/dot.dart';
 import '../../../../shared/utils/network_utils.dart';
-import '../../../settings_window/presentation/widgets/setting_input_bool.dart';
+import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../../settings_window/presentation/widgets/setting.dart';
-import '../../../settings_window/presentation/widgets/setting_input_number.dart';
+import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
 import '../state/remote_controller/remote_controller_cubit.dart';
 import '../state/remote_controller_settings/remote_controller_settings_cubit.dart';
 
@@ -115,7 +115,7 @@ class _RemoteControllerPageState extends State<RemoteControllerPage> {
                         label: 'Enable Remote Controller',
                         description:
                             'Control the app from another device on the same network. When enabled, a web server will be hosted on your machine.',
-                        child: SettingInputBool(
+                        child: AppInputBool(
                           isDisabled: state.isRunning || state.isBusy,
                           value: context.select(
                               (RemoteControllerSettingsCubit c) =>
@@ -130,7 +130,7 @@ class _RemoteControllerPageState extends State<RemoteControllerPage> {
                     Setting(
                         label: 'Port',
                         description: 'Preferred port for the web page host',
-                        child: SettingInputNumber(
+                        child: AppInputNumber(
                           isDisabled: state.isRunning || state.isBusy,
                           min: 49152,
                           max: 65535,

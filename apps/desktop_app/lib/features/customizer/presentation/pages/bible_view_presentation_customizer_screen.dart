@@ -5,8 +5,8 @@ import 'package:open_scripture/features/customizer/domain/entities/app_text_alig
 import 'package:open_scripture/features/customizer/domain/entities/presentation_verse_number_style.dart';
 import 'package:open_scripture/features/customizer/presentation/state/customizer_cubit.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting.dart';
-import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_number.dart';
-import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_option.dart';
+import 'package:open_scripture/shared/widgets/ui/inputs/app_input_number.dart';
+import 'package:open_scripture/shared/widgets/ui/inputs/app_input_option.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
 
 class BibleViewPresentationCustomizerScreen extends StatefulWidget {
@@ -37,7 +37,7 @@ class _BibleViewPresentationCustomizerScreenState
                   label: 'Text Font Weight Subtitle',
                   description:
                       'Set font weight for the bible metadata indicator when in parallel view',
-                  child: SettingInputOption<AppFontWeight>(
+                  child: AppInputOption<AppFontWeight>(
                     value: context.select((CustomizerCubit c) =>
                         c.state.presentTheme.subtitleFontWeight),
                     onChanged: (fw) {
@@ -53,7 +53,7 @@ class _BibleViewPresentationCustomizerScreenState
               Setting(
                   label: 'Title alignment',
                   description: 'Select title alignment',
-                  child: SettingInputOption<AppTextAlign>(
+                  child: AppInputOption<AppTextAlign>(
                     value: context.select((CustomizerCubit c) =>
                         c.state.presentTheme.titleTextAlign),
                     onChanged: (ta) {
@@ -68,7 +68,7 @@ class _BibleViewPresentationCustomizerScreenState
               Setting(
                   label: 'Text alignment',
                   description: 'Select text alignment',
-                  child: SettingInputOption<AppTextAlign>(
+                  child: AppInputOption<AppTextAlign>(
                     value: context.select(
                         (CustomizerCubit c) => c.state.presentTheme.textAlign),
                     onChanged: (ta) {
@@ -83,7 +83,7 @@ class _BibleViewPresentationCustomizerScreenState
               Setting(
                   label: 'Verse number style',
                   description: 'Select verse number style',
-                  child: SettingInputOption<PresentationVerseNumberStyle>(
+                  child: AppInputOption<PresentationVerseNumberStyle>(
                     value: context.select((CustomizerCubit c) =>
                         c.state.presentTheme.verseNumberStyle),
                     onChanged: (vns) {
@@ -100,7 +100,7 @@ class _BibleViewPresentationCustomizerScreenState
               Setting(
                   label: 'Parallel view distance',
                   description: 'Set distance between each parallel instance',
-                  child: SettingInputNumber(
+                  child: AppInputNumber(
                     min: 0,
                     max: 100,
                     onSubmitted: (n) {

@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/obs_live_overlay/presentation/state/obs_overlay/obs_live_overlay_cubit.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting.dart';
-import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_bool.dart';
-import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_number.dart';
+import 'package:open_scripture/shared/widgets/ui/inputs/app_input_bool.dart';
+import 'package:open_scripture/shared/widgets/ui/inputs/app_input_number.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
 
 import '../../../../shared/widgets/dot.dart';
@@ -67,7 +67,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                         label: 'Enable OBS Live Overlay',
                         description:
                             'Host a web page that OBS can listen to display as overlay graphic',
-                        child: SettingInputBool(
+                        child: AppInputBool(
                           isDisabled: state.isRunning || state.busy,
                           value: enableFeature,
                           onChanged: (val) {
@@ -82,7 +82,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                         label: 'Enable auto start',
                         description:
                             'Automatically start the OBS Live Overlay when the app starts',
-                        child: SettingInputBool(
+                        child: AppInputBool(
                           isDisabled: false, //state.isRunning || state.busy,
                           value: false,
                           // ctx.select((ObsLiveOverlaySettingsCubit c) =>
@@ -98,7 +98,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                         label: 'Enable manual control',
                         description:
                             'Decide if to pass the selected verse to the overlay manually',
-                        child: SettingInputBool(
+                        child: AppInputBool(
                           isDisabled: state.isRunning || state.busy,
                           value: ctx.select((ObsLiveOverlaySettingsCubit c) =>
                               c.state.settings.enableManualControl),
@@ -112,7 +112,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                     Setting(
                         label: 'Port',
                         description: 'Preffered port for the web page host',
-                        child: SettingInputNumber(
+                        child: AppInputNumber(
                           isDisabled: state.isRunning || state.busy,
                           min: 49152,
                           max: 65535,

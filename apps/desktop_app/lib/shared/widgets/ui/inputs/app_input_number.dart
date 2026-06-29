@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class SettingInputNumber extends StatefulWidget {
-  const SettingInputNumber({
+class AppInputNumber extends StatefulWidget {
+  const AppInputNumber({
     super.key,
     this.value,
     this.suffixIcon,
@@ -20,10 +20,10 @@ class SettingInputNumber extends StatefulWidget {
   final bool isDisabled;
 
   @override
-  State<SettingInputNumber> createState() => _SettingInputNumberState();
+  State<AppInputNumber> createState() => _AppInputNumberState();
 }
 
-class _SettingInputNumberState extends State<SettingInputNumber> {
+class _AppInputNumberState extends State<AppInputNumber> {
   late final TextEditingController _controller;
   bool _minReached = false;
   bool _maxReached = false;
