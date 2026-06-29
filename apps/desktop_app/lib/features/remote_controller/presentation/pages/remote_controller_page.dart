@@ -131,7 +131,7 @@ class _RemoteControllerPageState extends State<RemoteControllerPage> {
                         label: 'Port',
                         description: 'Preferred port for the web page host',
                         child: AppInputNumber(
-                          isDisabled: state.isRunning || state.isBusy,
+                          enabled: !(state.isRunning || state.isBusy),
                           min: 49152,
                           max: 65535,
                           value: port,

@@ -6,18 +6,24 @@ class AppInputNumber extends StatefulWidget {
     super.key,
     this.value,
     this.suffixIcon,
+    this.onChanged,
     this.onSubmitted,
     this.max,
-    this.min = 0,
-    this.isDisabled = false,
+    this.min,
+    this.decimal = false,
+    this.enabled = true,
   });
 
   final num? value;
   final IconData? suffixIcon;
-  final Function(num)? onSubmitted;
-  final int? max;
-  final int? min;
-  final bool isDisabled;
+  final ValueChanged<num>? onChanged;
+  final ValueChanged<num>? onSubmitted;
+  final num? max;
+  final num? min;
+
+  /// Allow decimal input. Defaults to false (integer only).
+  final bool decimal;
+  final bool enabled;
 
   @override
   State<AppInputNumber> createState() => _AppInputNumberState();
@@ -31,76 +37,81 @@ class _AppInputNumberState extends State<AppInputNumber> {
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController()
-      ..text = widget.value?.toString() ?? '';
-    _controller.addListener(_sanityCheck);
+    _controller = TextEditingController(text: widget.value?.toString() ?? '');
+    _controller.addListener(_validate);
+  }
+
+  @override
+  void didUpdateWidget(AppInputNumber old) {
+    super.didUpdateWidget(old);
+    if (widget.value != old.value) {
+      final String text = widget.value?.toString() ?? '';
+      if (text != _controller.text) {
+        _controller.value = _controller.value.copyWith(text: text);
+      }
+    }
+    if (widget.min != old.min || widget.max != old.max) _validate();
   }
 
   @override
   void dispose() {
+    _controller.removeListener(_validate);
     _controller.dispose();
     super.dispose();
   }
 
-  void _sanityCheck() {
-    final n = double.tryParse(_controller.text);
+  num? get _parsed => num.tryParse(_controller.text);
 
+  void _validate() {
+    final num? n = _parsed;
     if (n == null) return;
 
-    bool isMin = false;
-    if (widget.min != null && n < widget.min!) {
-      isMin = true;
-      if (isMin && _minReached) return;
-      setState(() => _minReached = true);
-      return;
-    }
-    bool isMax = false;
-    if (widget.max != null && n > widget.max!) {
-      isMax = true;
-      if (isMax && _maxReached) return;
-      setState(() => _maxReached = true);
-      return;
-    }
-    if (_maxReached || _minReached) {
+    final bool minReached = widget.min != null && n < widget.min!;
+    final bool maxReached = widget.max != null && n > widget.max!;
+
+    if (minReached != _minReached || maxReached != _maxReached) {
       setState(() {
-        _minReached = false;
-        _maxReached = false;
+        _minReached = minReached;
+        _maxReached = maxReached;
       });
     }
   }
 
-  String? _errorBuilder() {
-    if (_minReached) return 'min of ${widget.min} reached';
-    if (_maxReached) return 'max of ${widget.max} reached';
+  bool get _isValid => !_minReached && !_maxReached;
+
+  String? get _errorText {
+    if (_minReached) return 'Minimum value is ${widget.min}';
+    if (_maxReached) return 'Maximum value is ${widget.max}';
     return null;
   }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 35,
-      child: TextField(
-        enabled: !widget.isDisabled,
-        textAlign: TextAlign.end,
-        controller: _controller,
-        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-        keyboardType: TextInputType.number,
-        onSubmitted: (number) {
-          if (_minReached || _maxReached) return;
-          widget.onSubmitted?.call(double.parse(number));
-        },
-        decoration: InputDecoration(
-          visualDensity: VisualDensity.compact,
-          errorText: _errorBuilder(),
-          isDense: true,
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: 12,
-            vertical: 10,
-          ),
-          border: OutlineInputBorder(),
-          suffixIcon:
-              widget.suffixIcon != null ? Icon(widget.suffixIcon) : null,
-        ),
+    return TextField(
+      enabled: widget.enabled,
+      textAlign: TextAlign.end,
+      controller: _controller,
+      style: Theme.of(context).textTheme.bodyMedium,
+      keyboardType: TextInputType.numberWithOptions(
+        signed: false,
+        decimal: widget.decimal,
+      ),
+      inputFormatters: [
+        widget.decimal
+            ? FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
+            : FilteringTextInputFormatter.digitsOnly,
+      ],
+      onChanged: (text) {
+        final num? n = _parsed;
+        if (n != null && _isValid) widget.onChanged?.call(n);
+      },
+      onSubmitted: (text) {
+        final num? n = _parsed;
+        if (n != null && _isValid) widget.onSubmitted?.call(n);
+      },
+      decoration: InputDecoration(
+        errorText: _errorText,
+        suffixIcon: widget.suffixIcon != null ? Icon(widget.suffixIcon) : null,
       ),
     );
   }

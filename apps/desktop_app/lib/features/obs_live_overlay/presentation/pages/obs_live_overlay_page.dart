@@ -113,7 +113,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                         label: 'Port',
                         description: 'Preffered port for the web page host',
                         child: AppInputNumber(
-                          isDisabled: state.isRunning || state.busy,
+                          enabled: state.isRunning || state.busy,
                           min: 49152,
                           max: 65535,
                           value: ctx.select((ObsLiveOverlaySettingsCubit c) =>

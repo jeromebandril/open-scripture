@@ -70,7 +70,7 @@ abstract final class AppInputDecorationTheme {
         if (states.contains(WidgetState.focused)) return primaryColor;
         return iconColor;
       }),
-      isDense: false,
+      isDense: true,
       floatingLabelBehavior: FloatingLabelBehavior.auto,
     );
   }
