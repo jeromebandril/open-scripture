@@ -58,17 +58,6 @@ class _BibleViewListCustomizerScreenState
                     },
                   )),
               Setting(
-                  label: 'Use hanging refs',
-                  description: 'Enables hanging refs',
-                  child: AppInputBool(
-                    value: context.select((CustomizerCubit c) =>
-                        c.state.listTheme.enableHangingRefs),
-                    onChanged: (val) {
-                      cubit.updateTheme(
-                          listTheme: (l) => l.copyWith(enableHangingRefs: val));
-                    },
-                  )),
-              Setting(
                   label: 'Underline all references',
                   description: 'Put underline decoration on all references',
                   child: AppInputBool(

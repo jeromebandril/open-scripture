@@ -24,7 +24,6 @@ class BibleViewListTheme extends ThemeExtension<BibleViewListTheme> {
     TextDecoration? underlineRef,
     bool? showVerseDivider,
     bool? showFullRefAlways,
-    bool? enableHangingRefs,
     HighlightRenderMode? highlightRenderMode,
     double? parallelSpacing,
   }) {
