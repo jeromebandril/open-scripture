@@ -10,7 +10,7 @@ import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_
 import 'package:open_scripture/shared/widgets/dropdown_menu_anchor.dart';
 
 import '../state/interface_visibility_cubit.dart';
-import '../../shared/theme/tokens.dart';
+import '../../shared/design_system/tokens/tokens.dart';
 import '../../shared/widgets/custom_icon_button.dart';
 
 class ToolbarButton extends StatefulWidget {

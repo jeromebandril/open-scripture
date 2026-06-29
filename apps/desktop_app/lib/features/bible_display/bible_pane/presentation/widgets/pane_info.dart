@@ -7,8 +7,7 @@ import 'package:open_scripture/features/bible_display/bible_pane/presentation/st
 import 'package:open_scripture/features/bible_display/bible_pane/presentation/cubit/selected_word_cubit.dart';
 import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/widgets/active_pane_indicator.dart';
-
-import '../../../../../shared/theme/tokens.dart';
+import 'package:open_scripture/shared/design_system/design_system.dart';
 
 class _PaneInfoItem extends StatelessWidget {
   const _PaneInfoItem({required this.child, this.tooltip});

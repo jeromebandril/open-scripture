@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/models/multi_pane_data.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:open_scripture/shared/design_system/design_system.dart';
+
 import '../../../../../app/state/fullscreen_cubit.dart';
 import '../../../../../app/state/interface_visibility_cubit.dart';
-import '../../../../../shared/theme/tokens.dart';
 import '../../../../../shared/widgets/draggable_divider.dart';
 import '../../../../customizer/presentation/state/customizer_cubit.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';

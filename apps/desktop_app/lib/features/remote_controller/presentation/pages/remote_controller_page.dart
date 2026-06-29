@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/remote_controller/domain/entities/client_info.dart';
 import 'package:open_scripture/features/window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:open_scripture/shared/design_system/design_system.dart';
 
 import '../../../../shared/widgets/dot.dart';
-import '../../../../shared/theme/tokens.dart';
 import '../../../../shared/utils/network_utils.dart';
 import '../../../settings_window/presentation/widgets/setting_input_bool.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';

@@ -4,7 +4,7 @@ import 'package:open_scripture/core/di/injection_container.dart';
 import 'package:open_scripture/features/bible_display/bible_selector/presentation/cubit/bible_selector_cubit.dart';
 import 'package:open_scripture/features/my_library/presentation/cubit/my_library_cubit.dart';
 import 'package:open_scripture/shared/enums/bible_repository_type.dart';
-import 'package:open_scripture/shared/theme/tokens.dart';
+import 'package:open_scripture/shared/design_system/design_system.dart';
 
 class SwordSelector extends StatelessWidget {
   const SwordSelector({super.key});

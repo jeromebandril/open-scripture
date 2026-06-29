@@ -8,6 +8,7 @@ import 'package:open_scripture/features/shortcuts/presentation/models/app_comman
 import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_view.dart';
 import 'package:open_scripture/shared/widgets/floating_panel.dart';
 import 'package:open_scripture/shared/widgets/simple_floating_notification.dart';
+import 'package:open_scripture/shared/design_system/design_system.dart';
 
 import 'state/fullscreen_cubit.dart';
 import 'state/interface_visibility_cubit.dart';
@@ -21,7 +22,6 @@ import '../features/obs_live_overlay/presentation/widgets/obs_live_overlay_indic
 import '../features/shortcuts/presentation/widgets/shortcuts_host.dart';
 import '../features/three_tap_navigator/presentation/widgets/three_tap_navigator.dart';
 import '../features/window_stack_manager/presentation/widgets/window_stack_manager_host.dart';
-import '../shared/theme/tokens.dart';
 import 'widgets/titlebar.dart';
 
 class AppShell extends StatelessWidget {

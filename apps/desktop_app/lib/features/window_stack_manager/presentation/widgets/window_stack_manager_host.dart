@@ -7,7 +7,7 @@ import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcuts
 import 'package:open_scripture/features/window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import 'package:open_scripture/shared/constants.dart';
 import 'package:open_scripture/app/widgets/titlebar.dart';
-import 'package:open_scripture/shared/theme/tokens.dart';
+import 'package:open_scripture/shared/design_system/design_system.dart';
 
 import '../../../../app/state/fullscreen_cubit.dart';
 import '../../../obs_live_overlay/presentation/state/obs_overlay_settinsg/obs_live_overlay_settings_cubit.dart';

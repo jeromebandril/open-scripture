@@ -10,8 +10,8 @@ import 'package:open_scripture/features/bible_display/multi_pane_manager/present
 import 'package:open_scripture/features/customizer/presentation/models/bible_pane_general_theme.dart';
 import 'package:open_scripture/features/customizer/presentation/state/customizer_cubit.dart';
 import 'package:open_scripture/shared/enums/bible_repository_type.dart';
-import 'package:open_scripture/shared/theme/tokens.dart';
 import 'package:open_scripture/shared/widgets/ui/b_container_tab_bar.dart';
+import 'package:open_scripture/shared/design_system/design_system.dart';
 
 class BibleSelector extends StatefulWidget {
   final BibleSelectorCubit? bloc;
