@@ -46,8 +46,8 @@ class _BibleViewPresentationCustomizerScreenState
                               p.copyWith(subtitleFontWeight: fw));
                     },
                     items: AppFontWeight.values
-                        .map((fw) => DropdownMenuItem<AppFontWeight>(
-                            value: fw, child: Text(fw.wire)))
+                        .map((fw) => AppDropdownItem<AppFontWeight>(
+                            value: fw, label: fw.wire))
                         .toList(),
                   )),
               Setting(
@@ -61,8 +61,8 @@ class _BibleViewPresentationCustomizerScreenState
                           presentTheme: (p) => p.copyWith(titleTextAlign: ta));
                     },
                     items: AppTextAlign.values
-                        .map((ta) => DropdownMenuItem<AppTextAlign>(
-                            value: ta, child: Text(ta.wire)))
+                        .map((ta) => AppDropdownItem<AppTextAlign>(
+                            value: ta, label: ta.wire))
                         .toList(),
                   )),
               Setting(
@@ -76,8 +76,8 @@ class _BibleViewPresentationCustomizerScreenState
                           presentTheme: (p) => p.copyWith(textAlign: ta));
                     },
                     items: AppTextAlign.values
-                        .map((ta) => DropdownMenuItem<AppTextAlign>(
-                            value: ta, child: Text(ta.wire)))
+                        .map((ta) => AppDropdownItem<AppTextAlign>(
+                            value: ta, label: ta.wire))
                         .toList(),
                   )),
               Setting(
@@ -93,8 +93,8 @@ class _BibleViewPresentationCustomizerScreenState
                     },
                     items: PresentationVerseNumberStyle.values
                         .map((vns) =>
-                            DropdownMenuItem<PresentationVerseNumberStyle>(
-                                value: vns, child: Text(vns.wire)))
+                            AppDropdownItem<PresentationVerseNumberStyle>(
+                                value: vns, label: vns.wire))
                         .toList(),
                   )),
               Setting(

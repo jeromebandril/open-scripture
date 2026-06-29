@@ -55,8 +55,8 @@ class DropdownMenuAnchor extends StatefulWidget {
     //  Behaviour
     this.dismissOnOutsideTap = true,
     //  Decoration
-    this.menuDecoration,
     this.menuPadding = const EdgeInsets.all(8),
+    this.menuColor,
     this.onDismiss,
   });
 
@@ -90,9 +90,8 @@ class DropdownMenuAnchor extends StatefulWidget {
   final bool dismissOnOutsideTap;
 
   /// Override default menu container decoration.
-  final BoxDecoration? menuDecoration;
-
   final EdgeInsetsGeometry menuPadding;
+  final Color? menuColor;
 
   @override
   State<DropdownMenuAnchor> createState() => _DropdownMenuAnchorState();
@@ -153,25 +152,17 @@ class _DropdownMenuAnchorState extends State<DropdownMenuAnchor> {
     final child = ConstrainedBox(
       constraints:
           BoxConstraints(maxWidth: resolvedWidth, maxHeight: resolvedHeight),
-      child: widget.menuDecoration != null
-          ? Container(
-              width: resolvedWidth,
-              padding: widget.menuPadding,
-              decoration: widget.menuDecoration,
-              child: widget.menuContent,
-            )
-          : Material(
-              color: popupTheme.color,
-              elevation: popupTheme.elevation ?? 4,
-              shadowColor: popupTheme.shadowColor,
-              shape: popupTheme.shape,
-              clipBehavior: Clip.antiAlias,
-              child: Padding(
-                padding: widget.menuPadding ?? EdgeInsets.zero,
-                child:
-                    SizedBox(width: resolvedWidth, child: widget.menuContent),
-              ),
-            ),
+      child: Material(
+        color: widget.menuColor ?? popupTheme.color,
+        elevation: popupTheme.elevation ?? 4,
+        shadowColor: popupTheme.shadowColor,
+        shape: popupTheme.shape,
+        clipBehavior: Clip.antiAlias,
+        child: Padding(
+          padding: popupTheme.menuPadding ?? widget.menuPadding,
+          child: SizedBox(width: resolvedWidth, child: widget.menuContent),
+        ),
+      ),
     );
 
     return Stack(

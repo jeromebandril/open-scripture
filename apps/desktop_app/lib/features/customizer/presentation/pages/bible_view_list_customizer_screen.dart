@@ -91,8 +91,8 @@ class _BibleViewListCustomizerScreenState
                               l.copyWith(highlightRenderMode: mode));
                     },
                     items: HighlightRenderMode.values
-                        .map((m) => DropdownMenuItem<HighlightRenderMode>(
-                            value: m, child: Text(m.wire)))
+                        .map((m) => AppDropdownItem<HighlightRenderMode>(
+                            value: m, label: m.wire))
                         .toList(),
                   )),
             ],

@@ -46,8 +46,8 @@ class _GlobalCustomizerScreenState extends State<GlobalCustomizerScreen> {
                           appTheme: (a) => a.copyWith(mode: mode));
                     },
                     items: ThemeMode.values
-                        .map((m) => DropdownMenuItem<ThemeMode>(
-                            value: m, child: Text(m.name)))
+                        .map((m) =>
+                            AppDropdownItem<ThemeMode>(value: m, label: m.name))
                         .toList(),
                   )),
               Setting(

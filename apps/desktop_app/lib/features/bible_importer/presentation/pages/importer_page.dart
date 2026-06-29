@@ -48,8 +48,8 @@ class ImporterPage extends StatelessWidget {
                           .read<BibleImporterCubit>()
                           .setTargetType(mode),
                       items: BibleRepositoryType.installableTypes
-                          .map((m) => DropdownMenuItem<BibleRepositoryType>(
-                              value: m, child: Text(m.label)))
+                          .map((m) => AppDropdownItem<BibleRepositoryType>(
+                              value: m, label: m.label))
                           .toList(),
                     ),
                   ),

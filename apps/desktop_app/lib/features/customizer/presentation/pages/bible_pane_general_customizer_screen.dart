@@ -181,8 +181,8 @@ class _BiblePaneGeneralCustomizerScreenState
                                     p.copyWith(refFontWeight: fw));
                           },
                           items: AppFontWeight.values
-                              .map((fw) => DropdownMenuItem<AppFontWeight>(
-                                  value: fw, child: Text(fw.wire)))
+                              .map((fw) => AppDropdownItem<AppFontWeight>(
+                                  value: fw, label: fw.wire))
                               .toList(),
                         )),
                     Setting(
@@ -197,8 +197,8 @@ class _BiblePaneGeneralCustomizerScreenState
                                     p.copyWith(selectedRefFontWeight: fw));
                           },
                           items: AppFontWeight.values
-                              .map((fw) => DropdownMenuItem<AppFontWeight>(
-                                  value: fw, child: Text(fw.wire)))
+                              .map((fw) => AppDropdownItem<AppFontWeight>(
+                                  value: fw, label: fw.wire))
                               .toList(),
                         )),
                     Setting(
@@ -227,8 +227,8 @@ class _BiblePaneGeneralCustomizerScreenState
                                     p.copyWith(textFontWeight: fw));
                           },
                           items: AppFontWeight.values
-                              .map((fw) => DropdownMenuItem<AppFontWeight>(
-                                  value: fw, child: Text(fw.wire)))
+                              .map((fw) => AppDropdownItem<AppFontWeight>(
+                                  value: fw, label: fw.wire))
                               .toList(),
                         )),
                   ],
