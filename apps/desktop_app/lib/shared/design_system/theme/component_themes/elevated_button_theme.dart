@@ -47,7 +47,7 @@ abstract final class AppElevatedButtonTheme {
             vertical: AppSpacing.md,
           ),
         ),
-        textStyle: WidgetStateProperty.all(AppTypography.labelLg),
+        textStyle: WidgetStateProperty.all(AppTypography.labelMd),
         minimumSize: WidgetStateProperty.all(const Size(64, 40)),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         mouseCursor: WidgetStateProperty.resolveWith((states) {

@@ -40,7 +40,7 @@ abstract final class AppTextButtonTheme {
             vertical: AppSpacing.sm,
           ),
         ),
-        textStyle: WidgetStateProperty.all(AppTypography.labelLg),
+        textStyle: WidgetStateProperty.all(AppTypography.labelMd),
         minimumSize: WidgetStateProperty.all(const Size(40, 36)),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         mouseCursor: WidgetStateProperty.resolveWith((states) {
