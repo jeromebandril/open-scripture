@@ -1,51 +1,69 @@
 import 'package:flutter/material.dart';
+import 'package:open_scripture/shared/design_system/design_system.dart';
 
-class AppInputBool extends StatefulWidget {
+class AppInputBool extends StatelessWidget {
   const AppInputBool({
     super.key,
-    this.onChanged,
     required this.value,
-    this.isDisabled = false,
+    this.onChanged,
+    this.enabled = true,
   });
 
-  final Function(bool value)? onChanged;
   final bool value;
-  final bool isDisabled;
+  final ValueChanged<bool>? onChanged;
+  final bool enabled;
 
-  @override
-  State<AppInputBool> createState() => _AppInputBoolState();
-}
+  void _handleTap() {
+    if (enabled) onChanged?.call(!value);
+  }
 
-class _AppInputBoolState extends State<AppInputBool> {
   @override
   Widget build(BuildContext context) {
-    //return Switch.adaptive(value: widget.value, onChanged: widget.onChanged);
-    return GestureDetector(
-      onTap: widget.isDisabled
-          ? null
-          : () => widget.onChanged?.call(!widget.value),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        width: 44,
-        height: 24,
-        padding: const EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: widget.isDisabled
-              ? Colors.grey.shade300
-              : widget.value
-                  ? Theme.of(context).colorScheme.primary
-                  : Colors.grey.shade400,
-        ),
-        child: Align(
-          alignment:
-              widget.value ? Alignment.centerRight : Alignment.centerLeft,
-          child: Container(
-            width: 20,
-            height: 20,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white,
+    final ColorScheme cs = Theme.of(context).colorScheme;
+
+    final Color trackColor = !enabled
+        ? cs.onSurface.withValues(alpha: 0.12)
+        : value
+            ? cs.primary
+            : cs.surfaceContainer;
+
+    final Color thumbColor = !enabled
+        ? cs.onSurface.withValues(alpha: 0.38)
+        : value
+            ? cs.onPrimary
+            : cs.onSurfaceVariant;
+
+    return Semantics(
+      toggled: value,
+      enabled: enabled,
+      label: 'Toggle',
+      child: MouseRegion(
+        cursor:
+            enabled ? SystemMouseCursors.click : SystemMouseCursors.forbidden,
+        child: GestureDetector(
+          onTap: _handleTap,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
+            width: 44,
+            height: 24,
+            padding: const EdgeInsets.all(3),
+            decoration: BoxDecoration(
+              borderRadius: AppRadius.radiusFull,
+              color: trackColor,
+            ),
+            child: AnimatedAlign(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeInOut,
+              alignment: value ? Alignment.centerRight : Alignment.centerLeft,
+              child: Container(
+                width: 18,
+                height: 18,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: thumbColor,
+                ),
+              ),
             ),
           ),
         ),

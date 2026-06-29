@@ -68,7 +68,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                         description:
                             'Host a web page that OBS can listen to display as overlay graphic',
                         child: AppInputBool(
-                          isDisabled: state.isRunning || state.busy,
+                          enabled: state.isRunning || state.busy,
                           value: enableFeature,
                           onChanged: (val) {
                             ctx
@@ -83,7 +83,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                         description:
                             'Automatically start the OBS Live Overlay when the app starts',
                         child: AppInputBool(
-                          isDisabled: false, //state.isRunning || state.busy,
+                          enabled: false, //state.isRunning || state.busy,
                           value: false,
                           // ctx.select((ObsLiveOverlaySettingsCubit c) =>
                           //     c.state.settings.enableAutoStart),
@@ -99,7 +99,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                         description:
                             'Decide if to pass the selected verse to the overlay manually',
                         child: AppInputBool(
-                          isDisabled: state.isRunning || state.busy,
+                          enabled: state.isRunning || state.busy,
                           value: ctx.select((ObsLiveOverlaySettingsCubit c) =>
                               c.state.settings.enableManualControl),
                           onChanged: (val) {

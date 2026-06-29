@@ -116,7 +116,7 @@ class _RemoteControllerPageState extends State<RemoteControllerPage> {
                         description:
                             'Control the app from another device on the same network. When enabled, a web server will be hosted on your machine.',
                         child: AppInputBool(
-                          isDisabled: state.isRunning || state.isBusy,
+                          enabled: state.isRunning || state.isBusy,
                           value: context.select(
                               (RemoteControllerSettingsCubit c) =>
                                   c.state.settings.enableFeature),
