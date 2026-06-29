@@ -3,46 +3,15 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:open_scripture/shared/design_system/design_system.dart';
 import 'package:open_scripture/shared/widgets/dropdown_menu_anchor.dart';
 
-/// Displays the current path in a compact field. On click it opens a
-/// floating panel (overlay) anchored below the field where the user can
-/// type a path manually or browse via the OS file/folder picker.
-///
-/// ## Dependencies
-/// Add to your `pubspec.yaml`:
-/// ```yaml
-/// dependencies:
-///   file_picker: ^8.0.0
-/// ```
-///
-/// ## Usage
-/// ```dart
-/// PathInput(
-///   label: 'Output folder',
-///   initialPath: r'C:\Users\me\Documents',
-///   selectDirectory: true,
-///   onPathChanged: (path) => print('New path: $path'),
-/// )
-/// ```
 class PathInput extends StatefulWidget {
-  /// Optional label rendered above the field.
   final String? label;
-
-  /// The initial path value.
   final String? initialPath;
-
-  /// Placeholder text shown when no path is set.
   final String placeholder;
-
-  /// When `true` (default) the browse button opens a folder picker.
-  /// When `false` it opens a file picker.
   final bool selectDirectory;
-
-  /// Called whenever the path is confirmed (Enter, Confirm button, or browse).
   final ValueChanged<String>? onPathChanged;
-
-  /// Optional file-type filters used when [selectDirectory] is `false`.
   final List<String>? allowedExtensions;
 
   const PathInput({
@@ -105,14 +74,11 @@ class _PathInputState extends State<PathInput> {
       picked = result?.files.single.path;
     }
 
-    if (picked != null) {
-      _confirm(picked);
-    }
+    if (picked != null) _confirm(picked);
   }
 
-  bool pathExists(String path) {
-    return FileSystemEntity.typeSync(path) != FileSystemEntityType.notFound;
-  }
+  bool pathExists(String path) =>
+      FileSystemEntity.typeSync(path) != FileSystemEntityType.notFound;
 
   @override
   Widget build(BuildContext context) {
@@ -158,64 +124,33 @@ class _PathField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final cs = theme.colorScheme;
 
     return GestureDetector(
       onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
-        decoration: BoxDecoration(
-          color: cs.surface,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: isOpen ? cs.primary : cs.outline,
-            width: isOpen ? 1.5 : 1.0,
+      child: InputDecorator(
+        isFocused: isOpen,
+        decoration: InputDecoration(
+          hintText: placeholder,
+          prefixIcon: Icon(
+            selectDirectory
+                ? Icons.folder_outlined
+                : Icons.insert_drive_file_outlined,
+            size: 15,
           ),
-          boxShadow: isOpen
-              ? [
-                  BoxShadow(
-                      color: cs.primary.withOpacity(0.12),
-                      blurRadius: 6,
-                      offset: const Offset(0, 1))
-                ]
-              : null,
+          suffixIcon: const Icon(Icons.unfold_more, size: 14),
         ),
-        child: Row(
-          children: [
-            Icon(
-              selectDirectory
-                  ? Icons.folder_outlined
-                  : Icons.insert_drive_file_outlined,
-              size: 15,
-              color:
-                  path.isNotEmpty ? cs.primary : cs.onSurface.withOpacity(0.35),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                path.isNotEmpty ? path : placeholder,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: path.isNotEmpty
-                      ? cs.onSurface
-                      : cs.onSurface.withOpacity(0.38),
-                  letterSpacing: 0,
-                ),
+        child: path.isNotEmpty
+            ? Text(
+                path,
+                style: theme.textTheme.bodySmall?.copyWith(letterSpacing: 0),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
-              ),
-            ),
-            const SizedBox(width: 6),
-            Icon(Icons.unfold_more,
-                size: 14, color: cs.onSurface.withOpacity(0.35)),
-          ],
-        ),
+              )
+            : const SizedBox.shrink(),
       ),
     );
   }
 }
-
-// Popup panel
 
 class _PathPopup extends StatefulWidget {
   final String initialValue;
@@ -245,7 +180,6 @@ class _PathPopupState extends State<_PathPopup> {
     super.initState();
     _ctrl = TextEditingController(text: widget.initialValue);
     _focusNode = FocusNode();
-    // Auto-focus & select all text for quick editing
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
       _ctrl.selection = TextSelection(
@@ -275,146 +209,99 @@ class _PathPopupState extends State<_PathPopup> {
           widget.onCancel();
         }
       },
-      child: Material(
-        elevation: 6,
-        shadowColor: Colors.black26,
-        borderRadius: BorderRadius.circular(9),
-        child: Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: cs.surface,
-            borderRadius: BorderRadius.circular(9),
-            border: Border.all(color: cs.outlineVariant.withOpacity(0.6)),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              //
-              // Header
-              //
-              Row(
-                children: [
-                  Icon(
-                    widget.selectDirectory
-                        ? Icons.folder_open_outlined
-                        : Icons.file_open_outlined,
-                    size: 15,
-                    color: cs.primary,
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    widget.selectDirectory
-                        ? 'Set directory path'
-                        : 'Set file path',
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const Spacer(),
-                  // Subtle close button
-                  SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: IconButton(
-                      padding: EdgeInsets.zero,
-                      iconSize: 15,
-                      onPressed: widget.onCancel,
-                      icon: const Icon(Icons.close),
-                      color: cs.onSurface.withOpacity(0.4),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              //
-              // Text field + Browse
-              //
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _ctrl,
-                      focusNode: _focusNode,
-                      onSubmitted: widget.onConfirm,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        fontFamily: 'monospace',
-                        letterSpacing: 0,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: widget.selectDirectory
-                            ? r'e.g. C:\Users\me\Documents'
-                            : r'e.g. C:\Users\me\file.txt',
-                        hintStyle: theme.textTheme.bodySmall?.copyWith(
-                          color: cs.onSurface.withOpacity(0.35),
-                          fontFamily: 'monospace',
-                        ),
-                        isDense: true,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 9,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        suffixIcon: ValueListenableBuilder<TextEditingValue>(
-                          valueListenable: _ctrl,
-                          builder: (_, val, __) => val.text.isNotEmpty
-                              ? IconButton(
-                                  icon: const Icon(Icons.clear, size: 14),
-                                  onPressed: () => _ctrl.clear(),
-                                  color: cs.onSurface.withOpacity(0.4),
-                                )
-                              : const SizedBox.shrink(),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  OutlinedButton.icon(
-                    onPressed: widget.onBrowse,
-                    icon: const Icon(Icons.drive_folder_upload_outlined,
-                        size: 15),
-                    label: const Text('Browse'),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 9,
-                      ),
-                      textStyle: theme.textTheme.labelMedium,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              //
-              // Actions
-              //
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  widget.selectDirectory
+                      ? Icons.folder_open_outlined
+                      : Icons.file_open_outlined,
+                  size: 15,
+                  color: cs.primary,
+                ),
+                const SizedBox(width: AppSpacing.xs),
+                Text(
+                  widget.selectDirectory
+                      ? 'Set directory path'
+                      : 'Set file path',
+                  style: theme.textTheme.labelLarge
+                      ?.copyWith(fontWeight: FontWeight.w600),
+                ),
+                const Spacer(),
+                SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: IconButton(
+                    padding: EdgeInsets.zero,
+                    iconSize: 15,
                     onPressed: widget.onCancel,
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 8),
-                    ),
-                    child: const Text('Cancel'),
+                    icon: const Icon(Icons.close),
                   ),
-                  const SizedBox(width: 8),
-                  FilledButton(
-                    onPressed: () => widget.onConfirm(_ctrl.text),
-                    style: FilledButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _ctrl,
+                    focusNode: _focusNode,
+                    onSubmitted: widget.onConfirm,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      fontFamily: AppTypography.fontFamilyMono,
+                      letterSpacing: 0,
                     ),
-                    child: const Text('Confirm'),
+                    decoration: InputDecoration(
+                      hintText: widget.selectDirectory
+                          ? r'e.g. C:\Users\me\Documents'
+                          : r'e.g. C:\Users\me\file.txt',
+                      hintStyle: theme.textTheme.bodySmall?.copyWith(
+                        fontFamily: AppTypography.fontFamilyMono,
+                      ),
+                      suffixIcon: ValueListenableBuilder<TextEditingValue>(
+                        valueListenable: _ctrl,
+                        builder: (_, val, __) => val.text.isNotEmpty
+                            ? IconButton(
+                                icon: const Icon(Icons.clear, size: 14),
+                                onPressed: () => _ctrl.clear(),
+                              )
+                            : const SizedBox.shrink(),
+                      ),
+                    ),
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                OutlinedButton.icon(
+                  onPressed: widget.onBrowse,
+                  icon:
+                      const Icon(Icons.drive_folder_upload_outlined, size: 15),
+                  label: const Text('Browse'),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: widget.onCancel,
+                  child: const Text('Cancel'),
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                ElevatedButton(
+                  onPressed: () => widget.onConfirm(_ctrl.text),
+                  child: const Text('Confirm'),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

@@ -13,7 +13,7 @@ abstract final class AppPopupMenuTheme {
 
     final Color bg = isLight
         ? AppColors.surfaceContainerLowest
-        : AppColors.surfaceContainerLowestDark;
+        : AppColors.surfaceContainerHighestDark;
     final Color fg = isLight ? AppColors.onSurface : AppColors.onSurfaceDark;
     // final Color hoverBg = isLight
     //     ? AppColors.surfaceContainerLow
