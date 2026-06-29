@@ -31,8 +31,8 @@ class Keycap extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: theme.textTheme.labelMedium!.copyWith(
-          fontFamily: "IBM Plex Mono",
+        style: theme.textTheme.labelSmall!.copyWith(
+          fontFamily: AppTypography.fontFamilyMono,
           color: textColor,
           fontSize: fontSize,
         ),
