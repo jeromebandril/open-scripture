@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
-import 'package:open_scripture/core/engines/bible_compiler/source/packages/source_package.dart';
+import 'source_package.dart';
 
 class FileSourcePackage implements SourcePackage {
   final File file;

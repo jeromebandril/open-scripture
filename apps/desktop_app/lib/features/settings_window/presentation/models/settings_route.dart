@@ -1,14 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:open_scripture/features/bible_importer/presentation/pages/importer_page.dart';
-import 'package:open_scripture/features/my_library/presentation/pages/library_manager_page.dart';
-import 'package:open_scripture/features/customizer/presentation/pages/bible_pane_customizer_screen.dart';
-import 'package:open_scripture/features/customizer/presentation/pages/global_customizer_screen.dart';
-import 'package:open_scripture/features/obs_live_overlay/presentation/pages/obs_live_overlay_page.dart';
-import 'package:open_scripture/features/remote_controller/presentation/pages/remote_controller_page.dart';
-import 'package:open_scripture/features/settings_window/presentation/pages/about_setting_page.dart';
 
+import '../../../bible_importer/presentation/pages/importer_page.dart';
+import '../../../customizer/presentation/pages/bible_pane_customizer_screen.dart';
+import '../../../customizer/presentation/pages/global_customizer_screen.dart';
+import '../../../my_library/presentation/pages/library_manager_page.dart';
+import '../../../obs_live_overlay/presentation/pages/obs_live_overlay_page.dart';
+import '../../../remote_controller/presentation/pages/remote_controller_page.dart';
 import '../../../shortcuts/presentation/pages/shortcuts_screen.dart';
+import '../pages/about_setting_page.dart';
 
 enum SettingsGroup {
   appearance('Appearance'),

@@ -1,7 +1,8 @@
 import 'dart:js_interop';
 
-import 'package:open_scripture/core/infrastructure/window/app_window_manager.dart';
 import 'package:web/web.dart' as web;
+
+import 'app_window_manager.dart';
 
 class WindowManagerImpl extends AppWindowManager {
   @override

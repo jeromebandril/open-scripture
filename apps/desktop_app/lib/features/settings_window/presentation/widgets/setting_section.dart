@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:open_scripture/shared/widgets/debounce_textfield.dart';
-import 'package:open_scripture/shared/design_system/design_system.dart';
+
+import '../../../../shared/design_system/design_system.dart';
+import '../../../../shared/widgets/debounce_textfield.dart';
 
 const double _settingsSpacing = AppSpacing.sm;
 

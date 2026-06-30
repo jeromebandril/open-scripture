@@ -1,6 +1,8 @@
-import 'package:open_scripture/core/engines/settings/datasource/settings_datasource.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'settings_datasource.dart';
 
 abstract class SettingsDatasourceWebBase<T> implements SettingsDatasource<T> {
   String get prefsKey;

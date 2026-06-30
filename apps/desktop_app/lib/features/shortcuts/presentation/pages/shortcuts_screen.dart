@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_view.dart';
-import 'package:open_scripture/features/settings_window/presentation/widgets/setting.dart';
-import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
 
+import '../../../settings_window/presentation/widgets/setting.dart';
+import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../domain/models/app_command_info.dart';
 import '../models/app_command_shortcuts.dart';
+import '../widgets/shortcut_view.dart';
 
 class ShortcutsScreen extends StatelessWidget {
   const ShortcutsScreen({super.key});

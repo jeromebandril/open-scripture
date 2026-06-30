@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
-import 'package:open_scripture/shared/domain/entities/localized_book.dart';
-import 'package:open_scripture/shared/domain/entities/verse.dart';
+import '../../../../../shared/domain/entities/bible_translation.dart';
+import '../../../../../shared/domain/entities/localized_book.dart';
+import '../../../../../shared/domain/entities/verse.dart';
 
 import 'payload_issue.dart';
 

@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/core/infrastructure/window/app_window_manager.dart';
+import '../../core/infrastructure/window/app_window_manager.dart';
 
 class FullscreenCubit extends Cubit<bool> {
   FullscreenCubit(this._window) : super(false);

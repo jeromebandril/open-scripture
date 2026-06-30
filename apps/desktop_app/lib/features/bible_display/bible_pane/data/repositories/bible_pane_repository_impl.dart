@@ -1,15 +1,16 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:open_scripture/features/bible_display/bible_pane/domain/repositories/bible_pane_repository.dart';
-import 'package:open_scripture/shared/data/datasources/bible_catalog_datasource/bible_catalog_datasource.dart';
-import 'package:open_scripture/shared/data/datasources/bible_content_datasource/bible_content_datasourcee.dart';
-import 'package:open_scripture/shared/data/models/bible_install_dto.dart';
-import 'package:open_scripture/shared/data/models/verse_segment_dto.dart';
-import 'package:open_scripture/shared/domain/entities/bible_book.dart';
-import 'package:open_scripture/shared/domain/entities/bible_id.dart';
-import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
-import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
-import 'package:open_scripture/shared/domain/entities/verse.dart';
-import 'package:open_scripture/shared/error/failure.dart';
+
+import '../../../../../shared/data/datasources/bible_catalog_datasource/bible_catalog_datasource.dart';
+import '../../../../../shared/data/datasources/bible_content_datasource/bible_content_datasourcee.dart';
+import '../../../../../shared/data/models/bible_install_dto.dart';
+import '../../../../../shared/data/models/verse_segment_dto.dart';
+import '../../../../../shared/domain/entities/bible_book.dart';
+import '../../../../../shared/domain/entities/bible_id.dart';
+import '../../../../../shared/domain/entities/bible_ref.dart';
+import '../../../../../shared/domain/entities/bible_translation.dart';
+import '../../../../../shared/domain/entities/verse.dart';
+import '../../../../../shared/error/failure.dart';
+import '../../domain/repositories/bible_pane_repository.dart';
 
 class BiblePaneRepositoryImpl implements BiblePaneRepository {
   final BibleContentDatasource _contentDatasource;

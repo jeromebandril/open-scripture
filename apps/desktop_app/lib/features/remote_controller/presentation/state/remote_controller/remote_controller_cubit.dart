@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/features/remote_controller/domain/repositories/remote_controller_repo.dart';
-import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
 
+import '../../../../shortcuts/domain/models/app_command.dart';
 import '../../../../shortcuts/presentation/models/app_command_dispatcher.dart';
 import '../../../domain/entities/client_info.dart';
+import '../../../domain/repositories/remote_controller_repo.dart';
 
 part 'remote_controller_state.dart';
 

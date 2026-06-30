@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/features/customizer/domain/entities/bible_pane_presentation_theme_settings.dart';
-import 'package:open_scripture/features/customizer/domain/entities/bible_view_list_theme_settings.dart';
-import 'package:open_scripture/core/engines/settings/settings_repository.dart';
 
+import '../../../../core/engines/settings/settings_repository.dart';
 import '../../domain/entities/app_theme_settings.dart';
 import '../../domain/entities/bible_pane_general_theme_settings.dart';
+import '../../domain/entities/bible_pane_presentation_theme_settings.dart';
+import '../../domain/entities/bible_view_list_theme_settings.dart';
 
 part 'customizer_state.dart';
 

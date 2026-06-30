@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/shared/domain/entities/bible_book.dart';
-import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
+import 'bible_book.dart';
+import 'bible_ref.dart';
 
 class BibleRefPartial extends Equatable {
   final String bookToken;

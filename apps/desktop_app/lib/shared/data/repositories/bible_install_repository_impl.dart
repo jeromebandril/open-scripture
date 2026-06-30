@@ -1,9 +1,8 @@
-import 'package:open_scripture/shared/domain/entities/bible_download_progress.dart';
-import 'package:open_scripture/shared/domain/services/bible_installer_strategy.dart';
-import 'package:open_scripture/shared/enums/bible_repository_type.dart';
-
-import '../../domain/repositories/bible_install_repository.dart';
+import '../../domain/entities/bible_download_progress.dart';
 import '../../domain/entities/bible_source.dart';
+import '../../domain/repositories/bible_install_repository.dart';
+import '../../domain/services/bible_installer_strategy.dart';
+import '../../enums/bible_repository_type.dart';
 
 class BibleInstallRepositoryImpl implements BibleInstallRepository {
   final Map<BibleRepositoryType, BibleInstallerStrategy> _strategies;

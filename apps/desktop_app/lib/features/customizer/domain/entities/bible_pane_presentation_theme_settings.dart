@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/features/customizer/domain/entities/app_font_weight.dart';
-import 'package:open_scripture/features/customizer/domain/entities/app_text_align.dart';
-import 'package:open_scripture/features/customizer/domain/entities/presentation_verse_number_style.dart';
+import 'app_font_weight.dart';
+import 'app_text_align.dart';
+import 'presentation_verse_number_style.dart';
 
 class BibleViewPresentationThemeSettings extends Equatable {
   final AppTextAlign titleTextAlign;

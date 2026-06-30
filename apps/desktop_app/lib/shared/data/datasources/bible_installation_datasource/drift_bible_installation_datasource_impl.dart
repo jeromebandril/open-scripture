@@ -1,5 +1,5 @@
-import 'package:open_scripture/core/infrastructure/database/daos/bible_installation_dao.dart';
-import 'package:open_scripture/shared/data/models/bible_install_dto.dart';
+import '../../../../core/infrastructure/database/daos/bible_installation_dao.dart';
+import '../../models/bible_install_dto.dart';
 
 abstract class BibleInstallationDataSource {
   /// Installs the fully parsed Bible into the local infrastructure.

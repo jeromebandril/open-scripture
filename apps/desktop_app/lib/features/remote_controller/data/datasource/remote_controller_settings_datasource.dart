@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:open_scripture/core/engines/settings/datasource/settings_datasource_desktop.dart';
+import '../../../../core/engines/settings/datasource/settings_datasource_desktop.dart';
 
 import '../../domain/entities/remote_controller_settings.dart';
 

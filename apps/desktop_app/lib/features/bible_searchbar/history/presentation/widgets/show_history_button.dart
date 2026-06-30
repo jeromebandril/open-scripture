@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/app/state/interface_visibility_cubit.dart';
-import 'package:open_scripture/features/bible_searchbar/history/presentation/widgets/history_list.dart';
-import 'package:open_scripture/shared/widgets/dropdown_menu_anchor.dart';
+
+import '../../../../../app/state/interface_visibility_cubit.dart';
+import '../../../../../shared/widgets/dropdown_menu_anchor.dart';
+import 'history_list.dart';
 
 class ShowHistoryButton extends StatefulWidget {
   const ShowHistoryButton({super.key});

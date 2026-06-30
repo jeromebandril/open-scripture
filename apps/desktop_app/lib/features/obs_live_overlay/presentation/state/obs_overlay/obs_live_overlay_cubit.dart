@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/features/obs_live_overlay/domain/repostiory/overlay_repository.dart';
 
 import '../../../../../core/infrastructure/event_bus/selected_verse_bus.dart';
 import '../../../domain/entities/overlay_models.dart';
+import '../../../domain/repostiory/overlay_repository.dart';
 
 part 'obs_live_overlay_state.dart';
 

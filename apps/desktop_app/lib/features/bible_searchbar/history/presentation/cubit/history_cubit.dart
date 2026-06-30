@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/core/infrastructure/event_bus/search_result_bus.dart';
-import 'package:open_scripture/features/bible_searchbar/history/domain/entities/history_entry.dart';
+import '../../../../../core/infrastructure/event_bus/search_result_bus.dart';
+import '../../domain/entities/history_entry.dart';
 
 part 'history_state.dart';
 

@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:open_scripture/features/remote_controller/domain/entities/client_info.dart';
-import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
 import 'package:shared/rc_protocol/rc_protocol.dart';
 
 import '../../../../core/engines/remote_controller/remote_command_router.dart';
+import '../../../shortcuts/domain/models/app_command.dart';
+import '../../domain/entities/client_info.dart';
 import '../../domain/repositories/remote_controller_repo.dart';
 import '../datasource/remote_controller_ws.dart';
 

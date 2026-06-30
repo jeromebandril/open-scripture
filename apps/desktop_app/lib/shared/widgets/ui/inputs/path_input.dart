@@ -1,10 +1,11 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:open_scripture/shared/design_system/design_system.dart';
-import 'package:open_scripture/shared/widgets/dropdown_menu_anchor.dart';
+
+import '../../../design_system/design_system.dart';
+import '../../dropdown_menu_anchor.dart';
 
 class PathInput extends StatefulWidget {
   final String? label;

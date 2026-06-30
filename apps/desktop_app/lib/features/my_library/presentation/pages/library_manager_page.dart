@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/core/di/injection_container.dart' as di;
-import 'package:open_scripture/features/my_library/presentation/cubit/my_library_cubit.dart';
-import 'package:open_scripture/features/my_library/presentation/widgets/library_view.dart';
-import 'package:open_scripture/shared/enums/bible_repository_type.dart';
-import 'package:open_scripture/shared/widgets/ui/b_container_tab_bar.dart';
+
+import '../../../../core/di/injection_container.dart' as di;
+import '../../../../shared/enums/bible_repository_type.dart';
+import '../../../../shared/widgets/ui/b_container_tab_bar.dart';
+import '../cubit/my_library_cubit.dart';
+import '../widgets/library_view.dart';
 
 class LibrariesPage extends StatefulWidget {
   const LibrariesPage({super.key});

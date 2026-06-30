@@ -1,11 +1,11 @@
 import 'dart:io';
-import 'package:open_scripture/core/engines/bible_compiler/source/packages/zip_source_package.dart';
-import 'package:path/path.dart' as p;
 
-import 'package:open_scripture/core/engines/bible_compiler/source/packages/file_source_package.dart';
-import 'package:open_scripture/core/engines/bible_compiler/source/packages/source_package.dart';
+import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
+import '../../../core/engines/bible_compiler/source/packages/file_source_package.dart';
+import '../../../core/engines/bible_compiler/source/packages/source_package.dart';
+import '../../../core/engines/bible_compiler/source/packages/zip_source_package.dart';
 import '../../domain/entities/bible_source.dart';
 
 abstract interface class SourceFetcherService {

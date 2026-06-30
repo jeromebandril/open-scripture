@@ -1,5 +1,5 @@
 import 'package:flutter/painting.dart';
-import 'package:open_scripture/features/customizer/domain/entities/app_text_align.dart';
+import '../../domain/entities/app_text_align.dart';
 
 extension AppTextAlignmentFlutter on AppTextAlign {
   TextAlign toFlutter() {

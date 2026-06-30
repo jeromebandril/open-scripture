@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:open_scripture/shared/domain/entities/bible_book.dart';
-import 'package:open_scripture/shared/domain/entities/verse.dart';
+import '../../domain/entities/bible_book.dart';
+import '../../domain/entities/verse.dart';
 
 class VerseSegmentDto {
   final int bibleId;

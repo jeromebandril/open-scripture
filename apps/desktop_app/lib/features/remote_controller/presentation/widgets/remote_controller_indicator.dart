@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/shared/widgets/service_status_indicator_shell.dart';
+import '../../../../shared/widgets/service_status_indicator_shell.dart';
 
 import '../../../settings_window/presentation/models/settings_route.dart';
 import '../../../settings_window/presentation/pages/settings_window.dart';

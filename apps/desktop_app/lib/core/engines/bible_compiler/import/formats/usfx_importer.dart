@@ -1,16 +1,17 @@
-import 'package:open_scripture/core/engines/bible_compiler/domain/models/canonical_bible_package.dart';
-import 'package:open_scripture/core/engines/bible_compiler/domain/models/payload_issue.dart';
-import 'package:open_scripture/core/engines/bible_compiler/source/packages/source_package.dart';
-import 'package:open_scripture/shared/domain/entities/bible_id.dart';
-import 'package:open_scripture/shared/enums/bible_repository_type.dart';
 import 'package:xml/xml.dart';
 import 'package:xml/xpath.dart';
-import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
-import 'package:open_scripture/core/engines/bible_compiler/import/bible_importer.dart';
-import 'package:open_scripture/shared/domain/entities/verse.dart';
-import 'package:open_scripture/shared/domain/entities/bible_book.dart';
-import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
-import 'package:open_scripture/shared/domain/entities/localized_book.dart';
+
+import '../../../../../shared/domain/entities/bible_book.dart';
+import '../../../../../shared/domain/entities/bible_id.dart';
+import '../../../../../shared/domain/entities/bible_ref.dart';
+import '../../../../../shared/domain/entities/bible_translation.dart';
+import '../../../../../shared/domain/entities/localized_book.dart';
+import '../../../../../shared/domain/entities/verse.dart';
+import '../../../../../shared/enums/bible_repository_type.dart';
+import '../../domain/models/canonical_bible_package.dart';
+import '../../domain/models/payload_issue.dart';
+import '../../source/packages/source_package.dart';
+import '../bible_importer.dart';
 
 const Map<String, SpanType> usfxTagToSpanType = {
   // Basic character formatting
@@ -435,8 +436,9 @@ class _UsfxBookVisitor {
     _flushBuffer(); // Empty the text buffer into spans
 
     // Prevent empty verses from being added
-    if (_chapter == null || _verseNumber == null || _currentSpans.isEmpty)
+    if (_chapter == null || _verseNumber == null || _currentSpans.isEmpty) {
       return;
+    }
 
     _verses.add(Verse(
       translationId: bookId,

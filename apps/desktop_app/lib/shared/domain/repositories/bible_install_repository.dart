@@ -1,6 +1,6 @@
-import 'package:open_scripture/shared/domain/entities/bible_download_progress.dart';
-import 'package:open_scripture/shared/domain/entities/bible_source.dart';
-import 'package:open_scripture/shared/enums/bible_repository_type.dart';
+import '../../enums/bible_repository_type.dart';
+import '../entities/bible_download_progress.dart';
+import '../entities/bible_source.dart';
 
 abstract class BibleInstallRepository {
   Stream<InstallProgress> install(

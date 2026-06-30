@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/app/state/fullscreen_cubit.dart';
-import 'package:open_scripture/features/shortcuts/presentation/models/app_command_shortcuts.dart';
-import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_view.dart';
-import 'package:open_scripture/shared/widgets/simple_floating_notification.dart';
 
+import '../../../../app/state/fullscreen_cubit.dart';
+import '../../../../shared/widgets/simple_floating_notification.dart';
 import '../../domain/models/app_command.dart';
+import '../widgets/shortcut_view.dart';
+import 'app_command_shortcuts.dart';
 
 typedef UiEffectHandler = void Function();
 

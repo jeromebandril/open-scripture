@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/app/state/interface_visibility_cubit.dart';
-import 'package:open_scripture/features/bible_searchbar/history/presentation/cubit/history_cubit.dart';
-import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
-import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_view.dart';
 
+import '../../../../../app/state/interface_visibility_cubit.dart';
 import '../../../../bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../../../../bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
+import '../../../../shortcuts/domain/models/app_command.dart';
 import '../../../../shortcuts/presentation/models/app_command_shortcuts.dart';
+import '../../../../shortcuts/presentation/widgets/shortcut_view.dart';
 import '../../../search/presentation/state/search_bloc.dart';
 import '../../domain/entities/history_entry.dart';
+import '../cubit/history_cubit.dart';
 
 enum HistoryListSize {
   small,

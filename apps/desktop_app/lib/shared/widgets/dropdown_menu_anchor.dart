@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:open_scripture/app/widgets/app_reveal_animation.dart';
-import 'package:open_scripture/shared/constants.dart';
-import 'package:open_scripture/shared/design_system/design_system.dart';
+import '../../app/widgets/app_reveal_animation.dart';
+import '../constants.dart';
+import '../design_system/design_system.dart';
 
 /// A reusable widget that wraps any [trigger] and pops an overlay menu
 /// below it, animated with [AppRevealAnimation] (for consistent animation

@@ -1,10 +1,10 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:open_scripture/shared/domain/entities/bible_book.dart';
-import 'package:open_scripture/shared/domain/entities/bible_id.dart';
-import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
-import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
-import 'package:open_scripture/shared/domain/entities/verse.dart';
-import 'package:open_scripture/shared/error/failure.dart';
+import '../../../../../shared/domain/entities/bible_book.dart';
+import '../../../../../shared/domain/entities/bible_id.dart';
+import '../../../../../shared/domain/entities/bible_ref.dart';
+import '../../../../../shared/domain/entities/bible_translation.dart';
+import '../../../../../shared/domain/entities/verse.dart';
+import '../../../../../shared/error/failure.dart';
 
 abstract class BiblePaneRepository {
   Future<Either<Failure, BibleTranslation>> getBibleMetadata({

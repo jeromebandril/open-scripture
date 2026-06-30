@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
+import '../../../shared/domain/entities/bible_ref.dart';
 
 enum IntentSource { searchbar }
 

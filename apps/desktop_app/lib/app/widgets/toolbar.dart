@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/features/bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
-import 'package:open_scripture/features/bible_display/bible_pane/domain/display_mode.dart';
-import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
-import 'package:open_scripture/app/state/fullscreen_cubit.dart';
-import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
-import 'package:open_scripture/features/shortcuts/presentation/models/app_command_shortcuts.dart';
-import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_view.dart';
-import 'package:open_scripture/shared/widgets/dropdown_menu_anchor.dart';
 
-import '../state/interface_visibility_cubit.dart';
+import '../../features/bible_display/bible_pane/domain/display_mode.dart';
+import '../../features/bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
+import '../../features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
+import '../../features/shortcuts/domain/models/app_command.dart';
+import '../../features/shortcuts/presentation/models/app_command_shortcuts.dart';
+import '../../features/shortcuts/presentation/widgets/shortcut_view.dart';
 import '../../shared/design_system/tokens/tokens.dart';
 import '../../shared/widgets/custom_icon_button.dart';
+import '../../shared/widgets/dropdown_menu_anchor.dart';
+import '../state/fullscreen_cubit.dart';
+import '../state/interface_visibility_cubit.dart';
 
 class ToolbarButton extends StatefulWidget {
   const ToolbarButton({super.key});

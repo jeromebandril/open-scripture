@@ -1,10 +1,11 @@
 import 'dart:collection';
 
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/shared/domain/entities/bible_id.dart';
-import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
-import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
-import 'package:open_scripture/shared/domain/entities/verse.dart';
+
+import '../../../../../shared/domain/entities/bible_id.dart';
+import '../../../../../shared/domain/entities/bible_ref.dart';
+import '../../../../../shared/domain/entities/bible_translation.dart';
+import '../../../../../shared/domain/entities/verse.dart';
 
 typedef ParallelBibleMap = Map<BibleId, BibleData>;
 

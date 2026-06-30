@@ -1,5 +1,5 @@
-import 'package:open_scripture/core/lifecycle/app_lifecycle.dart';
-import 'package:open_scripture/core/sword/sword_bridge.dart';
+import '../sword/sword_bridge.dart';
+import 'app_lifecycle.dart';
 
 class DesktopAppLifecycleService implements AppLifecycleService {
   final SwordBridge _bridge;

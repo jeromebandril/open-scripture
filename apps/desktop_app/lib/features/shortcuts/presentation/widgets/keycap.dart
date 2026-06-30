@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:open_scripture/shared/design_system/design_system.dart';
+import '../../../../shared/design_system/design_system.dart';
 
 class Keycap extends StatelessWidget {
   final String text;

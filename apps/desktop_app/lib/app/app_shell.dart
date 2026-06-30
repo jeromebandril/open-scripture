@@ -1,28 +1,24 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/app/widgets/dynamic_searchbar.dart';
-import 'package:open_scripture/app/widgets/toolbar.dart';
-import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
-import 'package:open_scripture/features/shortcuts/presentation/models/app_command_shortcuts.dart';
-import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_view.dart';
-import 'package:open_scripture/shared/widgets/floating_panel.dart';
-import 'package:open_scripture/shared/widgets/simple_floating_notification.dart';
-import 'package:open_scripture/shared/design_system/design_system.dart';
 
-import 'state/fullscreen_cubit.dart';
-import 'state/interface_visibility_cubit.dart';
 import '../features/bible_display/multi_pane_manager/presentation/widgets/multi_pane_container.dart';
-import '../features/bible_searchbar/search/presentation/widgets/bible_searchbar.dart';
 import '../features/bible_searchbar/history/presentation/widgets/history_list.dart';
 import '../features/bible_searchbar/history/presentation/widgets/show_history_button.dart';
+import '../features/bible_searchbar/search/presentation/widgets/bible_searchbar.dart';
 import '../features/customizer/presentation/state/customizer_cubit.dart';
-import '../features/remote_controller/presentation/widgets/remote_controller_indicator.dart';
 import '../features/obs_live_overlay/presentation/widgets/obs_live_overlay_indicator.dart';
+import '../features/remote_controller/presentation/widgets/remote_controller_indicator.dart';
 import '../features/shortcuts/presentation/widgets/shortcuts_host.dart';
 import '../features/three_tap_navigator/presentation/widgets/three_tap_navigator.dart';
 import '../features/window_stack_manager/presentation/widgets/window_stack_manager_host.dart';
+import '../shared/design_system/design_system.dart';
+import '../shared/widgets/floating_panel.dart';
+import 'state/fullscreen_cubit.dart';
+import 'state/interface_visibility_cubit.dart';
+import 'widgets/dynamic_searchbar.dart';
 import 'widgets/titlebar.dart';
+import 'widgets/toolbar.dart';
 
 class AppShell extends StatelessWidget {
   const AppShell({super.key});

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:open_scripture/shared/design_system/tokens/tokens.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../../../../shared/design_system/tokens/tokens.dart';
 
 class ListOfBibleRepositories extends StatelessWidget {
   const ListOfBibleRepositories({

@@ -1,7 +1,8 @@
 import 'package:drift/drift.dart';
-import 'package:open_scripture/core/infrastructure/database/database.dart';
-import 'package:open_scripture/shared/data/datasources/bible_catalog_datasource/bible_catalog_datasource.dart';
-import 'package:open_scripture/shared/data/models/bible_install_dto.dart';
+
+import '../../../../core/infrastructure/database/database.dart';
+import '../../models/bible_install_dto.dart';
+import 'bible_catalog_datasource.dart';
 
 class LocalBibleCatalogDataSourceImpl implements BibleCatalogDatasource {
   final AppDb db;

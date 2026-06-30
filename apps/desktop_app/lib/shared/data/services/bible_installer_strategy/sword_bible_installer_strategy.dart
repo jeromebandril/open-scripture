@@ -1,9 +1,9 @@
-import 'package:open_scripture/shared/data/datasources/bible_installation_datasource/sword_bible_installation_datasource_impl.dart';
-import 'package:open_scripture/shared/data/services/source_fetcher_service.dart';
-import 'package:open_scripture/shared/domain/entities/bible_download_progress.dart';
-import 'package:open_scripture/shared/domain/entities/bible_source.dart';
-import 'package:open_scripture/shared/domain/services/bible_importer_settings_service.dart';
-import 'package:open_scripture/shared/domain/services/bible_installer_strategy.dart';
+import '../../../domain/entities/bible_download_progress.dart';
+import '../../../domain/entities/bible_source.dart';
+import '../../../domain/services/bible_importer_settings_service.dart';
+import '../../../domain/services/bible_installer_strategy.dart';
+import '../../datasources/bible_installation_datasource/sword_bible_installation_datasource_impl.dart';
+import '../source_fetcher_service.dart';
 
 class SwordInstallerStrategy implements BibleInstallerStrategy {
   final SourceFetcherService _fetcher;

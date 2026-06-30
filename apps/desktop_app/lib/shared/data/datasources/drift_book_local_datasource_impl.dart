@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
-import 'package:open_scripture/core/infrastructure/database/database.dart';
-import 'package:open_scripture/shared/data/models/book_dto.dart';
+import '../../../core/infrastructure/database/database.dart';
+import '../models/book_dto.dart';
 
 abstract class BibleBookLocalDataSource {
   Future<List<BookDto>> getBooksForBible(String bibleId);

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/features/shortcuts/presentation/widgets/keycap.dart';
 
 import '../../features/shortcuts/domain/models/app_command.dart';
 import '../../features/shortcuts/presentation/models/app_command_shortcuts.dart';
+import '../../features/shortcuts/presentation/widgets/keycap.dart';
 import '../../features/shortcuts/presentation/widgets/shortcut_view.dart';
 import '../../features/window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 

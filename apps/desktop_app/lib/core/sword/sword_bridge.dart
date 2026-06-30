@@ -168,7 +168,9 @@ class SwordBridge {
     if (ptr == nullptr) return '';
     int len = 0;
     final bytes = ptr.cast<Uint8>();
-    while (bytes[len] != 0) len++;
+    while (bytes[len] != 0) {
+      len++;
+    }
     final rawBytes = bytes.asTypedList(len);
     try {
       return utf8.decode(rawBytes);

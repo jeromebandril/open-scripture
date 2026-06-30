@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/features/bible_importer/presentation/state/bible_importer_cubit/bible_importer_cubit.dart';
-import 'package:open_scripture/shared/enums/bible_repository_type.dart';
+
+import '../../../../shared/enums/bible_repository_type.dart';
+import '../state/bible_importer_cubit/bible_importer_cubit.dart';
 
 class ImporterWidget extends StatelessWidget {
   const ImporterWidget({super.key});
@@ -25,7 +26,6 @@ class ImporterWidget extends StatelessWidget {
 
 class _XmlImportDropZoneUi extends StatelessWidget {
   const _XmlImportDropZoneUi({
-    super.key,
     required this.isDragOver,
     required this.isLoading,
     this.fileName,
@@ -39,7 +39,6 @@ class _XmlImportDropZoneUi extends StatelessWidget {
     this.onDrop,
   });
 
-  /// Driven by BLoC (visual only)
   final bool isDragOver;
   final bool isLoading;
   final String? fileName;
@@ -48,14 +47,11 @@ class _XmlImportDropZoneUi extends StatelessWidget {
   final String hintText;
   final double height;
 
-  /// UI callbacks (dispatch events to BLoC)
   final VoidCallback? onChoosePressed;
   final VoidCallback? onTap;
   final VoidCallback? onDragEnter;
   final VoidCallback? onDragLeave;
 
-  /// "Drop happened" callback (you decide the payload type in your platform layer)
-  /// e.g. pass bytes / path / html.File, etc.
   final ValueChanged<Object?>? onDrop;
 
   @override
@@ -64,7 +60,7 @@ class _XmlImportDropZoneUi extends StatelessWidget {
 
     final borderColor =
         isDragOver ? cs.primary : Theme.of(context).dividerColor;
-    final bg = isDragOver ? cs.primary.withOpacity(0.06) : cs.surface;
+    final bg = isDragOver ? cs.primary.withValues(alpha: 0.06) : cs.surface;
 
     return Material(
       color: bg,
@@ -144,7 +140,7 @@ class _XmlImportDropZoneUi extends StatelessWidget {
                 Positioned.fill(
                   child: DecoratedBox(
                     decoration: BoxDecoration(
-                      color: cs.surface.withOpacity(0.65),
+                      color: cs.surface.withValues(alpha: 0.65),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Center(

@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/core/di/injection_container.dart' as di;
-import 'package:open_scripture/features/bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
-import 'package:open_scripture/features/bible_display/bible_selector/presentation/cubit/bible_selector_cubit.dart';
-import 'package:open_scripture/features/bible_display/bible_selector/presentation/widgets/drift_selector.dart';
-import 'package:open_scripture/features/bible_display/bible_selector/presentation/widgets/remote_selector.dart';
-import 'package:open_scripture/features/bible_display/bible_selector/presentation/widgets/sword_selector.dart';
-import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
-import 'package:open_scripture/features/customizer/presentation/models/bible_pane_general_theme.dart';
-import 'package:open_scripture/features/customizer/presentation/state/customizer_cubit.dart';
-import 'package:open_scripture/shared/enums/bible_repository_type.dart';
-import 'package:open_scripture/shared/widgets/ui/b_container_tab_bar.dart';
-import 'package:open_scripture/shared/design_system/design_system.dart';
+
+import '../../../../../core/di/injection_container.dart' as di;
+import '../../../../../shared/design_system/design_system.dart';
+import '../../../../../shared/enums/bible_repository_type.dart';
+import '../../../../../shared/widgets/ui/b_container_tab_bar.dart';
+import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
+import '../../../../customizer/presentation/state/customizer_cubit.dart';
+import '../../../bible_pane/presentation/state/bible_pane_bloc.dart';
+import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
+import '../cubit/bible_selector_cubit.dart';
+import 'drift_selector.dart';
+import 'remote_selector.dart';
+import 'sword_selector.dart';
 
 class BibleSelector extends StatefulWidget {
   final BibleSelectorCubit? bloc;

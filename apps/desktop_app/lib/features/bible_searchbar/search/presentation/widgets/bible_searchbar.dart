@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/app/state/interface_visibility_cubit.dart';
-import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
-import 'package:open_scripture/features/shortcuts/presentation/models/app_command_shortcuts.dart';
-import 'package:open_scripture/features/shortcuts/presentation/widgets/shortcut_view.dart';
 
 import '../../../../../app/state/fullscreen_cubit.dart';
+import '../../../../../app/state/interface_visibility_cubit.dart';
+import '../../../../shortcuts/domain/models/app_command.dart';
+import '../../../../shortcuts/presentation/models/app_command_shortcuts.dart';
+import '../../../../shortcuts/presentation/widgets/shortcut_view.dart';
 import '../../../../shortcuts/presentation/widgets/shortcuts_focus_scope.dart';
 import '../state/search_bloc.dart';
 
@@ -233,7 +233,7 @@ class _BorderProgressPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = color.withOpacity(progress)
+      ..color = color.withValues(alpha: progress)
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;

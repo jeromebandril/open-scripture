@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/shared/domain/entities/bible_book.dart';
+import 'bible_book.dart';
 
 /// Verse coordinate, or used also for canonical query object
 class BibleRef extends Equatable implements Comparable<BibleRef> {

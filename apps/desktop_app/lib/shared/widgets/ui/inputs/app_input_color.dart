@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:open_scripture/features/settings_window/presentation/widgets/parts/reset_button.dart';
+import '../../../../features/settings_window/presentation/widgets/parts/reset_button.dart';
 
 import '../../../utils/colors_util.dart';
 

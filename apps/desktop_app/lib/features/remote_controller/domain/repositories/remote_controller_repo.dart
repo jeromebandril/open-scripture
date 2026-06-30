@@ -1,6 +1,5 @@
-import 'package:open_scripture/features/remote_controller/domain/entities/client_info.dart';
-
 import '../../../shortcuts/domain/models/app_command.dart';
+import '../entities/client_info.dart';
 
 abstract class RemoteControllerRepo {
   Future<void> start({required int port});

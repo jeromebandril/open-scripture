@@ -2,16 +2,16 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/models/multi_pane_data.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:open_scripture/shared/design_system/design_system.dart';
 
 import '../../../../../app/state/fullscreen_cubit.dart';
 import '../../../../../app/state/interface_visibility_cubit.dart';
+import '../../../../../shared/design_system/design_system.dart';
 import '../../../../../shared/widgets/draggable_divider.dart';
-import '../../../../customizer/presentation/state/customizer_cubit.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
+import '../../../../customizer/presentation/state/customizer_cubit.dart';
 import '../../../bible_pane/presentation/widgets/bible_pane.dart';
+import '../models/multi_pane_data.dart';
 import '../pane_animation_constants.dart';
 import '../state/multi_pane_manager_cubit.dart';
 

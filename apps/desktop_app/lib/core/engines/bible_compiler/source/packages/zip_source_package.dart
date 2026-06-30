@@ -65,12 +65,8 @@ final class ZipSourcePackage implements SourcePackage {
     );
 
     final content = file.content;
-    if (content is List<int>) {
-      return Uint8List.fromList(content);
-    }
-    if (content is Uint8List) {
-      return Uint8List.fromList(content);
-    }
+    return Uint8List.fromList(content);
+    return Uint8List.fromList(content);
 
     // archive sometimes stores content lazily; ensure bytes materialize
     return Uint8List.fromList(file.content as List<int>);

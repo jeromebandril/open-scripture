@@ -1,7 +1,9 @@
 import 'dart:io';
-import 'package:open_scripture/core/engines/settings/datasource/settings_datasource.dart';
+
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+
+import 'settings_datasource.dart';
 
 abstract class SettingsDatasourceDesktopBase<T>
     implements SettingsDatasource<T> {

@@ -3,8 +3,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
-import 'package:open_scripture/features/remote_controller/domain/entities/client_info.dart';
 import 'package:shared/rc_protocol/rc_protocol.dart';
+
+import '../../domain/entities/client_info.dart';
 
 typedef OnMessage = void Function(RemoteCommand command, ClientId? clientId);
 

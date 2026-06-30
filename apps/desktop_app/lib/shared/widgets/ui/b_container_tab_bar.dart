@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:open_scripture/shared/design_system/tokens/radius.dart';
+import '../../design_system/tokens/radius.dart';
 
 class BContainerTabBar extends StatefulWidget {
   const BContainerTabBar({
@@ -81,7 +81,7 @@ class _BContainerTabBarState extends State<BContainerTabBar>
               color: theme.colorScheme.primaryContainer,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 2,
                   offset: const Offset(0, 1),
                 ),

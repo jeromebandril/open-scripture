@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/shared/design_system/design_system.dart';
+import '../../../../shared/design_system/design_system.dart';
 
 import '../state/window_stack_manager_bloc.dart';
 

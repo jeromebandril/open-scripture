@@ -1,7 +1,6 @@
-import 'package:open_scripture/features/obs_live_overlay/data/datasource/overlay_control_server.dart';
-import 'package:open_scripture/features/obs_live_overlay/domain/repostiory/overlay_repository.dart';
-
 import '../../domain/entities/overlay_models.dart';
+import '../../domain/repostiory/overlay_repository.dart';
+import '../datasource/overlay_control_server.dart';
 import '../datasource/overlay_server_manager.dart';
 
 class OverlayRepositoryImpl implements OverlayRepository {

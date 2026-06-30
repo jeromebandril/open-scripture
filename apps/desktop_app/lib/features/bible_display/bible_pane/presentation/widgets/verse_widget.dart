@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/features/bible_display/bible_pane/presentation/rendering/verse_richtext_builder.dart';
-import 'package:open_scripture/features/bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
-import 'package:open_scripture/features/bible_display/bible_pane/presentation/cubit/selected_word_cubit.dart';
-import 'package:open_scripture/features/customizer/presentation/models/bible_pane_general_theme.dart';
-import 'package:open_scripture/features/customizer/presentation/models/bible_view_list_theme.dart';
-import 'package:open_scripture/features/customizer/presentation/state/customizer_cubit.dart';
-import 'package:open_scripture/shared/domain/entities/verse.dart';
+
+import '../../../../../shared/domain/entities/verse.dart';
+import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
+import '../../../../customizer/presentation/models/bible_view_list_theme.dart';
+import '../../../../customizer/presentation/state/customizer_cubit.dart';
+import '../cubit/selected_word_cubit.dart';
+import '../rendering/verse_richtext_builder.dart';
+import '../state/bible_pane_bloc.dart';
 
 class VerseWidget extends StatelessWidget {
   final Verse verse;

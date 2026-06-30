@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 
 import '../../../../../shared/widgets/dot.dart';
+import '../state/multi_pane_manager_cubit.dart';
 
 class ActivePaneIndicator extends StatelessWidget {
   const ActivePaneIndicator({

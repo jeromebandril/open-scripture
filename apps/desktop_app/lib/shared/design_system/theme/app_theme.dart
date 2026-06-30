@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../tokens/colors.dart';
 import '../tokens/radius.dart';
 import '../tokens/typography.dart';
+import 'app_text_theme.dart';
 import 'component_themes/app_bar_theme.dart';
 import 'component_themes/card_theme.dart';
 import 'component_themes/checkbox_theme.dart';
@@ -21,7 +22,6 @@ import 'component_themes/switch_theme.dart';
 import 'component_themes/tab_bar_theme.dart';
 import 'component_themes/text_button_theme.dart';
 import 'component_themes/tooltip_theme.dart';
-import 'app_text_theme.dart';
 
 /// Entry point for the design system theme.
 ///

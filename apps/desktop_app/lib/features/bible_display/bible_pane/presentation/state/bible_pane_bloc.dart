@@ -3,16 +3,15 @@ import 'dart:collection';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/shared/domain/entities/bible_id.dart';
-import 'package:open_scripture/shared/domain/entities/verse.dart';
-import 'package:open_scripture/features/bible_display/bible_pane/domain/repositories/bible_pane_repository.dart';
-import 'package:open_scripture/features/bible_display/bible_pane/domain/display_mode.dart';
-import 'package:open_scripture/core/infrastructure/event_bus/search_result_bus.dart';
-import 'package:open_scripture/core/infrastructure/event_bus/selected_verse_bus.dart';
-import 'package:open_scripture/shared/domain/repositories/bible_pane_repository_factory.dart';
-import 'package:open_scripture/shared/enums/bible_repository_type.dart';
 
+import '../../../../../core/infrastructure/event_bus/search_result_bus.dart';
+import '../../../../../core/infrastructure/event_bus/selected_verse_bus.dart';
+import '../../../../../shared/domain/entities/bible_id.dart';
 import '../../../../../shared/domain/entities/bible_ref.dart';
+import '../../../../../shared/domain/repositories/bible_pane_repository_factory.dart';
+import '../../../../../shared/enums/bible_repository_type.dart';
+import '../../domain/display_mode.dart';
+import '../../domain/repositories/bible_pane_repository.dart';
 import '../models/parallel_bible_config.dart';
 
 part 'bible_pane_event.dart';
@@ -267,10 +266,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
       return;
     }
 
-    emit(state.copyWith(
-      status: () => BiblePaneStatus.selectBibles,
-      //content: () => ParallelBibleConfig.empty,
-    ));
+    emit(state.copyWith(status: () => BiblePaneStatus.selectBibles));
   }
 
   FutureOr<void> _onChangeDisplayMode(

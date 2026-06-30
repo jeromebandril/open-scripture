@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:open_scripture/features/obs_live_overlay/domain/entities/overlay_models.dart';
+import '../../../features/obs_live_overlay/domain/entities/overlay_models.dart';
 
 class SelectedVerseBus {
   final _c = StreamController<OverlaySnapshot>.broadcast();

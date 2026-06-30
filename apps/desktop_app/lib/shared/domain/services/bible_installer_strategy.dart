@@ -1,5 +1,5 @@
-import 'package:open_scripture/shared/domain/entities/bible_download_progress.dart';
-import 'package:open_scripture/shared/domain/entities/bible_source.dart';
+import '../entities/bible_download_progress.dart';
+import '../entities/bible_source.dart';
 
 abstract class BibleInstallerStrategy {
   /// Executes the installation process and yields progress updates

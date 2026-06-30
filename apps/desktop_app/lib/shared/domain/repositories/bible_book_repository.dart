@@ -1,5 +1,5 @@
-import 'package:open_scripture/shared/domain/entities/bible_id.dart';
-import 'package:open_scripture/shared/domain/entities/localized_book.dart';
+import '../entities/bible_id.dart';
+import '../entities/localized_book.dart';
 
 /// The abstraction boundary for retrieving Bible book names and structures.
 abstract class BibleBookRepository {

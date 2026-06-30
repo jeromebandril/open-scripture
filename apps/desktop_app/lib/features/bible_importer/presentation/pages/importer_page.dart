@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/core/di/injection_container.dart';
-import 'package:open_scripture/features/bible_importer/presentation/state/bible_importer_cubit/bible_importer_cubit.dart';
-import 'package:open_scripture/features/bible_importer/presentation/widgets/importer.dart';
-import 'package:open_scripture/features/bible_importer/presentation/widgets/list_of_repositories.dart';
-import 'package:open_scripture/features/bible_importer/presentation/widgets/sword_path_selector.dart';
-import 'package:open_scripture/features/settings_window/presentation/widgets/setting.dart';
-import 'package:open_scripture/shared/widgets/ui/inputs/app_input_option.dart';
-import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
-import 'package:open_scripture/shared/enums/bible_repository_type.dart';
+
+import '../../../../core/di/injection_container.dart';
+import '../../../../shared/enums/bible_repository_type.dart';
+import '../../../../shared/widgets/ui/inputs/app_input_option.dart';
+import '../../../settings_window/presentation/widgets/setting.dart';
+import '../../../settings_window/presentation/widgets/setting_section.dart';
+import '../state/bible_importer_cubit/bible_importer_cubit.dart';
+import '../widgets/importer.dart';
+import '../widgets/list_of_repositories.dart';
+import '../widgets/sword_path_selector.dart';
 
 const _recommendedSources = [
   'https://eBible.org',

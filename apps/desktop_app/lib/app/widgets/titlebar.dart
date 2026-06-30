@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:open_scripture/app/widgets/menubar.dart';
-import 'package:open_scripture/shared/constants.dart';
-import 'package:open_scripture/shared/design_system/tokens/tokens.dart';
 import 'package:window_manager/window_manager.dart';
+
+import '../../shared/constants.dart';
+import '../../shared/design_system/tokens/tokens.dart';
+import 'menubar.dart';
 
 class Titlebar extends StatelessWidget {
   const Titlebar({

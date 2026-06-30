@@ -1,9 +1,8 @@
 import 'dart:convert';
 
-import 'package:open_scripture/core/sword/sword_bridge.dart';
-import 'package:open_scripture/shared/data/datasources/bible_catalog_datasource/bible_catalog_datasource.dart';
-import 'package:open_scripture/shared/data/models/bible_install_dto.dart';
-import 'package:open_scripture/shared/enums/bible_repository_type.dart';
+import '../../../../core/sword/sword_bridge.dart';
+import '../../models/bible_install_dto.dart';
+import 'bible_catalog_datasource.dart';
 
 class SwordBibleCatalogDatasourceImpl implements BibleCatalogDatasource {
   final SwordBridge _swordBridge;

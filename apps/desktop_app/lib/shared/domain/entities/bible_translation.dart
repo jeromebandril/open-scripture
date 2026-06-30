@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/shared/domain/entities/bible_id.dart';
+import 'bible_id.dart';
 
 /// Represents the metadata for a specific Bible translation (e.g., KJV, RVR60).
 /// Use [extId] is the unique id

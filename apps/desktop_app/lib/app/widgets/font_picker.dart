@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:open_scripture/shared/fonts/app_font.dart';
-import 'package:open_scripture/shared/widgets/ui/inputs/app_input_option.dart';
+import '../../shared/fonts/app_font.dart';
+import '../../shared/widgets/ui/inputs/app_input_option.dart';
 
 class FontPicker extends StatelessWidget {
   final AppFont selected;

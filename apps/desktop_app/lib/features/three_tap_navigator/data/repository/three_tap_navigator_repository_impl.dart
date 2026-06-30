@@ -1,11 +1,12 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:open_scripture/features/three_tap_navigator/domain/repository/three_tap_navigator_repository.dart';
-import 'package:open_scripture/shared/data/datasources/bible_content_datasource/bible_content_datasourcee.dart';
-import 'package:open_scripture/shared/data/datasources/drift_book_local_datasource_impl.dart';
-import 'package:open_scripture/shared/data/models/book_dto.dart';
-import 'package:open_scripture/shared/domain/entities/bible_id.dart';
-import 'package:open_scripture/shared/domain/entities/localized_book.dart';
-import 'package:open_scripture/shared/error/failure.dart';
+
+import '../../../../shared/data/datasources/bible_content_datasource/bible_content_datasourcee.dart';
+import '../../../../shared/data/datasources/drift_book_local_datasource_impl.dart';
+import '../../../../shared/data/models/book_dto.dart';
+import '../../../../shared/domain/entities/bible_id.dart';
+import '../../../../shared/domain/entities/localized_book.dart';
+import '../../../../shared/error/failure.dart';
+import '../../domain/repository/three_tap_navigator_repository.dart';
 
 class ThreeTapNavigatorRepositoryImpl implements ThreeTapNavigatorRepository {
   final BibleContentDatasource _contentDataSource;

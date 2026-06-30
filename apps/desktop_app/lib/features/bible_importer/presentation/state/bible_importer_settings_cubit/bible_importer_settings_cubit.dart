@@ -2,8 +2,9 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/features/bible_importer/domain/entities/bible_importer_settings.dart';
-import 'package:open_scripture/shared/domain/services/bible_importer_settings_service.dart';
+
+import '../../../../../shared/domain/services/bible_importer_settings_service.dart';
+import '../../../domain/entities/bible_importer_settings.dart';
 
 part 'bible_importer_settings_state.dart';
 

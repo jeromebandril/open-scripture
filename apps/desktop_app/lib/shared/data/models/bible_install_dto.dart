@@ -1,9 +1,9 @@
-import 'package:open_scripture/core/infrastructure/database/database.dart';
-import 'package:open_scripture/shared/domain/entities/bible_book.dart';
-import 'package:open_scripture/shared/domain/entities/bible_id.dart';
-import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
-import 'package:open_scripture/shared/domain/entities/verse.dart';
-import 'package:open_scripture/shared/enums/bible_repository_type.dart';
+import '../../../core/infrastructure/database/database.dart';
+import '../../domain/entities/bible_book.dart';
+import '../../domain/entities/bible_id.dart';
+import '../../domain/entities/bible_translation.dart';
+import '../../domain/entities/verse.dart';
+import '../../enums/bible_repository_type.dart';
 
 class TranslationInstallDto {
   final int? id;

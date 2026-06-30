@@ -1,16 +1,17 @@
-import 'package:open_scripture/core/engines/bible_compiler/domain/models/canonical_bible_package.dart';
-import 'package:open_scripture/core/engines/bible_compiler/domain/models/payload_issue.dart';
-import 'package:open_scripture/core/engines/bible_compiler/import/bible_importer.dart';
-import 'package:open_scripture/core/engines/bible_compiler/source/packages/source_package.dart';
-import 'package:open_scripture/shared/domain/entities/bible_book.dart';
-import 'package:open_scripture/shared/domain/entities/bible_id.dart';
-import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
-import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
-import 'package:open_scripture/shared/domain/entities/localized_book.dart';
-import 'package:open_scripture/shared/domain/entities/verse.dart';
-import 'package:open_scripture/shared/enums/bible_repository_type.dart';
 import 'package:xml/xml.dart';
 import 'package:xml/xpath.dart';
+
+import '../../../../../shared/domain/entities/bible_book.dart';
+import '../../../../../shared/domain/entities/bible_id.dart';
+import '../../../../../shared/domain/entities/bible_ref.dart';
+import '../../../../../shared/domain/entities/bible_translation.dart';
+import '../../../../../shared/domain/entities/localized_book.dart';
+import '../../../../../shared/domain/entities/verse.dart';
+import '../../../../../shared/enums/bible_repository_type.dart';
+import '../../domain/models/canonical_bible_package.dart';
+import '../../domain/models/payload_issue.dart';
+import '../../source/packages/source_package.dart';
+import '../bible_importer.dart';
 
 // helper class
 class _ActiveStyle {
@@ -251,8 +252,9 @@ final class OsisImporter implements BibleImporter {
 
     void flushVerse() {
       flushBuffer();
-      if (chapter == null || verseNumber == null || currentSpans.isEmpty)
+      if (chapter == null || verseNumber == null || currentSpans.isEmpty) {
         return;
+      }
 
       verses.add(Verse(
         translationId: translationId,
@@ -283,7 +285,9 @@ final class OsisImporter implements BibleImporter {
           final parsed = _chapterFromOsisId(node.getAttribute('osisID'));
           if (parsed != null) chapter = parsed;
 
-          for (final child in node.children) walk(child);
+          for (final child in node.children) {
+            walk(child);
+          }
           return;
         }
 
@@ -324,7 +328,9 @@ final class OsisImporter implements BibleImporter {
             inVerse = verseNumber != null;
             segmentIndex = 0;
 
-            for (final child in node.children) walk(child);
+            for (final child in node.children) {
+              walk(child);
+            }
 
             if (inVerse) flushVerse();
             inVerse = false;
@@ -332,7 +338,9 @@ final class OsisImporter implements BibleImporter {
             return;
           }
 
-          for (final child in node.children) walk(child);
+          for (final child in node.children) {
+            walk(child);
+          }
           return;
         }
 
@@ -341,19 +349,25 @@ final class OsisImporter implements BibleImporter {
         if (st != null) {
           flushBuffer();
           styleStack.add(_ActiveStyle(st, _spanPayload(node)));
-          for (final child in node.children) walk(child);
+          for (final child in node.children) {
+            walk(child);
+          }
           flushBuffer();
           styleStack.removeLast();
           return;
         }
 
-        for (final child in node.children) walk(child);
+        for (final child in node.children) {
+          walk(child);
+        }
         return;
       }
       if (node is XmlText && inVerse) appendNormalized(node.value);
     };
 
-    for (final child in bookDiv.children) walk(child);
+    for (final child in bookDiv.children) {
+      walk(child);
+    }
     if (inVerse) flushVerse();
     return verses;
   }

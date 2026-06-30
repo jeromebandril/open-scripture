@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/features/bible_display/bible_pane/presentation/rendering/verse_richtext_builder.dart';
-import 'package:open_scripture/features/bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
-import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
-import 'package:open_scripture/features/customizer/domain/entities/presentation_verse_number_style.dart';
-import 'package:open_scripture/features/customizer/presentation/models/bible_pane_general_theme.dart';
-import 'package:open_scripture/features/customizer/presentation/models/bible_view_presentation_theme.dart';
-import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
+
+import '../../../../../shared/domain/entities/bible_ref.dart';
+import '../../../../customizer/domain/entities/presentation_verse_number_style.dart';
+import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
+import '../../../../customizer/presentation/models/bible_view_presentation_theme.dart';
+import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
+import '../rendering/verse_richtext_builder.dart';
+import '../state/bible_pane_bloc.dart';
 
 class BibleViewPresentation extends StatelessWidget {
   const BibleViewPresentation({super.key, required this.uniqueId});

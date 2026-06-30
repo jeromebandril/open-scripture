@@ -1,9 +1,9 @@
 import 'package:drift/drift.dart';
-import 'package:open_scripture/core/infrastructure/database/daos/bible_content_dao.dart';
-import 'package:open_scripture/core/infrastructure/database/daos/bible_installation_dao.dart';
-import 'package:open_scripture/core/infrastructure/database/daos/installed_bibles_dao.dart';
-import 'package:open_scripture/shared/domain/entities/bible_book.dart';
 
+import '../../../shared/domain/entities/bible_book.dart';
+import 'daos/bible_content_dao.dart';
+import 'daos/bible_installation_dao.dart';
+import 'daos/installed_bibles_dao.dart';
 import 'db_connect/db_connect.dart';
 
 part 'database.g.dart';

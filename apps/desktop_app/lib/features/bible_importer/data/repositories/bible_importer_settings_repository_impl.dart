@@ -1,8 +1,9 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:open_scripture/core/engines/settings/datasource/settings_datasource.dart';
-import 'package:open_scripture/core/engines/settings/settings_repository.dart';
-import 'package:open_scripture/features/bible_importer/domain/entities/bible_importer_settings.dart';
-import 'package:open_scripture/shared/error/failure.dart';
+
+import '../../../../core/engines/settings/datasource/settings_datasource.dart';
+import '../../../../core/engines/settings/settings_repository.dart';
+import '../../../../shared/error/failure.dart';
+import '../../domain/entities/bible_importer_settings.dart';
 
 class BibleImporterSettingsRepositoryImpl
     implements SettingsRepository<BibleImporterSettings> {

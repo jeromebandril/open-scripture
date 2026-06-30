@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/app/widgets/app_reveal_animation.dart';
-import 'package:open_scripture/shared/design_system/design_system.dart';
+import '../../../../app/widgets/app_reveal_animation.dart';
+import '../../../../shared/design_system/design_system.dart';
 
 import '../../../window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import '../models/settings_route.dart';

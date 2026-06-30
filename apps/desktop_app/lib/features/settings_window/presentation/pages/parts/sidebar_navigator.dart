@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:open_scripture/features/settings_window/presentation/models/settings_route.dart';
-import 'package:open_scripture/shared/design_system/design_system.dart';
+
+import '../../../../../shared/design_system/design_system.dart';
+import '../../models/settings_route.dart';
 
 class SidebarNavigator extends StatelessWidget {
   final double width;

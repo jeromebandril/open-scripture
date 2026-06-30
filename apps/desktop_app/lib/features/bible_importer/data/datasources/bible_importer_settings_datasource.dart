@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:open_scripture/core/engines/settings/datasource/settings_datasource_desktop.dart';
-import 'package:open_scripture/features/bible_importer/domain/entities/bible_importer_settings.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+
+import '../../../../core/engines/settings/datasource/settings_datasource_desktop.dart';
+import '../../domain/entities/bible_importer_settings.dart';
 
 class BibleImporterSettingsDatasourceImpl
     extends SettingsDatasourceDesktopBase<BibleImporterSettings> {

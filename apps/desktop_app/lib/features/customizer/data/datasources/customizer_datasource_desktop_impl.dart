@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:open_scripture/core/engines/settings/datasource/settings_datasource_desktop.dart';
-import 'package:open_scripture/features/customizer/presentation/state/customizer_cubit.dart';
+import '../../../../core/engines/settings/datasource/settings_datasource_desktop.dart';
+import '../../presentation/state/customizer_cubit.dart';
 
 class CustomizerDatasourceDesktopImpl
     extends SettingsDatasourceDesktopBase<CustomizerState> {

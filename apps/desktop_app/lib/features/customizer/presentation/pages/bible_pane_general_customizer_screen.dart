@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/app/widgets/font_picker.dart';
-import 'package:open_scripture/features/customizer/domain/entities/app_font_weight.dart';
-import 'package:open_scripture/features/customizer/domain/entities/bible_pane_general_theme_settings.dart';
-import 'package:open_scripture/features/customizer/presentation/state/customizer_cubit.dart';
-import 'package:open_scripture/shared/widgets/ui/inputs/app_input_bool.dart';
-import 'package:open_scripture/features/settings_window/presentation/widgets/setting.dart';
-import 'package:open_scripture/shared/widgets/ui/inputs/app_input_color.dart';
-import 'package:open_scripture/shared/widgets/ui/inputs/app_input_number.dart';
-import 'package:open_scripture/shared/widgets/ui/inputs/app_input_option.dart';
-import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
-import 'package:open_scripture/shared/fonts/app_font.dart';
+
+import '../../../../app/widgets/font_picker.dart';
+import '../../../../shared/fonts/app_font.dart';
+import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
+import '../../../../shared/widgets/ui/inputs/app_input_color.dart';
+import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
+import '../../../../shared/widgets/ui/inputs/app_input_option.dart';
+import '../../../settings_window/presentation/widgets/setting.dart';
+import '../../../settings_window/presentation/widgets/setting_section.dart';
+import '../../domain/entities/app_font_weight.dart';
+import '../../domain/entities/bible_pane_general_theme_settings.dart';
+import '../state/customizer_cubit.dart';
 
 class BiblePaneGeneralCustomizerScreen extends StatefulWidget {
   const BiblePaneGeneralCustomizerScreen({super.key, this.showPreview = false});

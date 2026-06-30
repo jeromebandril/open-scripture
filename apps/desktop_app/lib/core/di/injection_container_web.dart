@@ -1,15 +1,16 @@
 import 'package:get_it/get_it.dart';
-import 'package:open_scripture/core/engines/settings/datasource/settings_datasource.dart';
-import 'package:open_scripture/core/lifecycle/app_lifecycle.dart';
-import 'package:open_scripture/core/lifecycle/app_lifecycle_web_impl.dart';
-import 'package:open_scripture/features/bible_display/bible_pane/domain/repositories/bible_pane_repository.dart';
-import 'package:open_scripture/features/customizer/data/datasources/customizer_datasource_web_impl.dart';
-import 'package:open_scripture/features/customizer/presentation/state/customizer_cubit.dart';
-import 'package:open_scripture/shared/data/repositories/bible_pane_repository_factory_impl.dart';
-import 'package:open_scripture/shared/data/services/book_resolvers/programmatic_book_resolver.dart';
-import 'package:open_scripture/shared/domain/repositories/bible_pane_repository_factory.dart';
-import 'package:open_scripture/shared/domain/services/book_resolver.dart';
-import 'package:open_scripture/shared/enums/bible_repository_type.dart';
+
+import '../../features/bible_display/bible_pane/domain/repositories/bible_pane_repository.dart';
+import '../../features/customizer/data/datasources/customizer_datasource_web_impl.dart';
+import '../../features/customizer/presentation/state/customizer_cubit.dart';
+import '../../shared/data/repositories/bible_pane_repository_factory_impl.dart';
+import '../../shared/data/services/book_resolvers/programmatic_book_resolver.dart';
+import '../../shared/domain/repositories/bible_pane_repository_factory.dart';
+import '../../shared/domain/services/book_resolver.dart';
+import '../../shared/enums/bible_repository_type.dart';
+import '../engines/settings/datasource/settings_datasource.dart';
+import '../lifecycle/app_lifecycle.dart';
+import '../lifecycle/app_lifecycle_web_impl.dart';
 
 Future<void> init(GetIt sl) async {
   sl.registerLazySingleton<AppLifecycleService>(() => WebLifecycleService());

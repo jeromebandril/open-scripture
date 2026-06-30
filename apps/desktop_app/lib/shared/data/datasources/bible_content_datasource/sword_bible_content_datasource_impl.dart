@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:open_scripture/core/sword/sword_bridge.dart';
-import 'package:open_scripture/shared/data/datasources/bible_content_datasource/bible_content_datasourcee.dart';
-import 'package:open_scripture/shared/data/models/verse_segment_dto.dart';
-import 'package:open_scripture/shared/domain/entities/bible_book.dart';
+import '../../../../core/sword/sword_bridge.dart';
+import '../../../domain/entities/bible_book.dart';
+import '../../models/verse_segment_dto.dart';
+import 'bible_content_datasourcee.dart';
 
 class SwordBibleContentDatasourceImpl implements BibleContentDatasource {
   final SwordBridge _swordBridge;

@@ -1,9 +1,11 @@
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
-import 'package:open_scripture/shared/constants.dart';
-import 'package:open_scripture/shared/data/datasources/bible_catalog_datasource/bible_catalog_datasource.dart';
-import 'package:open_scripture/shared/data/models/bible_install_dto.dart';
-import 'package:open_scripture/shared/enums/bible_repository_type.dart';
+
+import '../../../constants.dart';
+import '../../../enums/bible_repository_type.dart';
+import '../../models/bible_install_dto.dart';
+import 'bible_catalog_datasource.dart';
 
 class RemoteBibleCatalogDatasourceImpl implements BibleCatalogDatasource {
   List<TranslationInstallDto>? _cachedTranslations;

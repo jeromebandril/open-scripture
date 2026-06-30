@@ -1,10 +1,11 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:open_scripture/shared/data/datasources/bible_catalog_datasource/bible_catalog_datasource.dart';
-import 'package:open_scripture/shared/data/models/bible_install_dto.dart';
-import 'package:open_scripture/shared/domain/entities/bible_id.dart';
-import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
-import 'package:open_scripture/shared/domain/repositories/bible_catalog_repository.dart';
-import 'package:open_scripture/shared/error/failure.dart';
+
+import '../../domain/entities/bible_id.dart';
+import '../../domain/entities/bible_translation.dart';
+import '../../domain/repositories/bible_catalog_repository.dart';
+import '../../error/failure.dart';
+import '../datasources/bible_catalog_datasource/bible_catalog_datasource.dart';
+import '../models/bible_install_dto.dart';
 
 class BibleCatalogRepositoryImpl implements BibleCatalogRepository {
   final BibleCatalogDatasource _dataSource;

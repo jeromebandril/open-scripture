@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/features/text_scaler/presentation/state/text_scaler_cubit.dart';
 
 import '../../../../../shared/domain/entities/bible_ref.dart';
+import '../../../../text_scaler/presentation/state/text_scaler_cubit.dart';
 import '../../../bible_pane/presentation/state/bible_pane_bloc.dart';
 
 class PaneDescriptor extends Equatable {

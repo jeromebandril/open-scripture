@@ -1,6 +1,6 @@
-import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
-import 'package:open_scripture/features/shortcuts/domain/repositories/shortcuts_repo.dart';
-import 'package:open_scripture/features/shortcuts/presentation/models/app_command_dispatcher.dart';
+import '../../domain/models/app_command.dart';
+import '../../domain/repositories/shortcuts_repo.dart';
+import '../../presentation/models/app_command_dispatcher.dart';
 
 class ShortcutsRepoImpl implements ShortcutsRepo {
   final AppCommandDispatcher _dispatcher;

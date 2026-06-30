@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:open_scripture/core/infrastructure/database/database.dart';
+import '../database.dart';
 
 part 'installed_bibles_dao.g.dart';
 

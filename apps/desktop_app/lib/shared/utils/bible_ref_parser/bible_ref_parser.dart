@@ -1,5 +1,5 @@
-import 'package:open_scripture/shared/domain/entities/bible_ref_partial.dart';
-import 'package:open_scripture/shared/utils/bible_ref_parser/bible_ref_parser_exceptions.dart';
+import '../../domain/entities/bible_ref_partial.dart';
+import 'bible_ref_parser_exceptions.dart';
 
 class BibleRefParser {
   static const _searchPromptRegex =
@@ -50,12 +50,15 @@ class BibleRefParser {
         : int.parse(verseStartStr);
     final verseEnd = verseEndStr == null ? null : int.parse(verseEndStr);
 
-    if (chapter <= 0)
+    if (chapter <= 0) {
       throw BibleRefOutOfRangeException('Chapter must be >= 1.');
-    if (verseStart <= 0)
+    }
+    if (verseStart <= 0) {
       throw BibleRefOutOfRangeException('Verse must be >= 1.');
-    if (verseEnd != null && verseEnd < verseStart)
+    }
+    if (verseEnd != null && verseEnd < verseStart) {
       throw BibleRefOutOfRangeException('Verse end must be >= verse start.');
+    }
 
     // 4. Return the Domain Entity
     return BibleRefPartial(

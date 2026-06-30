@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
-import 'package:open_scripture/core/infrastructure/database/database.dart';
-import 'package:open_scripture/shared/domain/entities/bible_book.dart';
-import 'package:open_scripture/shared/domain/services/book_resolver.dart';
+import '../../../../core/infrastructure/database/database.dart';
+import '../../../domain/entities/bible_book.dart';
+import '../../../domain/services/book_resolver.dart';
 
 /// Database / Localized Lookup
 /// Hits SQLite to find localized names or aliases (e.g., "Génesis", "1 Sam").
@@ -29,7 +29,7 @@ class DriftBookResolver implements BookResolver {
         _db.canonicalBooks.id.equalsExp(_db.localizedBookNames.bookId),
       ),
     ])
-      ..where(_db.localizedBookNames.bibleId.equals(bibleId!) &
+      ..where(_db.localizedBookNames.bibleId.equals(bibleId) &
           (_db.localizedBookNames.longName.lower().like(containsMatch) |
               _db.localizedBookNames.shortName.lower().like(containsMatch) |
               _db.localizedBookNames.abbr.lower().like(prefixMatch) |

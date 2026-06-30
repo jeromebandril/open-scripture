@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/features/obs_live_overlay/presentation/state/obs_overlay/obs_live_overlay_cubit.dart';
-import 'package:open_scripture/features/settings_window/presentation/widgets/setting.dart';
-import 'package:open_scripture/shared/widgets/ui/inputs/app_input_bool.dart';
-import 'package:open_scripture/shared/widgets/ui/inputs/app_input_number.dart';
-import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
 
 import '../../../../shared/widgets/dot.dart';
+import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
+import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
+import '../../../settings_window/presentation/widgets/setting.dart';
+import '../../../settings_window/presentation/widgets/setting_section.dart';
+import '../state/obs_overlay/obs_live_overlay_cubit.dart';
 import '../state/obs_overlay_settinsg/obs_live_overlay_settings_cubit.dart';
 
 class ObsLiveOverlayPage extends StatelessWidget {

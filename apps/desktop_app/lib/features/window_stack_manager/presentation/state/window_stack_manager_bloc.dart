@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:open_scripture/features/window_stack_manager/presentation/widgets/custom_window_wrapper.dart';
+import '../widgets/custom_window_wrapper.dart';
 
 part 'window_stack_manager_event.dart';
 part 'window_stack_manager_state.dart';

@@ -1,4 +1,4 @@
-import 'package:open_scripture/shared/domain/entities/bible_book.dart';
+import '../entities/bible_book.dart';
 
 /// Repository responsible for translating human-readable text into
 /// strict domain coordinates [BibleBook].

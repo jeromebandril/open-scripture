@@ -1,8 +1,7 @@
 import 'dart:async';
 
-import 'package:open_scripture/shared/domain/entities/bible_ref_partial.dart';
-
 import '../../../shared/domain/entities/bible_ref.dart';
+import '../../../shared/domain/entities/bible_ref_partial.dart';
 
 class ResolvedSearchIntentBus {
   final _controller = StreamController<ResolvedSearchIntent>.broadcast();

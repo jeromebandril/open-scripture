@@ -1,12 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/core/infrastructure/event_bus/search_result_bus.dart';
-import 'package:open_scripture/core/infrastructure/event_bus/resolved_search_intent_bus.dart';
-import 'package:open_scripture/core/di/injection_container.dart';
-import 'package:open_scripture/core/infrastructure/event_bus/selected_verse_bus.dart';
-import 'package:open_scripture/features/bible_display/bible_selector/presentation/cubit/bible_selector_cubit.dart';
-import 'package:open_scripture/shared/domain/services/book_resolver.dart';
 
+import '../../../../../core/di/injection_container.dart';
+import '../../../../../core/infrastructure/event_bus/resolved_search_intent_bus.dart';
+import '../../../../../core/infrastructure/event_bus/search_result_bus.dart';
+import '../../../../../shared/domain/services/book_resolver.dart';
 import '../../../../text_scaler/presentation/state/text_scaler_cubit.dart';
 import '../../../bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../models/multi_pane_data.dart';

@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:open_scripture/shared/utils/colors_util.dart';
+import '../../../../shared/utils/colors_util.dart';
 
 /// App-wide theme settings that affect MaterialApp.
 

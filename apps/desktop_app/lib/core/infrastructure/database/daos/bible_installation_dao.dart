@@ -1,7 +1,9 @@
 import 'dart:convert';
+
 import 'package:drift/drift.dart';
-import 'package:open_scripture/core/infrastructure/database/database.dart';
-import 'package:open_scripture/shared/data/models/bible_install_dto.dart';
+
+import '../../../../shared/data/models/bible_install_dto.dart';
+import '../database.dart';
 
 part 'bible_installation_dao.g.dart';
 

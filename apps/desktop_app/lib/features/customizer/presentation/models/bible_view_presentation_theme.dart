@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:open_scripture/features/customizer/domain/entities/bible_pane_presentation_theme_settings.dart';
-import 'package:open_scripture/features/customizer/presentation/models/app_font_weight.dart';
-import 'package:open_scripture/features/customizer/presentation/models/app_text_alignment.dart';
 
+import '../../domain/entities/bible_pane_presentation_theme_settings.dart';
 import '../../domain/entities/presentation_verse_number_style.dart';
+import 'app_font_weight.dart';
+import 'app_text_alignment.dart';
 
 @immutable
 class BibleViewPresentationTheme

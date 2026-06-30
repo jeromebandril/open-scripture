@@ -1,8 +1,8 @@
-import 'package:open_scripture/shared/data/datasources/drift_book_local_datasource_impl.dart';
-import 'package:open_scripture/shared/domain/entities/bible_book.dart';
-import 'package:open_scripture/shared/domain/entities/bible_id.dart';
-import 'package:open_scripture/shared/domain/entities/localized_book.dart';
-import 'package:open_scripture/shared/domain/repositories/bible_book_repository.dart';
+import '../../domain/entities/bible_book.dart';
+import '../../domain/entities/bible_id.dart';
+import '../../domain/entities/localized_book.dart';
+import '../../domain/repositories/bible_book_repository.dart';
+import '../datasources/drift_book_local_datasource_impl.dart';
 
 class BibleBookRepositoryImpl implements BibleBookRepository {
   final BibleBookLocalDataSource _localDataSource;

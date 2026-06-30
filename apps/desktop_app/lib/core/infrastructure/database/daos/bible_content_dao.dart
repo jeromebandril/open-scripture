@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
-import 'package:open_scripture/core/infrastructure/database/database.dart';
-import 'package:open_scripture/shared/data/models/verse_segment_dto.dart';
+
+import '../../../../shared/data/models/verse_segment_dto.dart';
+import '../database.dart';
 
 part 'bible_content_dao.g.dart';
 

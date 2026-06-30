@@ -1,5 +1,5 @@
-import 'package:open_scripture/shared/domain/entities/bible_book.dart';
-import 'package:open_scripture/shared/domain/entities/localized_book.dart';
+import '../../domain/entities/bible_book.dart';
+import '../../domain/entities/localized_book.dart';
 
 class BookDto {
   final String bookToken;

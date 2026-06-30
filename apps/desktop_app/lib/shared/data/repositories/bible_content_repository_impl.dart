@@ -1,10 +1,10 @@
-import 'package:open_scripture/shared/data/datasources/bible_content_datasource/bible_content_datasourcee.dart';
-import 'package:open_scripture/shared/data/models/verse_segment_dto.dart';
-import 'package:open_scripture/shared/domain/entities/bible_book.dart';
-import 'package:open_scripture/shared/domain/entities/bible_id.dart';
-import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
-import 'package:open_scripture/shared/domain/entities/verse.dart';
-import 'package:open_scripture/shared/domain/repositories/bible_content_repository.dart';
+import '../../domain/entities/bible_book.dart';
+import '../../domain/entities/bible_id.dart';
+import '../../domain/entities/bible_ref.dart';
+import '../../domain/entities/verse.dart';
+import '../../domain/repositories/bible_content_repository.dart';
+import '../datasources/bible_content_datasource/bible_content_datasourcee.dart';
+import '../models/verse_segment_dto.dart';
 
 class BibleContentRepositoryImpl implements BibleContentRepository {
   final BibleContentDatasource _dataSource;

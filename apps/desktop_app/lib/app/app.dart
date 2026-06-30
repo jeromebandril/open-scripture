@@ -3,15 +3,12 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/core/infrastructure/window/app_window_manager.dart';
-import 'package:open_scripture/core/lifecycle/app_lifecycle.dart';
-import 'package:open_scripture/features/bible_searchbar/history/presentation/cubit/history_cubit.dart';
-import 'package:open_scripture/features/three_tap_navigator/presentation/state/three_tap_navigator_cubit.dart';
-import 'package:open_scripture/shared/design_system/design_system.dart';
 
-import 'state/fullscreen_cubit.dart';
-import 'state/interface_visibility_cubit.dart';
+import '../core/di/injection_container.dart' as di;
+import '../core/infrastructure/window/app_window_manager.dart';
+import '../core/lifecycle/app_lifecycle.dart';
 import '../features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
+import '../features/bible_searchbar/history/presentation/cubit/history_cubit.dart';
 import '../features/bible_searchbar/search/presentation/state/search_bloc.dart';
 import '../features/customizer/presentation/models/bible_pane_general_theme.dart';
 import '../features/customizer/presentation/models/bible_view_list_theme.dart';
@@ -22,9 +19,12 @@ import '../features/obs_live_overlay/presentation/state/obs_overlay_settinsg/obs
 import '../features/remote_controller/presentation/state/remote_controller/remote_controller_cubit.dart';
 import '../features/remote_controller/presentation/state/remote_controller_settings/remote_controller_settings_cubit.dart';
 import '../features/shortcuts/presentation/state/shortcuts_cubit.dart';
+import '../features/three_tap_navigator/presentation/state/three_tap_navigator_cubit.dart';
 import '../features/window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
-import '../core/di/injection_container.dart' as di;
+import '../shared/design_system/design_system.dart';
 import 'app_shell.dart';
+import 'state/fullscreen_cubit.dart';
+import 'state/interface_visibility_cubit.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});

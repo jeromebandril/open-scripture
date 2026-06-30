@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:open_scripture/features/customizer/presentation/pages/bible_pane_general_customizer_screen.dart';
-import 'package:open_scripture/features/customizer/presentation/pages/bible_view_list_customizer_screen.dart';
-import 'package:open_scripture/features/customizer/presentation/pages/bible_view_presentation_customizer_screen.dart';
-import 'package:open_scripture/shared/widgets/ui/b_container_tab_bar.dart';
+
+import '../../../../shared/widgets/ui/b_container_tab_bar.dart';
+import 'bible_pane_general_customizer_screen.dart';
+import 'bible_view_list_customizer_screen.dart';
+import 'bible_view_presentation_customizer_screen.dart';
 
 class BiblePaneCustomizerScreen extends StatefulWidget {
   const BiblePaneCustomizerScreen({super.key});

@@ -1,10 +1,10 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:open_scripture/core/engines/settings/settings_repository.dart';
-import 'package:open_scripture/core/infrastructure/event_bus/install_notifier.dart';
-import 'package:open_scripture/core/sword/sword_bridge.dart';
-import 'package:open_scripture/features/bible_importer/domain/entities/bible_importer_settings.dart';
-import 'package:open_scripture/shared/domain/services/bible_importer_settings_service.dart';
-import 'package:open_scripture/shared/error/failure.dart';
+import '../../../core/engines/settings/settings_repository.dart';
+import '../../../core/infrastructure/event_bus/install_notifier.dart';
+import '../../../core/sword/sword_bridge.dart';
+import '../../../features/bible_importer/domain/entities/bible_importer_settings.dart';
+import '../../domain/services/bible_importer_settings_service.dart';
+import '../../error/failure.dart';
 
 class BibleImporterSettingsServiceImpl implements BibleImporterSettingsService {
   BibleImporterSettingsServiceImpl({

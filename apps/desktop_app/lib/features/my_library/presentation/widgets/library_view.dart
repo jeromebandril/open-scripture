@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/features/my_library/presentation/cubit/my_library_cubit.dart';
-import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
-import 'package:open_scripture/features/window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
-import 'package:open_scripture/shared/domain/entities/bible_translation.dart';
-import 'package:open_scripture/shared/widgets/bible_meta_editor.dart';
-import 'package:open_scripture/shared/widgets/hoverable_container.dart';
+
+import '../../../../shared/domain/entities/bible_translation.dart';
+import '../../../../shared/widgets/bible_meta_editor.dart';
+import '../../../../shared/widgets/hoverable_container.dart';
+import '../../../settings_window/presentation/widgets/setting_section.dart';
+import '../../../window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
+import '../cubit/my_library_cubit.dart';
 
 // TODO: implement a refresh button
 // TODO: improve layout

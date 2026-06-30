@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/features/remote_controller/domain/entities/client_info.dart';
-import 'package:open_scripture/features/window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:open_scripture/shared/design_system/design_system.dart';
 
-import '../../../../shared/widgets/dot.dart';
+import '../../../../shared/design_system/design_system.dart';
 import '../../../../shared/utils/network_utils.dart';
+import '../../../../shared/widgets/dot.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
-import '../../../settings_window/presentation/widgets/setting_section.dart';
-import '../../../settings_window/presentation/widgets/setting.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
+import '../../../settings_window/presentation/widgets/setting.dart';
+import '../../../settings_window/presentation/widgets/setting_section.dart';
+import '../../../window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
+import '../../domain/entities/client_info.dart';
 import '../state/remote_controller/remote_controller_cubit.dart';
 import '../state/remote_controller_settings/remote_controller_settings_cubit.dart';
 

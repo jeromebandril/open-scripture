@@ -1,5 +1,5 @@
-import 'package:open_scripture/shared/domain/entities/bible_book.dart';
-import 'package:open_scripture/shared/domain/services/book_resolver.dart';
+import '../../../domain/entities/bible_book.dart';
+import '../../../domain/services/book_resolver.dart';
 
 class ChainedBookResolver implements BookResolver {
   final List<BookResolver> _chain;

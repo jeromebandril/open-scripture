@@ -1,11 +1,11 @@
-import 'package:open_scripture/app/state/fullscreen_cubit.dart';
-import 'package:open_scripture/app/state/interface_visibility_cubit.dart';
-import 'package:open_scripture/features/bible_display/bible_pane/domain/display_mode.dart';
-import 'package:open_scripture/features/bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
-import 'package:open_scripture/features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
-import 'package:open_scripture/features/bible_searchbar/search/presentation/state/search_bloc.dart';
-import 'package:open_scripture/features/shortcuts/domain/models/app_command.dart';
-import 'package:open_scripture/shared/domain/entities/bible_ref.dart';
+import '../../../../app/state/fullscreen_cubit.dart';
+import '../../../../app/state/interface_visibility_cubit.dart';
+import '../../../../shared/domain/entities/bible_ref.dart';
+import '../../../bible_display/bible_pane/domain/display_mode.dart';
+import '../../../bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
+import '../../../bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
+import '../../../bible_searchbar/search/presentation/state/search_bloc.dart';
+import '../../domain/models/app_command.dart';
 
 typedef CommandHandler = void Function();
 

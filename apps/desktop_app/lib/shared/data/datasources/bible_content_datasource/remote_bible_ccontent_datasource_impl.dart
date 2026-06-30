@@ -1,10 +1,11 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:open_scripture/shared/constants.dart';
-import 'package:open_scripture/shared/data/datasources/bible_content_datasource/bible_content_datasourcee.dart';
-import 'package:open_scripture/shared/data/models/verse_segment_dto.dart';
-import 'package:open_scripture/shared/domain/entities/bible_book.dart';
+
+import '../../../constants.dart';
+import '../../../domain/entities/bible_book.dart';
+import '../../models/verse_segment_dto.dart';
+import 'bible_content_datasourcee.dart';
 
 class RemoteBibleContentDatasourceImpl implements BibleContentDatasource {
   @override

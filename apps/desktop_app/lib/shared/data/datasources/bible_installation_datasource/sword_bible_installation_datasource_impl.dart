@@ -1,8 +1,9 @@
 import 'dart:io';
 
-import 'package:open_scripture/core/engines/bible_compiler/source/packages/source_package.dart';
-import 'package:open_scripture/core/sword/sword_bridge.dart';
 import 'package:path/path.dart' as p;
+
+import '../../../../core/engines/bible_compiler/source/packages/source_package.dart';
+import '../../../../core/sword/sword_bridge.dart';
 
 abstract class SwordInstallationDatasource {
   /// Handles the physical extraction and writing of bytes to the disk
@@ -41,7 +42,7 @@ class SwordBibleInstallationDatasourceImpl
         print('Successfully deleted modules-conf.cache');
       } catch (e) {
         print('Error deleting file: $e');
-        throw e;
+        rethrow;
       }
     } else {
       print('The file modules-conf.cache does not exist in this directory.');

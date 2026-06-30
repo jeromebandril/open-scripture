@@ -1,10 +1,10 @@
-import 'package:open_scripture/core/engines/bible_compiler/import/importer_registry.dart';
-import 'package:open_scripture/shared/data/models/bible_install_dto.dart';
-import 'package:open_scripture/shared/data/services/source_fetcher_service.dart';
-import 'package:open_scripture/shared/domain/entities/bible_download_progress.dart';
-import 'package:open_scripture/shared/data/datasources/bible_installation_datasource/drift_bible_installation_datasource_impl.dart';
-import 'package:open_scripture/shared/domain/entities/bible_source.dart';
-import 'package:open_scripture/shared/domain/services/bible_installer_strategy.dart';
+import '../../../../core/engines/bible_compiler/import/importer_registry.dart';
+import '../../../domain/entities/bible_download_progress.dart';
+import '../../../domain/entities/bible_source.dart';
+import '../../../domain/services/bible_installer_strategy.dart';
+import '../../datasources/bible_installation_datasource/drift_bible_installation_datasource_impl.dart';
+import '../../models/bible_install_dto.dart';
+import '../source_fetcher_service.dart';
 
 class CanonicalInstallerStrategy implements BibleInstallerStrategy {
   final SourceFetcherService _fetcher;

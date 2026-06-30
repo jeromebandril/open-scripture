@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:open_scripture/shared/enums/bible_repository_type.dart';
+import '../../enums/bible_repository_type.dart';
 
 class BibleId extends Equatable {
   const BibleId({required this.repoType, required this.externalId});

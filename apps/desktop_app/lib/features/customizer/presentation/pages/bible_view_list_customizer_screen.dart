@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_scripture/features/customizer/domain/entities/highlight_render_mode.dart';
-import 'package:open_scripture/features/customizer/presentation/state/customizer_cubit.dart';
-import 'package:open_scripture/features/settings_window/presentation/widgets/setting.dart';
-import 'package:open_scripture/shared/widgets/ui/inputs/app_input_bool.dart';
-import 'package:open_scripture/shared/widgets/ui/inputs/app_input_number.dart';
-import 'package:open_scripture/shared/widgets/ui/inputs/app_input_option.dart';
-import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
+
+import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
+import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
+import '../../../../shared/widgets/ui/inputs/app_input_option.dart';
+import '../../../settings_window/presentation/widgets/setting.dart';
+import '../../../settings_window/presentation/widgets/setting_section.dart';
+import '../../domain/entities/highlight_render_mode.dart';
+import '../state/customizer_cubit.dart';
 
 class BibleViewListCustomizerScreen extends StatefulWidget {
   const BibleViewListCustomizerScreen({super.key, this.showPreview = false});

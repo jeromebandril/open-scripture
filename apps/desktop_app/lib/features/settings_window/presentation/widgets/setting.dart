@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:open_scripture/shared/design_system/tokens/tokens.dart';
+import '../../../../shared/design_system/tokens/tokens.dart';
 
 class Setting extends StatelessWidget {
   const Setting({

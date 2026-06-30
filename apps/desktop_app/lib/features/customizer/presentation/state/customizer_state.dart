@@ -26,7 +26,7 @@ class CustomizerState extends Equatable {
       version: version ?? this.version,
       app: app ?? this.app,
       pane: pane ?? this.pane,
-      presentTheme: presentationTheme ?? this.presentTheme,
+      presentTheme: presentationTheme ?? presentTheme,
       listTheme: listTheme ?? this.listTheme,
     );
   }
