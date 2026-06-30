@@ -18,6 +18,10 @@ part 'bible_pane_event.dart';
 part 'bible_pane_state.dart';
 
 class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
+  /// How long an async operation must run before we bother showing a
+  /// loading state. Prevents the UI from flashing on fast responses.
+  static const _loadingIndicatorThreshold = Duration(milliseconds: 250);
+
   BiblePaneBloc({
     required int paneId,
     required BibleRepositoryFactory repositoryFactory,
@@ -131,79 +135,89 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     Emitter<BiblePaneState> emit,
   ) async {
     if (state.openedBiblesIds.isEmpty) return;
-    emit(state.copyWith(status: () => BiblePaneStatus.loading));
 
-    final newMap = ParallelBibleMap.from(state.content.asMap);
-    bool isSuccess = false;
-    int verseCount = 0;
+    final loadingTimer = Timer(_loadingIndicatorThreshold, () {
+      if (emit.isDone) return;
+      emit(state.copyWith(status: () => BiblePaneStatus.loading));
+    });
 
-    for (var id in state.openedBiblesIds) {
-      final failureOrChapter =
-          // event.withSpans ?
-          await _repo.getChapterWithSpans(
-        bibleId: id,
-        ref: event.ref,
-      );
-      // : await repo.getChapterSegments(
-      //     bibleId: id,
-      //     reference: event.ref,
-      //   );
+    try {
+      final newMap = ParallelBibleMap.from(state.content.asMap);
+      bool isSuccess = false;
+      int verseCount = 0;
 
-      await failureOrChapter.fold<Future<void>>(
-        (f) async => emit(state.copyWith(
+      for (var id in state.openedBiblesIds) {
+        final failureOrChapter =
+            // event.withSpans ?
+            await _repo.getChapterWithSpans(
+          bibleId: id,
+          ref: event.ref,
+        );
+        // : await repo.getChapterSegments(
+        //     bibleId: id,
+        //     reference: event.ref,
+        //   );
+
+        await failureOrChapter.fold<Future<void>>(
+          (f) async => emit(state.copyWith(
+            status: () => BiblePaneStatus.error,
+            reference: () => event.ref,
+            errorMessage: () => f.message,
+          )),
+          (verses) async {
+            isSuccess = true;
+
+            // update bible info with verse counter
+            // get the greatest count
+            final result = (await _repo.getMaxVerse(
+              ref: event.ref,
+              book: event.ref.book,
+            ))
+                .getOrElse(
+              (_) => 0,
+            );
+            if (result > verseCount) verseCount = result;
+
+            // set content of the pane
+            newMap[id] = newMap[id]!.copyWith(
+              verses: () => BibleData.versesToMap(verses),
+            );
+          },
+        );
+      }
+
+      final content = ParallelBibleConfig.from(newMap);
+
+      if (emit.isDone) return;
+
+      if (isSuccess) {
+        emit(state.copyWith(
+          status: () => BiblePaneStatus.ready,
+          reference: () => event.ref,
+          content: () => content,
+          isMixed: () => false,
+          verseCount: () => verseCount,
+        ));
+
+        // return feedback to searchbar
+        _navBus?.emit(SearchResultSuccess(
+          ref: event.ref,
+          source: event.source,
+        ));
+
+        _sendTextToObsLiveOverlay(event.ref);
+      } else {
+        emit(state.copyWith(
           status: () => BiblePaneStatus.error,
           reference: () => event.ref,
-          errorMessage: () => f.message,
-        )),
-        (verses) async {
-          isSuccess = true;
-
-          // update bible info with verse counter
-          // get the greatest count
-          final result = (await _repo.getMaxVerse(
-            ref: event.ref,
-            book: event.ref.book,
-          ))
-              .getOrElse(
-            (_) => 0,
-          );
-          if (result > verseCount) verseCount = result;
-
-          // set content of the pane
-          newMap[id] = newMap[id]!.copyWith(
-            verses: () => BibleData.versesToMap(verses),
-          );
-        },
-      );
-    }
-
-    final content = ParallelBibleConfig.from(newMap);
-
-    if (isSuccess) {
-      emit(state.copyWith(
-        status: () => BiblePaneStatus.ready,
-        reference: () => event.ref,
-        content: () => content,
-        isMixed: () => false,
-        verseCount: () => verseCount,
-      ));
-
-      // return feedback to searchbar
-      _navBus?.emit(SearchResultSuccess(
-        ref: event.ref,
-        source: event.source,
-      ));
-
-      _sendTextToObsLiveOverlay(event.ref);
-    } else {
-      emit(state.copyWith(
-        status: () => BiblePaneStatus.error,
-        reference: () => event.ref,
-        content: () => content,
-        isMixed: () => false,
-        errorMessage: () => 'Not found',
-        verseCount: () => verseCount,
-      ));
+          content: () => content,
+          isMixed: () => false,
+          errorMessage: () => 'Not found',
+          verseCount: () => verseCount,
+        ));
+      }
+    } finally {
+      loadingTimer.cancel();
     }
   }
 
