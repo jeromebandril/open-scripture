@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:open_scripture/app/widgets/app_reveal_animation.dart';
+import 'package:open_scripture/shared/constants.dart';
+import 'package:open_scripture/shared/design_system/design_system.dart';
 
 /// A reusable widget that wraps any [trigger] and pops an overlay menu
 /// below it, animated with [AppRevealAnimation] (for consistent animation
@@ -44,17 +46,17 @@ class DropdownMenuAnchor extends StatefulWidget {
     required this.menuContent,
     // Size
     this.menuWidth,
-    this.menuHeight,
+    required this.menuHeight,
     this.menuWidthFraction = 0.25,
-    this.menuHeightFraction = 0.4,
+    // this.menuHeightFraction = 0.4,
     // Layout
     this.menuGap = 5.0,
     this.menuAlignment = Alignment.topLeft,
     //  Behaviour
     this.dismissOnOutsideTap = true,
     //  Decoration
-    this.menuDecoration,
-    this.menuPadding = const EdgeInsets.all(8),
+    this.menuPadding,
+    this.menuColor,
     this.onDismiss,
   });
 
@@ -69,13 +71,13 @@ class DropdownMenuAnchor extends StatefulWidget {
   final Widget menuContent;
 
   final double? menuWidth;
-  final double? menuHeight;
+  final double menuHeight;
 
   /// Fraction of screen width used when [menuWidth] is null.
   final double menuWidthFraction;
 
   /// Fraction of screen height used when [menuHeight] is null.
-  final double menuHeightFraction;
+  // final double menuHeightFraction;
 
   /// Vertical gap between the trigger bottom and the menu top.
   final double menuGap;
@@ -88,9 +90,8 @@ class DropdownMenuAnchor extends StatefulWidget {
   final bool dismissOnOutsideTap;
 
   /// Override default menu container decoration.
-  final BoxDecoration? menuDecoration;
-
-  final EdgeInsetsGeometry menuPadding;
+  final EdgeInsetsGeometry? menuPadding;
+  final Color? menuColor;
 
   @override
   State<DropdownMenuAnchor> createState() => _DropdownMenuAnchorState();
@@ -135,36 +136,37 @@ class _DropdownMenuAnchorState extends State<DropdownMenuAnchor> {
 
   Widget _buildOverlayChild(BuildContext context, OverlayChildLayoutInfo info) {
     final screen = MediaQuery.sizeOf(context);
+    final popupTheme = Theme.of(context).popupMenuTheme;
 
     final resolvedWidth =
         widget.menuWidth ?? screen.width * widget.menuWidthFraction;
-    final resolvedHeight =
-        widget.menuHeight ?? screen.height * widget.menuHeightFraction;
+    final resolvedHeight = widget.menuHeight
+        .clamp(0, screen.height - kWindowsTitleBarHeight - AppSpacing.xl3)
+        .toDouble();
 
-    // Horizontal offset for right-alignment.
     final dx = widget.menuAlignment == Alignment.topRight
         ? info.childSize.width - resolvedWidth
         : 0.0;
     final dy = info.childSize.height + widget.menuGap;
 
-    final menuDecoration = widget.menuDecoration ??
-        BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(8),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.15),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        );
+    final child = ConstrainedBox(
+      constraints:
+          BoxConstraints(maxWidth: resolvedWidth, maxHeight: resolvedHeight),
+      child: Material(
+        color: widget.menuColor ?? popupTheme.color,
+        elevation: popupTheme.elevation ?? 4,
+        shadowColor: popupTheme.shadowColor,
+        shape: popupTheme.shape,
+        clipBehavior: Clip.antiAlias,
+        child: Padding(
+          padding: widget.menuPadding ?? popupTheme.menuPadding!,
+          child: SizedBox(width: resolvedWidth, child: widget.menuContent),
+        ),
+      ),
+    );
 
     return Stack(
       children: [
-        //
-        // Outside-tap dismissal
-        //
         if (widget.dismissOnOutsideTap)
           Positioned.fill(
             child: GestureDetector(
@@ -172,9 +174,6 @@ class _DropdownMenuAnchorState extends State<DropdownMenuAnchor> {
               onTap: _dismiss,
             ),
           ),
-        //
-        // Floating menu
-        //
         CompositedTransformFollower(
           link: _layerLink,
           offset: Offset(dx, dy),
@@ -182,18 +181,7 @@ class _DropdownMenuAnchorState extends State<DropdownMenuAnchor> {
             blocking: true,
             child: AppRevealAnimation(
               origin: _animOriginFromAlignment(),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxWidth: resolvedWidth,
-                  maxHeight: resolvedHeight,
-                ),
-                child: Container(
-                  width: resolvedWidth,
-                  padding: widget.menuPadding,
-                  decoration: menuDecoration,
-                  child: widget.menuContent,
-                ),
-              ),
+              child: child,
             ),
           ),
         ),

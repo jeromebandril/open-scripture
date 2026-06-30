@@ -3,14 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/remote_controller/domain/entities/client_info.dart';
 import 'package:open_scripture/features/window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:open_scripture/shared/design_system/design_system.dart';
 
 import '../../../../shared/widgets/dot.dart';
-import '../../../../shared/theme/tokens.dart';
 import '../../../../shared/utils/network_utils.dart';
-import '../../../settings_window/presentation/widgets/setting_input_bool.dart';
+import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../../settings_window/presentation/widgets/setting.dart';
-import '../../../settings_window/presentation/widgets/setting_input_number.dart';
+import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
 import '../state/remote_controller/remote_controller_cubit.dart';
 import '../state/remote_controller_settings/remote_controller_settings_cubit.dart';
 
@@ -48,7 +48,7 @@ class _RemoteControllerPageState extends State<RemoteControllerPage> {
                         title: 'Remote Controller (beta)',
                         children: [
                           Text(
-                              'This feature allows you to control the app remotely from another device. To use it, open the following URL on your phone:'),
+                              'Allows you to control this app remotely from your phone. To use it, make sure to be connected in the same network.'),
                           Column(
                             spacing: AppSpacing.lg,
                             children: [
@@ -113,10 +113,9 @@ class _RemoteControllerPageState extends State<RemoteControllerPage> {
                   children: [
                     Setting(
                         label: 'Enable Remote Controller',
-                        description:
-                            'Control the app from another device on the same network. When enabled, a web server will be hosted on your machine.',
-                        child: SettingInputBool(
-                          isDisabled: state.isRunning || state.isBusy,
+                        description: 'Enable/Disable remote controller feature',
+                        child: AppInputBool(
+                          enabled: !(state.isRunning || state.isBusy),
                           value: context.select(
                               (RemoteControllerSettingsCubit c) =>
                                   c.state.settings.enableFeature),
@@ -129,9 +128,9 @@ class _RemoteControllerPageState extends State<RemoteControllerPage> {
                         )),
                     Setting(
                         label: 'Port',
-                        description: 'Preferred port for the web page host',
-                        child: SettingInputNumber(
-                          isDisabled: state.isRunning || state.isBusy,
+                        description: 'Preferred connection port',
+                        child: AppInputNumber(
+                          enabled: !(state.isRunning || state.isBusy),
                           min: 49152,
                           max: 65535,
                           value: port,
@@ -180,7 +179,8 @@ class __ConnectionDetailsState extends State<_ConnectionDetails> {
                   return Column(
                     children: [
                       const Text('Scan this QR Code'),
-                      const Text('or copy the following URL to your phone:'),
+                      const Text('or copy this URL using the mobile app:'),
+                      const SizedBox(height: AppSpacing.sm),
                       SelectableText(serverUrl),
                       const SizedBox(height: AppSpacing.md),
                       if (_showQrCode)

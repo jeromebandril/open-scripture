@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/customizer/domain/entities/highlight_render_mode.dart';
 import 'package:open_scripture/features/customizer/presentation/state/customizer_cubit.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting.dart';
-import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_bool.dart';
-import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_number.dart';
-import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_option.dart';
+import 'package:open_scripture/shared/widgets/ui/inputs/app_input_bool.dart';
+import 'package:open_scripture/shared/widgets/ui/inputs/app_input_number.dart';
+import 'package:open_scripture/shared/widgets/ui/inputs/app_input_option.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
 
 class BibleViewListCustomizerScreen extends StatefulWidget {
@@ -35,7 +35,7 @@ class _BibleViewListCustomizerScreenState
               Setting(
                   label: 'Show verse divider',
                   description: 'Show divider between verses',
-                  child: SettingInputBool(
+                  child: AppInputBool(
                     value: context.select(
                       (CustomizerCubit c) => c.state.listTheme.showVerseDivider,
                     ),
@@ -47,7 +47,7 @@ class _BibleViewListCustomizerScreenState
               Setting(
                   label: 'Show full ref',
                   description: 'Show full verse reference or only verse number',
-                  child: SettingInputBool(
+                  child: AppInputBool(
                     value: context.select(
                       (CustomizerCubit c) =>
                           c.state.listTheme.showFullRefAlways,
@@ -58,20 +58,9 @@ class _BibleViewListCustomizerScreenState
                     },
                   )),
               Setting(
-                  label: 'Use hanging refs',
-                  description: 'Enables hanging refs',
-                  child: SettingInputBool(
-                    value: context.select((CustomizerCubit c) =>
-                        c.state.listTheme.enableHangingRefs),
-                    onChanged: (val) {
-                      cubit.updateTheme(
-                          listTheme: (l) => l.copyWith(enableHangingRefs: val));
-                    },
-                  )),
-              Setting(
                   label: 'Underline all references',
                   description: 'Put underline decoration on all references',
-                  child: SettingInputBool(
+                  child: AppInputBool(
                     value: context.select(
                         (CustomizerCubit c) => c.state.listTheme.underlineRef),
                     onChanged: (val) {
@@ -82,7 +71,7 @@ class _BibleViewListCustomizerScreenState
               Setting(
                   label: 'Selected verses render mode',
                   description: 'How selected verses are rendered',
-                  child: SettingInputOption<HighlightRenderMode>(
+                  child: AppInputOption<HighlightRenderMode>(
                     value: context.select((CustomizerCubit c) =>
                         c.state.listTheme.highlightRenderMode),
                     onChanged: (mode) {
@@ -91,8 +80,8 @@ class _BibleViewListCustomizerScreenState
                               l.copyWith(highlightRenderMode: mode));
                     },
                     items: HighlightRenderMode.values
-                        .map((m) => DropdownMenuItem<HighlightRenderMode>(
-                            value: m, child: Text(m.wire)))
+                        .map((m) => AppDropdownItem<HighlightRenderMode>(
+                            value: m, label: m.wire))
                         .toList(),
                   )),
             ],
@@ -104,7 +93,7 @@ class _BibleViewListCustomizerScreenState
                 label: 'Spacing',
                 description:
                     'The spacing/distance between each column in the parallel view',
-                child: SettingInputNumber(
+                child: AppInputNumber(
                   max: 300,
                   min: 0,
                   value: context.select(

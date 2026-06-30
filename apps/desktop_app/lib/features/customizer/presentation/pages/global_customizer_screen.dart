@@ -1,14 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_scripture/features/customizer/domain/entities/bible_pane_general_theme_settings.dart';
-import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_bool.dart';
+import 'package:open_scripture/shared/widgets/ui/inputs/app_input_bool.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting.dart';
-import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_color.dart';
-import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_number.dart';
-import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_option.dart';
+import 'package:open_scripture/shared/widgets/ui/inputs/app_input_color.dart';
+import 'package:open_scripture/shared/widgets/ui/inputs/app_input_number.dart';
+import 'package:open_scripture/shared/widgets/ui/inputs/app_input_option.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
 
 import '../state/customizer_cubit.dart';
+
+extension _ThemeModeIcons on ThemeMode {
+  IconData get icon {
+    switch (this) {
+      case ThemeMode.system:
+        return Icons.brightness_medium;
+      case ThemeMode.light:
+        return Icons.light_mode_rounded;
+      case ThemeMode.dark:
+        return Icons.dark_mode_rounded;
+    }
+  }
+}
 
 class GlobalCustomizerScreen extends StatefulWidget {
   const GlobalCustomizerScreen({super.key});
@@ -38,7 +51,7 @@ class _GlobalCustomizerScreenState extends State<GlobalCustomizerScreen> {
               Setting(
                   label: 'Theme',
                   description: 'Set app theme',
-                  child: SettingInputOption<ThemeMode>(
+                  child: AppInputOption<ThemeMode>(
                     value:
                         context.select((CustomizerCubit c) => c.state.app.mode),
                     onChanged: (mode) {
@@ -46,14 +59,14 @@ class _GlobalCustomizerScreenState extends State<GlobalCustomizerScreen> {
                           appTheme: (a) => a.copyWith(mode: mode));
                     },
                     items: ThemeMode.values
-                        .map((m) => DropdownMenuItem<ThemeMode>(
-                            value: m, child: Text(m.name)))
+                        .map((m) => AppDropdownItem<ThemeMode>(
+                            value: m, label: m.name, leading: Icon(m.icon)))
                         .toList(),
                   )),
               Setting(
                   label: 'Accent color',
                   description: 'Set accent color for app',
-                  child: SettingInputColor(
+                  child: AppInputColor(
                     showReset: defaultPaneTheme.accentColor !=
                         context.select(
                             (CustomizerCubit c) => c.state.app.accentColor),
@@ -73,7 +86,7 @@ class _GlobalCustomizerScreenState extends State<GlobalCustomizerScreen> {
                   label: 'Enable auto colorscheme',
                   description:
                       'Use generated colorscheme based on accent color',
-                  child: SettingInputBool(
+                  child: AppInputBool(
                     value: context.select((CustomizerCubit c) =>
                         c.state.app.enableAutoColorScheme),
                     onChanged: (val) {
@@ -103,7 +116,7 @@ class _GlobalCustomizerScreenState extends State<GlobalCustomizerScreen> {
                   label: 'Enable 3 Tap Navigator',
                   description:
                       'Select book, chapter and verse with consecutive clicks',
-                  child: SettingInputBool(
+                  child: AppInputBool(
                     value: context.select(
                         (CustomizerCubit c) => c.state.app.enable3TapNavigator),
                     onChanged: (val) {
@@ -120,7 +133,7 @@ class _GlobalCustomizerScreenState extends State<GlobalCustomizerScreen> {
               Setting(
                   label: 'Width adjustment',
                   description: 'Set horizontal padding to fit screen if needed',
-                  child: SettingInputNumber(
+                  child: AppInputNumber(
                     min: 0,
                     max: 100,
                     onSubmitted: (n) {

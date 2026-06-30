@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:open_scripture/shared/theme/tokens.dart';
+import 'package:open_scripture/shared/design_system/design_system.dart';
 
 class Keycap extends StatelessWidget {
   final String text;
@@ -26,13 +26,13 @@ class Keycap extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: fillColor ?? cs.surface,
-        borderRadius: BorderRadius.circular(AppRadius.xs),
+        borderRadius: BorderRadius.circular(AppRadius.md),
         border: Border.all(color: borderColor ?? cs.outlineVariant),
       ),
       child: Text(
         text,
-        style: theme.textTheme.labelMedium!.copyWith(
-          fontFamily: "IBM Plex Mono",
+        style: theme.textTheme.labelSmall!.copyWith(
+          fontFamily: AppTypography.fontFamilyMono,
           color: textColor,
           fontSize: fontSize,
         ),

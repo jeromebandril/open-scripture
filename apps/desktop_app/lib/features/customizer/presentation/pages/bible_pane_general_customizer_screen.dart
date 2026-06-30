@@ -4,11 +4,11 @@ import 'package:open_scripture/app/widgets/font_picker.dart';
 import 'package:open_scripture/features/customizer/domain/entities/app_font_weight.dart';
 import 'package:open_scripture/features/customizer/domain/entities/bible_pane_general_theme_settings.dart';
 import 'package:open_scripture/features/customizer/presentation/state/customizer_cubit.dart';
-import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_bool.dart';
+import 'package:open_scripture/shared/widgets/ui/inputs/app_input_bool.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting.dart';
-import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_color.dart';
-import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_number.dart';
-import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_option.dart';
+import 'package:open_scripture/shared/widgets/ui/inputs/app_input_color.dart';
+import 'package:open_scripture/shared/widgets/ui/inputs/app_input_number.dart';
+import 'package:open_scripture/shared/widgets/ui/inputs/app_input_option.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
 import 'package:open_scripture/shared/fonts/app_font.dart';
 
@@ -54,7 +54,7 @@ class _BiblePaneGeneralCustomizerScreenState
                         label: 'Enable custom colors',
                         description:
                             'Enables custom color theming or use app\'s theme',
-                        child: SettingInputBool(
+                        child: AppInputBool(
                           value: context.select((CustomizerCubit c) =>
                               c.state.pane.enableCustomTheme),
                           onChanged: (val) {
@@ -66,7 +66,7 @@ class _BiblePaneGeneralCustomizerScreenState
                     Setting(
                         label: 'Background color',
                         description: 'Set color for the background',
-                        child: SettingInputColor(
+                        child: AppInputColor(
                           showReset: defaultPaneTheme.backgroundColor !=
                               context.select((CustomizerCubit c) =>
                                   c.state.pane.backgroundColor),
@@ -91,7 +91,7 @@ class _BiblePaneGeneralCustomizerScreenState
                         label: 'Reference color',
                         description:
                             'Set color for the verse reference (unselected)',
-                        child: SettingInputColor(
+                        child: AppInputColor(
                           showReset: defaultPaneTheme.refColor !=
                               context.select(
                                   (CustomizerCubit c) => c.state.pane.refColor),
@@ -113,7 +113,7 @@ class _BiblePaneGeneralCustomizerScreenState
                     Setting(
                         label: 'Text color',
                         description: 'Set color for the verse text',
-                        child: SettingInputColor(
+                        child: AppInputColor(
                           showReset: defaultPaneTheme.textColor !=
                               context.select((CustomizerCubit c) =>
                                   c.state.pane.textColor),
@@ -135,7 +135,7 @@ class _BiblePaneGeneralCustomizerScreenState
                     Setting(
                         label: 'Horizontal padding',
                         description: 'Set horizontal padding',
-                        child: SettingInputNumber(
+                        child: AppInputNumber(
                           suffixIcon: Icons.percent,
                           min: 0,
                           max: 100,
@@ -172,7 +172,7 @@ class _BiblePaneGeneralCustomizerScreenState
                         label: 'Reference Font Weight',
                         description:
                             'Set font weight for unselected references',
-                        child: SettingInputOption<AppFontWeight>(
+                        child: AppInputOption<AppFontWeight>(
                           value: context.select((CustomizerCubit c) =>
                               c.state.pane.refFontWeight),
                           onChanged: (fw) {
@@ -181,14 +181,14 @@ class _BiblePaneGeneralCustomizerScreenState
                                     p.copyWith(refFontWeight: fw));
                           },
                           items: AppFontWeight.values
-                              .map((fw) => DropdownMenuItem<AppFontWeight>(
-                                  value: fw, child: Text(fw.wire)))
+                              .map((fw) => AppDropdownItem<AppFontWeight>(
+                                  value: fw, label: fw.wire))
                               .toList(),
                         )),
                     Setting(
                         label: 'Selected reference Font Weight',
                         description: 'Set font weight for selected references',
-                        child: SettingInputOption<AppFontWeight>(
+                        child: AppInputOption<AppFontWeight>(
                           value: context.select((CustomizerCubit c) =>
                               c.state.pane.selectedRefFontWeight),
                           onChanged: (fw) {
@@ -197,8 +197,8 @@ class _BiblePaneGeneralCustomizerScreenState
                                     p.copyWith(selectedRefFontWeight: fw));
                           },
                           items: AppFontWeight.values
-                              .map((fw) => DropdownMenuItem<AppFontWeight>(
-                                  value: fw, child: Text(fw.wire)))
+                              .map((fw) => AppDropdownItem<AppFontWeight>(
+                                  value: fw, label: fw.wire))
                               .toList(),
                         )),
                     Setting(
@@ -218,7 +218,7 @@ class _BiblePaneGeneralCustomizerScreenState
                     Setting(
                         label: 'Text Font Weight',
                         description: 'Set font weight for verse text',
-                        child: SettingInputOption<AppFontWeight>(
+                        child: AppInputOption<AppFontWeight>(
                           value: context.select((CustomizerCubit c) =>
                               c.state.pane.textFontWeight),
                           onChanged: (fw) {
@@ -227,8 +227,8 @@ class _BiblePaneGeneralCustomizerScreenState
                                     p.copyWith(textFontWeight: fw));
                           },
                           items: AppFontWeight.values
-                              .map((fw) => DropdownMenuItem<AppFontWeight>(
-                                  value: fw, child: Text(fw.wire)))
+                              .map((fw) => AppDropdownItem<AppFontWeight>(
+                                  value: fw, label: fw.wire))
                               .toList(),
                         )),
                   ],
@@ -239,7 +239,7 @@ class _BiblePaneGeneralCustomizerScreenState
                     Setting(
                         label: 'Quote color',
                         description: 'Set color for the verse text',
-                        child: SettingInputColor(
+                        child: AppInputColor(
                           showReset: defaultPaneTheme.quoteColor !=
                               context.select((CustomizerCubit c) =>
                                   c.state.pane.quoteColor),
@@ -259,7 +259,7 @@ class _BiblePaneGeneralCustomizerScreenState
                     Setting(
                         label: 'Add color',
                         description: 'Set color for added words',
-                        child: SettingInputColor(
+                        child: AppInputColor(
                           showReset: defaultPaneTheme.addColor !=
                               context.select(
                                   (CustomizerCubit c) => c.state.pane.addColor),
@@ -280,7 +280,7 @@ class _BiblePaneGeneralCustomizerScreenState
                         label: 'Show underline for strong words',
                         description:
                             'Shows a subtle dotted underline for strong words',
-                        child: SettingInputBool(
+                        child: AppInputBool(
                           value: context.select((CustomizerCubit c) =>
                               c.state.pane.underlineStrongWords),
                           onChanged: (val) {
@@ -298,7 +298,7 @@ class _BiblePaneGeneralCustomizerScreenState
                         label: 'Gap',
                         description:
                             'Set gap space between each bible pane view',
-                        child: SettingInputNumber(
+                        child: AppInputNumber(
                           min: 0,
                           max: 100,
                           onSubmitted: (n) {
@@ -313,7 +313,7 @@ class _BiblePaneGeneralCustomizerScreenState
                     Setting(
                         label: 'Show divider',
                         description: 'Shows a line divider between panes',
-                        child: SettingInputBool(
+                        child: AppInputBool(
                           value: context.select((CustomizerCubit c) =>
                               c.state.pane.showSplitscreenDivider),
                           onChanged: (val) {

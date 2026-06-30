@@ -42,7 +42,7 @@ class _ShowHistoryButtonState extends State<ShowHistoryButton> {
       listener: (context, state) => _menuVisible.value = state.isHistoryVisible,
       child: DropdownMenuAnchor(
         menuWidth: 250,
-        menuHeightFraction: 0.2,
+        menuHeight: 220,
         menuContent: const HistoryList(),
         onDismiss: () => context
             .read<InterfaceVisibilityCubit>()

@@ -51,7 +51,8 @@ class _ThreeTapNavigatorTriggerState extends State<ThreeTapNavigatorTrigger> {
         ),
         onDismiss: _dismiss,
         menuWidth: 500,
-        menuHeightFraction: .3,
+        menuHeight: 300,
+        // menuHeightFraction: .3,
         menuVisible: _menuVisible,
         menuContent: _ThreeTapNavigatorOverlay(
           onEnd: _dismiss,

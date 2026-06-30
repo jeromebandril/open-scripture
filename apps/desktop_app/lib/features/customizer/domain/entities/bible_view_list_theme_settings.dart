@@ -6,7 +6,6 @@ class BibleViewListThemeSettings extends Equatable {
   final bool underlineRef;
   final bool showVerseDivider;
   final bool showFullRefAlways;
-  final bool enableHangingRefs;
   final int parallelSpacing;
   final HighlightRenderMode highlightRenderMode;
 
@@ -14,7 +13,6 @@ class BibleViewListThemeSettings extends Equatable {
     this.underlineRef = true,
     this.showVerseDivider = false,
     this.showFullRefAlways = true,
-    this.enableHangingRefs = false,
     this.highlightRenderMode = HighlightRenderMode.fullRefWithColor,
     this.parallelSpacing = 32,
   });
@@ -24,7 +22,6 @@ class BibleViewListThemeSettings extends Equatable {
         underlineRef,
         showVerseDivider,
         showFullRefAlways,
-        enableHangingRefs,
         highlightRenderMode,
         parallelSpacing,
       ];
@@ -33,7 +30,6 @@ class BibleViewListThemeSettings extends Equatable {
         'underlineRef': underlineRef,
         'showVerseDivider': showVerseDivider,
         'showFullRefAlways': showFullRefAlways,
-        'enableHangingRefs': enableHangingRefs,
         'highlightRenderMode': highlightRenderMode.wire,
         'parallelSpacing': parallelSpacing,
       };
@@ -42,7 +38,6 @@ class BibleViewListThemeSettings extends Equatable {
     bool? underlineRef,
     bool? showVerseDivider,
     bool? showFullRefAlways,
-    bool? enableHangingRefs,
     HighlightRenderMode? highlightRenderMode,
     int? parallelSpacing,
   }) {
@@ -50,7 +45,6 @@ class BibleViewListThemeSettings extends Equatable {
       underlineRef: underlineRef ?? this.underlineRef,
       showVerseDivider: showVerseDivider ?? this.showVerseDivider,
       showFullRefAlways: showFullRefAlways ?? this.showFullRefAlways,
-      enableHangingRefs: enableHangingRefs ?? this.enableHangingRefs,
       highlightRenderMode: highlightRenderMode ?? this.highlightRenderMode,
       parallelSpacing: parallelSpacing ?? this.parallelSpacing,
     );
@@ -61,7 +55,6 @@ class BibleViewListThemeSettings extends Equatable {
         underlineRef: json['underlineRef'] as bool,
         showVerseDivider: (json['showVerseDivider'] as bool),
         showFullRefAlways: (json['showFullRefAlways'] as bool),
-        enableHangingRefs: json['enableHangingRefs'] as bool,
         highlightRenderMode: HighlightRenderModeWire.fromWire(
             json['highlightRenderMode'] as String),
         parallelSpacing: json['parallelSpacing'] as int);

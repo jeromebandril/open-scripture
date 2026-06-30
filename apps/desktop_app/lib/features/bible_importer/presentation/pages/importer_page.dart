@@ -6,7 +6,7 @@ import 'package:open_scripture/features/bible_importer/presentation/widgets/impo
 import 'package:open_scripture/features/bible_importer/presentation/widgets/list_of_repositories.dart';
 import 'package:open_scripture/features/bible_importer/presentation/widgets/sword_path_selector.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting.dart';
-import 'package:open_scripture/features/settings_window/presentation/widgets/setting_input_option.dart';
+import 'package:open_scripture/shared/widgets/ui/inputs/app_input_option.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/setting_section.dart';
 import 'package:open_scripture/shared/enums/bible_repository_type.dart';
 
@@ -42,14 +42,14 @@ class ImporterPage extends StatelessWidget {
                     label: 'Import type',
                     description:
                         'Select what type of datasource you are importing to',
-                    child: SettingInputOption<BibleRepositoryType>(
+                    child: AppInputOption<BibleRepositoryType>(
                       value: targetType,
                       onChanged: (mode) => context
                           .read<BibleImporterCubit>()
                           .setTargetType(mode),
                       items: BibleRepositoryType.installableTypes
-                          .map((m) => DropdownMenuItem<BibleRepositoryType>(
-                              value: m, child: Text(m.label)))
+                          .map((m) => AppDropdownItem<BibleRepositoryType>(
+                              value: m, label: m.label))
                           .toList(),
                     ),
                   ),

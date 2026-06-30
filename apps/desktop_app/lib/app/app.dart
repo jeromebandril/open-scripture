@@ -7,12 +7,12 @@ import 'package:open_scripture/core/infrastructure/window/app_window_manager.dar
 import 'package:open_scripture/core/lifecycle/app_lifecycle.dart';
 import 'package:open_scripture/features/bible_searchbar/history/presentation/cubit/history_cubit.dart';
 import 'package:open_scripture/features/three_tap_navigator/presentation/state/three_tap_navigator_cubit.dart';
+import 'package:open_scripture/shared/design_system/design_system.dart';
 
 import 'state/fullscreen_cubit.dart';
 import 'state/interface_visibility_cubit.dart';
 import '../features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../features/bible_searchbar/search/presentation/state/search_bloc.dart';
-import '../features/customizer/domain/entities/app_theme_settings.dart';
 import '../features/customizer/presentation/models/bible_pane_general_theme.dart';
 import '../features/customizer/presentation/models/bible_view_list_theme.dart';
 import '../features/customizer/presentation/models/bible_view_presentation_theme.dart';
@@ -77,36 +77,33 @@ class _MyAppState extends State<MyApp> {
               prev.listTheme != curr.listTheme;
         },
         builder: (context, state) {
-          final builder = const AppThemeBuilder();
+          final enableTint = state.app.enableAutoColorScheme;
+          final accentColor = state.app.accentColor;
 
-          final biblePaneTheme = state.pane
-              .toExtension()
-              .copyWith(accentColor: state.app.accentColor);
+          final extensions = <ThemeExtension<dynamic>>[
+            state.pane
+                .toExtension()
+                .copyWith(accentColor: state.app.accentColor),
+            state.presentTheme.toExtension(),
+            state.listTheme.toExtension(),
+          ];
 
-          final presentTheme = state.presentTheme.toExtension();
-
-          final listTheme = state.listTheme.toExtension();
-
-          final light = builder.buildLight(state.app).copyWith(
-            extensions: <ThemeExtension<dynamic>>[
-              biblePaneTheme,
-              presentTheme,
-              listTheme
-            ],
-          );
-          final dark = builder.buildDark(state.app).copyWith(
-            extensions: <ThemeExtension<dynamic>>[
-              biblePaneTheme,
-              presentTheme,
-              listTheme
-            ],
-          );
+          final light = AppTheme.light.copyWith(
+              colorScheme: enableTint
+                  ? ColorScheme.fromSeed(seedColor: accentColor)
+                  : null,
+              extensions: extensions);
+          final dark = AppTheme.dark.copyWith(
+              colorScheme: enableTint
+                  ? ColorScheme.fromSeed(seedColor: accentColor)
+                  : null,
+              extensions: extensions);
 
           return MaterialApp(
             title: 'Open Scripture',
             themeMode: state.app.mode,
-            darkTheme: dark.copyWith(splashFactory: NoSplash.splashFactory),
-            theme: light.copyWith(splashFactory: NoSplash.splashFactory),
+            darkTheme: dark,
+            theme: light,
             debugShowCheckedModeBanner: false,
             builder: (context, child) {
               return MultiBlocProvider(

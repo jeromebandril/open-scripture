@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../theme/tokens.dart';
+import 'package:open_scripture/shared/design_system/design_system.dart';
 
 class ServiceStatusIndicatorShell extends StatelessWidget {
   const ServiceStatusIndicatorShell({

@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:open_scripture/features/settings_window/presentation/widgets/parts/reset_button.dart';
 
-import '../../../../shared/utils/colors_util.dart';
+import '../../../utils/colors_util.dart';
 
-class SettingInputColor extends StatefulWidget {
-  const SettingInputColor({
+class AppInputColor extends StatefulWidget {
+  const AppInputColor({
     super.key,
     this.color = Colors.red,
     this.onColorChanged,
@@ -24,10 +24,10 @@ class SettingInputColor extends StatefulWidget {
   final Function()? onReset;
 
   @override
-  State<SettingInputColor> createState() => _SettingInputColorState();
+  State<AppInputColor> createState() => _AppInputColorState();
 }
 
-class _SettingInputColorState extends State<SettingInputColor> {
+class _AppInputColorState extends State<AppInputColor> {
   OverlayEntry? entry;
   final LayerLink layerLink = LayerLink();
   Color? selectedColor;
