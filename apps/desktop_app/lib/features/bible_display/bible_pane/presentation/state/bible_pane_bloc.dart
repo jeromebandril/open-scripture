@@ -131,6 +131,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     Emitter<BiblePaneState> emit,
   ) async {
     if (state.openedBiblesIds.isEmpty) return;
+    emit(state.copyWith(status: () => BiblePaneStatus.loading));
 
     final newMap = ParallelBibleMap.from(state.content.asMap);
     bool isSuccess = false;
