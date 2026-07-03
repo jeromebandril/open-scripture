@@ -34,9 +34,8 @@ class Titlebar extends StatelessWidget {
           // Drag area
           //
           const Positioned.fill(
-            child: DragToMoveArea(
-              child: SizedBox(height: 38),
-            ),
+            child:
+                DragToMoveArea(child: SizedBox(height: kWindowsTitleBarHeight)),
           ),
           //
           // CENTER widgets
@@ -90,6 +89,7 @@ class Titlebar extends StatelessWidget {
                   ],
                 ),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     if (rightItems != null)
                       Row(

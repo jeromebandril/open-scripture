@@ -23,7 +23,11 @@ class _LibrariesPageState extends State<LibrariesPage> {
   late final List<Widget> _pages = _pageConfigs
       .map((c) => BlocProvider.value(
             value: di.sl.get<MyLibraryCubit>(instanceName: c.instanceName),
-            child: LibraryManagerPage(title: c.title),
+            child: LibraryManagerPage(
+              title: c.title,
+              supportUninstallation:
+                  c.instanceName != BibleRepositoryType.cloudAPI.name,
+            ),
           ))
       .toList();
 

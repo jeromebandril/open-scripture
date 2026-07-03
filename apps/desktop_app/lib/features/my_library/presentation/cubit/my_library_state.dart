@@ -11,6 +11,7 @@ final class MyLibraryState extends Equatable {
   const MyLibraryState({
     this.status = MyLibraryStatus.initial,
     this.bibles = const [],
+    this.uninstallingBibles = const [],
     this.errorMessage,
     this.selectedBibleIndex,
     this.repoType = BibleRepositoryType.localDatabase,
@@ -19,6 +20,7 @@ final class MyLibraryState extends Equatable {
 
   final MyLibraryStatus status;
   final List<BibleTranslation> bibles;
+  final List<BibleTranslation> uninstallingBibles;
   final int? selectedBibleIndex;
   final String? errorMessage;
   final BibleRepositoryType repoType;
@@ -43,6 +45,7 @@ final class MyLibraryState extends Equatable {
     int? Function()? selectedBibleIndex,
     BibleRepositoryType? repoType,
     String? filterQuery,
+    List<BibleTranslation>? uninstallingBibles,
   }) {
     return MyLibraryState(
       status: status ?? this.status,
@@ -53,6 +56,7 @@ final class MyLibraryState extends Equatable {
           : this.selectedBibleIndex,
       repoType: repoType ?? this.repoType,
       filterQuery: filterQuery ?? this.filterQuery,
+      uninstallingBibles: uninstallingBibles ?? this.uninstallingBibles,
     );
   }
 
@@ -64,5 +68,6 @@ final class MyLibraryState extends Equatable {
         errorMessage,
         repoType,
         filterQuery,
+        uninstallingBibles,
       ];
 }

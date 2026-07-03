@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../shared/design_system/design_system.dart';
 import '../../../../shared/domain/entities/bible_translation.dart';
 import '../../../../shared/widgets/bible_meta_editor.dart';
 import '../../../../shared/widgets/hoverable_container.dart';
@@ -29,10 +30,16 @@ extension _BibleTranslationFieldTable on BibleTranslation {
 }
 
 class LibraryManagerPage extends StatelessWidget {
-  const LibraryManagerPage({super.key, this.onSelect, required this.title});
+  const LibraryManagerPage({
+    super.key,
+    this.onSelect,
+    required this.title,
+    this.supportUninstallation = false,
+  });
 
   final String title;
   final Function(BibleTranslation)? onSelect;
+  final bool supportUninstallation;
 
   @override
   Widget build(BuildContext context) {
@@ -57,12 +64,16 @@ class LibraryManagerPage extends StatelessWidget {
                   final isSelected = selIndex == null
                       ? false
                       : bibles[selIndex].extId == bibles[index].extId;
+                  final isUninstalling =
+                      state.uninstallingBibles.contains(bibles[index]);
 
                   return GestureDetector(
                     onTap: () => context.read<MyLibraryCubit>().select(index),
                     child: _InstalledBiblesRow(
                       isSelected: isSelected,
                       bibleMeta: bibles[index],
+                      isUninstalling: isUninstalling,
+                      supportUninstallation: supportUninstallation,
                     ),
                   );
                 },
@@ -143,10 +154,14 @@ class LibraryManagerPage extends StatelessWidget {
 class _InstalledBiblesRow extends StatelessWidget {
   final BibleTranslation bibleMeta;
   final bool isSelected;
+  final bool isUninstalling;
+  final bool supportUninstallation;
 
   const _InstalledBiblesRow({
     required this.bibleMeta,
     this.isSelected = false,
+    this.isUninstalling = false,
+    this.supportUninstallation = false,
   });
 
   @override
@@ -165,6 +180,7 @@ class _InstalledBiblesRow extends StatelessWidget {
       child: Align(
         alignment: Alignment.centerLeft,
         child: Row(
+          spacing: AppSpacing.lg,
           children: [
             Expanded(
               child: Text(
@@ -178,17 +194,24 @@ class _InstalledBiblesRow extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            TextButton(
-              onPressed: () =>
-                  context.read<MyLibraryCubit>().uninstall(bibleMeta),
-              child: Row(
-                spacing: 8,
-                children: [
-                  const Icon(Icons.delete_forever_outlined),
-                  const Text('Uninstall'),
-                ],
-              ),
-            ),
+            if (supportUninstallation)
+              isUninstalling
+                  ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: LinearProgressIndicator(),
+                    )
+                  : TextButton(
+                      onPressed: () =>
+                          context.read<MyLibraryCubit>().uninstall(bibleMeta),
+                      child: Row(
+                        spacing: 8,
+                        children: [
+                          const Icon(Icons.delete_forever_outlined),
+                          const Text('Uninstall'),
+                        ],
+                      ),
+                    ),
           ],
         ),
       ),

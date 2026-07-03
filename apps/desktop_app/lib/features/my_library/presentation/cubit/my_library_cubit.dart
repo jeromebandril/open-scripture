@@ -45,11 +45,16 @@ class MyLibraryCubit extends Cubit<MyLibraryState> {
 
   Future<void> uninstall(BibleTranslation bible) async {
     if (_installRepo == null) return;
+    emit(state
+        .copywith(uninstallingBibles: [...state.uninstallingBibles, bible]));
     await _installRepo.uninstall(
       bible.localId ?? bible.extId.externalId,
       bible.extId.repoType,
     );
-    emit(state.copywith(selectedBibleIndex: () => null));
+    emit(state.copywith(
+      selectedBibleIndex: () => null,
+      uninstallingBibles: [...state.uninstallingBibles]..remove(bible),
+    ));
     getBibles();
   }
 
