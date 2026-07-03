@@ -143,29 +143,32 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
 
     try {
       final newMap = ParallelBibleMap.from(state.content.asMap);
-      bool isSuccess = false;
-      int verseCount = 0;
+      bool hasAtLeastOneSuccess = false;
+      int maxVerseCount = 0;
 
-      for (var id in state.openedBiblesIds) {
-        final failureOrChapter =
-            // event.withSpans ?
-            await _repo.getChapterWithSpans(
+      final fetchFutures = state.openedBiblesIds.map((id) async {
+        final failureOrChapter = await _repo.getChapterWithSpans(
           bibleId: id,
           ref: event.ref,
         );
-        // : await repo.getChapterSegments(
-        //     bibleId: id,
-        //     reference: event.ref,
-        //   );
+        return MapEntry(id, failureOrChapter);
+      });
+
+      final results = await Future.wait(fetchFutures);
+
+      for (var entry in results) {
+        final id = entry.key;
+        final failureOrChapter = entry.value;
 
         await failureOrChapter.fold<Future<void>>(
-          (f) async => emit(state.copyWith(
-            status: () => BiblePaneStatus.error,
-            reference: () => event.ref,
-            errorMessage: () => f.message,
-          )),
+          (fail) async {
+            // TODO: get failure details and reason
+            newMap[id] = newMap[id]!.copyWith(
+              verses: () => null,
+            );
+          },
           (verses) async {
-            isSuccess = true;
+            hasAtLeastOneSuccess = true;
 
             // update bible info with verse counter
             // get the greatest count
@@ -173,10 +176,9 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
               ref: event.ref,
               book: event.ref.book,
             ))
-                .getOrElse(
-              (_) => 0,
-            );
-            if (result > verseCount) verseCount = result;
+                .getOrElse((_) => 0);
+
+            if (result > maxVerseCount) maxVerseCount = result;
 
             // set content of the pane
             newMap[id] = newMap[id]!.copyWith(
@@ -190,13 +192,13 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
 
       if (emit.isDone) return;
 
-      if (isSuccess) {
+      if (hasAtLeastOneSuccess) {
         emit(state.copyWith(
           status: () => BiblePaneStatus.ready,
           reference: () => event.ref,
           content: () => content,
           isMixed: () => false,
-          verseCount: () => verseCount,
+          verseCount: () => maxVerseCount,
         ));
 
         // return feedback to searchbar
@@ -212,8 +214,8 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
           reference: () => event.ref,
           content: () => content,
           isMixed: () => false,
-          errorMessage: () => 'Not found',
-          verseCount: () => verseCount,
+          errorMessage: () => 'Not found in any translation',
+          verseCount: () => maxVerseCount,
         ));
       }
     } finally {
