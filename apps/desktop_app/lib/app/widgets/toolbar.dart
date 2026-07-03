@@ -65,6 +65,8 @@ class ToolbarMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final panesNumber =
+        context.select((MultiPaneManagerCubit c) => c.state.panes.length);
     final activePane =
         context.select((MultiPaneManagerCubit c) => c.activePane());
 
@@ -156,19 +158,20 @@ class ToolbarMenu extends StatelessWidget {
                   icon: Icon(Icons.vertical_split_rounded),
                 ),
               ),
-              _Control(
-                command: AppCommand.removePane,
-                child: TextButton.icon(
-                  onPressed: () => context
-                      .read<MultiPaneManagerCubit>()
-                      .closePane(context
-                          .read<MultiPaneManagerCubit>()
-                          .state
-                          .activePaneId),
-                  label: Text('Remove split screen'),
-                  icon: Icon(Icons.close_rounded),
+              if (panesNumber > 1)
+                _Control(
+                  command: AppCommand.removePane,
+                  child: TextButton.icon(
+                    onPressed: () => context
+                        .read<MultiPaneManagerCubit>()
+                        .closePane(context
+                            .read<MultiPaneManagerCubit>()
+                            .state
+                            .activePaneId),
+                    label: Text('Remove split screen'),
+                    icon: Icon(Icons.close_rounded),
+                  ),
                 ),
-              ),
               _Control(
                 command: AppCommand.zoomIn,
                 child: TextButton.icon(

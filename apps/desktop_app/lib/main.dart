@@ -10,6 +10,9 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
+  // TODO: Maybe I should move this to a separate file, but for now, this is fine.
+  // it's strange that compilation for web works fine, even though window_manager
+  // is not supported on web.
   if (!kIsWeb) {
     await windowManager.ensureInitialized();
     WindowOptions windowOptions = WindowOptions(

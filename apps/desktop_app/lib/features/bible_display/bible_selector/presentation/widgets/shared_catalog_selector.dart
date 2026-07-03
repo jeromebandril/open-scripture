@@ -1,0 +1,175 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../../core/di/injection_container.dart' as di;
+import '../../../../../shared/design_system/design_system.dart';
+import '../../../../../shared/enums/bible_repository_type.dart';
+import '../../../../my_library/presentation/cubit/my_library_cubit.dart';
+import '../cubit/bible_selector_cubit.dart';
+
+class SharedCatalogSelector extends StatelessWidget {
+  final BibleRepositoryType repoType;
+  final bool showFilter;
+  final Widget? emptyWidget;
+  final String defaultErrorMessage;
+  final VoidCallback? onRetry;
+  final String Function(dynamic bible)? titleBuilder;
+  final Widget Function(BuildContext context, dynamic bible)? subtitleBuilder;
+
+  const SharedCatalogSelector({
+    super.key,
+    required this.repoType,
+    this.showFilter = false,
+    this.emptyWidget,
+    this.defaultErrorMessage = 'Failed to load bibles',
+    this.onRetry,
+    this.titleBuilder,
+    this.subtitleBuilder,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final selectedIds =
+        context.select((BibleSelectorCubit b) => b.state.selectedBiblesIds);
+    final theme = Theme.of(context);
+
+    return BlocProvider.value(
+      value: di.sl.get<MyLibraryCubit>(instanceName: repoType.name),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.sm),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          spacing: AppSpacing.md,
+          children: [
+            if (showFilter)
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                child: _FilterInput(),
+              ),
+            //
+            // List
+            //
+            BlocBuilder<MyLibraryCubit, MyLibraryState>(
+              builder: (context, state) {
+                final bibles = showFilter ? state.filteredBibles : state.bibles;
+
+                return switch (state.status) {
+                  MyLibraryStatus.loading ||
+                  MyLibraryStatus.initial =>
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 32),
+                      child: Center(child: CircularProgressIndicator()),
+                    ),
+                  MyLibraryStatus.error => Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 32),
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          spacing: 12,
+                          children: [
+                            Text(state.errorMessage ?? defaultErrorMessage),
+                            // Optional retry button from the original Drift selector
+                            if (onRetry != null)
+                              ElevatedButton(
+                                onPressed: onRetry,
+                                child: const Text('Retry'),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  MyLibraryStatus.ready => bibles.isEmpty
+                      ? (emptyWidget ??
+                          const Center(child: Text('No items found')))
+                      : ListView.separated(
+                          shrinkWrap: true,
+                          itemCount: bibles.length,
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(height: AppSpacing.xs),
+                          itemBuilder: (context, index) {
+                            final bible = bibles[index];
+                            final selected = selectedIds.contains(bible.extId);
+                            final hasLangInfo = bible.langEngName != null ||
+                                bible.langNativeName != null ||
+                                bible.langIsoCode != null;
+
+                            final String titleText =
+                                titleBuilder?.call(bible) ?? bible.name;
+
+                            final defaultSubtitle = Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                    bible.description ??
+                                        bible.localName ??
+                                        bible.name,
+                                    style: theme.textTheme.bodySmall),
+                                if (hasLangInfo)
+                                  Text(
+                                      bible.langEngName ??
+                                          bible.langNativeName ??
+                                          bible.langIsoCode!,
+                                      style: theme.textTheme.bodySmall),
+                              ],
+                            );
+
+                            return Card(
+                              child: ListTile(
+                                selected: selected,
+                                title: Text(titleText),
+                                subtitle:
+                                    subtitleBuilder?.call(context, bible) ??
+                                        defaultSubtitle,
+                                isThreeLine: hasLangInfo,
+                                trailing: selected
+                                    ? Text(
+                                        '${selectedIds.indexOf(bible.extId) + 1}',
+                                        style: theme.textTheme.titleLarge
+                                            ?.copyWith(
+                                          color: theme.colorScheme.primary,
+                                        ),
+                                      )
+                                    : null,
+                                onTap: () => context
+                                    .read<BibleSelectorCubit>()
+                                    .select(bible.extId),
+                              ),
+                            );
+                          },
+                        ),
+                };
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _FilterInput extends StatefulWidget {
+  const _FilterInput();
+
+  @override
+  State<_FilterInput> createState() => _FilterInputState();
+}
+
+class _FilterInputState extends State<_FilterInput> {
+  final _filterController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _filterController.text = context.read<MyLibraryCubit>().state.filterQuery;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: _filterController,
+      decoration: const InputDecoration(hintText: 'Filter'),
+      onChanged: (v) => context.read<MyLibraryCubit>().filter(v),
+    );
+  }
+}

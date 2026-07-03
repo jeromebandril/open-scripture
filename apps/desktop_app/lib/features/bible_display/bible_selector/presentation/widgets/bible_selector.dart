@@ -10,9 +10,8 @@ import '../../../../customizer/presentation/state/customizer_cubit.dart';
 import '../../../bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../cubit/bible_selector_cubit.dart';
-import 'drift_selector.dart';
-import 'remote_selector.dart';
-import 'sword_selector.dart';
+import 'empty_catalog.dart';
+import 'shared_catalog_selector.dart';
 
 class BibleSelector extends StatefulWidget {
   final BibleSelectorCubit? bloc;
@@ -28,10 +27,37 @@ class _BibleSelectorState extends State<BibleSelector> {
   int _tabIndex = 0;
 
   static const _repoTypes = BibleRepositoryType.platformEnabled;
-  final allSelectorWidgets = const {
-    BibleRepositoryType.localDatabase: DriftCatalogSelector(),
-    BibleRepositoryType.sword: SwordSelector(),
-    BibleRepositoryType.cloudAPI: RemoteSelector(),
+  final allSelectorWidgets = {
+    BibleRepositoryType.localDatabase: SharedCatalogSelector(
+      repoType: BibleRepositoryType.localDatabase,
+      emptyWidget: const EmptyCatalog(),
+      // TODO: call reload logic here (which is not implemented yet)
+      onRetry: () => print('Retry Local DB'),
+    ),
+    BibleRepositoryType.sword: SharedCatalogSelector(
+      repoType: BibleRepositoryType.sword,
+      emptyWidget: Padding(
+        padding: EdgeInsets.symmetric(vertical: 24),
+        child: Center(child: Text('No Sword modules installed')),
+      ),
+      titleBuilder: (bible) => bible.abbreviation,
+      subtitleBuilder: (context, bible) => Text(
+        bible.name,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
+      ),
+      defaultErrorMessage: 'Failed to load Sword modules',
+    ),
+    BibleRepositoryType.cloudAPI: const SharedCatalogSelector(
+      repoType: BibleRepositoryType.cloudAPI,
+      showFilter: true, // Enables the search bar
+      emptyWidget: Padding(
+        padding: EdgeInsets.symmetric(vertical: 24),
+        child: Center(child: Text('Found nothing')),
+      ),
+      defaultErrorMessage: 'Unknown Error',
+    ),
   };
   List<Widget> get enabledSelectorWidgets {
     return _repoTypes
