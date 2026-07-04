@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:ffi';
 import 'package:ffi/ffi.dart';
 
@@ -89,7 +88,7 @@ class SwordBridge {
   String listModules() {
     final ptr = _listModules();
     try {
-      return _ptrToString(ptr);
+      return ptr.toDartString();
     } finally {
       _freeString(ptr);
     }
@@ -99,7 +98,7 @@ class SwordBridge {
   String listBibles() {
     final ptr = _listBibles();
     try {
-      return _ptrToString(ptr);
+      return ptr.toDartString();
     } finally {
       _freeString(ptr);
     }
@@ -110,7 +109,7 @@ class SwordBridge {
     try {
       final ptr = _getModuleInfo(namePtr);
       try {
-        return _ptrToString(ptr);
+        return ptr.toDartString();
       } finally {
         _freeString(ptr);
       }
@@ -125,7 +124,7 @@ class SwordBridge {
     try {
       final result = _getVerse(modPtr, keyPtr);
       try {
-        return _ptrToString(result);
+        return result.toDartString();
       } finally {
         _freeString(result);
       }
@@ -143,7 +142,7 @@ class SwordBridge {
     try {
       final result = _getChapter(modPtr, bookPtr, chapter);
       try {
-        return _ptrToString(result);
+        return result.toDartString();
       } finally {
         _freeString(result);
       }
@@ -161,21 +160,6 @@ class SwordBridge {
     } finally {
       malloc.free(modPtr);
       malloc.free(bookPtr);
-    }
-  }
-
-  String _ptrToString(Pointer<Utf8> ptr) {
-    if (ptr == nullptr) return '';
-    int len = 0;
-    final bytes = ptr.cast<Uint8>();
-    while (bytes[len] != 0) {
-      len++;
-    }
-    final rawBytes = bytes.asTypedList(len);
-    try {
-      return utf8.decode(rawBytes);
-    } catch (_) {
-      return String.fromCharCodes(rawBytes);
     }
   }
 
