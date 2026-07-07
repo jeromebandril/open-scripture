@@ -77,7 +77,7 @@ class _MyAppState extends State<MyApp> {
               prev.listTheme != curr.listTheme;
         },
         builder: (context, state) {
-          final enableTint = state.app.enableAutoColorScheme;
+          final enableTint = false; //state.app.enableAutoColorScheme;
           final accentColor = state.app.accentColor;
 
           final extensions = <ThemeExtension<dynamic>>[

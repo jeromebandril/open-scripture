@@ -87,13 +87,15 @@ class _GlobalCustomizerScreenState extends State<GlobalCustomizerScreen> {
                   description:
                       'Use generated colorscheme based on accent color',
                   child: AppInputBool(
-                    value: context.select((CustomizerCubit c) =>
-                        c.state.app.enableAutoColorScheme),
-                    onChanged: (val) {
-                      cubit.updateTheme(
-                          appTheme: (a) =>
-                              a.copyWith(enableAutoColorScheme: val));
-                    },
+                    enabled: false,
+                    value: false,
+                    // value: context.select((CustomizerCubit c) =>
+                    //     c.state.app.enableAutoColorScheme),
+                    // onChanged: (val) {
+                    //   cubit.updateTheme(
+                    //       appTheme: (a) =>
+                    //           a.copyWith(enableAutoColorScheme: val));
+                    // },
                   )),
               // Setting(
               //     label: 'Enable uniform background color',
