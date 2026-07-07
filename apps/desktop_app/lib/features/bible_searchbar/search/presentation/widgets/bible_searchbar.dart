@@ -9,7 +9,7 @@ import '../../../../shortcuts/presentation/widgets/shortcut_view.dart';
 import '../../../../shortcuts/presentation/widgets/shortcuts_focus_scope.dart';
 import '../state/search_bloc.dart';
 
-class BSearchbar extends StatelessWidget {
+class BSearchbar extends StatefulWidget {
   const BSearchbar({
     this.onSubmitted,
     this.height = 42,
@@ -24,9 +24,41 @@ class BSearchbar extends StatelessWidget {
   final bool isDense;
 
   @override
-  Widget build(BuildContext context) {
-    final focusNode = ShortcutFocusScope.of(context).search;
+  State<BSearchbar> createState() => _BSearchbarState();
+}
 
+class _BSearchbarState extends State<BSearchbar> {
+  final _ctrl = TextEditingController();
+  FocusNode? _focusNode;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final node = ShortcutFocusScope.of(context).search;
+    if (_focusNode != node) {
+      _focusNode?.removeListener(_onFocusChange);
+      _focusNode = node..addListener(_onFocusChange);
+    }
+  }
+
+  void _onFocusChange() {
+    if (_focusNode!.hasFocus && _ctrl.text.isNotEmpty) {
+      _ctrl.selection = TextSelection(
+        baseOffset: 0,
+        extentOffset: _ctrl.text.length,
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _focusNode?.removeListener(_onFocusChange);
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return BlocConsumer<SearchBloc, SearchState>(
       listenWhen: (prev, curr) =>
           prev.errorCount != curr.errorCount && curr.errorCount > 0,
@@ -44,8 +76,10 @@ class BSearchbar extends StatelessWidget {
           hasError: state is SearchError,
           errorTrigger: state.errorCount,
           child: SearchBar(
-            constraints: BoxConstraints(maxWidth: width, minHeight: height),
-            focusNode: focusNode,
+            controller: _ctrl,
+            constraints: BoxConstraints(
+                maxWidth: widget.width, minHeight: widget.height),
+            focusNode: _focusNode,
             leading: Padding(
               padding: const EdgeInsets.only(left: 4),
               child: Icon(
@@ -57,25 +91,27 @@ class BSearchbar extends StatelessWidget {
             hintText: 'Search reference',
             elevation: const WidgetStatePropertyAll(0),
             trailing: [
-              ListenableBuilder(
-                listenable: focusNode,
-                builder: (context, __) {
-                  if (focusNode.hasFocus) return SizedBox.shrink();
-                  return Container(
-                    alignment: AlignmentDirectional.centerEnd,
-                    child: ShortcutView(
-                      activator: appCommandShortcuts[AppCommand.focusSearch],
-                      textColor: Theme.of(context).colorScheme.onSurfaceVariant,
-                      fillColor: Colors.transparent,
-                      borderColor: null,
-                      fontSize: 10,
-                    ),
-                  );
-                },
-              ),
+              if (_focusNode != null)
+                ListenableBuilder(
+                  listenable: _focusNode!,
+                  builder: (context, __) {
+                    if (_focusNode!.hasFocus) return SizedBox.shrink();
+                    return Container(
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: ShortcutView(
+                        activator: appCommandShortcuts[AppCommand.focusSearch],
+                        textColor:
+                            Theme.of(context).colorScheme.onSurfaceVariant,
+                        fillColor: Colors.transparent,
+                        borderColor: null,
+                        fontSize: 10,
+                      ),
+                    );
+                  },
+                ),
             ],
             onSubmitted: (input) {
-              if (onSubmitted != null) onSubmitted!();
+              if (widget.onSubmitted != null) widget.onSubmitted!();
               if (input.isEmpty) return;
 
               // if (_findMode) {
