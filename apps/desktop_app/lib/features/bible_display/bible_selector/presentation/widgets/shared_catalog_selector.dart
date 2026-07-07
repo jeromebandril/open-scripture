@@ -6,7 +6,11 @@ import '../../../../../core/di/injection_container.dart' as di;
 import '../../../../../shared/design_system/design_system.dart';
 import '../../../../../shared/enums/bible_repository_type.dart';
 import '../../../../../shared/widgets/async_singleton_builder.dart';
+import '../../../../../shared/widgets/ui/inputs/app_input_text.dart';
 import '../../../../my_library/presentation/cubit/my_library_cubit.dart';
+import '../../../../settings_window/presentation/models/settings_route.dart';
+import '../../../../settings_window/presentation/pages/settings_window.dart';
+import '../../../../window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import '../cubit/bible_selector_cubit.dart';
 
 class SharedCatalogSelector extends StatelessWidget {
@@ -57,11 +61,7 @@ class SharedCatalogSelector extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 spacing: AppSpacing.md,
                 children: [
-                  if (showFilter)
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 12),
-                      child: _FilterInput(),
-                    ),
+                  if (showFilter) _FilterInput(),
                   //
                   // List
                   //
@@ -73,10 +73,7 @@ class SharedCatalogSelector extends StatelessWidget {
                       return switch (state.status) {
                         MyLibraryStatus.loading ||
                         MyLibraryStatus.initial =>
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 32),
-                            child: Center(child: CircularProgressIndicator()),
-                          ),
+                          Center(child: CircularProgressIndicator()),
                         MyLibraryStatus.error => Padding(
                             padding: const EdgeInsets.symmetric(vertical: 32),
                             child: Center(
@@ -97,8 +94,28 @@ class SharedCatalogSelector extends StatelessWidget {
                             ),
                           ),
                         MyLibraryStatus.ready => bibles.isEmpty
-                            ? (emptyWidget ??
-                                const Center(child: Text('No items found')))
+                            ? SizedBox(
+                                height: 300,
+                                child: Center(
+                                    child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    emptyWidget ?? Text('No items found'),
+                                    TextButton.icon(
+                                        onPressed: () {
+                                          context
+                                              .read<WindowStackManagerBloc>()
+                                              .add(WindowStackManagerOpen
+                                                  .selfManaged(
+                                                      widget: SettingsWindow(
+                                                          initialPage:
+                                                              SettingsPage
+                                                                  .importer)));
+                                        },
+                                        icon: Icon(Icons.file_upload_outlined),
+                                        label: Text('Go to Import Page'))
+                                  ],
+                                )))
                             : ListView.separated(
                                 shrinkWrap: true,
                                 itemCount: bibles.length,
@@ -178,19 +195,20 @@ class _FilterInput extends StatefulWidget {
 }
 
 class _FilterInputState extends State<_FilterInput> {
-  final _filterController = TextEditingController();
+  late String _value;
 
   @override
   void initState() {
     super.initState();
-    _filterController.text = context.read<MyLibraryCubit>().state.filterQuery;
+    _value = context.read<MyLibraryCubit>().state.filterQuery;
   }
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: _filterController,
-      decoration: const InputDecoration(hintText: 'Filter'),
+    return AppInputText(
+      value: _value,
+      hint: 'Search by name',
+      prefixIcon: Icons.search_rounded,
       onChanged: (v) => context.read<MyLibraryCubit>().filter(v),
     );
   }

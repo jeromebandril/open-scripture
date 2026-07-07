@@ -10,7 +10,6 @@ import '../../../../customizer/presentation/state/customizer_cubit.dart';
 import '../../../bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../cubit/bible_selector_cubit.dart';
-import 'empty_catalog.dart';
 import 'shared_catalog_selector.dart';
 
 class BibleSelector extends StatefulWidget {
@@ -31,16 +30,13 @@ class _BibleSelectorState extends State<BibleSelector> {
   final allSelectorWidgets = {
     BibleRepositoryType.localDatabase: SharedCatalogSelector(
       repoType: BibleRepositoryType.localDatabase,
-      emptyWidget: const EmptyCatalog(),
+      emptyWidget: const Text('No installed bibles found'),
       // TODO: call reload logic here (which is not implemented yet)
       onRetry: () => print('Retry Local DB'),
     ),
     BibleRepositoryType.sword: SharedCatalogSelector(
       repoType: BibleRepositoryType.sword,
-      emptyWidget: Padding(
-        padding: EdgeInsets.symmetric(vertical: 24),
-        child: Center(child: Text('No Sword modules installed')),
-      ),
+      emptyWidget: const Text('No Sword modules installed'),
       titleBuilder: (bible) => bible.abbreviation,
       subtitleBuilder: (context, bible) => Text(
         bible.name,
@@ -53,10 +49,7 @@ class _BibleSelectorState extends State<BibleSelector> {
     BibleRepositoryType.cloudAPI: const SharedCatalogSelector(
       repoType: BibleRepositoryType.cloudAPI,
       showFilter: true, // Enables the search bar
-      emptyWidget: Padding(
-        padding: EdgeInsets.symmetric(vertical: 24),
-        child: Center(child: Text('Found nothing')),
-      ),
+      emptyWidget: Text('Found nothing'),
       defaultErrorMessage: 'Unknown Error',
     ),
   };
