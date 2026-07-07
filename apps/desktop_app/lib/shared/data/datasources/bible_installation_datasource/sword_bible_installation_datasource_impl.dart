@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 
 import '../../../../core/engines/bible_compiler/source/packages/source_package.dart';
-import '../../../../core/sword/sword_bridge.dart';
+import '../../services/sword_service.dart';
 
 abstract class SwordInstallationDatasource {
   /// Handles the physical extraction and writing of bytes to the disk
@@ -24,10 +24,11 @@ abstract class SwordInstallationDatasource {
 
 class SwordBibleInstallationDatasourceImpl
     implements SwordInstallationDatasource {
-  final SwordBridge _swordBridge;
+  final SwordService _swordService;
 
-  const SwordBibleInstallationDatasourceImpl({required SwordBridge swordBridge})
-      : _swordBridge = swordBridge;
+  const SwordBibleInstallationDatasourceImpl(
+      {required SwordService swordService})
+      : _swordService = swordService;
 
   @override
   Future<void> clearEngineCache({required String basePath}) async {
@@ -37,7 +38,6 @@ class SwordBibleInstallationDatasourceImpl
 
     if (await targetFile.exists()) {
       try {
-        // 3. Delete the file
         await targetFile.delete();
         print('Successfully deleted modules-conf.cache');
       } catch (e) {
@@ -48,8 +48,7 @@ class SwordBibleInstallationDatasourceImpl
       print('The file modules-conf.cache does not exist in this directory.');
     }
 
-    // re-init
-    _swordBridge.init(basePath);
+    _swordService.restart();
   }
 
   @override

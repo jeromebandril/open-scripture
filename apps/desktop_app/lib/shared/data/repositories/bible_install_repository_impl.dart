@@ -10,6 +10,12 @@ class BibleInstallRepositoryImpl implements BibleInstallRepository {
   BibleInstallRepositoryImpl(this._strategies);
 
   @override
+  void registerStrategy(
+      BibleRepositoryType type, BibleInstallerStrategy strategy) {
+    _strategies[type] = strategy;
+  }
+
+  @override
   Stream<InstallProgress> install(
       BibleSourceType source, BibleRepositoryType targetType) {
     final strategy = _strategies[targetType];

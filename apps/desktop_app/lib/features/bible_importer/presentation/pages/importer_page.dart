@@ -6,10 +6,12 @@ import '../../../../shared/enums/bible_repository_type.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_option.dart';
 import '../../../settings_window/presentation/widgets/setting.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
+import '../../../sword/presentation/widgets/sword_path_selector.dart'
+    if (dart.library.html) '../../../sword/presentation/widgets/sword_path_selector_stub.dart';
+
 import '../state/bible_importer_cubit/bible_importer_cubit.dart';
 import '../widgets/importer.dart';
 import '../widgets/list_of_repositories.dart';
-import '../widgets/sword_path_selector.dart';
 
 const _recommendedSources = [
   'https://eBible.org',

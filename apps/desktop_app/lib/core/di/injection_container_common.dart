@@ -12,7 +12,6 @@ import '../../features/bible_searchbar/search/data/repositories/search_repositor
 import '../../features/bible_searchbar/search/domain/repositories/search_repository.dart';
 import '../../features/bible_searchbar/search/domain/search_intent_resolver.dart';
 import '../../features/bible_searchbar/search/presentation/state/search_bloc.dart';
-import '../../features/customizer/data/repo/customizer_repo_impl.dart';
 import '../../features/customizer/presentation/state/customizer_cubit.dart';
 import '../../features/font_loader/presentation/state/font_loader_cubit.dart';
 import '../../features/my_library/presentation/cubit/my_library_cubit.dart';
@@ -32,7 +31,6 @@ import '../../shared/domain/repositories/bible_catalog_repository.dart';
 import '../../shared/domain/repositories/bible_pane_repository_factory.dart';
 import '../../shared/enums/bible_repository_type.dart';
 import '../../shared/utils/bible_ref_parser/bible_ref_parser.dart';
-import '../engines/settings/settings_repository.dart';
 import '../infrastructure/event_bus/install_notifier.dart';
 import '../infrastructure/event_bus/resolved_search_intent_bus.dart';
 import '../infrastructure/event_bus/search_result_bus.dart';
@@ -93,9 +91,6 @@ Future<void> init(GetIt sl) async {
       searchIntentBus: sl(), bookResolver: sl(), searchResultBus: sl()));
 
   // init Customizer
-  sl.registerLazySingleton<SettingsRepository<CustomizerState>>(
-    () => CustomizerRepoImpl(localDatasource: sl()),
-  );
   sl.registerFactory(() => CustomizerCubit(repo: sl()));
 
   // init windows tack manager
@@ -125,9 +120,9 @@ Future<void> init(GetIt sl) async {
     () => SearchRepositoryImpl(parser: sl()),
   );
   sl.registerLazySingleton(() => SearchIntentResolver());
-  sl.registerLazySingleton<HistoryCubit>(() => HistoryCubit(navBus: sl()));
-  sl.registerLazySingleton<SearchBloc>(
-    () => SearchBloc(
+  sl.registerSingleton<HistoryCubit>((HistoryCubit(navBus: sl())));
+  sl.registerSingleton<SearchBloc>(
+    SearchBloc(
         repo: sl(),
         intentResolver: sl(),
         searchIntentBus: sl(),

@@ -34,4 +34,6 @@ enum BibleRepositoryType {
           BibleRepositoryType.sword,
           BibleRepositoryType.cloudAPI,
         ];
+
+  bool get isAsyncRegistration => this == BibleRepositoryType.sword;
 }

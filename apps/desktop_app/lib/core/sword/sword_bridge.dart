@@ -48,7 +48,7 @@ class SwordBridge {
   late final _SwordShutdownDart _shutdown;
   late final _SwordGetModuleInfoDart _getModuleInfo;
 
-  SwordBridge() {
+  SwordBridge._() {
     final lib = DynamicLibrary.open('native_sword_bridge.dll');
 
     _init = lib.lookupFunction<_SwordInitNative, _SwordInitDart>('sword_init');
@@ -76,10 +76,14 @@ class SwordBridge {
             'sword_get_module_info');
   }
 
-  bool init(String modulePath) {
+  static SwordBridge? create(String modulePath) {
+    final bridge = SwordBridge._();
+
     final pathPtr = modulePath.toNativeUtf8();
     try {
-      return _init(pathPtr) == 1;
+      final isSuccess = bridge._init(pathPtr) == 1;
+      if (isSuccess) return bridge;
+      return null;
     } finally {
       malloc.free(pathPtr);
     }

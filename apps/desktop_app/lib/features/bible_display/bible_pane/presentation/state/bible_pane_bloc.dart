@@ -45,7 +45,8 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
   final BibleRepositoryFactory _repositoryFactory;
   // final _resolver = sl<BibleRefResolver>();
 
-  BiblePaneRepository get _repo => _repositoryFactory.get(state.repoType);
+  Future<BiblePaneRepository> get _repo async =>
+      await _repositoryFactory.get(state.repoType);
 
   // Add a bible translation to the content
   Future<void> _onBiblePaneOpen(
@@ -54,7 +55,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
   ) async {
     emit(state.copyWith(status: () => BiblePaneStatus.loading));
     final repoType = event.bibleIds.first.repoType;
-    final repo = _repositoryFactory.get(repoType);
+    final repo = await _repositoryFactory.get(repoType);
 
     final newMap = ParallelBibleMap.from(state.content.asMap);
 
@@ -147,7 +148,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
       int maxVerseCount = 0;
 
       final fetchFutures = state.openedBiblesIds.map((id) async {
-        final failureOrChapter = await _repo.getChapterWithSpans(
+        final failureOrChapter = await (await _repo).getChapterWithSpans(
           bibleId: id,
           ref: event.ref,
         );
@@ -172,7 +173,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
 
             // update bible info with verse counter
             // get the greatest count
-            final result = (await _repo.getMaxVerse(
+            final result = (await (await _repo).getMaxVerse(
               ref: event.ref,
               book: event.ref.book,
             ))

@@ -1,15 +1,15 @@
 import 'dart:convert';
 
-import '../../../../core/sword/sword_bridge.dart';
 import '../../../domain/entities/bible_book.dart';
 import '../../models/verse_segment_dto.dart';
+import '../../services/sword_service.dart';
 import 'bible_content_datasourcee.dart';
 
 class SwordBibleContentDatasourceImpl implements BibleContentDatasource {
-  final SwordBridge _swordBridge;
+  final SwordService _swordService;
 
-  const SwordBibleContentDatasourceImpl({required SwordBridge swordBridge})
-      : _swordBridge = swordBridge;
+  const SwordBibleContentDatasourceImpl({required SwordService swordService})
+      : _swordService = swordService;
 
   @override
   Future<int> getChapterBoundaryOf({required String bookToken}) {
@@ -19,10 +19,11 @@ class SwordBibleContentDatasourceImpl implements BibleContentDatasource {
 
   @override
   Future<List<VerseSegmentDto>> getChapterWithSpans(
-      String bibleExtId, BibleBook book, int chapter) {
+      String bibleExtId, BibleBook book, int chapter) async {
     print('getting this: $bibleExtId - ${book.osis}:$chapter');
 
-    final rawJson = _swordBridge.getChapter(bibleExtId, book.osis, chapter);
+    final rawJson = (await _swordService.instance)
+        .getChapter(bibleExtId, book.osis, chapter);
 
     if (rawJson.isEmpty || rawJson == "[]") {
       return Future.value([]);

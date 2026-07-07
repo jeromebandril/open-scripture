@@ -27,6 +27,7 @@ class _BibleSelectorState extends State<BibleSelector> {
   int _tabIndex = 0;
 
   static const _repoTypes = BibleRepositoryType.platformEnabled;
+
   final allSelectorWidgets = {
     BibleRepositoryType.localDatabase: SharedCatalogSelector(
       repoType: BibleRepositoryType.localDatabase,

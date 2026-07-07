@@ -8,4 +8,5 @@ Future<void> init() async {
   await common.init(sl);
   await platform.init(sl);
   await sl.allReady();
+  platform.warmUpCore(sl);
 }
