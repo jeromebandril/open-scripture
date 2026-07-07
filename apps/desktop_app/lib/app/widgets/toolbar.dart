@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -103,15 +104,16 @@ class ToolbarMenu extends StatelessWidget {
               ),
               _Control(
                 command: AppCommand.toggleToolbar,
-                addInfo: '(only when fullscreen)',
+                addInfo: kIsWeb ? null : '(only when fullscreen)',
                 child: BlocBuilder<InterfaceVisibilityCubit,
                     InterfaceVisibilityState>(builder: (context, state) {
                   return TextButton.icon(
-                    onPressed: context.select((FullscreenCubit c) => c.state)
-                        ? () => context
-                            .read<InterfaceVisibilityCubit>()
-                            .toggleToolbar()
-                        : null,
+                    onPressed:
+                        context.select((FullscreenCubit c) => c.state) || kIsWeb
+                            ? () => context
+                                .read<InterfaceVisibilityCubit>()
+                                .toggleToolbar()
+                            : null,
                     label: state.isToolbarVisible
                         ? const Text('Hide top bar')
                         : const Text('Show top bar'),
