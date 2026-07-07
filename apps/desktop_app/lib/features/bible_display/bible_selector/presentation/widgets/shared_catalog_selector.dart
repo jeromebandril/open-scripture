@@ -18,7 +18,7 @@ class SharedCatalogSelector extends StatelessWidget {
   final bool showFilter;
   final Widget? emptyWidget;
   final String defaultErrorMessage;
-  final VoidCallback? onRetry;
+  final Function(BuildContext context)? onRetry;
   final String Function(dynamic bible)? titleBuilder;
   final Widget Function(BuildContext context, dynamic bible)? subtitleBuilder;
 
@@ -86,7 +86,7 @@ class SharedCatalogSelector extends StatelessWidget {
                                   // Optional retry button from the original Drift selector
                                   if (onRetry != null)
                                     ElevatedButton(
-                                      onPressed: onRetry,
+                                      onPressed: () => onRetry?.call(context),
                                       child: const Text('Retry'),
                                     ),
                                 ],

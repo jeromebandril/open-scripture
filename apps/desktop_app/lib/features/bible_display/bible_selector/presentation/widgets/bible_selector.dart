@@ -7,6 +7,7 @@ import '../../../../../shared/enums/bible_repository_type.dart';
 import '../../../../../shared/widgets/ui/b_container_tab_bar.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../../../../customizer/presentation/state/customizer_cubit.dart';
+import '../../../../my_library/presentation/cubit/my_library_cubit.dart';
 import '../../../bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../cubit/bible_selector_cubit.dart';
@@ -32,7 +33,7 @@ class _BibleSelectorState extends State<BibleSelector> {
       repoType: BibleRepositoryType.localDatabase,
       emptyWidget: const Text('No installed bibles found'),
       // TODO: call reload logic here (which is not implemented yet)
-      onRetry: () => print('Retry Local DB'),
+      onRetry: (context) => context.read<MyLibraryCubit>().getBibles(),
     ),
     BibleRepositoryType.sword: SharedCatalogSelector(
       repoType: BibleRepositoryType.sword,
@@ -45,12 +46,14 @@ class _BibleSelectorState extends State<BibleSelector> {
         ),
       ),
       defaultErrorMessage: 'Failed to load Sword modules',
+      onRetry: (context) => context.read<MyLibraryCubit>().getBibles(),
     ),
-    BibleRepositoryType.cloudAPI: const SharedCatalogSelector(
+    BibleRepositoryType.cloudAPI: SharedCatalogSelector(
       repoType: BibleRepositoryType.cloudAPI,
       showFilter: true, // Enables the search bar
-      emptyWidget: Text('Found nothing'),
+      emptyWidget: const Text('Found nothing'),
       defaultErrorMessage: 'Unknown Error',
+      onRetry: (context) => context.read<MyLibraryCubit>().getBibles(),
     ),
   };
   List<Widget> get enabledSelectorWidgets {
