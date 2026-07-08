@@ -17,110 +17,115 @@ Map<ShortcutActivator, Intent> buildShortcutIntentMap(
   return result;
 }
 
-// for web platform I mostrly replaced ctrl with alt
-const Map<AppCommand, SingleActivator> appCommandShortcuts = {
-  AppCommand.focusSearch: kIsWeb
-      ? SingleActivator(LogicalKeyboardKey.keyL,
-          alt: true, includeRepeats: false)
-      : SingleActivator(LogicalKeyboardKey.keyL,
-          control: true, includeRepeats: false),
+final bool _isMacDesktop =
+    !kIsWeb && defaultTargetPlatform == TargetPlatform.macOS;
 
+// for web platform I mostrly replaced ctrl with alt
+final Map<AppCommand, SingleActivator> appCommandShortcuts = {
+  AppCommand.focusSearch: kIsWeb
+      ? const SingleActivator(LogicalKeyboardKey.slash, includeRepeats: false)
+      : SingleActivator(LogicalKeyboardKey.keyL,
+          control: !_isMacDesktop, meta: _isMacDesktop, includeRepeats: false),
   AppCommand.toggleHistory: kIsWeb
-      ? SingleActivator(LogicalKeyboardKey.keyH,
+      ? const SingleActivator(LogicalKeyboardKey.keyH,
           alt: true, includeRepeats: false)
       : SingleActivator(LogicalKeyboardKey.keyH,
-          control: true, includeRepeats: false),
-
+          control: !_isMacDesktop, meta: _isMacDesktop, includeRepeats: false),
   AppCommand.toggleToolbar: kIsWeb
-      ? SingleActivator(LogicalKeyboardKey.keyT,
+      ? const SingleActivator(LogicalKeyboardKey.keyT,
           alt: true, includeRepeats: false)
       : SingleActivator(LogicalKeyboardKey.keyT,
-          control: true, includeRepeats: false),
-
+          control: !_isMacDesktop, meta: _isMacDesktop, includeRepeats: false),
   AppCommand.toggleFullscreen: kIsWeb
-      ? SingleActivator(LogicalKeyboardKey.f11, includeRepeats: false)
+      ? const SingleActivator(LogicalKeyboardKey.f11, includeRepeats: false)
       : SingleActivator(LogicalKeyboardKey.keyF,
-          control: true, includeRepeats: false),
-
+          control: !_isMacDesktop, meta: _isMacDesktop, includeRepeats: false),
   AppCommand.changeBible: kIsWeb
-      ? SingleActivator(LogicalKeyboardKey.keyB,
+      ? const SingleActivator(LogicalKeyboardKey.keyB,
           alt: true, includeRepeats: false)
       : SingleActivator(LogicalKeyboardKey.keyB,
-          control: true, shift: true, includeRepeats: false),
-
+          control: !_isMacDesktop,
+          meta: _isMacDesktop,
+          shift: true,
+          includeRepeats: false),
   AppCommand.switchDisplayMode: kIsWeb
-      ? SingleActivator(LogicalKeyboardKey.keyD,
+      ? const SingleActivator(LogicalKeyboardKey.keyM,
           alt: true, includeRepeats: false)
       : SingleActivator(LogicalKeyboardKey.keyD,
-          control: true, shift: true, includeRepeats: false),
-
-  AppCommand.closeWhatever: SingleActivator(
+          control: !_isMacDesktop,
+          meta: _isMacDesktop,
+          shift: true,
+          includeRepeats: false),
+  AppCommand.closeWhatever: const SingleActivator(
     LogicalKeyboardKey.escape,
     includeRepeats: false,
   ),
-
-  // Navigation (Verses)
-  // Note: Alt + Arrow avoids macOS Mission Control workspace switching conflicts
+  // For consistency I still use ALT here.
+  // Also for web, to avoid missclicks with arrowUp and arrowDown,
+  // I use arrowRight and arrowLeft (with ALT it should block the
+  // default browser shortcut, which navigate trough pages)
   AppCommand.nextVerse: kIsWeb
-      ? SingleActivator(LogicalKeyboardKey.arrowRight, alt: true)
-      : SingleActivator(LogicalKeyboardKey.arrowRight, control: true),
-
-  AppCommand.prevVerse: kIsWeb
-      ? SingleActivator(LogicalKeyboardKey.arrowLeft, alt: true)
-      : SingleActivator(LogicalKeyboardKey.arrowLeft, control: true),
-
-  // Verse Selection
-  AppCommand.removeVerseFromSelection: kIsWeb
-      ? SingleActivator(LogicalKeyboardKey.arrowLeft, alt: true, shift: true)
-      : SingleActivator(LogicalKeyboardKey.arrowLeft,
-          control: true, shift: true),
-
-  AppCommand.addNextVerseToSelection: kIsWeb
-      ? SingleActivator(LogicalKeyboardKey.arrowRight, alt: true, shift: true)
+      ? const SingleActivator(LogicalKeyboardKey.arrowRight, alt: true)
       : SingleActivator(LogicalKeyboardKey.arrowRight,
-          control: true, shift: true),
-
-  // Multi-Pane Management
+          control: !_isMacDesktop, meta: _isMacDesktop),
+  AppCommand.prevVerse: kIsWeb
+      ? const SingleActivator(LogicalKeyboardKey.arrowLeft, alt: true)
+      : SingleActivator(LogicalKeyboardKey.arrowLeft,
+          control: !_isMacDesktop, meta: _isMacDesktop),
+  //
+  AppCommand.removeVerseFromSelection: kIsWeb
+      ? const SingleActivator(LogicalKeyboardKey.arrowUp,
+          alt: true, shift: true)
+      : SingleActivator(LogicalKeyboardKey.arrowLeft,
+          control: !_isMacDesktop, meta: _isMacDesktop, shift: true),
+  AppCommand.addNextVerseToSelection: kIsWeb
+      ? const SingleActivator(LogicalKeyboardKey.arrowDown,
+          alt: true, shift: true)
+      : SingleActivator(LogicalKeyboardKey.arrowRight,
+          control: !_isMacDesktop, meta: _isMacDesktop, shift: true),
   AppCommand.nextPane: kIsWeb
-      ? SingleActivator(LogicalKeyboardKey.period, alt: true)
-      : SingleActivator(LogicalKeyboardKey.tab, control: true),
-
+      ? const SingleActivator(LogicalKeyboardKey.bracketRight, alt: true)
+      : SingleActivator(LogicalKeyboardKey.tab,
+          control: !_isMacDesktop, meta: _isMacDesktop),
   AppCommand.prevPane: kIsWeb
-      ? SingleActivator(LogicalKeyboardKey.comma, alt: true)
-      : SingleActivator(LogicalKeyboardKey.tab, control: true, shift: true),
-
+      ? const SingleActivator(LogicalKeyboardKey.bracketLeft, alt: true)
+      : SingleActivator(LogicalKeyboardKey.tab,
+          control: !_isMacDesktop, meta: _isMacDesktop, shift: true),
   AppCommand.addPane: kIsWeb
-      ? SingleActivator(LogicalKeyboardKey.backslash, alt: true)
-      : SingleActivator(LogicalKeyboardKey.backslash, control: true),
-
+      ? const SingleActivator(LogicalKeyboardKey.backslash, alt: true)
+      : SingleActivator(LogicalKeyboardKey.backslash,
+          control: !_isMacDesktop, meta: _isMacDesktop),
   AppCommand.removePane: kIsWeb
-      ? SingleActivator(LogicalKeyboardKey.keyW,
+      ? const SingleActivator(LogicalKeyboardKey.keyW,
           alt: true, includeRepeats: false)
       : SingleActivator(LogicalKeyboardKey.keyW,
-          control: true, includeRepeats: false),
-
-  AppCommand.movePaneToRight: SingleActivator(
-    LogicalKeyboardKey.arrowRight,
-    control: true,
-    alt: true,
-    includeRepeats: false,
-  ),
-  AppCommand.movePaneToLeft: SingleActivator(
-    LogicalKeyboardKey.arrowLeft,
-    control: true,
-    alt: true,
-    includeRepeats: false,
-  ),
-  AppCommand.displayChapterOfSelected: SingleActivator(
-    LogicalKeyboardKey.enter,
-    control: true,
-  ),
-  AppCommand.zoomIn: SingleActivator(
-    LogicalKeyboardKey.equal,
-    control: true,
-  ),
-  AppCommand.zoomOut: SingleActivator(
-    LogicalKeyboardKey.minus,
-    control: true,
-  ),
+          control: !_isMacDesktop, meta: _isMacDesktop, includeRepeats: false),
+  AppCommand.movePaneToRight: kIsWeb
+      ? const SingleActivator(LogicalKeyboardKey.bracketRight,
+          alt: true, shift: true, includeRepeats: false)
+      : SingleActivator(LogicalKeyboardKey.arrowRight,
+          control: !_isMacDesktop,
+          meta: _isMacDesktop,
+          alt: true,
+          includeRepeats: false),
+  AppCommand.movePaneToLeft: kIsWeb
+      ? const SingleActivator(LogicalKeyboardKey.bracketLeft,
+          alt: true, shift: true, includeRepeats: false)
+      : SingleActivator(LogicalKeyboardKey.arrowLeft,
+          control: !_isMacDesktop,
+          meta: _isMacDesktop,
+          alt: true,
+          includeRepeats: false),
+  AppCommand.displayChapterOfSelected: kIsWeb
+      ? const SingleActivator(LogicalKeyboardKey.enter, alt: true)
+      : SingleActivator(LogicalKeyboardKey.enter,
+          control: !_isMacDesktop, meta: _isMacDesktop),
+  AppCommand.zoomIn: kIsWeb
+      ? const SingleActivator(LogicalKeyboardKey.equal, alt: true)
+      : SingleActivator(LogicalKeyboardKey.equal,
+          control: !_isMacDesktop, meta: _isMacDesktop),
+  AppCommand.zoomOut: kIsWeb
+      ? const SingleActivator(LogicalKeyboardKey.minus, alt: true)
+      : SingleActivator(LogicalKeyboardKey.minus,
+          control: !_isMacDesktop, meta: _isMacDesktop),
 };
