@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -66,11 +67,12 @@ class ImporterPage extends StatelessWidget {
                   urls: _recommendedSources,
                   description: 'Repositories for canonical installations.',
                 ),
-                const ListOfBibleRepositories(
-                  urls: _crosswireSources,
-                  description:
-                      'Repositories for crosswire sword engine. The first link may not work.',
-                ),
+                if (!kIsWeb)
+                  const ListOfBibleRepositories(
+                    urls: _crosswireSources,
+                    description:
+                        'Repositories for crosswire sword engine. The first link may not work.',
+                  ),
               ]),
             ],
           ),
