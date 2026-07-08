@@ -1,33 +1,32 @@
 # Open Scripture
 
-Open scripture is a desktop app made for reading and presenting the scripture during church service.
-It offers:
+Open Scripture is a desktop app for reading and presenting scripture during church services, paired with a mobile companion app for remote control.
+
+![screenshots collage](apps/desktop/assets/images/image-1.png)
+
+## Features
 
 - High customization
 - List and Presentation view
 - Splitscreen and parallel view with different translations
 - Clean interface with less clutter
-- Shortcuts
-- Live overlay graphic for OBS
+- Keyboard shortcuts
+- Live overlay graphic for OBS _(desktop only)_
+- Remote control via the mobile app _(desktop only)_
 
-![screenshots collage](assets/images/image-1.png)
+**Supported platforms:** Windows, Web
 
-## Todo
+## Project Structure
 
-### Features to implement
+This repo is a monorepo containing two apps:
 
-- enable custom image as background
-  - select multiple images and randomly change background
-- Searchbar
-  - command bar with autocompletion
-  - enable search of list of references (insted of querying the whole chapter of one ref)
-  - search bible with text tokens
-    - Give a list of results
-    - Select or use shortcut to view the selected verse's chapter
+```
+apps/
+├── desktop/      # Main desktop app (reading, presentation, OBS overlay etc...)
+└── mobile/       # Companion app for remote-controlling the desktop app
+packages/shared   # Shared packages between the apps (example: the RC protocols)
+```
 
-### Fixes
+## Roadmap
 
-- Searchbar
-  - In split screen, it can't dispatch the same reference consecutively to different panes
-- Split screen
-  - For some reason when a Pane is swapped, the text_scale_cubit doesn is not. This case another Pane's text_scale to control the other one, and also, when closing the Pane, to dispose of the wrong text_scale_cubit.
+Open Scripture is under active development. Upcoming focus areas include custom image backgrounds and a smarter search/command bar (autocomplete, reference-list search, token-based search).
