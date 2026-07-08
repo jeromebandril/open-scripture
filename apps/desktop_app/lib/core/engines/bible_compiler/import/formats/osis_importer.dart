@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:math' as math;
+
 import 'package:xml/xml.dart';
 import 'package:xml/xpath.dart';
 
@@ -28,16 +31,26 @@ final class OsisImporter implements BibleImporter {
 
   @override
   Future<bool> canImport(SourcePackage package) async {
-    if (!await package.exists('main')) return false;
-    final text = await package.readText('main');
-    return text.contains('<osis') && text.contains('OSIS/namespace');
+    if (package is! LeafPackage) return false;
+    if (package.displayName == 'main') return false;
+
+    // check the header by manually reading the first bytes
+    final bytes = await package.readBytes();
+    final chunkSize = math.min(1000, bytes.length);
+    final headerBytes = bytes.sublist(0, chunkSize);
+    final headerText = utf8.decode(headerBytes, allowMalformed: true);
+
+    return headerText.contains('<osis') &&
+        headerText.contains('OSIS/namespace');
   }
 
   @override
   Future<CanonicalBiblePackage> importFrom(SourcePackage package) async {
+    package as LeafPackage;
+
     final issues = <PayloadIssue>[];
 
-    final xmlText = await package.readText('main');
+    final xmlText = await package.readText();
     final doc = XmlDocument.parse(xmlText);
 
     final translation = _parseBibleTranslation(doc, issues);

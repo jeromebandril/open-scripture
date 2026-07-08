@@ -1,59 +1,66 @@
-// lib/shared/installer/bible/source/packages/bytes_source_package.dart
-
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:archive/archive.dart';
 import 'package:crypto/crypto.dart';
 
 import 'source_package.dart';
 
-final class BytesSourcePackage implements SourcePackage {
+final class BytesLeafPackage implements LeafPackage {
   final Uint8List _bytes;
-
   @override
   final String displayName;
-
-  BytesSourcePackage({
-    required Uint8List bytes,
-    required this.displayName,
-  }) : _bytes = Uint8List.fromList(bytes);
+  BytesLeafPackage({required Uint8List bytes, required this.displayName})
+      : _bytes = bytes;
 
   @override
-  SourcePackageKind get kind => SourcePackageKind.bytes;
-
+  Future<Uint8List> readBytes() async => _bytes;
   @override
-  Future<List<PackageEntry>> listEntries() async {
-    return [PackageEntry(path: 'main', size: _bytes.length)];
+  Future<String> readText({Encoding encoding = utf8}) async =>
+      encoding.decode(_bytes);
+  @override
+  Future<String> fingerprint() async => sha256.convert(_bytes).toString();
+}
+
+final class BytesContainerPackage implements ContainerPackage {
+  final Archive _archive;
+  @override
+  final String displayName;
+  final Uint8List _rawBytes;
+
+  BytesContainerPackage._(this._archive, this._rawBytes,
+      {required this.displayName});
+
+  factory BytesContainerPackage.fromZipBytes(Uint8List bytes,
+      {required String displayName}) {
+    return BytesContainerPackage._(
+        ZipDecoder().decodeBytes(bytes, verify: true), bytes,
+        displayName: displayName);
   }
 
   @override
-  Future<bool> exists(String entryPath) async => entryPath == 'main';
+  List<PackageEntry> listEntries() => _archive.files
+      .where((f) => f.isFile)
+      .map((f) => PackageEntry(path: _normalize(f.name), size: f.size))
+      .toList();
 
   @override
-  Future<Uint8List> readBytes(String entryPath) async {
-    if (entryPath != 'main') {
-      throw ArgumentError.value(
-          entryPath, 'entryPath', 'Only "main" is valid for bytes packages.');
-    }
-    return Uint8List.fromList(_bytes);
+  bool exists(String entryPath) => _archive.files
+      .any((f) => f.isFile && _normalize(f.name) == _normalize(entryPath));
+
+  @override
+  Future<LeafPackage> open(String entryPath) async {
+    final f = _archive.files.firstWhere(
+        (f) => f.isFile && _normalize(f.name) == _normalize(entryPath));
+    return BytesLeafPackage(
+        bytes: Uint8List.fromList(f.content as List<int>), displayName: f.name);
   }
 
   @override
-  Future<String> readText(String entryPath, {Encoding encoding = utf8}) async {
-    final bytes = await readBytes(entryPath);
-    return encoding.decode(bytes);
-  }
+  Future<String> fingerprint() async => sha256.convert(_rawBytes).toString();
 
   @override
-  Future<String?> tryReadText(String entryPath,
-      {Encoding encoding = utf8}) async {
-    final ok = await exists(entryPath);
-    if (!ok) return null;
-    return readText(entryPath, encoding: encoding);
-  }
+  Future<void> dispose() async {} // nothing to release
 
-  @override
-  Future<String> fingerprint() async {
-    return sha256.convert(_bytes).toString();
-  }
+  static String _normalize(String p) => p.replaceAll('\\', '/');
 }

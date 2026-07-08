@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../../../../core/infrastructure/event_bus/install_notifier.dart';
 import '../../../../../shared/domain/entities/bible_download_progress.dart';
@@ -34,7 +35,7 @@ class BibleImporterCubit extends Cubit<BibleImporterState> {
     final result = await FilePicker.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['zip', 'xml'],
-      withData: false,
+      withData: kIsWeb,
       withReadStream: false,
       allowMultiple: false,
       lockParentWindow: true,
@@ -46,13 +47,20 @@ class BibleImporterCubit extends Cubit<BibleImporterState> {
       return;
     }
 
-    final path = result.files.single.path;
-    final name = result.files.single.name;
+    final picked = result.files.single;
+    final name = picked.name;
 
-    if (path == null) {
+    final BibleSourceType src;
+
+    if (picked.bytes != null) {
+      src = MemoryFileSource(bytes: picked.bytes!, displayName: name);
+    } else if (picked.path != null) {
+      src = LocalFileSource(filePath: picked.path!, displayName: name);
+    } else {
       emit(state.copyWith(status: BibleImporterStatus.failed));
       return;
     }
+    print('Picked file: $name, source: $src, type: ${src.runtimeType}');
 
     // Cancel any ongoing install
     await _sub?.cancel();
@@ -66,7 +74,6 @@ class BibleImporterCubit extends Cubit<BibleImporterState> {
       ),
     ));
 
-    final src = LocalFileSource(filePath: path, displayName: name);
     final stream = _repo.install(src, state.targetType);
 
     _sub = stream.listen(

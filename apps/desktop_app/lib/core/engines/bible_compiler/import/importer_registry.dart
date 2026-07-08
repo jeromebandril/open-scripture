@@ -14,9 +14,12 @@ final class ImporterRegistry {
       final ok = await importer.canImport(package);
       if (ok) return importer;
     }
+    final entryCount = SourcePackage is ContainerPackage
+        ? ((package as ContainerPackage).listEntries()).length
+        : 1;
     throw UnsupportedFormatException(
       displayName: package.displayName,
-      entryCount: (await package.listEntries()).length,
+      entryCount: entryCount,
       knownFormats: _importers.map((i) => i.formatId).toList(growable: false),
     );
   }

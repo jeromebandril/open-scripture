@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 sealed class BibleSourceType {
   final String displayName;
   const BibleSourceType({required this.displayName});
@@ -20,4 +22,10 @@ class RemoteNetworkSource extends BibleSourceType {
     this.credentials,
     required super.displayName,
   });
+}
+
+/// For files picked in-memory (e.g. Flutter Web, where no real file path exists)
+class MemoryFileSource extends BibleSourceType {
+  final Uint8List bytes;
+  const MemoryFileSource({required this.bytes, required super.displayName});
 }

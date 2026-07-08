@@ -47,7 +47,10 @@ class UsfxImporter implements BibleImporter {
 
   @override
   Future<bool> canImport(SourcePackage package) async {
-    final entries = await package.listEntries();
+    // This is USFX is in zip format
+    // I've seen some as standalone files (which are not supported by this importer)
+    if (package is! ContainerPackage) return false;
+    final entries = package.listEntries();
     final paths = entries.map((e) => e.path.toLowerCase()).toList();
     final hasMetadata = paths.any((p) => p.endsWith('metadata.xml'));
     if (!hasMetadata) return false;
@@ -56,9 +59,10 @@ class UsfxImporter implements BibleImporter {
 
   @override
   Future<CanonicalBiblePackage> importFrom(SourcePackage package) async {
+    package as ContainerPackage;
+
     final issues = <PayloadIssue>[];
-    final entryPaths =
-        (await package.listEntries()).map((e) => e.path).toList();
+    final entryPaths = (package.listEntries()).map((e) => e.path).toList();
 
     final metadataPath = _pickMetadataPath(entryPaths);
     if (metadataPath == null) {
@@ -71,13 +75,13 @@ class UsfxImporter implements BibleImporter {
           'USFX: no USFX content XML found in package.');
     }
 
-    final metadataContent = await package.readText(metadataPath);
+    final metadataContent = await (await package.open(metadataPath)).readText();
     final metadataXml = XmlDocument.parse(metadataContent);
 
     // Parse verse content across all content files
     final allVerses = <Verse>[];
     for (final path in usfxPaths) {
-      final bibleContent = await package.readText(path);
+      final bibleContent = await (await package.open(path)).readText();
       final bibleXml = XmlDocument.parse(bibleContent);
       allVerses.addAll(_parseVerses(bibleXml));
     }

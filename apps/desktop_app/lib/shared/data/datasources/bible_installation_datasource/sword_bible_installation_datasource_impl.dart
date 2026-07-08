@@ -133,7 +133,7 @@ class SwordBibleInstallationDatasourceImpl
   @override
   Future<void> extractAndInstallModule(
       {required SourcePackage package, required String targetBasePath}) async {
-    if (package.kind != SourcePackageKind.zip) {
+    if (package is! ContainerPackage) {
       throw UnsupportedError(
           'Sword modules must be processed from a compressed archive archive.');
     }
@@ -141,13 +141,17 @@ class SwordBibleInstallationDatasourceImpl
     final entries = await package.listEntries();
 
     for (final entry in entries) {
-      // Read bytes via your agnostic SourcePackage interface
-      final fileBytes = await package.readBytes(entry.path);
+      final leaf = await package.open(entry.path);
+      final fileBytes = await leaf.readBytes();
 
-      // Map internal zip paths straight to the local sword directory layout
       final targetPath = p.join(targetBasePath, entry.path);
-      final targetFile = File(targetPath);
 
+      if (!p.isWithin(targetBasePath, targetPath)) {
+        throw FileSystemException(
+            'Zip entry escapes target directory', entry.path);
+      }
+
+      final targetFile = File(targetPath);
       await targetFile.create(recursive: true);
       await targetFile.writeAsBytes(fileBytes);
     }
