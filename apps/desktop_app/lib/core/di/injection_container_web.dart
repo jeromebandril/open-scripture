@@ -4,9 +4,7 @@ import '../../features/bible_display/bible_pane/domain/repositories/bible_pane_r
 import '../../features/customizer/presentation/state/customizer_cubit.dart';
 import '../../features/my_library/presentation/cubit/my_library_cubit.dart';
 import '../../shared/data/repositories/bible_pane_repository_factory_impl.dart';
-import '../../shared/data/services/book_resolvers/programmatic_book_resolver.dart';
 import '../../shared/domain/repositories/bible_pane_repository_factory.dart';
-import '../../shared/domain/services/book_resolver.dart';
 import '../../shared/enums/bible_repository_type.dart';
 import '../engines/settings/datasource/settings_datasource_web.dart';
 import '../engines/settings/settings_repository.dart';
@@ -15,7 +13,6 @@ import '../lifecycle/app_lifecycle_web_impl.dart';
 
 Future<void> init(GetIt sl) async {
   sl.registerLazySingleton<AppLifecycleService>(() => WebLifecycleService());
-  sl.registerLazySingleton<BookResolver>(() => ProgrammaticIdResolver());
 
   sl.registerLazySingleton<SettingsRepository<CustomizerState>>(
     () => SettingsRepositoryImpl<CustomizerState>(

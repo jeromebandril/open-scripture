@@ -7,7 +7,6 @@ import '../../features/bible_display/bible_pane/data/repositories/bible_pane_rep
 import '../../features/bible_display/bible_pane/domain/repositories/bible_pane_repository.dart';
 import '../../features/bible_display/multi_pane_manager/presentation/remote/pane_manager_handler.dart';
 import '../../features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
-import '../../features/bible_importer/presentation/state/bible_importer_cubit/bible_importer_cubit.dart';
 import '../../features/bible_searchbar/search/presentation/remote/search_handler.dart';
 import '../../features/bible_searchbar/search/presentation/state/search_bloc.dart';
 import '../../features/customizer/presentation/state/customizer_cubit.dart';
@@ -31,41 +30,21 @@ import '../../features/three_tap_navigator/data/repository/three_tap_navigator_r
 import '../../features/three_tap_navigator/domain/repository/three_tap_navigator_repository.dart';
 import '../../features/three_tap_navigator/presentation/state/three_tap_navigator_cubit.dart';
 import '../../shared/data/datasources/bible_catalog_datasource/bible_catalog_datasource.dart';
-import '../../shared/data/datasources/bible_catalog_datasource/local_bible_catalog_datasource_impl.dart';
 import '../../shared/data/datasources/bible_catalog_datasource/sword_bible_catalog_datasource_impl.dart';
 import '../../shared/data/datasources/bible_content_datasource/bible_content_datasourcee.dart';
-import '../../shared/data/datasources/bible_content_datasource/drift_bible_content_datasource_impl.dart';
 import '../../shared/data/datasources/bible_content_datasource/sword_bible_content_datasource_impl.dart';
-import '../../shared/data/datasources/bible_installation_datasource/drift_bible_installation_datasource_impl.dart';
 import '../../shared/data/datasources/bible_installation_datasource/sword_bible_installation_datasource_impl.dart';
-import '../../shared/data/datasources/drift_book_local_datasource_impl.dart';
 import '../../shared/data/repositories/bible_catalog_repository_impl.dart';
-import '../../shared/data/repositories/bible_install_repository_impl.dart';
 import '../../shared/data/repositories/bible_pane_repository_factory_impl.dart';
-import '../../shared/data/repositories/drift_bible_book_repository_impl.dart';
-import '../../shared/data/services/bible_installer_strategy/canonical_bible_installer_strategy.dart';
 import '../../shared/data/services/bible_installer_strategy/sword_bible_installer_strategy.dart';
-import '../../shared/data/services/book_resolvers/chained_book_resolver.dart';
-import '../../shared/data/services/book_resolvers/drift_book_resolver.dart';
-import '../../shared/data/services/book_resolvers/programmatic_book_resolver.dart';
-import '../../shared/data/services/source_fetcher_service.dart';
 import '../../shared/data/services/sword_service.dart';
-import '../../shared/domain/repositories/bible_book_repository.dart';
 import '../../shared/domain/repositories/bible_catalog_repository.dart';
 import '../../shared/domain/repositories/bible_install_repository.dart';
 import '../../shared/domain/repositories/bible_pane_repository_factory.dart';
-import '../../shared/domain/services/book_resolver.dart';
 import '../../shared/enums/bible_repository_type.dart';
-import '../engines/bible_compiler/import/formats/osis_importer.dart';
-import '../engines/bible_compiler/import/formats/usfx_importer.dart';
-import '../engines/bible_compiler/import/importer_registry.dart';
 import '../engines/remote_controller/remote_command_router.dart';
 import '../engines/settings/datasource/settings_datasource_desktop.dart';
 import '../engines/settings/settings_repository.dart';
-import '../infrastructure/database/daos/bible_content_dao.dart';
-import '../infrastructure/database/daos/bible_installation_dao.dart';
-import '../infrastructure/database/daos/installed_bibles_dao.dart';
-import '../infrastructure/database/database.dart';
 import '../infrastructure/event_bus/selected_verse_bus.dart';
 import '../lifecycle/app_lifecycle.dart';
 import '../lifecycle/app_lifecycle_desktop_impl.dart';
@@ -73,57 +52,13 @@ import '../lifecycle/app_lifecycle_desktop_impl.dart';
 // dart format off
 
 Future<void> init(GetIt sl) async {
-  _registerDatabase(sl);
-  _registerLocalDatabaseBible(sl);
   _registerSwordBible(sl);
   _registerBibleSupport(sl); // importer, resolver, install repo, factory
-  _registerMyLibrary(sl);
   _registerCustomizer(sl);
   _registerRemoteController(sl);
   _registerObsOverlay(sl);
   _registerThreeTapNavigator(sl);
-  sl.registerFactory(() => BibleImporterCubit(repo: sl(), notifier: sl()));
   _registerLifecycle(sl);
-}
-
-// ---------------------------------------------------------------------------
-void _registerDatabase(GetIt sl) {
-  sl.registerLazySingleton<AppDb>(() => AppDb());
-  sl.registerLazySingleton<BibleContentDao>(() => BibleContentDao(sl()));
-  sl.registerLazySingleton<InstalledBiblesDao>(() => InstalledBiblesDao(sl()));
-  sl.registerLazySingleton<BibleInstallationDao>(() => BibleInstallationDao(sl()));
-}
-
-// ---------------------------------------------------------------------------
-// CORE. Always plain `registerLazySingleton`. nothing here needs an await,
-// so nothing here should be async. This is your main app path.
-// ---------------------------------------------------------------------------
-void _registerLocalDatabaseBible(GetIt sl) {
-  const type = BibleRepositoryType.localDatabase;
-
-  sl.registerLazySingleton<BibleCatalogDatasource>(
-    () => LocalBibleCatalogDataSourceImpl(sl()),
-    instanceName: type.name,
-  );
-  sl.registerLazySingleton<BibleContentDatasource>(
-    () => DriftBibleContentDataSourceImpl(dao: sl()),
-    instanceName: type.name,
-  );
-  sl.registerLazySingleton<BibleBookLocalDataSource>(() => DriftBibleBookLocalDataSourceImpl(sl()));
-  sl.registerLazySingleton<BibleInstallationDataSource>(() => DriftBibleInstallationDataSourceImpl(sl()));
-
-  sl.registerLazySingleton<BibleBookRepository>(() => BibleBookRepositoryImpl(sl()));
-  sl.registerLazySingleton<BibleCatalogRepository>(
-    () => BibleCatalogRepositoryImpl(sl.get<BibleCatalogDatasource>(instanceName: type.name)),
-    instanceName: type.name,
-  );
-  sl.registerLazySingleton<BiblePaneRepository>(
-    () => BiblePaneRepositoryImpl(
-      contentDatasource: sl.get(instanceName: type.name),
-      catalogDatasource: sl.get<BibleCatalogDatasource>(instanceName: type.name),
-    ),
-    instanceName: type.name,
-  );
 }
 
 // ---------------------------------------------------------------------------
@@ -212,23 +147,6 @@ void _registerSwordBible(GetIt sl) {
 
 // ---------------------------------------------------------------------------
 void _registerBibleSupport(GetIt sl) {
-  sl.registerLazySingleton<CanonicalInstallerStrategy>(
-    () => CanonicalInstallerStrategy(fetcher: sl(), compiler: sl(), localDataSource: sl()),
-  );
-  sl.registerLazySingleton<BibleInstallRepository>(
-    () => BibleInstallRepositoryImpl({
-      BibleRepositoryType.localDatabase: sl<CanonicalInstallerStrategy>(),
-      // Sword's strategy is added dynamically the first time SwordService
-      // boots. see `onCreated` above. Nothing forces that here.
-    }),
-  );
-
-  sl.registerLazySingleton<ImporterRegistry>(() => ImporterRegistry([UsfxImporter(), OsisImporter()]));
-  sl.registerLazySingleton<SourceFetcherService>(() => SourceFetcherServiceImpl());
-  sl.registerLazySingleton<BookResolver>(
-    () => ChainedBookResolver([DriftBookResolver(sl()), ProgrammaticIdResolver()]),
-  );
-
   // Every repository type funnels through here. localDatabase & cloudAPI
   // resolve their Future immediately; sword genuinely awaits engine start-up.
   // Callers never need to know or care which case they're in.
@@ -244,18 +162,6 @@ void _registerBibleSupport(GetIt sl) {
   );
 }
 
-// ---------------------------------------------------------------------------
-void _registerMyLibrary(GetIt sl) {
-  sl.registerLazySingleton<MyLibraryCubit>(
-    () => MyLibraryCubit(
-      repo: sl.get<BibleCatalogRepository>(instanceName: BibleRepositoryType.localDatabase.name),
-      notifier: sl(),
-      installRepo: sl(),
-    ),
-    instanceName: BibleRepositoryType.localDatabase.name,
-    onCreated: (c) => c.getBibles(),
-  );
-}
 
 void _registerCustomizer(GetIt sl) {
   sl.registerLazySingleton<SettingsRepository<CustomizerState>>(

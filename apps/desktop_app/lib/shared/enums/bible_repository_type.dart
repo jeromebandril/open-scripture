@@ -19,15 +19,20 @@ enum BibleRepositoryType {
   final String label;
   final String? description;
 
-  static const installableTypes = [
-    BibleRepositoryType.localDatabase,
-    BibleRepositoryType.sword,
-  ];
+  static const installableTypes = kIsWeb
+      ? [
+          BibleRepositoryType.localDatabase,
+        ]
+      : [
+          BibleRepositoryType.localDatabase,
+          BibleRepositoryType.sword,
+        ];
 
   /// Central source of truth for platform capabilities.
   static const platformEnabled = kIsWeb
       ? [
           BibleRepositoryType.cloudAPI,
+          BibleRepositoryType.localDatabase,
         ]
       : [
           BibleRepositoryType.localDatabase,
@@ -35,5 +40,6 @@ enum BibleRepositoryType {
           BibleRepositoryType.cloudAPI,
         ];
 
+  // for GetIt registration
   bool get isAsyncRegistration => this == BibleRepositoryType.sword;
 }

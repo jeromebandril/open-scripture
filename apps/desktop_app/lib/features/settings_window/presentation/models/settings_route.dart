@@ -84,8 +84,7 @@ enum SettingsPage {
 
   bool get isSupportedOnPlatform {
     if (kIsWeb) {
-      return this != SettingsPage.importer &&
-          this != SettingsPage.obsLiveOverlay &&
+      return this != SettingsPage.obsLiveOverlay &&
           this != SettingsPage.remoteController;
     }
     return true;
