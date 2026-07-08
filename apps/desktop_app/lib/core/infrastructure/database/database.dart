@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:drift/drift.dart';
+import 'package:drift_flutter/drift_flutter.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 
 import '../../../shared/domain/entities/bible_book.dart';
 import 'daos/bible_content_dao.dart';
 import 'daos/bible_installation_dao.dart';
 import 'daos/installed_bibles_dao.dart';
-import 'db_connect/db_connect.dart';
 
 part 'database.g.dart';
 
@@ -48,4 +52,25 @@ class AppDb extends _$AppDb {
           await customStatement('PRAGMA foreign_keys = ON;');
         },
       );
+}
+
+QueryExecutor openConnection() {
+  return driftDatabase(
+    name: 'open_scripture',
+    native: DriftNativeOptions(
+      databasePath: () async {
+        final dbFolder = await getApplicationSupportDirectory();
+        final file =
+            File(p.join(dbFolder.path, 'data', 'open_scripture.sqlite'));
+
+        await file.parent.create(recursive: true);
+
+        return file.path;
+      },
+    ),
+    web: DriftWebOptions(
+      sqlite3Wasm: Uri.parse('sqlite3.wasm'),
+      driftWorker: Uri.parse('drift_worker.js'),
+    ),
+  );
 }
