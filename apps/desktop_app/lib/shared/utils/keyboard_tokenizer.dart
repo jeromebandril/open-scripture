@@ -5,9 +5,9 @@ import 'package:flutter/services.dart';
 List<String> shortcutTokens(ShortcutActivator? activator) {
   if (activator == null) return const [];
 
-  if (activator is SingleActivator) {
-    final tokens = <String>[];
+  final tokens = <String>[];
 
+  if (activator is SingleActivator) {
     // Modifiers in conventional display order
     if (activator.control) {
       tokens.add(_modifierLabel(ModifierKey.controlModifier));
@@ -17,6 +17,18 @@ List<String> shortcutTokens(ShortcutActivator? activator) {
     if (activator.meta) tokens.add(_modifierLabel(ModifierKey.metaModifier));
 
     tokens.add(_keyLabel(activator.trigger));
+
+    return tokens;
+  } else if (activator is CharacterActivator) {
+    // CharacterActivator doesn't have a 'shift' property because the shift
+    // requirement is inherently part of the character itself.
+    if (activator.control) {
+      tokens.add(_modifierLabel(ModifierKey.controlModifier));
+    }
+    if (activator.alt) tokens.add(_modifierLabel(ModifierKey.altModifier));
+    if (activator.meta) tokens.add(_modifierLabel(ModifierKey.metaModifier));
+
+    tokens.add(activator.character.toUpperCase());
 
     return tokens;
   }

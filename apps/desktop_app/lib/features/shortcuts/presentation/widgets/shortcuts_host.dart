@@ -100,30 +100,13 @@ class _ShortcutsHostState extends State<ShortcutsHost> {
   }
 
   AppCommand? _resolveCommand(KeyEvent event) {
-    final pressed = HardwareKeyboard.instance.logicalKeysPressed;
     for (final entry in appCommandShortcuts.entries) {
-      if (_activatorMatches(entry.value, event, pressed)) return entry.key;
+      final activator = entry.value;
+      if (activator.accepts(event, HardwareKeyboard.instance)) {
+        return entry.key;
+      }
     }
     return null;
-  }
-
-  bool _activatorMatches(
-    SingleActivator a,
-    KeyEvent event,
-    Set<LogicalKeyboardKey> pressed,
-  ) {
-    if (event.logicalKey != a.trigger) return false;
-    if (!a.includeRepeats && event is KeyRepeatEvent) return false;
-
-    bool mod(bool required, LogicalKeyboardKey l, LogicalKeyboardKey r) =>
-        required == (pressed.contains(l) || pressed.contains(r));
-
-    return mod(a.control, LogicalKeyboardKey.controlLeft,
-            LogicalKeyboardKey.controlRight) &&
-        mod(a.shift, LogicalKeyboardKey.shiftLeft,
-            LogicalKeyboardKey.shiftRight) &&
-        mod(a.alt, LogicalKeyboardKey.altLeft, LogicalKeyboardKey.altRight) &&
-        mod(a.meta, LogicalKeyboardKey.metaLeft, LogicalKeyboardKey.metaRight);
   }
 
   bool _isEditing() {

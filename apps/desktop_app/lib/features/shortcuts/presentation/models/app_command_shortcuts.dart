@@ -21,9 +21,9 @@ final bool _isMacDesktop =
     !kIsWeb && defaultTargetPlatform == TargetPlatform.macOS;
 
 // for web platform I mostrly replaced ctrl with alt
-final Map<AppCommand, SingleActivator> appCommandShortcuts = {
+final Map<AppCommand, ShortcutActivator> appCommandShortcuts = {
   AppCommand.focusSearch: kIsWeb
-      ? const SingleActivator(LogicalKeyboardKey.slash, includeRepeats: false)
+      ? CharacterActivator('/')
       : SingleActivator(LogicalKeyboardKey.keyL,
           control: !_isMacDesktop, meta: _isMacDesktop, includeRepeats: false),
   AppCommand.toggleHistory: kIsWeb
@@ -74,21 +74,21 @@ final Map<AppCommand, SingleActivator> appCommandShortcuts = {
           control: !_isMacDesktop, meta: _isMacDesktop),
   //
   AppCommand.removeVerseFromSelection: kIsWeb
-      ? const SingleActivator(LogicalKeyboardKey.arrowUp,
+      ? const SingleActivator(LogicalKeyboardKey.arrowLeft,
           alt: true, shift: true)
       : SingleActivator(LogicalKeyboardKey.arrowLeft,
           control: !_isMacDesktop, meta: _isMacDesktop, shift: true),
   AppCommand.addNextVerseToSelection: kIsWeb
-      ? const SingleActivator(LogicalKeyboardKey.arrowDown,
+      ? const SingleActivator(LogicalKeyboardKey.arrowRight,
           alt: true, shift: true)
       : SingleActivator(LogicalKeyboardKey.arrowRight,
           control: !_isMacDesktop, meta: _isMacDesktop, shift: true),
   AppCommand.nextPane: kIsWeb
-      ? const SingleActivator(LogicalKeyboardKey.bracketRight, alt: true)
+      ? const SingleActivator(LogicalKeyboardKey.period, alt: true)
       : SingleActivator(LogicalKeyboardKey.tab,
           control: !_isMacDesktop, meta: _isMacDesktop),
   AppCommand.prevPane: kIsWeb
-      ? const SingleActivator(LogicalKeyboardKey.bracketLeft, alt: true)
+      ? const SingleActivator(LogicalKeyboardKey.comma, alt: true)
       : SingleActivator(LogicalKeyboardKey.tab,
           control: !_isMacDesktop, meta: _isMacDesktop, shift: true),
   AppCommand.addPane: kIsWeb
@@ -101,16 +101,16 @@ final Map<AppCommand, SingleActivator> appCommandShortcuts = {
       : SingleActivator(LogicalKeyboardKey.keyW,
           control: !_isMacDesktop, meta: _isMacDesktop, includeRepeats: false),
   AppCommand.movePaneToRight: kIsWeb
-      ? const SingleActivator(LogicalKeyboardKey.bracketRight,
-          alt: true, shift: true, includeRepeats: false)
+      ? const SingleActivator(LogicalKeyboardKey.period,
+          alt: true, control: true, includeRepeats: false)
       : SingleActivator(LogicalKeyboardKey.arrowRight,
           control: !_isMacDesktop,
           meta: _isMacDesktop,
           alt: true,
           includeRepeats: false),
   AppCommand.movePaneToLeft: kIsWeb
-      ? const SingleActivator(LogicalKeyboardKey.bracketLeft,
-          alt: true, shift: true, includeRepeats: false)
+      ? const SingleActivator(LogicalKeyboardKey.comma,
+          alt: true, control: true, includeRepeats: false)
       : SingleActivator(LogicalKeyboardKey.arrowLeft,
           control: !_isMacDesktop,
           meta: _isMacDesktop,
