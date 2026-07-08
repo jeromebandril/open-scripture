@@ -29,7 +29,7 @@ class SourceFetcherServiceImpl implements SourceFetcherService {
     final package = switch (source) {
       LocalFileSource() => _resolveLocalSource(source),
       RemoteNetworkSource() => await _resolveRemoteSource(source),
-      MemoryFileSource() => _resolveMemorySource(source),
+      MemoryFileSource() => await _resolveMemorySource(source),
     };
     _packageTracker[source] = package;
     return package;
@@ -72,9 +72,9 @@ class SourceFetcherServiceImpl implements SourceFetcherService {
     return _classifyFile(destinationFile, displayName: source.displayName);
   }
 
-  SourcePackage _resolveMemorySource(MemoryFileSource source) {
+  Future<SourcePackage> _resolveMemorySource(MemoryFileSource source) async {
     if (_isZipBytes(source.bytes)) {
-      return BytesContainerPackage.fromZipBytes(
+      return await BytesContainerPackage.fromZipBytes(
         source.bytes,
         displayName: source.displayName,
       );

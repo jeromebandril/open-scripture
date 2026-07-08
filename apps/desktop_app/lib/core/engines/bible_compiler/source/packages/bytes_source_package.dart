@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
 import 'package:crypto/crypto.dart';
+import 'package:flutter/foundation.dart';
 
 import 'source_package.dart';
 
@@ -31,11 +32,16 @@ final class BytesContainerPackage implements ContainerPackage {
   BytesContainerPackage._(this._archive, this._rawBytes,
       {required this.displayName});
 
-  factory BytesContainerPackage.fromZipBytes(Uint8List bytes,
-      {required String displayName}) {
-    return BytesContainerPackage._(
-        ZipDecoder().decodeBytes(bytes, verify: true), bytes,
-        displayName: displayName);
+  static Future<BytesContainerPackage> fromZipBytes(
+    Uint8List bytes, {
+    required String displayName,
+  }) async {
+    Archive decodeZip(Uint8List bytes) {
+      return ZipDecoder().decodeBytes(bytes, verify: true);
+    }
+
+    final archive = await compute(decodeZip, bytes);
+    return BytesContainerPackage._(archive, bytes, displayName: displayName);
   }
 
   @override
