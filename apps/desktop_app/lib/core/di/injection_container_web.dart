@@ -29,6 +29,9 @@ Future<void> init(GetIt sl) async {
     () => BibleRepositoryFactoryImpl({
       BibleRepositoryType.cloudAPI: () async => sl.get<BiblePaneRepository>(
           instanceName: BibleRepositoryType.cloudAPI.name),
+      BibleRepositoryType.localDatabase: () async =>
+          sl.get<BiblePaneRepository>(
+              instanceName: BibleRepositoryType.localDatabase.name),
     }),
   );
 }
