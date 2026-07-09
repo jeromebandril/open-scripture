@@ -29,9 +29,13 @@ class RemoteBibleCatalogDatasourceImpl implements BibleCatalogDatasource {
       return TranslationInstallDto(
         extId: data['abbreviation'],
         name: data['translation'] as String,
+        description: data['description'] as String,
         abbreviation: data['abbreviation'] as String,
-        description: data['language'] as String,
+        langEngName: data['language'] as String,
+        langIsoCode: data['lang'] as String,
+        copyright: data['distribution_license'] as String,
         repoType: BibleRepositoryType.cloudAPI,
+        originFormat: data['distribution_sourcetype'] as String,
       );
     }).toList();
 
