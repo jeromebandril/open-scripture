@@ -59,6 +59,8 @@ class LibraryManagerPage extends StatelessWidget {
                 isError: state.status == MyLibraryStatus.error,
                 emptyListPlaceholder: Text('Empty'),
                 errorPlaceholder: Text('Error'),
+                filterInitValue:
+                    context.read<MyLibraryCubit>().state.filterQuery,
                 onFilter: (query) =>
                     context.read<MyLibraryCubit>().filter(query),
                 itemCount: state.filteredBibles.length,

@@ -264,6 +264,7 @@ class SettingListSection extends StatelessWidget {
     this.emptyListPlaceholder,
     this.separatorBuilder,
     this.onFilter,
+    this.filterInitValue,
   });
 
   final String title;
@@ -276,6 +277,7 @@ class SettingListSection extends StatelessWidget {
   final Widget? emptyListPlaceholder;
   final Widget? errorPlaceholder;
   final ValueChanged<String>? onFilter;
+  final String? filterInitValue;
 
   @override
   Widget build(BuildContext context) {
@@ -292,6 +294,7 @@ class SettingListSection extends StatelessWidget {
                   child: AppInputText(
                     hint: 'Filter',
                     prefixIcon: Icons.search,
+                    value: filterInitValue,
                     debounce: const Duration(milliseconds: 500),
                     onChanged: onFilter,
                   ),
