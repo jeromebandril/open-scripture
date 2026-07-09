@@ -68,5 +68,6 @@ class MyLibraryCubit extends Cubit<MyLibraryState> {
     return super.close();
   }
 
-  void filter(String query) => emit(state.copywith(filterQuery: query));
+  void filter(String query) =>
+      emit(state.copywith(filterQuery: query, selectedBibleIndex: () => null));
 }

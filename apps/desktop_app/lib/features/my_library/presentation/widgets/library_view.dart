@@ -56,10 +56,12 @@ class LibraryManagerPage extends StatelessWidget {
                 isError: state.status == MyLibraryStatus.error,
                 emptyListPlaceholder: Text('Empty'),
                 errorPlaceholder: Text('Error'),
-                itemCount: state.bibles.length,
+                onFilter: (query) =>
+                    context.read<MyLibraryCubit>().filter(query),
+                itemCount: state.filteredBibles.length,
                 separatorBuilder: (_, __) => Divider(height: 0.1),
                 itemBuilder: (_, index) {
-                  final bibles = state.bibles;
+                  final bibles = state.filteredBibles;
                   final selIndex = state.selectedBibleIndex;
                   final isSelected = selIndex == null
                       ? false
