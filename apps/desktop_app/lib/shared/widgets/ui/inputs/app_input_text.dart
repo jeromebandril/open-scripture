@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 class AppInputText extends StatefulWidget {
@@ -10,6 +11,7 @@ class AppInputText extends StatefulWidget {
     this.suffixIcon,
     this.enabled = true,
     this.focusNode,
+    this.debounce,
     this.onChanged,
     this.onSubmitted,
   });
@@ -21,6 +23,12 @@ class AppInputText extends StatefulWidget {
   final IconData? suffixIcon;
   final bool enabled;
   final FocusNode? focusNode;
+
+  /// When set, [onChanged] fires [debounce] after the last keystroke
+  /// instead of on every keystroke. Submitting (Enter) always flushes any
+  /// pending call immediately. Leave null for fire-on-every-keystroke behavior.
+  final Duration? debounce;
+
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onSubmitted;
 
@@ -30,6 +38,7 @@ class AppInputText extends StatefulWidget {
 
 class _AppInputTextState extends State<AppInputText> {
   late final TextEditingController _controller;
+  Timer? _debounceTimer;
 
   @override
   void initState() {
@@ -48,8 +57,28 @@ class _AppInputTextState extends State<AppInputText> {
 
   @override
   void dispose() {
+    _debounceTimer?.cancel();
     _controller.dispose();
     super.dispose();
+  }
+
+  void _handleChanged(String value) {
+    final debounce = widget.debounce;
+    if (debounce == null) {
+      widget.onChanged?.call(value);
+      return;
+    }
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(debounce, () => widget.onChanged?.call(value));
+  }
+
+  void _handleSubmitted(String value) {
+    // Flush a pending debounced call so listeners aren't stale after submit.
+    if (_debounceTimer?.isActive ?? false) {
+      _debounceTimer!.cancel();
+      widget.onChanged?.call(value);
+    }
+    widget.onSubmitted?.call(value);
   }
 
   @override
@@ -61,8 +90,9 @@ class _AppInputTextState extends State<AppInputText> {
       controller: _controller,
       focusNode: widget.focusNode,
       enabled: widget.enabled,
-      onChanged: widget.onChanged,
-      onSubmitted: widget.onSubmitted,
+      onChanged: _handleChanged,
+      onSubmitted:
+          widget.debounce != null ? _handleSubmitted : widget.onSubmitted,
       style: Theme.of(context).textTheme.bodyMedium,
       decoration: InputDecoration(
         hintText: widget.hint,
