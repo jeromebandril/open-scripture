@@ -1,59 +1,218 @@
 import 'package:flutter/material.dart';
 
 import '../../../../shared/design_system/design_system.dart';
-import '../../../../shared/widgets/debounce_textfield.dart';
+import '../../../../shared/widgets/ui/inputs/app_input_text.dart';
 
-const double _settingsSpacing = AppSpacing.sm;
+class _SettingsSurface extends StatelessWidget {
+  const _SettingsSurface({
+    required this.child,
+    this.padding = const EdgeInsets.all(AppSpacing.xl),
+  });
+
+  final Widget child;
+  final EdgeInsets padding;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(AppRadius.md),
+      ),
+      padding: padding,
+      child: child,
+    );
+  }
+}
+
+class _SettingsHeader extends StatelessWidget {
+  const _SettingsHeader({this.title, this.trailing});
+
+  final String? title;
+  final Widget? trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    if (title == null && trailing == null) return const SizedBox.shrink();
+    return Padding(
+      padding:
+          const EdgeInsets.only(left: AppSpacing.xl, bottom: AppSpacing.sm),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title ?? '',
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+          ),
+          if (trailing != null) trailing!,
+        ],
+      ),
+    );
+  }
+}
+
+/// The loading / error / empty / list-of-items body shared by every
+/// lazily-built settings list.
+///
+/// [shrinkWrap] true sizes the list to its content (a card in a scrollable
+/// page); false lets it fill whatever bounded height its parent gives it
+/// (a panel meant to occupy the rest of the screen).
+class _SettingsListBody extends StatelessWidget {
+  const _SettingsListBody({
+    required this.itemCount,
+    required this.itemBuilder,
+    this.separatorBuilder,
+    this.isLoading = false,
+    this.isError = false,
+    this.errorPlaceholder,
+    this.emptyPlaceholder,
+    this.shrinkWrap = true,
+  });
+
+  final int itemCount;
+  final NullableIndexedWidgetBuilder itemBuilder;
+  final IndexedWidgetBuilder? separatorBuilder;
+  final bool isLoading;
+  final bool isError;
+  final Widget? errorPlaceholder;
+  final Widget? emptyPlaceholder;
+  final bool shrinkWrap;
+
+  static Widget _defaultSeparator(BuildContext context, int index) {
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
+      child: Divider(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (isLoading) return const Center(child: CircularProgressIndicator());
+    if (isError) {
+      return Center(child: errorPlaceholder ?? const Text('Error'));
+    }
+    if (itemCount == 0) {
+      return Center(child: emptyPlaceholder ?? const Text('Empty'));
+    }
+
+    return ListView.separated(
+      shrinkWrap: shrinkWrap,
+      physics: shrinkWrap ? const NeverScrollableScrollPhysics() : null,
+      itemCount: itemCount,
+      itemBuilder: itemBuilder,
+      separatorBuilder: separatorBuilder ?? _defaultSeparator,
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// SettingSection. It's a card sized to its content. Use inside a scrollable
+// settings page.
+// ---------------------------------------------------------------------------
 
 class SettingSection extends StatelessWidget {
+  /// A static list of [children], optionally next to a [sideChild]
+  /// (e.g. a live preview of the setting being edited).
   const SettingSection({
     super.key,
     this.title,
-    this.children,
-    this.child,
+    required this.children,
+    this.sideChild,
     this.actions,
   })  : itemCount = null,
-        itemBuilder = null;
+        itemBuilder = null,
+        isLoading = false,
+        isError = false,
+        errorPlaceholder = null,
+        emptyPlaceholder = null,
+        child = null;
 
+  /// A lazily built list, with loading / error / empty handling.
   const SettingSection.builder({
     super.key,
     this.title,
     required this.itemCount,
     required this.itemBuilder,
+    this.isLoading = false,
+    this.isError = false,
+    this.errorPlaceholder,
+    this.emptyPlaceholder,
     this.actions,
   })  : children = null,
+        sideChild = null,
         child = null;
 
+  /// A single custom [child]
   const SettingSection.single({
     super.key,
     this.title,
     required this.child,
     this.actions,
   })  : children = null,
+        sideChild = null,
         itemCount = null,
-        itemBuilder = null;
+        itemBuilder = null,
+        isLoading = false,
+        isError = false,
+        errorPlaceholder = null,
+        emptyPlaceholder = null;
 
   final String? title;
-  final List<Widget>? children;
   final List<Widget>? actions;
-  final Widget? child;
+
+  // default constructor
+  final List<Widget>? children;
+  final Widget? sideChild;
+
+  // .builder
   final int? itemCount;
   final NullableIndexedWidgetBuilder? itemBuilder;
+  final bool isLoading;
+  final bool isError;
+  final Widget? errorPlaceholder;
+  final Widget? emptyPlaceholder;
 
-  List<Widget> _withDividers(
-    List<Widget> children, {
-    Widget divider = const Padding(
-      padding: EdgeInsets.symmetric(vertical: _settingsSpacing),
-      child: Divider(),
-    ),
-  }) {
-    if (children.isEmpty) return const [];
+  // .single
+  final Widget? child;
+
+  List<Widget> _withDividers(List<Widget> items) {
+    if (items.isEmpty) return const [];
     return [
-      for (int i = 0; i < children.length; i++) ...[
-        if (i > 0) divider,
-        children[i],
+      for (var i = 0; i < items.length; i++) ...[
+        if (i > 0)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
+            child: Divider(),
+          ),
+        items[i],
       ],
     ];
+  }
+
+  Widget _body() {
+    if (child != null) return child!;
+
+    if (itemBuilder != null) {
+      return _SettingsListBody(
+        itemCount: itemCount!,
+        itemBuilder: itemBuilder!,
+        isLoading: isLoading,
+        isError: isError,
+        errorPlaceholder: errorPlaceholder,
+        emptyPlaceholder: emptyPlaceholder,
+      );
+    }
+
+    final list = Column(children: _withDividers(children!));
+    if (sideChild == null) return list;
+
+    return Row(
+      spacing: AppSpacing.xl,
+      children: [
+        Expanded(flex: 2, child: list),
+        Expanded(child: sideChild!),
+      ],
+    );
   }
 
   @override
@@ -62,74 +221,27 @@ class SettingSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (title != null || actions != null) ...[
-          SizedBox(height: AppSpacing.lg),
-          Padding(
-            padding: const EdgeInsets.only(left: AppSpacing.xl),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  title!,
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
-                ),
-                if (actions != null) ...actions!
-              ],
-            ),
+          const SizedBox(height: AppSpacing.lg),
+          _SettingsHeader(
+            title: title,
+            trailing: actions != null
+                ? Row(mainAxisSize: MainAxisSize.min, children: actions!)
+                : null,
           ),
-          SizedBox(height: AppSpacing.sm),
+          const SizedBox(height: AppSpacing.sm),
         ],
-        Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(AppRadius.md),
-          ),
-          padding: EdgeInsets.all(AppSpacing.xl),
-          child: children == null && child != null
-              ? child
-              : Row(
-                  spacing: AppSpacing.xl,
-                  children: [
-                    //
-                    // LEFT SIDE
-                    //
-                    if (itemBuilder != null)
-                      Expanded(
-                        child: ListView.separated(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          separatorBuilder: (_, __) => const Padding(
-                            padding:
-                                EdgeInsets.symmetric(vertical: AppSpacing.sm),
-                            child: Divider(),
-                          ),
-                          itemCount: itemCount!,
-                          itemBuilder: itemBuilder!,
-                        ),
-                      ),
-
-                    if (children != null)
-                      Expanded(
-                        flex: 2,
-                        child: Column(
-                          children: _withDividers(children!),
-                        ),
-                      ),
-                    //
-                    // RIGHT SIDE
-                    //
-                    if (child != null)
-                      Expanded(
-                        flex: 1,
-                        //fit: FlexFit.loose,
-                        child: child!,
-                      ),
-                  ],
-                ),
-        ),
+        _SettingsSurface(child: _body()),
       ],
     );
   }
 }
+
+// ---------------------------------------------------------------------------
+// SettingListSection. It fills the remaining height of its
+// parent. The caller must give it a bounded height (e.g. wrap it in
+// `Expanded` inside an outer Column) since its list uses `Expanded`
+// internally.
+// ---------------------------------------------------------------------------
 
 class SettingListSection extends StatelessWidget {
   const SettingListSection({
@@ -153,86 +265,42 @@ class SettingListSection extends StatelessWidget {
   final bool isError;
   final Widget? emptyListPlaceholder;
   final Widget? errorPlaceholder;
-  final Function(String)? onFilter;
-
-  Widget _builder() {
-    if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-    if (isError) {
-      return Center(child: errorPlaceholder ?? Text('Error'));
-    }
-    if (itemCount == 0) {
-      return Center(child: emptyListPlaceholder ?? Text('Empty'));
-    }
-    if (separatorBuilder != null) {
-      return ListView.separated(
-        itemBuilder: itemBuilder,
-        separatorBuilder: separatorBuilder!,
-        itemCount: itemCount,
-      );
-    }
-
-    return ListView.builder(
-      itemCount: itemCount,
-      itemBuilder: itemBuilder,
-    );
-  }
+  final ValueChanged<String>? onFilter;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 32, bottom: 12),
-              child: Text(
-                title,
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
-              ),
-            ),
-
-            // Connected to the main part
-            Container(
-              decoration: BoxDecoration(
-                //color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(12),
-                  topRight: Radius.circular(12),
-                ),
-              ),
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-              width: 250,
-              child: DebouncedTextField(
-                onDebouncedChanged: (String value) => onFilter?.call(value),
-                decoration: InputDecoration(
-                  isDense: true,
-                  hintText: 'Filter',
-                  contentPadding: EdgeInsets.symmetric(vertical: 8),
-                  // prefixIcon: Icon(
-                  //   Icons.search,
-                  //   size: 14,
-                  // ),
-                ),
-              ),
-            ),
-          ],
+        const SizedBox(height: AppSpacing.lg),
+        _SettingsHeader(
+          title: title,
+          trailing: onFilter != null
+              ? ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 250),
+                  child: AppInputText(
+                    hint: 'Filter',
+                    prefixIcon: Icons.search,
+                    debounce: const Duration(milliseconds: 500),
+                    onChanged: onFilter,
+                  ),
+                )
+              : null,
         ),
-        // Main part
         Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(AppRadius.md),
-            ),
-            padding: EdgeInsets.all(32),
+          child: _SettingsSurface(
             child: ClipRRect(
               borderRadius: BorderRadius.circular(AppRadius.md),
-              child: _builder(),
+              child: _SettingsListBody(
+                itemCount: itemCount,
+                itemBuilder: itemBuilder,
+                separatorBuilder: separatorBuilder,
+                isLoading: isLoading,
+                isError: isError,
+                errorPlaceholder: errorPlaceholder,
+                emptyPlaceholder: emptyListPlaceholder,
+                shrinkWrap: false,
+              ),
             ),
           ),
         ),
