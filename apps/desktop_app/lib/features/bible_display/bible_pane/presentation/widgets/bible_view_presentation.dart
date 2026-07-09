@@ -185,7 +185,7 @@ class BibleViewPresentation extends StatelessWidget {
   ) {
     final label = number.toString();
 
-    if (presentTheme.verseNumberStyle == PresentationVerseNumberStyle.normal) {
+    if (presentTheme.verseNumberStyle == PresentationVerseNumberStyle.simple) {
       return TextSpan(
         text: label,
         style: TextStyle(

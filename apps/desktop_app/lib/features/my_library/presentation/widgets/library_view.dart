@@ -173,17 +173,16 @@ class _InstalledBiblesRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).colorScheme.primaryContainer;
+
     return HoverableContainer(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: isSelected
-            ? Theme.of(context).colorScheme.primaryContainer
-            : Colors.transparent,
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        color: isSelected ? primaryColor : Colors.transparent,
       ),
-      height: 36,
-      initialColor: null,
-      hoveredColor: Theme.of(context).colorScheme.primaryContainer,
+      height: 38,
+      hoveredColor: primaryColor,
       child: Align(
         alignment: Alignment.centerLeft,
         child: Row(

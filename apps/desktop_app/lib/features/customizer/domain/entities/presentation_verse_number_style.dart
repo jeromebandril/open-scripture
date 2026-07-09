@@ -1,13 +1,13 @@
 enum PresentationVerseNumberStyle {
-  normal,
+  simple,
   boxed,
 }
 
 extension PresentationVerseNumberStyleWire on PresentationVerseNumberStyle {
   String get wire {
     switch (this) {
-      case PresentationVerseNumberStyle.normal:
-        return 'normal';
+      case PresentationVerseNumberStyle.simple:
+        return 'default';
       case PresentationVerseNumberStyle.boxed:
         return 'boxed';
     }
@@ -15,12 +15,12 @@ extension PresentationVerseNumberStyleWire on PresentationVerseNumberStyle {
 
   static PresentationVerseNumberStyle fromWire(String value) {
     switch (value) {
-      case 'normal':
-        return PresentationVerseNumberStyle.normal;
+      case 'default':
+        return PresentationVerseNumberStyle.simple;
       case 'boxed':
         return PresentationVerseNumberStyle.boxed;
       default:
-        return PresentationVerseNumberStyle.normal;
+        return PresentationVerseNumberStyle.simple;
     }
   }
 }

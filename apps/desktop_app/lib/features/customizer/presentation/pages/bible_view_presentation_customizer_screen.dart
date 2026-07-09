@@ -98,9 +98,15 @@ class _BibleViewPresentationCustomizerScreenState
                                 value: vns, label: vns.wire))
                         .toList(),
                   )),
+            ],
+          ),
+          SettingSection(
+            title: 'Parallel view options',
+            children: [
               Setting(
-                  label: 'Parallel view distance',
-                  description: 'Set distance between each parallel instance',
+                  label: 'Spacing',
+                  description:
+                      'The spacing/distance between each parallel instance',
                   child: AppInputNumber(
                     min: 0,
                     max: 100,

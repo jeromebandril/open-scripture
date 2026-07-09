@@ -111,9 +111,6 @@ class _PaneListState extends State<_PaneList> with WindowListener {
     final gap = context.select(
       (CustomizerCubit c) => c.state.pane.splitscreenGap,
     );
-    final showDivider = context.select(
-      (CustomizerCubit c) => c.state.pane.showSplitscreenDivider,
-    );
 
     return BlocSelector<MultiPaneManagerCubit, PaneManagerState,
         (List<PaneDescriptor>, int?)>(
@@ -137,7 +134,6 @@ class _PaneListState extends State<_PaneList> with WindowListener {
                   count: panes.length,
                   gapPx: gapPx,
                   widthMinusGap: widthMinusGaps,
-                  showDivider: showDivider,
                   removingPaneId: removingPaneId,
                 ),
               // test: center reference
@@ -189,7 +185,6 @@ class _PaneListState extends State<_PaneList> with WindowListener {
     required int count,
     required double gapPx,
     required double widthMinusGap,
-    required bool showDivider,
     required int? removingPaneId,
   }) {
     final cubit = context.read<MultiPaneManagerCubit>();
@@ -232,7 +227,7 @@ class _PaneListState extends State<_PaneList> with WindowListener {
       // Calls resizeAdjacentPanes so both neighbours adjust simultaneously,
       // keeping all sizeFactor values summed to 1.0.
       //
-      if (showDivider && !isLast)
+      if (!isLast)
         AnimatedPositioned(
           key: ValueKey('divider_$i'),
           left: left + paneWidth,

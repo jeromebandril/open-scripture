@@ -14,7 +14,7 @@ class BibleViewPresentationThemeSettings extends Equatable {
     this.titleTextAlign = AppTextAlign.center,
     this.textAlign = AppTextAlign.center,
     this.subtitleFontWeight = AppFontWeight.semiBold,
-    this.verseNumberStyle = PresentationVerseNumberStyle.normal,
+    this.verseNumberStyle = PresentationVerseNumberStyle.simple,
     this.parallelDistance = 32,
   });
 

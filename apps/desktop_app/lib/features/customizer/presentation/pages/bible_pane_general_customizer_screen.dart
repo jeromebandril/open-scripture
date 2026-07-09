@@ -301,7 +301,7 @@ class _BiblePaneGeneralCustomizerScreenState
                             'Set gap space between each bible pane view',
                         child: AppInputNumber(
                           min: 0,
-                          max: 100,
+                          max: 256,
                           onSubmitted: (n) {
                             cubit.updateTheme(
                                 paneTheme: (p) =>
@@ -310,18 +310,6 @@ class _BiblePaneGeneralCustomizerScreenState
                           value: context.select(
                             (CustomizerCubit c) => c.state.pane.splitscreenGap,
                           ),
-                        )),
-                    Setting(
-                        label: 'Show divider',
-                        description: 'Shows a line divider between panes',
-                        child: AppInputBool(
-                          value: context.select((CustomizerCubit c) =>
-                              c.state.pane.showSplitscreenDivider),
-                          onChanged: (val) {
-                            cubit.updateTheme(
-                                paneTheme: (p) =>
-                                    p.copyWith(showSplitscreenDivider: val));
-                          },
                         )),
                   ],
                 ),
