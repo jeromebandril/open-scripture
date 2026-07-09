@@ -34,10 +34,12 @@ class LibraryManagerPage extends StatelessWidget {
     super.key,
     this.onSelect,
     required this.title,
+    this.subtitle,
     this.supportUninstallation = false,
   });
 
   final String title;
+  final String? subtitle;
   final Function(BibleTranslation)? onSelect;
   final bool supportUninstallation;
 
@@ -52,6 +54,7 @@ class LibraryManagerPage extends StatelessWidget {
             builder: (context, state) {
               return SettingListSection(
                 title: title,
+                subtitle: subtitle,
                 isLoading: state.status == MyLibraryStatus.loading,
                 isError: state.status == MyLibraryStatus.error,
                 emptyListPlaceholder: Text('Empty'),

@@ -26,24 +26,32 @@ class _SettingsSurface extends StatelessWidget {
 }
 
 class _SettingsHeader extends StatelessWidget {
-  const _SettingsHeader({this.title, this.trailing});
+  const _SettingsHeader({this.title, this.addInfo, this.trailing});
 
   final String? title;
+  final String? addInfo;
   final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
-    if (title == null && trailing == null) return const SizedBox.shrink();
+    if (title == null && addInfo == null && trailing == null) {
+      return const SizedBox.shrink();
+    }
+
     return Padding(
       padding:
           const EdgeInsets.only(left: AppSpacing.xl, bottom: AppSpacing.sm),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             title ?? '',
             style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
           ),
+          if (addInfo != null) ...[
+            const SizedBox(width: AppSpacing.md),
+            Tooltip(message: addInfo, child: Icon(Icons.info_outline))
+          ],
+          const Spacer(),
           if (trailing != null) trailing!,
         ],
       ),
@@ -249,6 +257,7 @@ class SettingListSection extends StatelessWidget {
     required this.title,
     required this.itemCount,
     required this.itemBuilder,
+    this.subtitle,
     this.isLoading = false,
     this.isError = false,
     this.errorPlaceholder,
@@ -258,6 +267,7 @@ class SettingListSection extends StatelessWidget {
   });
 
   final String title;
+  final String? subtitle;
   final int itemCount;
   final NullableIndexedWidgetBuilder itemBuilder;
   final IndexedWidgetBuilder? separatorBuilder;
@@ -275,6 +285,7 @@ class SettingListSection extends StatelessWidget {
         const SizedBox(height: AppSpacing.lg),
         _SettingsHeader(
           title: title,
+          addInfo: subtitle,
           trailing: onFilter != null
               ? ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 250),

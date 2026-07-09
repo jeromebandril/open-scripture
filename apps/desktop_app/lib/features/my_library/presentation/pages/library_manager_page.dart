@@ -29,6 +29,7 @@ class _LibrariesPageState extends State<LibrariesPage> {
                 value: cubit,
                 child: LibraryManagerPage(
                   title: repoType.label,
+                  subtitle: repoType.description,
                   supportUninstallation:
                       repoType != BibleRepositoryType.cloudAPI,
                 ),
