@@ -2,7 +2,7 @@
 
 Open Scripture is a desktop app for reading and presenting scripture during church services, paired with a mobile companion app for remote control.
 
-![screenshots collage](apps/desktop/assets/images/image-1.png)
+![screenshots collage](apps/desktop_app/assets/images/image-1.png)
 
 ## Features
 
@@ -29,4 +29,9 @@ packages/shared   # Shared packages between the apps (example: the RC protocols)
 
 ## Roadmap
 
-Open Scripture is under active development. Upcoming focus areas include custom image backgrounds and a smarter search/command bar (autocomplete, reference-list search, token-based search).
+Open Scripture is under active development.
+Upcoming focus areas include:
+
+- custom image backgrounds
+- smarter search/command bar (autocomplete, reference-list search, token-based search).
+- paragraphs support with subtitles
