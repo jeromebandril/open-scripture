@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../app/state/interface_visibility_cubit.dart';
+import '../../../../shared/design_system/design_system.dart';
 import '../../../../shared/domain/entities/bible_book.dart';
 import '../../../../shared/domain/entities/bible_id.dart';
 import '../../../../shared/domain/entities/localized_book.dart';
@@ -52,7 +53,7 @@ class _ThreeTapNavigatorTriggerState extends State<ThreeTapNavigatorTrigger> {
         ),
         onDismiss: _dismiss,
         menuWidth: 500,
-        menuHeight: 300,
+        menuHeight: 330,
         // menuHeightFraction: .3,
         menuVisible: _menuVisible,
         menuContent: _ThreeTapNavigatorOverlay(
@@ -124,8 +125,11 @@ class _ThreeTapNavigatorOverlayState extends State<_ThreeTapNavigatorOverlay> {
               }
 
               return Column(
-                spacing: 14,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  //
+                  // Sort of breadcrumbs for current input step
+                  //
                   SizedBox(
                       height: 24,
                       child: Row(
@@ -163,6 +167,10 @@ class _ThreeTapNavigatorOverlayState extends State<_ThreeTapNavigatorOverlay> {
                               )),
                         ],
                       )),
+                  const SizedBox(height: AppSpacing.lg),
+                  //
+                  // Selection grid
+                  //
                   Expanded(
                     child: Stack(
                       children: [
@@ -223,10 +231,46 @@ class _ThreeTapNavigatorOverlayState extends State<_ThreeTapNavigatorOverlay> {
                       ],
                     ),
                   ),
+                  const SizedBox(height: AppSpacing.lg),
+                  //
+                  // Additional info
+                  //
+                  _AddInfo(loadType: state.loadType),
                 ],
               );
             },
           );
+  }
+}
+
+class _AddInfo extends StatelessWidget {
+  const _AddInfo({required this.loadType});
+
+  final BookLoadType loadType;
+
+  @override
+  Widget build(BuildContext context) {
+    final style = Theme.of(context).textTheme.bodySmall;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.sm, vertical: AppSpacing.sm),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(AppRadius.sm),
+        color: Theme.of(context).colorScheme.surfaceContainer,
+      ),
+      child: loadType == BookLoadType.defaulted
+          ? Text(
+              'Defaulted: couldn\'t fetch books data for the current bible. It include books from  all versifications, with chapter and verse boundaries as fixed constants. They may not map to actual values.',
+              textAlign: TextAlign.center,
+              style: style,
+            )
+          : Text(
+              'Fetched from database',
+              style: style,
+              textAlign: TextAlign.center,
+            ),
+    );
   }
 }
 
@@ -253,8 +297,8 @@ class _GridSelector<T> extends StatelessWidget {
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 6, // number of columns
         childAspectRatio: 50 / 25,
-        mainAxisSpacing: 2,
-        crossAxisSpacing: 2,
+        mainAxisSpacing: 0,
+        crossAxisSpacing: 0,
       ),
       itemCount: items.length,
       itemBuilder: (context, index) {
