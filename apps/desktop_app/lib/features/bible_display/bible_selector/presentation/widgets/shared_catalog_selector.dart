@@ -207,7 +207,7 @@ class _FilterInputState extends State<_FilterInput> {
   Widget build(BuildContext context) {
     return AppInputText(
       value: _value,
-      hint: 'Search by name',
+      hint: 'Search by name or language',
       prefixIcon: Icons.search_rounded,
       onChanged: (v) => context.read<MyLibraryCubit>().filter(v),
     );
