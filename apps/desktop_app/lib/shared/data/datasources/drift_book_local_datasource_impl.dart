@@ -14,6 +14,15 @@ class DriftBibleBookLocalDataSourceImpl implements BibleBookLocalDataSource {
 
   @override
   Future<List<BookDto>> getBooksForBible(String bibleId) async {
+    final bibleRecord = await (_db.select(_db.bibles)
+          ..where((tbl) => tbl.extId.equals(bibleId)))
+        .getSingleOrNull();
+
+    if (bibleRecord == null) {
+      throw ArgumentError(
+          'Bible with id $bibleId does not exist in the database.');
+    }
+
     final query = _db.select(_db.localizedBookNames).join([
       innerJoin(
         _db.canonicalBooks,

@@ -21,6 +21,9 @@ import '../../features/shortcuts/domain/repositories/shortcuts_repo.dart';
 import '../../features/shortcuts/presentation/models/app_command_dispatcher.dart';
 import '../../features/shortcuts/presentation/state/shortcuts_cubit.dart';
 import '../../features/text_scaler/presentation/state/text_scaler_cubit.dart';
+import '../../features/three_tap_navigator/data/repository/three_tap_navigator_repository_impl.dart';
+import '../../features/three_tap_navigator/domain/repository/three_tap_navigator_repository.dart';
+import '../../features/three_tap_navigator/presentation/state/three_tap_navigator_cubit.dart';
 import '../../features/window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import '../../shared/data/datasources/bible_catalog_datasource/bible_catalog_datasource.dart';
 import '../../shared/data/datasources/bible_catalog_datasource/local_bible_catalog_datasource_impl.dart';
@@ -67,6 +70,7 @@ Future<void> init(GetIt sl) async {
   _registerCloudBible(sl);
   _registerShortcuts(sl);
   _registerBibleImporter(sl);
+  _registerThreeTapNavigator(sl);
 
   // bloc factory
   sl.registerFactoryParam<BiblePaneBloc, int, void>(
@@ -249,4 +253,16 @@ void _registerBibleImporter(GetIt sl) {
     () => ChainedBookResolver(
         [DriftBookResolver(sl()), ProgrammaticIdResolver()]),
   );
+}
+
+// ----------------------------------------------------------------------------
+void _registerThreeTapNavigator(GetIt sl) {
+  sl.registerLazySingleton<ThreeTapNavigatorRepository>(
+    () => ThreeTapNavigatorRepositoryImpl(
+      contentDataSource:
+          sl.get(instanceName: BibleRepositoryType.localDatabase.name),
+      booksLocalDataSource: sl(),
+    ),
+  );
+  sl.registerLazySingleton(() => ThreeTapNavigatorCubit(repo: sl()));
 }

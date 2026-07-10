@@ -77,8 +77,8 @@ class _MyAppState extends State<MyApp> {
               prev.listTheme != curr.listTheme;
         },
         builder: (context, state) {
-          final enableTint = false; //state.app.enableAutoColorScheme;
-          final accentColor = state.app.accentColor;
+          // final enableTint = false; //state.app.enableAutoColorScheme;
+          // final accentColor = state.app.accentColor;
 
           final extensions = <ThemeExtension<dynamic>>[
             state.pane
@@ -89,14 +89,14 @@ class _MyAppState extends State<MyApp> {
           ];
 
           final light = AppTheme.light.copyWith(
-              colorScheme: enableTint
-                  ? ColorScheme.fromSeed(seedColor: accentColor)
-                  : null,
+              // colorScheme: enableTint
+              //     ? ColorScheme.fromSeed(seedColor: accentColor)
+              //     : null,
               extensions: extensions);
           final dark = AppTheme.dark.copyWith(
-              colorScheme: enableTint
-                  ? ColorScheme.fromSeed(seedColor: accentColor)
-                  : null,
+              // colorScheme: enableTint
+              //     ? ColorScheme.fromSeed(seedColor: accentColor)
+              //     : null,
               extensions: extensions);
 
           return MaterialApp(
@@ -113,12 +113,12 @@ class _MyAppState extends State<MyApp> {
                     BlocProvider(
                         create: (_) => di.sl<ObsLiveOverlaySettingsCubit>()),
                     BlocProvider(
-                        create: (context) => di.sl<ThreeTapNavigatorCubit>()),
-                    BlocProvider(
                         create: (_) => di.sl<RemoteControllerSettingsCubit>()),
                     BlocProvider(create: (_) => di.sl<RemoteControllerCubit>()),
                     // BlocProvider(create: (_) => di.sl<InstallerBloc>()),
                   ],
+                  BlocProvider(
+                      create: (context) => di.sl<ThreeTapNavigatorCubit>()),
                   BlocProvider.value(value: di.sl<MultiPaneManagerCubit>()),
                   BlocProvider(create: (_) => di.sl<FullscreenCubit>()..init()),
                   BlocProvider(create: (_) => di.sl<WindowStackManagerBloc>()),

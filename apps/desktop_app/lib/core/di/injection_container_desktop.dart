@@ -26,9 +26,6 @@ import '../../features/remote_controller/presentation/state/remote_controller/re
 import '../../features/remote_controller/presentation/state/remote_controller_settings/remote_controller_settings_cubit.dart';
 import '../../features/sword/entities/sword_engine_settings.dart';
 import '../../features/sword/presentation/state/sword_engine_settings_cubit.dart';
-import '../../features/three_tap_navigator/data/repository/three_tap_navigator_repository_impl.dart';
-import '../../features/three_tap_navigator/domain/repository/three_tap_navigator_repository.dart';
-import '../../features/three_tap_navigator/presentation/state/three_tap_navigator_cubit.dart';
 import '../../shared/data/datasources/bible_catalog_datasource/bible_catalog_datasource.dart';
 import '../../shared/data/datasources/bible_catalog_datasource/sword_bible_catalog_datasource_impl.dart';
 import '../../shared/data/datasources/bible_content_datasource/bible_content_datasourcee.dart';
@@ -57,7 +54,6 @@ Future<void> init(GetIt sl) async {
   _registerCustomizer(sl);
   _registerRemoteController(sl);
   _registerObsOverlay(sl);
-  _registerThreeTapNavigator(sl);
   _registerLifecycle(sl);
 }
 
@@ -222,16 +218,6 @@ void _registerObsOverlay(GetIt sl) {
   sl.registerLazySingleton<OverlayServerManager>(() => OverlayServerManager(fs: sl()));
   sl.registerLazySingleton<OverlayRepository>(() => OverlayRepositoryImpl(mgr: sl()));
   sl.registerFactory(() => ObsLiveOverlayCubit(repo: sl(), notifier: sl()));
-}
-
-void _registerThreeTapNavigator(GetIt sl) {
-  sl.registerLazySingleton<ThreeTapNavigatorRepository>(
-    () => ThreeTapNavigatorRepositoryImpl(
-      contentDataSource: sl.get(instanceName: BibleRepositoryType.localDatabase.name),
-      booksLocalDataSource: sl(),
-    ),
-  );
-  sl.registerLazySingleton(() => ThreeTapNavigatorCubit(repo: sl()));
 }
 
 void _registerLifecycle(GetIt sl) {

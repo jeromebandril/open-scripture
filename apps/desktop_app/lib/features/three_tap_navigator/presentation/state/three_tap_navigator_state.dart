@@ -2,6 +2,8 @@ part of 'three_tap_navigator_cubit.dart';
 
 enum ThreeTapNavigatorStatus { init, error, loaded }
 
+enum BookLoadType { localized, defaulted }
+
 class ThreeTapNavigatorState extends Equatable {
   const ThreeTapNavigatorState({
     this.status = ThreeTapNavigatorStatus.init,
@@ -9,6 +11,7 @@ class ThreeTapNavigatorState extends Equatable {
     this.books = const [],
     this.maxChapter = 0,
     this.maxVerse = 0,
+    this.loadType = BookLoadType.defaulted,
   });
 
   final ThreeTapNavigatorStatus status;
@@ -16,6 +19,7 @@ class ThreeTapNavigatorState extends Equatable {
   final List<LocalizedBook> books;
   final int maxChapter;
   final int maxVerse;
+  final BookLoadType loadType;
 
   ThreeTapNavigatorState copyWith({
     ThreeTapNavigatorStatus? status,
@@ -23,6 +27,7 @@ class ThreeTapNavigatorState extends Equatable {
     List<LocalizedBook>? books,
     int? maxChapter,
     int? maxVerse,
+    BookLoadType? loadType,
   }) {
     return ThreeTapNavigatorState(
       status: status ?? this.status,
@@ -30,9 +35,11 @@ class ThreeTapNavigatorState extends Equatable {
       books: books ?? this.books,
       maxChapter: maxChapter ?? this.maxChapter,
       maxVerse: maxVerse ?? this.maxVerse,
+      loadType: loadType ?? this.loadType,
     );
   }
 
   @override
-  List<Object?> get props => [status, ref, books, maxChapter, maxVerse];
+  List<Object?> get props =>
+      [status, ref, books, maxChapter, maxVerse, loadType];
 }
