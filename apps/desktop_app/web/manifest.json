@@ -1,7 +1,7 @@
 {
   "name": "open_scripture",
   "short_name": "open_scripture",
-  "start_url": "/resources/open-scripture/",
+  "start_url": ".",
   "display": "standalone",
   "background_color": "#0175C2",
   "theme_color": "#0175C2",
