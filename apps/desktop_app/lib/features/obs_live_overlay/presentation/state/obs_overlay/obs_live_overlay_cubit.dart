@@ -39,11 +39,15 @@ class ObsLiveOverlayCubit extends Cubit<ObsLiveOverlayState> {
   Timer? _hideDebounce;
   int? _debounceTime;
 
+  void _setEmptySnapshot() {
+    final emptySnapshot = OverlaySnapshot.initial();
+    setSnapshot(emptySnapshot);
+  }
+
   void _scheduleHideDeb() {
     _hideDebounce?.cancel();
-    final emptySnapshot = OverlaySnapshot.initial();
-    _hideDebounce = Timer(Duration(seconds: _debounceTime ?? 30),
-        () => setSnapshot(emptySnapshot));
+    _hideDebounce = Timer(
+        Duration(seconds: _debounceTime ?? 30), () => _setEmptySnapshot());
   }
 
   Future<void> startServer(
@@ -66,6 +70,8 @@ class ObsLiveOverlayCubit extends Cubit<ObsLiveOverlayState> {
   Future<void> stopServer() async {
     emit(state.copyWith(busy: true, error: null));
     try {
+      _hideDebounce?.cancel();
+      _setEmptySnapshot();
       await _repo.stop();
       emit(state.copyWith(
         busy: false,
