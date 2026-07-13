@@ -10,7 +10,6 @@ import '../../../../../shared/domain/entities/bible_id.dart';
 import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../../shared/domain/repositories/bible_pane_repository_factory.dart';
 import '../../../../../shared/enums/bible_repository_type.dart';
-import '../../../../obs_live_overlay/domain/entities/overlay_models.dart';
 import '../../domain/display_mode.dart';
 import '../../domain/repositories/bible_pane_repository.dart';
 import '../models/parallel_bible_config.dart';
@@ -229,28 +228,15 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
   void _sendTextToObsLiveOverlay(BibleRef ref) {
     if (_overlayNotifier == null || state.content.isContentEmpty) return;
 
-    // Set the bible reference
-    String refStr = ref.toDisplayString();
-
-    // Set content
-    final buffer = StringBuffer();
-    final rangeToDisplay = state.content.getRefsInRange(ref);
-
-    // TODO: support parallel view (e.g. multiple translations in the overlay)
-    // For now display content of the first translation
+    // Display content of the first translation
     final translationToDisplay = state.content.keys.first;
-    final verses = state.content[translationToDisplay]!.verses!.entries
-        .where((e) => rangeToDisplay.contains(e.key))
-        .toList();
-    for (final v in verses) {
-      buffer.write(v.value.plainText);
-    }
 
-    final snapshot = OverlaySnapshot(items: {
-      'ref': OverlayItem(text: refStr, visible: true),
-      'content': OverlayItem(text: buffer.toString(), visible: true)
-    });
-    _overlayNotifier.update(snapshot);
+    final verses = state.content[translationToDisplay]!.verses!.values
+        .where((v) => ref.contains(v.ref))
+        .toList();
+    final sel = SelectedVerseBusItem(ref: ref, verses: verses);
+
+    _overlayNotifier.update(sel);
   }
 
   /// Just change the selected verse

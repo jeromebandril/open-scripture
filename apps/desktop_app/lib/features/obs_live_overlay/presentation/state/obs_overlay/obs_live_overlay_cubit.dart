@@ -6,21 +6,35 @@ import 'package:equatable/equatable.dart';
 import '../../../../../core/infrastructure/event_bus/selected_verse_bus.dart';
 import '../../../domain/entities/overlay_models.dart';
 import '../../../domain/repostiory/overlay_repository.dart';
+import '../../../domain/service/verse_html_formatter.dart';
 
 part 'obs_live_overlay_state.dart';
 
 class ObsLiveOverlayCubit extends Cubit<ObsLiveOverlayState> {
   ObsLiveOverlayCubit({
-    required this.repo,
+    required OverlayRepository repo,
     required SelectedVerseBus notifier,
-  }) : super(ObsLiveOverlayState.initial()) {
-    _sub = notifier.stream.listen((snapshot) {
-      if (!repo.isRunning) return;
+    required VerseHtmlFormatter htmlFormatter,
+  })  : _htmlFormatter = htmlFormatter,
+        _repo = repo,
+        super(ObsLiveOverlayState.initial()) {
+    _sub = notifier.stream.listen((data) {
+      if (!_repo.isRunning) return;
+
+      final spans = data.verses.expand((v) => v.spans).toList();
+      final verseHtml = _htmlFormatter.toHtml(spans);
+
+      final snapshot = OverlaySnapshot(items: {
+        'ref': OverlayItem(text: data.ref.toDisplayString(), visible: true),
+        'content': OverlayItem(text: verseHtml, visible: true)
+      });
+
       setSnapshot(snapshot);
     });
   }
 
-  final OverlayRepository repo;
+  final OverlayRepository _repo;
+  final VerseHtmlFormatter _htmlFormatter;
   late final StreamSubscription _sub;
   Timer? _hideDebounce;
 
@@ -34,36 +48,36 @@ class ObsLiveOverlayCubit extends Cubit<ObsLiveOverlayState> {
   Future<void> startServer(int port) async {
     emit(state.copyWith(busy: true, error: null));
     try {
-      await repo.start(port: port, controllerToken: '123456');
+      await _repo.start(port: port, controllerToken: '123456');
       emit(state.copyWith(
         busy: false,
-        isRunning: repo.isRunning,
-        snapshot: repo.snapshot,
+        isRunning: _repo.isRunning,
+        snapshot: _repo.snapshot,
       ));
     } catch (e) {
       emit(state.copyWith(
-          busy: false, error: e.toString(), isRunning: repo.isRunning));
+          busy: false, error: e.toString(), isRunning: _repo.isRunning));
     }
   }
 
   Future<void> stopServer() async {
     emit(state.copyWith(busy: true, error: null));
     try {
-      await repo.stop();
+      await _repo.stop();
       emit(state.copyWith(
         busy: false,
-        isRunning: repo.isRunning,
-        snapshot: repo.snapshot,
+        isRunning: _repo.isRunning,
+        snapshot: _repo.snapshot,
       ));
     } catch (e) {
       emit(state.copyWith(
-          busy: false, error: e.toString(), isRunning: repo.isRunning));
+          busy: false, error: e.toString(), isRunning: _repo.isRunning));
     }
   }
 
   void setSnapshot(OverlaySnapshot snapshot) {
-    repo.setSnapshot(snapshot: snapshot);
-    emit(state.copyWith(snapshot: repo.snapshot));
+    _repo.setSnapshot(snapshot: snapshot);
+    emit(state.copyWith(snapshot: _repo.snapshot));
     _scheduleHideDeb();
   }
 

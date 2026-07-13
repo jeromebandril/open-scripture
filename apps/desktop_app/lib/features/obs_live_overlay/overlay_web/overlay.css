@@ -43,3 +43,63 @@ body {
   flex-direction: row;
   gap: 8px;
 }
+
+/* Default styles for the classes VerseHtmlFormatter emits. */
+
+.v-bold {
+  font-weight: bold;
+}
+
+.v-italic {
+  font-style: italic;
+}
+
+.v-added {
+  font-style: italic;
+  opacity: 0.85;
+}
+
+.v-underline {
+  text-decoration: underline;
+}
+
+.v-small-caps {
+  font-variant: small-caps;
+}
+
+.v-superscript {
+  vertical-align: super;
+  font-size: 0.7em;
+}
+
+.v-strongs {
+  cursor: pointer;
+  border-bottom: 1px dotted currentColor;
+}
+
+.v-footnote {
+  cursor: help;
+  border-bottom: 1px dotted currentColor;
+}
+
+.v-red-letter {
+  color: #e04a4a;
+}
+
+.v-poetry {
+  display: block;
+  margin-left: 2em;
+}
+
+.v-reference {
+  font-weight: 600;
+}
+
+.v-cross-reference {
+  color: #2980b9;
+  text-decoration: none;
+}
+
+.v-cross-reference:hover {
+  text-decoration: underline;
+}

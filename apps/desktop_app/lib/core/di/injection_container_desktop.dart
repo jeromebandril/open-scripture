@@ -14,8 +14,10 @@ import '../../features/my_library/presentation/cubit/my_library_cubit.dart';
 import '../../features/obs_live_overlay/data/datasource/overlay_file_system.dart';
 import '../../features/obs_live_overlay/data/datasource/overlay_server_manager.dart';
 import '../../features/obs_live_overlay/data/repository/overlay_repository_impl.dart';
+import '../../features/obs_live_overlay/data/service/verse_html_formatter_impl.dart';
 import '../../features/obs_live_overlay/domain/entities/overlay_settings.dart';
 import '../../features/obs_live_overlay/domain/repostiory/overlay_repository.dart';
+import '../../features/obs_live_overlay/domain/service/verse_html_formatter.dart';
 import '../../features/obs_live_overlay/presentation/state/obs_overlay/obs_live_overlay_cubit.dart';
 import '../../features/obs_live_overlay/presentation/state/obs_overlay_settinsg/obs_live_overlay_settings_cubit.dart';
 import '../../features/remote_controller/data/datasource/remote_controller_ws.dart';
@@ -213,11 +215,13 @@ void _registerObsOverlay(GetIt sl) {
   );
   sl.registerFactory(() => ObsLiveOverlaySettingsCubit(repo: sl()));
 
+  sl.registerLazySingleton<VerseHtmlFormatter>(() => VerseHtmlFormatterImpl());
+
   sl.registerLazySingleton<SelectedVerseBus>(() => SelectedVerseBus());
   sl.registerLazySingleton<OverlayFilesystem>(() => OverlayFilesystem());
   sl.registerLazySingleton<OverlayServerManager>(() => OverlayServerManager(fs: sl()));
   sl.registerLazySingleton<OverlayRepository>(() => OverlayRepositoryImpl(mgr: sl()));
-  sl.registerFactory(() => ObsLiveOverlayCubit(repo: sl(), notifier: sl()));
+  sl.registerFactory(() => ObsLiveOverlayCubit(repo: sl(), notifier: sl(), htmlFormatter: sl()));
 }
 
 void _registerLifecycle(GetIt sl) {

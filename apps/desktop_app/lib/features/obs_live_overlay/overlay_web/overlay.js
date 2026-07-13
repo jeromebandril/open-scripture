@@ -1,4 +1,3 @@
-console.log('im here!!');
 (() => {
   // Build ws url from current location (works for localhost and LAN)
   const WS_URL = (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/ws';
@@ -19,7 +18,6 @@ console.log('im here!!');
       retryMs = 250;
       log('ws open');
 
-      // Handshake expected by the server
       socket.send(JSON.stringify({ type: 'hello', role: 'overlay', version: 1 }));
     };
 
@@ -75,10 +73,9 @@ console.log('im here!!');
     const text = data && typeof data.text === 'string' ? data.text : '';
     const visible = data && typeof data.visible === 'boolean' ? data.visible : false;
 
-    el.textContent = text;
+    el.innerHTML = text;
     el.style.display = visible ? 'block' : 'none';
   }
 
-  // Kick off
   connect();
 })();

@@ -42,6 +42,7 @@ class WsMsg {
 }
 
 class OverlayItem extends Equatable {
+  /// can be html
   final String text;
   final bool visible;
 

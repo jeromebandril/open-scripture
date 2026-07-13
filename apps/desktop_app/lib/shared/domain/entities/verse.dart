@@ -75,6 +75,9 @@ class Verse extends Equatable {
       .map((span) => span.text)
       .join();
 
+  List<VerseSpan> get spans =>
+      segments.expand((segment) => segment.spans).toList();
+
   @override
   List<Object?> get props => [translationId, ref, segments];
 }
