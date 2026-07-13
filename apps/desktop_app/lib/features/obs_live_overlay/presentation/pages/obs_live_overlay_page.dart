@@ -28,10 +28,10 @@ class ObsLiveOverlayPage extends StatelessWidget {
             return Column(
               children: [
                 SettingSection(
-                  title: 'OBS Live Overlay (beta)',
+                  title: 'OBS Live Overlay',
                   children: [
                     Text(
-                        'Hosts a customizable local web page, which can be used by the OBS program to display in real time an overlay with the selected verse content.'),
+                        'Hosts a customizable local web page, which can be used by the OBS program to display in real time an overlay with the last selected verse (in a parallel view, only the first opened bible will be used to display verses).'),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

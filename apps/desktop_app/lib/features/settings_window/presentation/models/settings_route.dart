@@ -47,7 +47,7 @@ enum SettingsPage {
   ),
   obsLiveOverlay(
     route: '/obsliveoverlay',
-    name: 'OBS Live Overlay (beta)',
+    name: 'OBS Live Overlay',
     icon: Icons.live_tv_rounded,
     group: SettingsGroup.tools,
   ),

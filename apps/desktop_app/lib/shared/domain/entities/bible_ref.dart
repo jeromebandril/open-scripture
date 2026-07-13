@@ -70,6 +70,10 @@ class BibleRef extends Equatable implements Comparable<BibleRef> {
     return '${book.usfm} ${toStringChapterAndVerse()}';
   }
 
+  String toDisplayString() {
+    return '${book.englishName} ${toStringChapterAndVerse()}';
+  }
+
   String toStringChapterAndVerse() {
     return '$chapter:$verseStart${verseEnd != null ? '-$verseEnd' : ''}';
   }
