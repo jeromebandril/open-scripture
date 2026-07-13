@@ -47,11 +47,16 @@ class ObsLiveOverlayPage extends StatelessWidget {
                               : () => state.isRunning
                                   ? ctx.read<ObsLiveOverlayCubit>().stopServer()
                                   : ctx.read<ObsLiveOverlayCubit>().startServer(
-                                      ctx
+                                      port: ctx
                                           .read<ObsLiveOverlaySettingsCubit>()
                                           .state
                                           .settings
-                                          .port),
+                                          .port,
+                                      hideDebounceTimeSeconds: ctx
+                                          .read<ObsLiveOverlaySettingsCubit>()
+                                          .state
+                                          .settings
+                                          .hideDebounceSeconds),
                           child: state.isRunning
                               ? const Text('Turn OBS Live Overlay Off')
                               : const Text('Turn OBS Live Overlay On'),
@@ -124,6 +129,23 @@ class ObsLiveOverlayPage extends StatelessWidget {
                                 .read<ObsLiveOverlaySettingsCubit>()
                                 .updateSettings((settings) =>
                                     settings.copyWith(port: p.toInt()));
+                          },
+                        )),
+                    Setting(
+                        label: 'Visibility time',
+                        description:
+                            'How many seconds the overaly is visible before disappearing',
+                        child: AppInputNumber(
+                          enabled: !(state.isRunning || state.busy),
+                          min: 5,
+                          max: 480,
+                          value: ctx.select((ObsLiveOverlaySettingsCubit c) =>
+                              c.state.settings.hideDebounceSeconds),
+                          onSubmitted: (p) {
+                            ctx
+                                .read<ObsLiveOverlaySettingsCubit>()
+                                .updateSettings((settings) => settings.copyWith(
+                                    hideDebounceSeconds: p.toInt()));
                           },
                         )),
                     Setting(
