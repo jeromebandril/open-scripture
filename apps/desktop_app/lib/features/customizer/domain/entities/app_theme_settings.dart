@@ -12,9 +12,9 @@ class AppThemeSettings extends Equatable {
   final bool enable3TapNavigator;
 
   const AppThemeSettings({
-    this.mode = ThemeMode.system,
+    this.mode = ThemeMode.light,
     this.fontFamily = 'General Sans',
-    this.accentColor = Colors.blue,
+    this.accentColor = const Color(0xFF2558C0),
     this.enableAutoColorScheme = true,
     this.enable3TapNavigator = false,
   });
