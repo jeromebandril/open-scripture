@@ -83,10 +83,10 @@ enum SettingsPage {
   });
 
   bool get isSupportedOnPlatform {
-    if (kIsWeb) {
-      return this != SettingsPage.obsLiveOverlay &&
-          this != SettingsPage.remoteController;
-    }
+    // if (kIsWeb) {
+    //   return this != SettingsPage.obsLiveOverlay &&
+    //       this != SettingsPage.remoteController;
+    // }
     return true;
   }
 
