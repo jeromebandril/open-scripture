@@ -101,19 +101,22 @@ class SharedCatalogSelector extends StatelessWidget {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     emptyWidget ?? Text('No items found'),
-                                    TextButton.icon(
-                                        onPressed: () {
-                                          context
-                                              .read<WindowStackManagerBloc>()
-                                              .add(WindowStackManagerOpen
-                                                  .selfManaged(
-                                                      widget: SettingsWindow(
-                                                          initialPage:
-                                                              SettingsPage
-                                                                  .importer)));
-                                        },
-                                        icon: Icon(Icons.file_upload_outlined),
-                                        label: Text('Go to Import Page'))
+                                    if (repoType !=
+                                        BibleRepositoryType.cloudAPI)
+                                      TextButton.icon(
+                                          onPressed: () {
+                                            context
+                                                .read<WindowStackManagerBloc>()
+                                                .add(WindowStackManagerOpen
+                                                    .selfManaged(
+                                                        widget: SettingsWindow(
+                                                            initialPage:
+                                                                SettingsPage
+                                                                    .importer)));
+                                          },
+                                          icon:
+                                              Icon(Icons.file_upload_outlined),
+                                          label: Text('Go to Import Page'))
                                   ],
                                 )))
                             : ListView.separated(
