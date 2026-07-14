@@ -1,11 +1,11 @@
 {
-  "name": "open_scripture",
-  "short_name": "open_scripture",
+  "name": "Open Scripture",
+  "short_name": "Open Scripture",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#0175C2",
   "theme_color": "#0175C2",
-  "description": "A new Flutter project.",
+  "description": "Reading and presenting bible scripture during church services",
   "orientation": "portrait-primary",
   "prefer_related_applications": false,
   "icons": [
