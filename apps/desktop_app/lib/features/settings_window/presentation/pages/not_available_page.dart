@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../shared/design_system/tokens/spacing.dart';
+import '../../../../shared/utils/platform_info.dart';
 
 // For now It is ok to have hardcoded strings, because
 // the only platform supported are web and windows,
@@ -26,7 +27,7 @@ class FeatureNotAvailablePage extends StatelessWidget {
         spacing: AppSpacing.sm,
         children: [
           Text(
-            'This feature is not available on web',
+            'This feature is not available on ${getTargetPlatform()}',
             textAlign: TextAlign.center,
             style: textTheme.titleSmall,
           ),
