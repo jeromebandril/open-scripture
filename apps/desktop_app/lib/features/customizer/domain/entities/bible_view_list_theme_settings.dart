@@ -10,8 +10,8 @@ class BibleViewListThemeSettings extends Equatable {
   final HighlightRenderMode highlightRenderMode;
 
   const BibleViewListThemeSettings({
-    this.underlineRef = true,
-    this.showVerseDivider = false,
+    this.underlineRef = false,
+    this.showVerseDivider = true,
     this.showFullRefAlways = true,
     this.highlightRenderMode = HighlightRenderMode.fullRefWithColor,
     this.parallelSpacing = 32,

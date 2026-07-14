@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -7,6 +8,7 @@ import '../../../../shared/utils/network_utils.dart';
 import '../../../../shared/widgets/dot.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
+import '../../../settings_window/presentation/pages/not_available_page.dart';
 import '../../../settings_window/presentation/widgets/setting.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../../window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
@@ -24,131 +26,144 @@ class RemoteControllerPage extends StatefulWidget {
 class _RemoteControllerPageState extends State<RemoteControllerPage> {
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: context.read<RemoteControllerCubit>(),
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(42, 0, 42, 42),
-        child: BlocBuilder<RemoteControllerCubit, RemoteControllerState>(
-          builder: (context, state) {
-            final enableFeature = context.select(
-                (RemoteControllerSettingsCubit c) =>
-                    c.state.settings.enableFeature);
+    const featureDescription =
+        'Allows you to control this app remotely from your phone. To use it, make sure to be connected in the same network.';
 
-            final port = context.select(
-                (RemoteControllerSettingsCubit c) => c.state.settings.port);
+    final plat = TargetPlatform.windows;
 
-            return Column(
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: AppSpacing.md,
-                  children: [
-                    Expanded(
-                      child: SettingSection(
-                        title: 'Remote Controller (beta)',
+    return kIsWeb
+        ? const FeatureNotAvailablePage(featureDescription: featureDescription)
+        : BlocProvider.value(
+            value: context.read<RemoteControllerCubit>(),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(42, 0, 42, 42),
+              child: BlocBuilder<RemoteControllerCubit, RemoteControllerState>(
+                builder: (context, state) {
+                  final enableFeature = context.select(
+                      (RemoteControllerSettingsCubit c) =>
+                          c.state.settings.enableFeature);
+
+                  final port = context.select(
+                      (RemoteControllerSettingsCubit c) =>
+                          c.state.settings.port);
+
+                  return Column(
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: AppSpacing.md,
                         children: [
-                          Text(
-                              'Allows you to control this app remotely from your phone. To use it, make sure to be connected in the same network.'),
-                          Column(
-                            spacing: AppSpacing.lg,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Dot(
-                                    glowing: state.isRunning,
-                                    overrideColor: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant,
-                                    overrideGlowingColor: Colors.red,
-                                  ),
-                                  TextButton(
-                                    onPressed: state.isBusy || !enableFeature
-                                        ? null
-                                        : () => state.isRunning
-                                            ? context
-                                                .read<RemoteControllerCubit>()
-                                                .stop()
-                                            : context
-                                                .read<RemoteControllerCubit>()
-                                                .start(context
-                                                    .read<
-                                                        RemoteControllerSettingsCubit>()
-                                                    .state
-                                                    .settings
-                                                    .port),
-                                    child: state.isRunning
-                                        ? const Text(
-                                            'Turn Remote Controller Server Off')
-                                        : const Text(
-                                            'Turn Remote Controller Server On'),
-                                  ),
-                                ],
-                              ),
-                              if (state.isRunning)
-                                TextButton(
-                                    onPressed: () {
-                                      context
-                                          .read<WindowStackManagerBloc>()
-                                          .add(WindowStackManagerOpen(
-                                              title: 'Connected Devices',
-                                              widget:
-                                                  const _ConnectedClientsList(),
-                                              size: Size(400, 400)));
-                                    },
-                                    child: Text('Manage connected devices')),
-                            ],
+                          Expanded(
+                            child: SettingSection(
+                              title: 'Remote Controller (beta)',
+                              children: [
+                                Text(featureDescription),
+                                Column(
+                                  spacing: AppSpacing.lg,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Dot(
+                                          glowing: state.isRunning,
+                                          overrideColor: Theme.of(context)
+                                              .colorScheme
+                                              .onSurfaceVariant,
+                                          overrideGlowingColor: Colors.red,
+                                        ),
+                                        TextButton(
+                                          onPressed: state.isBusy ||
+                                                  !enableFeature
+                                              ? null
+                                              : () => state.isRunning
+                                                  ? context
+                                                      .read<
+                                                          RemoteControllerCubit>()
+                                                      .stop()
+                                                  : context
+                                                      .read<
+                                                          RemoteControllerCubit>()
+                                                      .start(context
+                                                          .read<
+                                                              RemoteControllerSettingsCubit>()
+                                                          .state
+                                                          .settings
+                                                          .port),
+                                          child: state.isRunning
+                                              ? const Text(
+                                                  'Turn Remote Controller Server Off')
+                                              : const Text(
+                                                  'Turn Remote Controller Server On'),
+                                        ),
+                                      ],
+                                    ),
+                                    if (state.isRunning)
+                                      TextButton(
+                                          onPressed: () {
+                                            context
+                                                .read<WindowStackManagerBloc>()
+                                                .add(WindowStackManagerOpen(
+                                                    title: 'Connected Devices',
+                                                    widget:
+                                                        const _ConnectedClientsList(),
+                                                    size: Size(400, 400)));
+                                          },
+                                          child:
+                                              Text('Manage connected devices')),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
+                          if (state.isRunning)
+                            Expanded(
+                              child: const _ConnectionDetails(),
+                            ),
                         ],
                       ),
-                    ),
-                    if (state.isRunning)
-                      Expanded(
-                        child: const _ConnectionDetails(),
-                      ),
-                  ],
-                ),
-                SettingSection(
-                  title: 'Preferences',
-                  children: [
-                    Setting(
-                        label: 'Enable Remote Controller',
-                        description: 'Enable/Disable remote controller feature',
-                        child: AppInputBool(
-                          enabled: !(state.isRunning || state.isBusy),
-                          value: context.select(
-                              (RemoteControllerSettingsCubit c) =>
-                                  c.state.settings.enableFeature),
-                          onChanged: (val) {
-                            context
-                                .read<RemoteControllerSettingsCubit>()
-                                .updateSettings((settings) =>
-                                    settings.copyWith(enableFeature: val));
-                          },
-                        )),
-                    Setting(
-                        label: 'Port',
-                        description: 'Preferred connection port',
-                        child: AppInputNumber(
-                          enabled: !(state.isRunning || state.isBusy),
-                          min: 49152,
-                          max: 65535,
-                          value: port,
-                          onSubmitted: (p) {
-                            context
-                                .read<RemoteControllerSettingsCubit>()
-                                .updateSettings((settings) =>
-                                    settings.copyWith(port: p.toInt()));
-                          },
-                        )),
-                  ],
-                )
-              ],
-            );
-          },
-        ),
-      ),
-    );
+                      SettingSection(
+                        title: 'Preferences',
+                        children: [
+                          Setting(
+                              label: 'Enable Remote Controller',
+                              description:
+                                  'Enable/Disable remote controller feature',
+                              child: AppInputBool(
+                                enabled: !(state.isRunning || state.isBusy),
+                                value: context.select(
+                                    (RemoteControllerSettingsCubit c) =>
+                                        c.state.settings.enableFeature),
+                                onChanged: (val) {
+                                  context
+                                      .read<RemoteControllerSettingsCubit>()
+                                      .updateSettings((settings) => settings
+                                          .copyWith(enableFeature: val));
+                                },
+                              )),
+                          Setting(
+                              label: 'Port',
+                              description: 'Preferred connection port',
+                              child: AppInputNumber(
+                                enabled: !(state.isRunning || state.isBusy),
+                                min: 49152,
+                                max: 65535,
+                                value: port,
+                                onSubmitted: (p) {
+                                  context
+                                      .read<RemoteControllerSettingsCubit>()
+                                      .updateSettings((settings) =>
+                                          settings.copyWith(port: p.toInt()));
+                                },
+                              )),
+                        ],
+                      )
+                    ],
+                  );
+                },
+              ),
+            ),
+          );
   }
 }
 

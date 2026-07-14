@@ -39,7 +39,7 @@ class BiblePaneGeneralThemeSettings extends Equatable {
     this.quoteColor = const Color(0xFFE04A4A),
     this.selectedRefFontWeight = AppFontWeight.extraBold,
     this.refFontWeight = AppFontWeight.semiBold,
-    this.underlineStrongWords = true,
+    this.underlineStrongWords = false,
   });
 
   factory BiblePaneGeneralThemeSettings.dark() => BiblePaneGeneralThemeSettings(

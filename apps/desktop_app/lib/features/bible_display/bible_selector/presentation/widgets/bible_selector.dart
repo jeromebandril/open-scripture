@@ -32,7 +32,6 @@ class _BibleSelectorState extends State<BibleSelector> {
     BibleRepositoryType.localDatabase: SharedCatalogSelector(
       repoType: BibleRepositoryType.localDatabase,
       emptyWidget: const Text('No installed bibles found'),
-      // TODO: call reload logic here (which is not implemented yet)
       onRetry: (context) => context.read<MyLibraryCubit>().getBibles(),
     ),
     BibleRepositoryType.sword: SharedCatalogSelector(
@@ -51,7 +50,7 @@ class _BibleSelectorState extends State<BibleSelector> {
     BibleRepositoryType.cloudAPI: SharedCatalogSelector(
       repoType: BibleRepositoryType.cloudAPI,
       showFilter: true, // Enables the search bar
-      emptyWidget: const Text('Found nothing'),
+      emptyWidget: const Text('No results found'),
       defaultErrorMessage: 'Unknown Error',
       onRetry: (context) => context.read<MyLibraryCubit>().getBibles(),
     ),
