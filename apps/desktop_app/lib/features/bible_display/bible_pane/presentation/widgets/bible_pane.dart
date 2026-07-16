@@ -10,6 +10,7 @@ import '../../domain/display_mode.dart';
 import '../cubit/selected_word_cubit.dart';
 import '../state/bible_pane_bloc.dart';
 import 'bible_view_list.dart';
+import 'bible_view_normal.dart';
 import 'bible_view_presentation.dart';
 import 'initial_screen.dart';
 import 'pane_info.dart';
@@ -102,15 +103,16 @@ class BiblePane extends StatelessWidget {
                             DisplayMode>(
                           selector: (s) => s.dMode,
                           builder: (context, dMode) {
-                            return dMode == DisplayMode.presentation
-                                //
-                                // Presentation mode
-                                //
-                                ? BibleViewPresentation(uniqueId: uniqueId)
-                                //
-                                // List mode
-                                //
-                                : BibleViewList(uniqueId: uniqueId);
+                            return switch (dMode) {
+                              DisplayMode.presentation =>
+                                BibleViewPresentation(uniqueId: uniqueId),
+                              DisplayMode.list =>
+                                BibleViewList(uniqueId: uniqueId),
+                              DisplayMode.prose => BibleViewContinuous(
+                                  uniqueId: uniqueId,
+                                  verseLabelBuilder: (ref) =>
+                                      '[${ref.verseStart}]'),
+                            };
                           },
                         ),
                       ),
