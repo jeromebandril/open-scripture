@@ -221,7 +221,7 @@ class BibleViewPresentation extends StatelessWidget {
       return TextSpan(
         text: label,
         style: TextStyle(
-          fontSize: 10,
+          fontSize: 12,
           fontWeight: FontWeight.bold,
           color: paneTheme.accentColor,
           decoration: TextDecoration.underline,
@@ -240,7 +240,7 @@ class BibleViewPresentation extends StatelessWidget {
         child: Text(
           label,
           style: TextStyle(
-            fontSize: 10,
+            fontSize: 3,
             fontWeight: FontWeight.bold,
             color: paneTheme.accentColor,
           ),

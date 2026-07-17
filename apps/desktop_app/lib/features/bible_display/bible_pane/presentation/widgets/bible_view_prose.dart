@@ -186,7 +186,6 @@ class _BibleViewProseState extends State<BibleViewProse> {
     final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
 
     final baseStyle = TextStyle(
-      fontSize: 16,
       height: 1.5,
       fontFamily: paneTheme.textFont,
       fontWeight: paneTheme.textFontWeight,
@@ -256,7 +255,8 @@ class _BibleViewProseState extends State<BibleViewProse> {
           currentSpans.add(
             TextSpan(
               text: '${ref.verseStart}',
-              style: VerseRefLabel.style(context, isHighlighted: isHighlighted),
+              style: VerseRefLabel.style(context, isHighlighted: isHighlighted)
+                  .copyWith(fontSize: 12),
               recognizer: widget.onVerseTap != null
                   ? (TapGestureRecognizer()
                     ..onTap = () =>
