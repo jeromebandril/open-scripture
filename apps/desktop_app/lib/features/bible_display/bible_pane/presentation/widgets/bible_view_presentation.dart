@@ -9,6 +9,8 @@ import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.
 import '../rendering/verse_richtext_builder.dart';
 import '../state/bible_pane_bloc.dart';
 
+typedef _TranslationBlock = ({String subtitle, Widget content});
+
 class BibleViewPresentation extends StatelessWidget {
   const BibleViewPresentation({super.key, required this.uniqueId});
 
@@ -16,7 +18,7 @@ class BibleViewPresentation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screen = MediaQuery.of(context).size;
+    final screen = MediaQuery.sizeOf(context);
     final panes = context.read<MultiPaneManagerCubit>().state.panes;
     final thisPaneIndex = panes.indexWhere((e) => e.id == uniqueId);
     final isFirst = thisPaneIndex == 0;
@@ -30,17 +32,12 @@ class BibleViewPresentation extends StatelessWidget {
       buildWhen: (prev, curr) =>
           prev.reference != curr.reference || prev.content != curr.content,
       builder: (context, state) {
-        if (state.reference == null) return const SizedBox.shrink();
-        final ref = state.reference!;
-
-        // TODO: make english name be the fallback, prioritize the localized name
-        final displayTitle =
-            '${ref.book.englishName} ${ref.toStringChapterAndVerse()}';
+        final ref = state.reference;
+        if (ref == null) return const SizedBox.shrink();
 
         final rangeToDisplay = state.content.getRefsInRange(ref);
         final isParallel = state.parallelOrder.length > 1;
-
-        final views = _buildParallelViews(
+        final translations = _buildTranslationBlocks(
           context: context,
           state: state,
           rangeToDisplay: rangeToDisplay,
@@ -62,41 +59,28 @@ class BibleViewPresentation extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 spacing: 32,
                 children: [
-                  Text(
-                    displayTitle,
-                    textAlign: presentTheme.titleAlignment,
-                    style: TextStyle(
-                      fontWeight: paneTheme.selectedRefFontWeight,
-                      fontFamily: paneTheme.referenceFont,
-                      color: paneTheme.accentColor,
-                      fontSize: 16,
-                    ),
-                  ),
+                  _buildTitle(ref, paneTheme, presentTheme),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     spacing: presentTheme.parallelDistance,
-                    children: views.map((entry) {
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          if (isParallel)
-                            Text(
-                              entry.key.toString(),
-                              textAlign: presentTheme.titleAlignment,
-                              style: TextStyle(
-                                color: paneTheme.enableCustomTheme
-                                    ? paneTheme.refColor
-                                    : Theme.of(context).colorScheme.primary,
-                                fontWeight: presentTheme.subtitleFontWeight,
-                                fontSize: 8,
+                    children: [
+                      for (final block in translations)
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            if (isParallel)
+                              _buildTranslationSubtitle(
+                                context,
+                                block.subtitle,
+                                paneTheme,
+                                presentTheme,
                               ),
-                            ),
-                          entry.value,
-                        ],
-                      );
-                    }).toList(),
+                            block.content,
+                          ],
+                        ),
+                    ],
                   ),
                 ],
               ),
@@ -107,78 +91,126 @@ class BibleViewPresentation extends StatelessWidget {
     );
   }
 
-  List<MapEntry<String, Widget>> _buildParallelViews({
+  static Widget _buildTitle(
+    BibleRef ref,
+    BiblePaneGeneralTheme paneTheme,
+    BibleViewPresentationTheme presentTheme,
+  ) {
+    // TODO: make english name be the fallback, prioritize the localized name
+    final title = '${ref.book.englishName} ${ref.toStringChapterAndVerse()}';
+
+    return Text(
+      title,
+      textAlign: presentTheme.titleAlignment,
+      style: TextStyle(
+        fontWeight: paneTheme.selectedRefFontWeight,
+        fontFamily: paneTheme.referenceFont,
+        color: paneTheme.accentColor,
+        fontSize: 16,
+      ),
+    );
+  }
+
+  static Widget _buildTranslationSubtitle(
+    BuildContext context,
+    String subtitle,
+    BiblePaneGeneralTheme paneTheme,
+    BibleViewPresentationTheme presentTheme,
+  ) {
+    return Text(
+      subtitle,
+      textAlign: presentTheme.titleAlignment,
+      style: TextStyle(
+        color: paneTheme.enableCustomTheme
+            ? paneTheme.refColor
+            : Theme.of(context).colorScheme.primary,
+        fontWeight: presentTheme.subtitleFontWeight,
+        fontSize: 8,
+      ),
+    );
+  }
+
+  /// Builds one block per translation that has data for this reference.
+  /// Verses are looked up by [BibleRef], not positional index, so a
+  /// translation missing a verse mid-range can't shift every verse number
+  /// after it out of alignment with the wrong text.
+  static List<_TranslationBlock> _buildTranslationBlocks({
     required BuildContext context,
     required BiblePaneState state,
     required List<BibleRef> rangeToDisplay,
     required BiblePaneGeneralTheme paneTheme,
     required BibleViewPresentationTheme presentTheme,
   }) {
-    return state.parallelOrder
-        .where(
-            (id) => state.content.getParallelDataByBibleId(id)?.verses != null)
-        .map((id) {
-      final value = state.content.getParallelDataByBibleId(id)!;
-      final verses = value.verses!.entries
-          .where((e) => rangeToDisplay.contains(e.key))
-          .toList();
+    final blocks = <_TranslationBlock>[];
 
-      // Each verse produces a List<InlineSpan>; presentation mode flattens
-      // segments since it renders a flowing paragraph, not stacked VerseWidgets.
-      // Heading/paragraph-break handling from VerseSegment is a future TODO here.
-      final verseSpans = verses.map((entry) {
-        final spans = entry.value.segments.expand((s) => s.spans).toList();
-        return VerseSpanBuilder.build(
-          context: context,
-          spans: spans,
-          // Word tap is not wired in presentation mode
-        );
-      }).toList();
+    for (final id in state.parallelOrder) {
+      final data = state.content.getParallelDataByBibleId(id);
+      if (data == null || data.verses == null) continue;
+      final verses = data.verses!;
+
+      final spansByRef = <BibleRef, List<InlineSpan>>{
+        for (final ref in rangeToDisplay)
+          if (verses[ref] != null)
+            ref: VerseSpanBuilder.build(
+              context: context,
+              spans: verses[ref]!.segments.expand((s) => s.spans).toList(),
+            ),
+      };
 
       final children = rangeToDisplay.length > 1
-          ? _interleavedWithVerseNumbers(
-              rangeToDisplay, verseSpans, context, paneTheme, presentTheme)
-          : verseSpans.isEmpty
+          ? _interleaveVerseNumbers(
+              rangeToDisplay, spansByRef, paneTheme, presentTheme)
+          : spansByRef.values.isEmpty
               ? const <InlineSpan>[]
-              : verseSpans.first;
+              : spansByRef.values.first;
 
+      final langNativeName = data.meta.langNativeName;
       final subtitle =
-          '[${value.meta.name}${value.meta.langNativeName != null ? '- ${value.meta.langNativeName}' : ''}]';
+          '[${data.meta.name}${langNativeName != null ? ' - $langNativeName' : ''}]';
 
-      return MapEntry(
-        subtitle,
-        Text.rich(
+      blocks.add((
+        subtitle: subtitle,
+        content: Text.rich(
           TextSpan(
             style: TextStyle(fontWeight: paneTheme.textFontWeight),
             children: children,
           ),
           textAlign: presentTheme.textAlignment,
         ),
-      );
-    }).toList();
+      ));
+    }
+
+    return blocks;
   }
 
-  List<InlineSpan> _interleavedWithVerseNumbers(
+  /// Interleaves each verse's spans with a leading verse-number marker.
+  /// Only called when the range spans more than one verse — a single
+  /// selected verse is shown without a number, since the title already
+  /// states the full reference.
+  static List<InlineSpan> _interleaveVerseNumbers(
     List<BibleRef> range,
-    List<List<InlineSpan>> verseSpans, // one List<InlineSpan> per verse
-    BuildContext context,
+    Map<BibleRef, List<InlineSpan>> spansByRef,
     BiblePaneGeneralTheme paneTheme,
     BibleViewPresentationTheme presentTheme,
   ) {
     final result = <InlineSpan>[];
-    for (int i = 0; i < range.length; i++) {
+
+    for (final ref in range) {
+      final spans = spansByRef[ref];
+      if (spans == null) continue;
+
       result.addAll([
         const TextSpan(text: '   '),
-        _buildVerseNumber(range[i].verseStart!, paneTheme, presentTheme),
+        _buildVerseNumber(ref.verseStart!, paneTheme, presentTheme),
         const TextSpan(text: ' '),
-        // Spread the spans for this verse rather than wrapping in a parent
-        ...verseSpans[i],
+        ...spans,
       ]);
     }
+
     return result;
   }
 
-  InlineSpan _buildVerseNumber(
+  static InlineSpan _buildVerseNumber(
     int number,
     BiblePaneGeneralTheme paneTheme,
     BibleViewPresentationTheme presentTheme,
@@ -208,7 +240,7 @@ class BibleViewPresentation extends StatelessWidget {
         child: Text(
           label,
           style: TextStyle(
-            fontSize: 2.2,
+            fontSize: 10,
             fontWeight: FontWeight.bold,
             color: paneTheme.accentColor,
           ),

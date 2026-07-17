@@ -7,62 +7,28 @@ import '../../../../../shared/domain/entities/verse.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../../../../customizer/presentation/models/bible_view_list_theme.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
+import '../cubit/selected_word_cubit.dart';
+import '../rendering/verse_ref_label.dart';
 import '../rendering/verse_richtext_builder.dart';
 import '../state/bible_pane_bloc.dart';
 
 /// A "continuous" reading view: verses flow together as ordinary prose,
-/// broken only where the data says a paragraph or heading starts, instead
-/// of being rendered as one discrete row per verse (as `BibleViewList` does).
-///
-/// Drop this in wherever `BibleViewList` is used today — it reads from the
-/// same `BiblePaneBloc` / `MultiPaneManagerCubit` and supports the same
-/// multi-pane parallel-translation layout.
-///
-/// Two things are left for you to wire up, since they depend on APIs not
-/// shown to me (rather than guessing and risking a broken build):
-///
-/// - [verseLabelBuilder]: turn a [BibleRef] into the small verse-number
-///   label, e.g. `(ref) => ref.verseStart.toString()` — adjust the field
-///   name to whatever your `BibleRef` actually exposes for the verse number.
-/// - [onVerseTap]: called when the reader taps a verse's text. Wire this to
-///   whatever currently updates `state.reference` when a verse is tapped in
-///   `VerseWidget`, so selection behaves identically in both views.
-class BibleViewContinuous extends StatefulWidget {
-  const BibleViewContinuous({
+/// broken only where the data says a paragraph or heading starts.
+class BibleViewProse extends StatefulWidget {
+  const BibleViewProse({
     super.key,
     required this.uniqueId,
-    required this.verseLabelBuilder,
     this.onVerseTap,
-    this.onWordTap,
-    this.highlightColor,
-    this.showVerseNumbers = true,
   });
 
   final int uniqueId;
-
-  /// Builds the small leading verse-number label shown before each verse.
-  final String Function(BibleRef ref) verseLabelBuilder;
-
-  /// Fired when the reader taps anywhere in a verse's text. Strong's-tagged
-  /// words keep triggering [onWordTap] instead.
   final void Function(BibleRef ref)? onVerseTap;
 
-  /// Passed straight through to [VerseSpanBuilder.build], useful for Strong's-word
-  /// tapping (e.g. opening a definition).
-  final void Function(VerseSpan span)? onWordTap;
-
-  /// Background painted behind the selected verse's text. Defaults to
-  /// `colorScheme.primaryContainer`.
-  final Color? highlightColor;
-
-  /// Whether to show the small verse-number marker before each verse.
-  final bool showVerseNumbers;
-
   @override
-  State<BibleViewContinuous> createState() => _BibleViewContinuousState();
+  State<BibleViewProse> createState() => _BibleViewProseState();
 }
 
-class _BibleViewContinuousState extends State<BibleViewContinuous> {
+class _BibleViewProseState extends State<BibleViewProse> {
   final Map<int, ScrollController> _scrollControllers = {};
   final Map<int, Map<BibleRef, GlobalKey>> _verseAnchors = {};
 
@@ -147,10 +113,9 @@ class _BibleViewContinuousState extends State<BibleViewContinuous> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       final bloc = context.read<BiblePaneBloc>();
-      final ref = bloc.state.reference;
-      if (ref != null) {
-        _scheduleScrollToRef(ref.copyWith(verseEnd: () => null));
-      }
+      final initialRef = bloc.state.reference;
+      if (initialRef == null) return;
+      _scheduleScrollToRef(initialRef.copyWith(verseEnd: () => null));
     });
   }
 
@@ -162,9 +127,15 @@ class _BibleViewContinuousState extends State<BibleViewContinuous> {
     super.dispose();
   }
 
+  void _onStrongsWordTap(BuildContext context, VerseSpan span) {
+    context.read<SelectedWordCubit>().setSelectedWord(
+          WordInfo(span: span, text: span.text),
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final screen = MediaQuery.of(context).size;
+    final screen = MediaQuery.sizeOf(context);
     final panes = context.read<MultiPaneManagerCubit>().state.panes;
     final thisPaneIndex = panes.indexWhere((e) => e.id == widget.uniqueId);
     final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
@@ -212,17 +183,10 @@ class _BibleViewContinuousState extends State<BibleViewContinuous> {
     dynamic translationId,
   ) {
     final theme = Theme.of(context);
-    final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
-
-    final headingStyle = TextStyle(color: Colors.blue);
-    final verseStyle = TextStyle(
-      fontSize: 16,
-      height: 1.5,
-      fontWeight: paneTheme.textFontWeight,
-      fontFamily: paneTheme.textFont,
-    );
-    final highlight = widget.highlightColor ??
-        theme.colorScheme.primaryContainer.withOpacity(0.55);
+    final textTheme = theme.textTheme;
+    final baseStyle =
+        textTheme.bodyLarge ?? const TextStyle(fontSize: 16, height: 1.5);
+    final highlight = theme.colorScheme.primaryContainer;
 
     final unionRefs = state.unionRefs.toList();
     final anchors = _anchorsFor(column);
@@ -236,8 +200,8 @@ class _BibleViewContinuousState extends State<BibleViewContinuous> {
       blocks.add(
         Padding(
           padding: const EdgeInsets.only(bottom: 14),
-          child: Text.rich(
-            TextSpan(style: verseStyle, children: List.of(currentSpans)),
+          child: SelectableText.rich(
+            TextSpan(style: baseStyle, children: List.of(currentSpans)),
           ),
         ),
       );
@@ -251,9 +215,8 @@ class _BibleViewContinuousState extends State<BibleViewContinuous> {
 
       final isHighlighted = state.reference?.contains(ref) ?? false;
       final verseBaseStyle = isHighlighted
-          ? verseStyle.merge(TextStyle(backgroundColor: highlight))
-          : verseStyle
-              .merge(TextStyle(color: paneTheme.textColor.withAlpha(100)));
+          ? baseStyle.merge(TextStyle(backgroundColor: highlight))
+          : baseStyle;
       final key = anchors.putIfAbsent(ref, () => GlobalKey());
 
       var isFirstSegmentOfVerse = true;
@@ -266,7 +229,8 @@ class _BibleViewContinuousState extends State<BibleViewContinuous> {
               padding: const EdgeInsets.only(top: 22, bottom: 10),
               child: Text(
                 segment.heading!,
-                style: headingStyle,
+                style: textTheme.titleMedium
+                    ?.copyWith(fontWeight: FontWeight.w700),
               ),
             ),
           );
@@ -277,7 +241,7 @@ class _BibleViewContinuousState extends State<BibleViewContinuous> {
         }
 
         if (isFirstSegmentOfVerse) {
-          // Anchor
+          // Zero-size anchor for Scrollable.ensureVisible().
           currentSpans.add(
             WidgetSpan(
               alignment: PlaceholderAlignment.middle,
@@ -285,22 +249,17 @@ class _BibleViewContinuousState extends State<BibleViewContinuous> {
             ),
           );
 
-          if (widget.showVerseNumbers) {
-            currentSpans.add(
-              TextSpan(
-                text: '${widget.verseLabelBuilder(ref)} ',
-                style: verseBaseStyle.copyWith(
-                  fontSize: 11,
-                  fontWeight: paneTheme.refFontWeight,
-                  color: paneTheme.refColor,
-                ),
-                recognizer: widget.onVerseTap != null
-                    ? (TapGestureRecognizer()
-                      ..onTap = () => widget.onVerseTap!(ref))
-                    : null,
-              ),
-            );
-          }
+          currentSpans.add(
+            TextSpan(
+              text: '${ref.verseStart}',
+              style: VerseRefLabel.style(context, isHighlighted: isHighlighted),
+              recognizer: widget.onVerseTap != null
+                  ? (TapGestureRecognizer()
+                    ..onTap = () =>
+                        widget.onVerseTap!(ref.copyWith(verseEnd: () => null)))
+                  : null,
+            ),
+          );
 
           isFirstSegmentOfVerse = false;
         }
@@ -310,10 +269,10 @@ class _BibleViewContinuousState extends State<BibleViewContinuous> {
             spans: segment.spans,
             context: context,
             baseStyle: verseBaseStyle,
-            onWordTap: widget.onWordTap,
-            // onVerseTap: widget.onVerseTap == null
-            //     ? null
-            //     : () => widget.onVerseTap!(ref),
+            onWordTap: (span) => _onStrongsWordTap(context, span),
+            onVerseTap: widget.onVerseTap == null
+                ? null
+                : () => widget.onVerseTap!(ref.copyWith(verseEnd: () => null)),
           ),
         );
       }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../../../../customizer/presentation/state/customizer_cubit.dart';
 import '../../../../text_scaler/presentation/widgets/text_scaler_host.dart';
@@ -10,8 +11,8 @@ import '../../domain/display_mode.dart';
 import '../cubit/selected_word_cubit.dart';
 import '../state/bible_pane_bloc.dart';
 import 'bible_view_list.dart';
-import 'bible_view_normal.dart';
 import 'bible_view_presentation.dart';
+import 'bible_view_prose.dart';
 import 'initial_screen.dart';
 import 'pane_info.dart';
 
@@ -24,6 +25,41 @@ class BiblePane extends StatelessWidget {
     required this.blocComponents,
     super.key,
   });
+
+  void _onVerseTap(BuildContext context, BibleRef ref) {
+    context.read<BiblePaneBloc>().add(BiblePaneJustChangeRef(ref: ref));
+  }
+
+  Widget _buildDisplay(BuildContext context, DisplayMode dMode) {
+    return switch (dMode) {
+      DisplayMode.presentation => BibleViewPresentation(
+          uniqueId: uniqueId,
+        ),
+      DisplayMode.list => BibleViewList(
+          uniqueId: uniqueId,
+          onVerseTap: (ref) => _onVerseTap(context, ref),
+        ),
+      DisplayMode.prose => BibleViewProse(
+          uniqueId: uniqueId,
+          onVerseTap: (ref) => _onVerseTap(context, ref),
+        ),
+    };
+  }
+
+  Widget _buildReadyContent(BuildContext context, BiblePaneState state) {
+    if (state.content.isContentEmpty) {
+      return const InitalEmptyContentScreen();
+    }
+
+    return TextScalerHost(
+      textScalerCubit: blocComponents.textScalerCubit,
+      initialiSize: 14,
+      child: BlocSelector<BiblePaneBloc, BiblePaneState, DisplayMode>(
+        selector: (s) => s.dMode,
+        builder: _buildDisplay,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +112,7 @@ class BiblePane extends StatelessWidget {
                 prev.errorMessage != curr.errorMessage ||
                 prev.content.isContentEmpty != curr.content.isContentEmpty,
             builder: (context, state) {
-              final Widget widget = switch (state.status) {
+              final Widget content = switch (state.status) {
                 //
                 // INITIAL
                 //
@@ -94,41 +130,20 @@ class BiblePane extends StatelessWidget {
                 //
                 // READY SCREEN
                 //
-                BiblePaneStatus.ready => state.content.isContentEmpty
-                    ? const InitalEmptyContentScreen()
-                    : TextScalerHost(
-                        textScalerCubit: blocComponents.textScalerCubit,
-                        initialiSize: 14,
-                        child: BlocSelector<BiblePaneBloc, BiblePaneState,
-                            DisplayMode>(
-                          selector: (s) => s.dMode,
-                          builder: (context, dMode) {
-                            return switch (dMode) {
-                              DisplayMode.presentation =>
-                                BibleViewPresentation(uniqueId: uniqueId),
-                              DisplayMode.list =>
-                                BibleViewList(uniqueId: uniqueId),
-                              DisplayMode.prose => BibleViewContinuous(
-                                  uniqueId: uniqueId,
-                                  verseLabelBuilder: (ref) =>
-                                      '[${ref.verseStart}]'),
-                            };
-                          },
-                        ),
-                      ),
+                BiblePaneStatus.ready => _buildReadyContent(context, state),
               };
 
               return Stack(
                 children: [
-                  Positioned.fill(child: widget),
+                  Positioned.fill(child: content),
                   //
                   // PANE STATUS INFO
                   //
-                  DefaultTextStyle(
-                    style: const TextStyle(inherit: false),
-                    child: Positioned(
-                      bottom: 0,
-                      right: 0,
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: DefaultTextStyle(
+                      style: const TextStyle(inherit: false),
                       child: const PaneInfo(),
                     ),
                   ),
