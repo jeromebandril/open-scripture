@@ -13,6 +13,7 @@ class VerseSpanBuilder {
     TextStyle? baseStyle,
     void Function(VerseSpan span)? onWordTap,
     VoidCallback? onVerseTap,
+    int? colorAlpha,
   }) {
     if (spans.isEmpty) return const [];
 
@@ -29,10 +30,16 @@ class VerseSpanBuilder {
         recognizer = TapGestureRecognizer()..onTap = onVerseTap;
       }
 
+      TextStyle style = _buildCombinedStyle(span, base, bTheme);
+      if (style.color == null) style = style.copyWith(color: bTheme.textColor);
+      if (colorAlpha != null) {
+        style = style.copyWith(color: style.color!.withAlpha(colorAlpha));
+      }
+
       return TextSpan(
         text: span.text,
         // Apply all styles cumulatively
-        style: _buildCombinedStyle(span, base, bTheme),
+        style: style,
         recognizer: recognizer,
       );
     }).toList();

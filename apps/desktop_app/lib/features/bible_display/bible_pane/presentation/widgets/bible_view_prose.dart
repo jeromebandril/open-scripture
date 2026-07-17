@@ -4,8 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../../shared/domain/entities/verse.dart';
+import '../../../../customizer/domain/entities/bible_view_prose_theme_settings.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../../../../customizer/presentation/models/bible_view_list_theme.dart';
+import '../../../../customizer/presentation/state/customizer_cubit.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../cubit/selected_word_cubit.dart';
 import '../rendering/verse_ref_label.dart';
@@ -184,6 +186,8 @@ class _BibleViewProseState extends State<BibleViewProse> {
   ) {
     final theme = Theme.of(context);
     final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
+    final proseTheme =
+        context.select((CustomizerCubit c) => c.state.proseTheme);
 
     final baseStyle = TextStyle(
       height: 1.5,
@@ -219,7 +223,7 @@ class _BibleViewProseState extends State<BibleViewProse> {
 
       final isHighlighted = state.reference?.contains(ref) ?? false;
       final verseBaseStyle = isHighlighted
-          ? baseStyle.merge(TextStyle(backgroundColor: highlight))
+          ? baseStyle.copyWith(backgroundColor: highlight)
           : baseStyle;
       final key = anchors.putIfAbsent(ref, () => GlobalKey());
 
@@ -273,6 +277,9 @@ class _BibleViewProseState extends State<BibleViewProse> {
             spans: segment.spans,
             context: context,
             baseStyle: verseBaseStyle,
+            colorAlpha: proseTheme.emphasizeSelectedVerses && !isHighlighted
+                ? 110
+                : null,
             onWordTap: (span) => _onStrongsWordTap(context, span),
             onVerseTap: widget.onVerseTap == null
                 ? null

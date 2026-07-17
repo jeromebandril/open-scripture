@@ -8,6 +8,7 @@ import '../../domain/entities/app_theme_settings.dart';
 import '../../domain/entities/bible_pane_general_theme_settings.dart';
 import '../../domain/entities/bible_pane_presentation_theme_settings.dart';
 import '../../domain/entities/bible_view_list_theme_settings.dart';
+import '../../domain/entities/bible_view_prose_theme_settings.dart';
 
 part 'customizer_state.dart';
 
@@ -46,12 +47,15 @@ class CustomizerCubit extends Cubit<CustomizerState> {
             BibleViewPresentationThemeSettings)?
         presentTheme,
     BibleViewListThemeSettings Function(BibleViewListThemeSettings)? listTheme,
+    BibleViewProseThemeSettings Function(BibleViewProseThemeSettings)?
+        proseTheme,
   }) {
     emit(state.copyWith(
       app: appTheme?.call(state.app),
       pane: paneTheme?.call(state.pane),
       presentationTheme: presentTheme?.call(state.presentTheme),
       listTheme: listTheme?.call(state.listTheme),
+      proseTheme: proseTheme?.call(state.proseTheme),
     ));
     _scheduleSave();
   }

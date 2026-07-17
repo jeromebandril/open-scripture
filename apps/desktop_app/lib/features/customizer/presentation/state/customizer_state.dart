@@ -7,6 +7,7 @@ class CustomizerState extends Equatable {
     this.pane = const BiblePaneGeneralThemeSettings(),
     this.presentTheme = const BibleViewPresentationThemeSettings(),
     this.listTheme = const BibleViewListThemeSettings(),
+    this.proseTheme = const BibleViewProseThemeSettings(),
   });
 
   final int version;
@@ -14,6 +15,7 @@ class CustomizerState extends Equatable {
   final BiblePaneGeneralThemeSettings pane;
   final BibleViewPresentationThemeSettings presentTheme;
   final BibleViewListThemeSettings listTheme;
+  final BibleViewProseThemeSettings proseTheme;
 
   CustomizerState copyWith({
     int? version,
@@ -21,6 +23,7 @@ class CustomizerState extends Equatable {
     BiblePaneGeneralThemeSettings? pane,
     BibleViewPresentationThemeSettings? presentationTheme,
     BibleViewListThemeSettings? listTheme,
+    BibleViewProseThemeSettings? proseTheme,
   }) {
     return CustomizerState(
       version: version ?? this.version,
@@ -28,11 +31,13 @@ class CustomizerState extends Equatable {
       pane: pane ?? this.pane,
       presentTheme: presentationTheme ?? presentTheme,
       listTheme: listTheme ?? this.listTheme,
+      proseTheme: proseTheme ?? this.proseTheme,
     );
   }
 
   @override
-  List<Object?> get props => [version, app, pane, presentTheme, listTheme];
+  List<Object?> get props =>
+      [version, app, pane, presentTheme, listTheme, proseTheme];
 
   Map<String, dynamic> toJson() => {
         'version': version,
@@ -40,6 +45,7 @@ class CustomizerState extends Equatable {
         'pane': pane.toJson(),
         'presentView': presentTheme.toJson(),
         'listView': listTheme.toJson(),
+        'proseView': proseTheme.toJson(),
       };
 
   static CustomizerState fromJson(Map<String, dynamic> json) {
@@ -56,6 +62,9 @@ class CustomizerState extends Equatable {
       ),
       listTheme: BibleViewListThemeSettings.fromJson(
         (json['listView'] as Map<String, dynamic>?) ?? const {},
+      ),
+      proseTheme: BibleViewProseThemeSettings.fromJson(
+        (json['proseView'] as Map<String, dynamic>?) ?? const {},
       ),
     );
   }
