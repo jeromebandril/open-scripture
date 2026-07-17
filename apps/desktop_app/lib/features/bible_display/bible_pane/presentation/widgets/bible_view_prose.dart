@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -101,7 +103,7 @@ class _BibleViewProseState extends State<BibleViewProse> {
           key!.currentContext!,
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeInOut,
-          alignment: 0.2,
+          alignment: 0.25,
         );
         return;
       }
@@ -140,6 +142,7 @@ class _BibleViewProseState extends State<BibleViewProse> {
     final screen = MediaQuery.sizeOf(context);
     final panes = context.read<MultiPaneManagerCubit>().state.panes;
     final thisPaneIndex = panes.indexWhere((e) => e.id == widget.uniqueId);
+    final theme = Theme.of(context);
     final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
     final listTheme = Theme.of(context).extension<BibleViewListTheme>()!;
 
@@ -155,24 +158,73 @@ class _BibleViewProseState extends State<BibleViewProse> {
           prev.reference != curr.reference || prev.content != curr.content,
       builder: (context, state) {
         final parallelOrder = state.parallelOrder.toList();
+        final ref = state.reference;
 
-        return Padding(
-          padding: EdgeInsets.only(
-            left: thisPaneIndex == 0 ? screen.width * paneTheme.xPadding : 0,
-            right: thisPaneIndex == panes.length - 1
-                ? screen.width * paneTheme.xPadding
-                : 0,
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            spacing: listTheme.parallelSpacing,
-            children: [
-              for (var col = 0; col < parallelOrder.length; col++)
-                Expanded(
-                  child: _buildColumn(context, state, col, parallelOrder[col]),
+        return Stack(
+          children: [
+            Positioned.fill(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  left: thisPaneIndex == 0
+                      ? screen.width * paneTheme.xPadding
+                      : 0,
+                  right: thisPaneIndex == panes.length - 1
+                      ? screen.width * paneTheme.xPadding
+                      : 0,
                 ),
-            ],
-          ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  spacing: listTheme.parallelSpacing,
+                  children: [
+                    for (var col = 0; col < parallelOrder.length; col++)
+                      Expanded(
+                        child: _buildColumn(
+                            context, state, col, parallelOrder[col]),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      (paneTheme.enableCustomTheme
+                          ? paneTheme.backgroundColor
+                          : theme.colorScheme.surface),
+                      (paneTheme.enableCustomTheme
+                              ? paneTheme.backgroundColor
+                              : theme.colorScheme.surface)
+                          .withAlpha(250),
+                      (paneTheme.enableCustomTheme
+                              ? paneTheme.backgroundColor
+                              : theme.colorScheme.surface)
+                          .withAlpha(240),
+                      (paneTheme.enableCustomTheme
+                              ? paneTheme.backgroundColor
+                              : theme.colorScheme.surface)
+                          .withAlpha(0),
+                    ],
+                    stops: const [0.0, 0.4, 0.7, 1.0],
+                  ),
+                ),
+                padding: const EdgeInsets.only(top: 12, bottom: 80),
+                child: Text(
+                  '${ref?.book.englishName} ${ref?.chapter}',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: paneTheme.accentColor),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ],
         );
       },
     );
@@ -296,7 +348,15 @@ class _BibleViewProseState extends State<BibleViewProse> {
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: blocks,
+        children: [
+          // This empty text if for creating an empty space that grows
+          // togheter with text size
+          Container(
+            padding: const EdgeInsets.only(top: 12, bottom: 32),
+            child: const Text(''),
+          ),
+          ...blocks,
+        ],
       ),
     );
   }
