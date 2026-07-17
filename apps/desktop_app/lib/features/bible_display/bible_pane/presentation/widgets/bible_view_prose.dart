@@ -183,9 +183,14 @@ class _BibleViewProseState extends State<BibleViewProse> {
     dynamic translationId,
   ) {
     final theme = Theme.of(context);
-    final textTheme = theme.textTheme;
-    final baseStyle =
-        textTheme.bodyLarge ?? const TextStyle(fontSize: 16, height: 1.5);
+    final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
+
+    final baseStyle = TextStyle(
+      fontSize: 16,
+      height: 1.5,
+      fontFamily: paneTheme.textFont,
+      fontWeight: paneTheme.textFontWeight,
+    );
     final highlight = theme.colorScheme.primaryContainer;
 
     final unionRefs = state.unionRefs.toList();
@@ -229,8 +234,7 @@ class _BibleViewProseState extends State<BibleViewProse> {
               padding: const EdgeInsets.only(top: 22, bottom: 10),
               child: Text(
                 segment.heading!,
-                style: textTheme.titleMedium
-                    ?.copyWith(fontWeight: FontWeight.w700),
+                style: const TextStyle(fontWeight: FontWeight.w700),
               ),
             ),
           );
