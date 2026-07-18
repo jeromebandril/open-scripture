@@ -227,7 +227,12 @@ class _BibleViewProseState extends State<BibleViewProse> {
         Padding(
           padding: const EdgeInsets.only(bottom: 14),
           child: SelectableText.rich(
-            TextSpan(style: baseStyle, children: List.of(currentSpans)),
+            TextSpan(style: baseStyle, children: [
+              // paragraph indent
+              WidgetSpan(
+                  child: SizedBox(width: (TextStyle().fontSize ?? 16) * 2)),
+              ...List.of(currentSpans)
+            ]),
           ),
         ),
       );
