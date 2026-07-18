@@ -173,9 +173,9 @@ _flutter.loader.load({
   onEntrypointLoaded: async function(engineInitializer) {
     const appRunner = await engineInitializer.initializeEngine({});
     
-    // splashscreen.remove();
-    // style.remove();
+    splashscreen.remove();
+    style.remove();
     
-    // await appRunner.runApp();
+    await appRunner.runApp();
   }
 });

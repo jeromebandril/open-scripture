@@ -19,7 +19,8 @@ class ChainedBookResolver implements BookResolver {
   @override
   Future<List<BibleBook>> resolveCandidates(String userInput, int languageId,
       {int limit = 10}) {
-    // TODO: implement resolveCandidates
-    throw UnimplementedError();
+    return Future.value(BibleBook.resolveEnglishPrefixCandidates(userInput)
+        .take(limit)
+        .toList());
   }
 }

@@ -67,31 +67,4 @@ abstract final class AppSearchBarTheme {
       // }),
     );
   }
-
-  static SearchViewThemeData buildView({required Brightness brightness}) {
-    final bool isLight = brightness == Brightness.light;
-
-    return SearchViewThemeData(
-      backgroundColor: isLight
-          ? AppColors.surfaceContainerLowest
-          : AppColors.surfaceContainerLowestDark,
-      surfaceTintColor: AppColors.transparent,
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: AppRadius.radiusLg,
-        side: BorderSide(
-          color:
-              isLight ? AppColors.outlineVariant : AppColors.outlineVariantDark,
-        ),
-      ),
-      headerTextStyle: AppTypography.bodyMd.copyWith(
-        color: isLight ? AppColors.onSurface : AppColors.onSurfaceDark,
-      ),
-      headerHintStyle: AppTypography.bodyMd.copyWith(
-        color: isLight ? AppColors.grey400 : AppColors.grey600,
-      ),
-      dividerColor:
-          isLight ? AppColors.outlineVariant : AppColors.outlineVariantDark,
-    );
-  }
 }
