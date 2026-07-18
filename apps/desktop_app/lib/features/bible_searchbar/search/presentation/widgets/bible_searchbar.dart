@@ -13,6 +13,7 @@ import '../../../../../shared/domain/services/book_resolver.dart';
 import '../../../../../shared/widgets/dropdown_menu_anchor.dart';
 import '../../../../shortcuts/domain/models/app_command.dart';
 import '../../../../shortcuts/presentation/models/app_command_shortcuts.dart';
+import '../../../../shortcuts/presentation/widgets/keycap.dart';
 import '../../../../shortcuts/presentation/widgets/shortcut_view.dart';
 import '../../../../shortcuts/presentation/widgets/shortcuts_focus_scope.dart';
 import '../state/search_bloc.dart';
@@ -466,16 +467,17 @@ class _SuggestionsList extends StatelessWidget {
                 borderRadius: BorderRadius.circular(AppRadius.md),
               ),
               child: Row(
+                spacing: AppSpacing.sm,
                 children: [
                   Expanded(
                     child: Text(candidate.englishName,
                         style: theme.textTheme.bodyMedium,
                         overflow: TextOverflow.ellipsis),
                   ),
-                  const SizedBox(width: 8),
                   Text(candidate.canonical,
                       style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant)),
+                  if (isHighlighted) const Keycap('tab')
                 ],
               ),
             ),
