@@ -34,4 +34,4 @@ Upcoming focus areas include:
 
 - custom image backgrounds
 - smarter search/command bar (autocomplete, reference-list search, token-based search).
-- paragraphs support with subtitles
+- bible periscopes
