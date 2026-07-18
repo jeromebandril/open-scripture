@@ -1,12 +1,9 @@
-import 'dart:ui';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../../shared/domain/entities/verse.dart';
-import '../../../../customizer/domain/entities/bible_view_prose_theme_settings.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../../../../customizer/presentation/models/bible_view_list_theme.dart';
 import '../../../../customizer/presentation/state/customizer_cubit.dart';
@@ -142,7 +139,6 @@ class _BibleViewProseState extends State<BibleViewProse> {
     final screen = MediaQuery.sizeOf(context);
     final panes = context.read<MultiPaneManagerCubit>().state.panes;
     final thisPaneIndex = panes.indexWhere((e) => e.id == widget.uniqueId);
-    final theme = Theme.of(context);
     final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
     final listTheme = Theme.of(context).extension<BibleViewListTheme>()!;
 
@@ -160,9 +156,18 @@ class _BibleViewProseState extends State<BibleViewProse> {
         final parallelOrder = state.parallelOrder.toList();
         final ref = state.reference;
 
-        return Stack(
+        return Column(
           children: [
-            Positioned.fill(
+            Padding(
+              padding: const EdgeInsets.only(top: 12, bottom: 12),
+              child: Text(
+                '${ref?.book.englishName} ${ref?.chapter}',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, color: paneTheme.accentColor),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Expanded(
               child: Padding(
                 padding: EdgeInsets.only(
                   left: thisPaneIndex == 0
@@ -182,45 +187,6 @@ class _BibleViewProseState extends State<BibleViewProse> {
                             context, state, col, parallelOrder[col]),
                       ),
                   ],
-                ),
-              ),
-            ),
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      (paneTheme.enableCustomTheme
-                          ? paneTheme.backgroundColor
-                          : theme.colorScheme.surface),
-                      (paneTheme.enableCustomTheme
-                              ? paneTheme.backgroundColor
-                              : theme.colorScheme.surface)
-                          .withAlpha(250),
-                      (paneTheme.enableCustomTheme
-                              ? paneTheme.backgroundColor
-                              : theme.colorScheme.surface)
-                          .withAlpha(240),
-                      (paneTheme.enableCustomTheme
-                              ? paneTheme.backgroundColor
-                              : theme.colorScheme.surface)
-                          .withAlpha(0),
-                    ],
-                    stops: const [0.0, 0.4, 0.7, 1.0],
-                  ),
-                ),
-                padding: const EdgeInsets.only(top: 12, bottom: 80),
-                child: Text(
-                  '${ref?.book.englishName} ${ref?.chapter}',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: paneTheme.accentColor),
-                  textAlign: TextAlign.center,
                 ),
               ),
             ),
