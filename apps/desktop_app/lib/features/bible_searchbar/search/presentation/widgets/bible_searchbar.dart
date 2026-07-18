@@ -55,7 +55,7 @@ class _BSearchbarState extends State<BSearchbar> {
   Timer? _debounce;
   bool _suppressNextQueryChange = false;
 
-  static const _itemHeight = 44.0;
+  static const _itemHeight = 42.0;
   static const _maxVisibleItems = 6;
 
   double get _menuHeight {
@@ -466,7 +466,7 @@ class _SuggestionsList extends StatelessWidget {
             canRequestFocus: false,
             onTap: () => onSelected(candidate),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
                 color: isHighlighted
                     ? theme.colorScheme.primary.withValues(alpha: 0.08)
@@ -484,7 +484,7 @@ class _SuggestionsList extends StatelessWidget {
                   Text(candidate.canonical,
                       style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant)),
-                  if (isHighlighted) const Keycap('tab')
+                  if (isHighlighted) const Keycap('tab', fontSize: 10)
                 ],
               ),
             ),
