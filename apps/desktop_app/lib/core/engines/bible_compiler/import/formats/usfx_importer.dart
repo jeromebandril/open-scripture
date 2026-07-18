@@ -39,6 +39,11 @@ const Map<String, SpanType> usfxTagToSpanType = {
   'q3': SpanType.poetry,
 };
 
+/// Tags whose whole subtree is excluded from verse text. Footnotes and
+/// cross references carry their own text (like "Heb: ...") that would
+/// otherwise leak into the plain verse text if we treated them as spans.
+const Set<String> _excludedFromVerseText = {'f', 'fr', 'ft', 'x', 'xo', 'xt'};
+
 class UsfxImporter implements BibleImporter {
   static const int _canonicalSchemaVersion = 1;
 
@@ -288,37 +293,56 @@ class UsfxImporter implements BibleImporter {
     final bibleBook = BibleBook.fromProgrammaticId(bookId);
     if (bibleBook == null) return []; // Unknown book - skip silently
 
-    // Defer the heavy lifting to the stateful visitor class
     final visitor = _UsfxBookVisitor(bookId: bookId, bibleBook: bibleBook);
     return visitor.parse(bookEl);
   }
 }
 
+/// A style that is currently open while walking the tree (e.g. we are
+/// inside a <w> or <i> element and have not reached its closing tag yet).
 class _ActiveStyle {
   final SpanType type;
   final String? payload;
   _ActiveStyle(this.type, this.payload);
 }
 
+/// Walks a single <book> element and turns it into a flat list of [Verse]
+/// objects.
+///
+/// USFX marks chapters and verses as empty "milestone" elements (<c/>,
+/// <v/>, <ve/>) rather than as containers, while paragraphs (<p>) and
+/// character styles (<i>, <w>, ...) are real containers. A style can span
+/// across a <c> or <v> milestone without closing, and a <p> can (rarely)
+/// open in the middle of a verse. That mix is why this is a small stateful
+/// visitor rather than a plain recursive-descent parse.
 class _UsfxBookVisitor {
   final String bookId;
   final BibleBook bibleBook;
 
+  _UsfxBookVisitor({required this.bookId, required this.bibleBook});
+
   int? _chapter;
   int? _verseNumber;
   bool _inVerse = false;
+
+  // Set by <p>, consumed by the next segment that gets closed. This is how
+  // a paragraph break turns into VerseSegment.isParagraphStart.
+  bool _pendingParagraphStart = false;
+
+  // Segments completed so far for the verse currently being built. A verse
+  // normally ends up with exactly one segment; it only gets more than one
+  // if a <p> opens mid-verse.
+  final List<VerseSegment> _verseSegments = [];
   int _segmentIndex = 0;
 
-  // The style stack allows block elements (like <q> poetry) to span across multiple
-  // verses and chapters without swallowing the <c> and <v> milestone tags.
+  // Styles currently open, outermost first.
   final List<_ActiveStyle> _styleStack = [];
 
   final List<VerseSpan> _currentSpans = [];
-  final List<Verse> _verses = [];
   final StringBuffer _buffer = StringBuffer();
   bool _lastWasSpace = false;
 
-  _UsfxBookVisitor({required this.bookId, required this.bibleBook});
+  final List<Verse> _verses = [];
 
   List<Verse> parse(XmlElement bookEl) {
     for (final child in bookEl.children) {
@@ -329,82 +353,103 @@ class _UsfxBookVisitor {
   }
 
   void _walk(XmlNode node) {
-    if (node is XmlElement) {
-      final tag = node.name.local;
-
-      if (_isFootnoteOrCrossRef(tag)) return;
-
-      if (tag == 'c') {
-        final id = node.getAttribute('id');
-        if (id != null) {
-          _chapter = int.tryParse(id);
-          _segmentIndex = 0;
-        }
-        // Fall through to parse potential children if <c> is a container
-      } else if (tag == 'v') {
-        if (_inVerse) _flushVerse();
-        final id = node.getAttribute('id');
-        _verseNumber = id == null ? null : int.tryParse(id);
-        _inVerse = true;
-        _segmentIndex = 0;
-        // Fall through to parse potential children if <v> is a container
-      } else if (tag == 've') {
-        if (_inVerse) _flushVerse();
-        _inVerse = false;
-        _verseNumber = null;
-      } else if (usfxTagToSpanType.containsKey(tag)) {
-        final spanType = usfxTagToSpanType[tag]!;
-        final payload = tag == 'w' ? node.getAttribute('s') : null;
-
-        // 1. Turn the style ON
-        _pushStyle(_ActiveStyle(spanType, payload));
-
-        // 2. Recurse normally (this prevents <c> and <v> from being swallowed)
-        for (final child in node.children) {
-          _walk(child);
-        }
-
-        // 3. Turn the style OFF
-        _popStyle();
-
-        return; // Children parsed, do not fall through to generic loop
-      }
-
-      // Generic element (e.g. <p> paragraphs) - recurse into children
-      for (final child in node.children) {
-        _walk(child);
-      }
+    if (node is XmlText) {
+      if (_inVerse) _appendText(node.value);
       return;
     }
 
-    if (node is XmlText && _inVerse) {
-      _appendNormalized(node.value);
+    if (node is! XmlElement) return;
+
+    final tag = node.name.local;
+    if (_excludedFromVerseText.contains(tag)) return;
+
+    if (tag == 'c') {
+      _handleChapterMarker(node);
+    } else if (tag == 'v') {
+      _handleVerseStart(node);
+    } else if (tag == 've') {
+      _handleVerseEnd();
+    } else if (tag == 'p') {
+      _handleParagraphStart();
+    } else if (usfxTagToSpanType.containsKey(tag)) {
+      _handleStyledElement(node, usfxTagToSpanType[tag]!);
+      return; // children already walked inside the style push/pop
+    }
+
+    // Generic containers (<p>, <c> if it ever has children, etc.) and
+    // anything else we don't specifically handle: just recurse.
+    for (final child in node.children) {
+      _walk(child);
     }
   }
 
-  // ---------------------------------------------------------------------------
-  // State Management
-  // ---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------
+  // Milestone handlers
+  // ---------------------------------------------------------------------
+
+  void _handleChapterMarker(XmlElement node) {
+    final id = node.getAttribute('id');
+    if (id != null) _chapter = int.tryParse(id);
+  }
+
+  void _handleVerseStart(XmlElement node) {
+    if (_inVerse) _flushVerse();
+    final id = node.getAttribute('id');
+    _verseNumber = id == null ? null : int.tryParse(id);
+    _inVerse = true;
+  }
+
+  void _handleVerseEnd() {
+    if (_inVerse) _flushVerse();
+    _inVerse = false;
+    _verseNumber = null;
+  }
+
+  /// A <p> marks the start of a new paragraph. It does not immediately
+  /// produce a segment: it closes whatever segment was already open (so
+  /// text written before this point keeps its own paragraph flag) and
+  /// flags the next bit of text as the start of a new paragraph.
+  void _handleParagraphStart() {
+    _closeSegment();
+    _pendingParagraphStart = true;
+  }
+
+  void _handleStyledElement(XmlElement node, SpanType spanType) {
+    final payload = node.name.local == 'w' ? node.getAttribute('s') : null;
+
+    _pushStyle(_ActiveStyle(spanType, payload));
+    for (final child in node.children) {
+      _walk(child);
+    }
+    _popStyle();
+  }
+
+  // ---------------------------------------------------------------------
+  // Style stack
+  // ---------------------------------------------------------------------
 
   void _pushStyle(_ActiveStyle style) {
-    _flushBuffer(); // Save existing text before the style changes
+    _flushBuffer(); // text seen so far keeps the styles active before this one
     _styleStack.add(style);
   }
 
   void _popStyle() {
-    _flushBuffer(); // Save text with the old style before reverting
-    if (_styleStack.isNotEmpty) {
-      _styleStack.removeLast();
-    }
+    _flushBuffer(); // text seen under this style should still carry it
+    if (_styleStack.isNotEmpty) _styleStack.removeLast();
   }
 
-  void _appendNormalized(String s) {
+  // ---------------------------------------------------------------------
+  // Text buffering
+  // ---------------------------------------------------------------------
+
+  void _appendText(String s) {
     for (final rune in s.runes) {
       final ch = String.fromCharCode(rune);
       if (ch.trim().isEmpty) {
-        // Allow a space if we haven't just appended one, and we are not at the very start of a verse
-        if (!_lastWasSpace &&
-            (_buffer.isNotEmpty || _currentSpans.isNotEmpty)) {
+        // Collapse whitespace runs to a single space, and drop leading
+        // whitespace at the very start of a verse or segment.
+        final atStart = _buffer.isEmpty && _currentSpans.isEmpty;
+        if (!_lastWasSpace && !atStart) {
           _buffer.write(' ');
           _lastWasSpace = true;
         }
@@ -418,53 +463,62 @@ class _UsfxBookVisitor {
   void _flushBuffer() {
     final text = _buffer.toString();
     _buffer.clear();
+    if (text.isEmpty) return;
 
-    if (text.isNotEmpty) {
-      // Capture ALL active types currently in the stack
-      final activeStyles = _styleStack.map((s) => s.type).toSet();
+    final activeStyles = _styleStack.map((s) => s.type).toSet();
+    final activePayload = _styleStack.reversed
+        .map((s) => s.payload)
+        .firstWhere((p) => p != null, orElse: () => null);
 
-      // Capture the most relevant payload (e.g., the last one added)
-      final activePayload = _styleStack.reversed
-          .map((s) => s.payload)
-          .firstWhere((p) => p != null, orElse: () => null);
+    _currentSpans.add(VerseSpan(
+      text: text,
+      activeStyles: activeStyles,
+      payload: activePayload,
+    ));
+  }
 
-      _currentSpans.add(VerseSpan(
-        text: text,
-        activeStyles: activeStyles,
-        payload: activePayload,
-      ));
-    }
+  // ---------------------------------------------------------------------
+  // Segment / verse assembly
+  // ---------------------------------------------------------------------
+
+  /// Turns whatever text is currently buffered into a completed
+  /// [VerseSegment], tagged with the paragraph flag pending since the last
+  /// <p>. Safe to call speculatively: it is a no-op if there is nothing to
+  /// flush, and the paragraph flag is only consumed once it is actually
+  /// attached to a segment.
+  void _closeSegment() {
+    _flushBuffer();
+    if (_currentSpans.isEmpty) return;
+
+    _verseSegments.add(VerseSegment(
+      segmentIndex: _segmentIndex++,
+      isParagraphStart: _pendingParagraphStart,
+      spans: List.unmodifiable(_currentSpans),
+    ));
+    _currentSpans.clear();
+    _pendingParagraphStart = false;
+    _lastWasSpace = false;
   }
 
   void _flushVerse() {
-    _flushBuffer(); // Empty the text buffer into spans
+    _closeSegment();
 
-    // Prevent empty verses from being added
-    if (_chapter == null || _verseNumber == null || _currentSpans.isEmpty) {
-      return;
+    final hasContent =
+        _chapter != null && _verseNumber != null && _verseSegments.isNotEmpty;
+
+    if (hasContent) {
+      _verses.add(Verse(
+        translationId: bookId,
+        ref: BibleRef(
+          book: bibleBook,
+          chapter: _chapter!,
+          verseStart: _verseNumber,
+        ),
+        segments: List.unmodifiable(_verseSegments),
+      ));
     }
 
-    _verses.add(Verse(
-      translationId: bookId,
-      ref: BibleRef(
-          book: bibleBook, chapter: _chapter!, verseStart: _verseNumber),
-      segments: [
-        VerseSegment(
-          segmentIndex: _segmentIndex++,
-          spans: List.unmodifiable(_currentSpans),
-        ),
-      ],
-    ));
-
-    _currentSpans.clear();
-    _lastWasSpace = false; // Reset space tracker for new verse
+    _verseSegments.clear();
+    _segmentIndex = 0;
   }
-
-  bool _isFootnoteOrCrossRef(String name) =>
-      name == 'f' ||
-      name == 'fr' ||
-      name == 'ft' ||
-      name == 'x' ||
-      name == 'xo' ||
-      name == 'xt';
 }
