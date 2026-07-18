@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
+import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
 import '../../../settings_window/presentation/widgets/setting.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../state/customizer_cubit.dart';
@@ -40,6 +41,22 @@ class _BibleViewProseCustomizerScreenState
                         proseTheme: (p) =>
                             p.copyWith(emphasizeSelectedVerses: val));
                   },
+                ),
+              ),
+              Setting(
+                label: 'Opacity level of unselected',
+                description:
+                    'Opacity level of unselected verses when emphasize selected verses is enabled',
+                child: AppInputNumber(
+                  max: 100,
+                  min: 1,
+                  value: context.select((CustomizerCubit c) =>
+                          c.state.proseTheme.unselectedOpacityLevel) *
+                      100,
+                  onSubmitted: (val) => cubit.updateTheme(
+                      proseTheme: (p) => p.copyWith(
+                            unselectedOpacityLevel: val / 100,
+                          )),
                 ),
               )
             ],

@@ -301,7 +301,7 @@ class _BibleViewProseState extends State<BibleViewProse> {
             context: context,
             baseStyle: verseBaseStyle,
             colorAlpha: proseTheme.emphasizeSelectedVerses && !isHighlighted
-                ? 110
+                ? (proseTheme.unselectedOpacityLevel * 255).toInt()
                 : null,
             onWordTap: (span) => _onStrongsWordTap(context, span),
             onVerseTap: widget.onVerseTap == null
