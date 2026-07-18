@@ -13,6 +13,11 @@ class DynamicSearchbar extends StatelessWidget {
       ..skipTraversal = true;
 
     final screen = MediaQuery.of(context).size;
+    // Use the [FloatingPanel] style
+    final sTheme = Theme.of(context).searchBarTheme.copyWith(
+          backgroundColor: WidgetStatePropertyAll(Colors.transparent),
+          side: WidgetStatePropertyAll(BorderSide.none),
+        );
 
     return ListenableBuilder(
       listenable: focusNode,
@@ -28,7 +33,7 @@ class DynamicSearchbar extends StatelessWidget {
           border:
               BoxBorder.all(width: 4, color: Theme.of(context).dividerColor),
         ),
-        child: const BSearchbar(height: 56, width: 300),
+        child: BSearchbar(height: 56, width: 300, theme: sTheme),
       ),
     );
   }

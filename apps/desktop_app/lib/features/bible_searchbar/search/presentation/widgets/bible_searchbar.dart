@@ -29,12 +29,14 @@ class BSearchbar extends StatefulWidget {
     this.width = 280,
     this.isDense = false,
     super.key,
+    this.theme,
   });
 
   final Function()? onSubmitted;
   final double height;
   final double width;
   final bool isDense;
+  final SearchBarThemeData? theme;
 
   @override
   State<BSearchbar> createState() => _BSearchbarState();
@@ -210,6 +212,10 @@ class _BSearchbarState extends State<BSearchbar> {
               hasError: state is SearchError,
               errorTrigger: state.errorCount,
               child: SearchBar(
+                // theme overwrites
+                backgroundColor: widget.theme?.backgroundColor,
+                side: widget.theme?.side,
+                //
                 controller: _ctrl,
                 constraints: BoxConstraints(
                     maxWidth: widget.width, minHeight: widget.height),
@@ -454,6 +460,7 @@ class _SuggestionsList extends StatelessWidget {
         final candidate = candidates[index];
         final isHighlighted = index == highlightedIndex;
         return MouseRegion(
+          hitTestBehavior: HitTestBehavior.opaque,
           onEnter: (_) => onHover(index),
           child: InkWell(
             canRequestFocus: false,

@@ -85,16 +85,15 @@ class AppShell extends StatelessWidget {
                       //
                       // Dynamic History viewer
                       //
-                      if (enableDynamicInterface)
-                        FloatingPanel(
-                          visible: showHistory,
-                          top: screen.height * 0.08 + 100,
-                          left: 0,
-                          right: 0,
-                          width: 350,
-                          height: 250,
-                          child: const HistoryList(size: HistoryListSize.big),
-                        )
+                      FloatingPanel(
+                        visible: showHistory,
+                        top: screen.height * 0.08 + 100,
+                        left: 0,
+                        right: 0,
+                        width: 350,
+                        height: 250,
+                        child: const HistoryList(size: HistoryListSize.big),
+                      )
                     ],
                   ],
                 ),
