@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../features/bible_display/bible_pane/domain/display_mode.dart';
 import '../../features/bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
@@ -50,8 +51,8 @@ class _ToolbarButtonState extends State<ToolbarButton> {
             .read<InterfaceVisibilityCubit>()
             .setVisibility(toolmenu: false),
         trigger: CustomIconButton(
-          Icons.handyman_rounded,
-          tooltipMessage: 'Toolbar',
+          LucideIcons.toolbox,
+          tooltipMessage: 'Tools menu',
           onTap: () =>
               context.read<InterfaceVisibilityCubit>().toggleToolMenu(),
         ),
@@ -96,8 +97,8 @@ class ToolbarMenu extends StatelessWidget {
                           ? const Text('Exit Fullscreen')
                           : const Text('Enter Fullscreen'),
                       icon: isFullscreen
-                          ? const Icon(Icons.close_fullscreen_rounded)
-                          : const Icon(Icons.open_in_full_rounded),
+                          ? const Icon(LucideIcons.minimize2)
+                          : const Icon(LucideIcons.maximize2),
                     );
                   },
                 ),
@@ -118,8 +119,8 @@ class ToolbarMenu extends StatelessWidget {
                         ? const Text('Hide top bar')
                         : const Text('Show top bar'),
                     icon: state.isToolbarVisible
-                        ? const Icon(Icons.visibility_rounded)
-                        : const Icon(Icons.visibility_off_rounded),
+                        ? const Icon(LucideIcons.eye)
+                        : const Icon(LucideIcons.eyeClosed),
                   );
                 }),
               ),
@@ -134,7 +135,7 @@ class ToolbarMenu extends StatelessWidget {
                   onPressed: () =>
                       activePane.bloc.add(const BiblePaneChooseBibles()),
                   label: Text('Set bible'),
-                  icon: Icon(Icons.menu_book),
+                  icon: Icon(LucideIcons.bookOpen),
                 ),
               ),
               _Control(
@@ -149,7 +150,7 @@ class ToolbarMenu extends StatelessWidget {
                       activePane.bloc.add(evt);
                     },
                     label: const Text('Switch display mode'),
-                    icon: const Icon(Icons.fit_screen_rounded)),
+                    icon: const Icon(LucideIcons.monitor)),
               ),
               _Control(
                 command: AppCommand.addPane,
@@ -157,7 +158,7 @@ class ToolbarMenu extends StatelessWidget {
                   onPressed: () =>
                       context.read<MultiPaneManagerCubit>().splitNewPane(),
                   label: Text('Add split screen'),
-                  icon: Icon(Icons.vertical_split_rounded),
+                  icon: Icon(LucideIcons.squareSplitHorizontal),
                 ),
               ),
               if (panesNumber > 1)
@@ -180,7 +181,7 @@ class ToolbarMenu extends StatelessWidget {
                   onPressed: () =>
                       activePane.textScalerCubit.zoomIn(multiplier: 4),
                   label: Text('Zoom In'),
-                  icon: Icon(Icons.zoom_in_rounded),
+                  icon: Icon(LucideIcons.zoomIn),
                 ),
               ),
               _Control(
@@ -189,7 +190,7 @@ class ToolbarMenu extends StatelessWidget {
                   onPressed: () =>
                       activePane.textScalerCubit.zoomOut(multiplier: 4),
                   label: Text('Zoom Out'),
-                  icon: Icon(Icons.zoom_out_rounded),
+                  icon: Icon(LucideIcons.zoomOut),
                 ),
               ),
             ],

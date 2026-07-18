@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../../shared/design_system/design_system.dart';
 import '../../../../../shared/domain/entities/bible_translation.dart';
@@ -82,7 +83,7 @@ class _PaneInfoState extends State<PaneInfo> {
               builder: (context, state) {
                 return _PaneInfoItem(
                   tooltip: 'Zoom level',
-                  icon: Icons.zoom_in,
+                  icon: LucideIcons.zoomIn,
                   text: '${state.textScaleFactor.toStringAsFixed(2)}x',
                 );
               },
@@ -92,7 +93,7 @@ class _PaneInfoState extends State<PaneInfo> {
               builder: (context, dMode) {
                 return _PaneInfoItem(
                     tooltip: 'Display mode',
-                    icon: Icons.display_settings,
+                    icon: LucideIcons.monitor,
                     text: dMode.name);
               },
             ),
@@ -101,7 +102,7 @@ class _PaneInfoState extends State<PaneInfo> {
               builder: (context, verseCount) {
                 return _PaneInfoItem(
                     tooltip: 'Verse count',
-                    icon: Icons.numbers_rounded,
+                    icon: LucideIcons.hash,
                     text: '${verseCount ?? '_'}');
               },
             ),
@@ -122,12 +123,12 @@ class _PaneInfoState extends State<PaneInfo> {
                 late final String text;
                 if (metas.isEmpty) text = '...';
                 if (metas.length > 1) {
-                  text = metas.map((m) => m.abbreviation).join('  |  ');
+                  text = metas.map((m) => m.abbreviation).join(' - ');
                 }
                 if (metas.length == 1) text = metas.first.abbreviation;
                 return _PaneInfoItem(
                   tooltip: 'Open bibles',
-                  icon: Icons.book_rounded,
+                  icon: LucideIcons.bookOpen,
                   text: text,
                 );
               },
