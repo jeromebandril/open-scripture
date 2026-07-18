@@ -10,6 +10,7 @@ class ShortcutView extends StatelessWidget {
   final Color? textColor;
   final Color? borderColor;
   final double? fontSize;
+  final bool hasBorders;
 
   const ShortcutView({
     super.key,
@@ -19,6 +20,7 @@ class ShortcutView extends StatelessWidget {
     this.textColor,
     this.borderColor,
     this.fontSize,
+    this.hasBorders = true,
   });
 
   @override
@@ -44,6 +46,7 @@ class ShortcutView extends StatelessWidget {
                   textColor: textColor,
                   borderColor: borderColor,
                   fontSize: fontSize,
+                  hasBorder: hasBorders,
                 ),
                 Text('+', style: TextStyle(fontSize: fontSize))
               ])

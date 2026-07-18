@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../../app/state/fullscreen_cubit.dart';
 import '../../../../../app/state/interface_visibility_cubit.dart';
@@ -13,6 +14,7 @@ import '../../../../../shared/domain/services/book_resolver.dart';
 import '../../../../../shared/widgets/dropdown_menu_anchor.dart';
 import '../../../../shortcuts/domain/models/app_command.dart';
 import '../../../../shortcuts/presentation/models/app_command_shortcuts.dart';
+import '../../../../shortcuts/presentation/widgets/keycap.dart';
 import '../../../../shortcuts/presentation/widgets/shortcut_view.dart';
 import '../../../../shortcuts/presentation/widgets/shortcuts_focus_scope.dart';
 import '../state/search_bloc.dart';
@@ -28,12 +30,14 @@ class BSearchbar extends StatefulWidget {
     this.width = 280,
     this.isDense = false,
     super.key,
+    this.theme,
   });
 
   final Function()? onSubmitted;
   final double height;
   final double width;
   final bool isDense;
+  final SearchBarThemeData? theme;
 
   @override
   State<BSearchbar> createState() => _BSearchbarState();
@@ -52,7 +56,7 @@ class _BSearchbarState extends State<BSearchbar> {
   Timer? _debounce;
   bool _suppressNextQueryChange = false;
 
-  static const _itemHeight = 44.0;
+  static const _itemHeight = 42.0;
   static const _maxVisibleItems = 6;
 
   double get _menuHeight {
@@ -209,14 +213,18 @@ class _BSearchbarState extends State<BSearchbar> {
               hasError: state is SearchError,
               errorTrigger: state.errorCount,
               child: SearchBar(
+                // theme overwrites
+                backgroundColor: widget.theme?.backgroundColor,
+                side: widget.theme?.side,
+                //
                 controller: _ctrl,
                 constraints: BoxConstraints(
                     maxWidth: widget.width, minHeight: widget.height),
                 focusNode: _focusNode,
                 leading: Padding(
                   padding: const EdgeInsets.only(left: 4),
-                  child: Icon(Icons.search,
-                      size: 18,
+                  child: Icon(LucideIcons.search,
+                      size: 14,
                       color: Theme.of(context).colorScheme.onSurfaceVariant),
                 ),
                 hintText: 'Search reference',
@@ -231,14 +239,17 @@ class _BSearchbarState extends State<BSearchbar> {
                         }
                         return Container(
                           alignment: AlignmentDirectional.centerEnd,
+                          padding: const EdgeInsets.only(right: AppSpacing.sm),
                           child: ShortcutView(
                             activator:
                                 appCommandShortcuts[AppCommand.focusSearch],
-                            textColor:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
+                            textColor: Theme.of(context)
+                                .colorScheme
+                                .onSurfaceVariant
+                                .withAlpha(200),
                             fillColor: Colors.transparent,
-                            borderColor: null,
-                            fontSize: 10,
+                            hasBorders: false,
+                            fontSize: 12,
                           ),
                         );
                       },
@@ -453,12 +464,13 @@ class _SuggestionsList extends StatelessWidget {
         final candidate = candidates[index];
         final isHighlighted = index == highlightedIndex;
         return MouseRegion(
+          hitTestBehavior: HitTestBehavior.opaque,
           onEnter: (_) => onHover(index),
           child: InkWell(
             canRequestFocus: false,
             onTap: () => onSelected(candidate),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
                 color: isHighlighted
                     ? theme.colorScheme.primary.withValues(alpha: 0.08)
@@ -466,16 +478,17 @@ class _SuggestionsList extends StatelessWidget {
                 borderRadius: BorderRadius.circular(AppRadius.md),
               ),
               child: Row(
+                spacing: AppSpacing.sm,
                 children: [
                   Expanded(
                     child: Text(candidate.englishName,
                         style: theme.textTheme.bodyMedium,
                         overflow: TextOverflow.ellipsis),
                   ),
-                  const SizedBox(width: 8),
                   Text(candidate.canonical,
                       style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant)),
+                  if (isHighlighted) const Keycap('tab', fontSize: 10)
                 ],
               ),
             ),

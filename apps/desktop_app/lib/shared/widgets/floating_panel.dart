@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../app/widgets/app_reveal_animation.dart';
-import '../design_system/design_system.dart';
 
 /// A panel that floats at an absolute position inside a [Stack].
 ///
@@ -100,12 +99,7 @@ class FloatingPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final resolvedDecoration = decoration ??
-        BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(AppRadius.lg),
-            border:
-                BoxBorder.all(width: 4, color: Theme.of(context).dividerColor));
+    final popupTheme = Theme.of(context).popupMenuTheme;
 
     return Positioned(
       top: top,
@@ -123,12 +117,18 @@ class FloatingPanel extends StatelessWidget {
             visible: visible,
             // duration: animationDuration,
             // curve: animationCurve,
-            child: Container(
-              width: width,
-              height: height,
-              padding: padding,
-              decoration: resolvedDecoration,
-              child: child,
+            child: Material(
+              color: popupTheme.color,
+              elevation: popupTheme.elevation ?? 4,
+              shadowColor: popupTheme.shadowColor,
+              shape: popupTheme.shape,
+              clipBehavior: Clip.antiAlias,
+              child: Container(
+                width: width,
+                height: height,
+                padding: padding,
+                child: child,
+              ),
             ),
           ),
         ),

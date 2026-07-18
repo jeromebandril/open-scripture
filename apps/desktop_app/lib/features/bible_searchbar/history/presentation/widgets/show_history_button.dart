@@ -56,7 +56,7 @@ class _ShowHistoryButtonState extends State<ShowHistoryButton> {
           visualDensity: VisualDensity.compact,
           icon: const Icon(
             LucideIcons.history,
-            size: 20,
+            size: 16,
           ),
         ),
         menuVisible: _menuVisible,
