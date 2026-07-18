@@ -17,7 +17,8 @@ class VerseSpanBuilder {
   }) {
     if (spans.isEmpty) return const [];
 
-    final bTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
+    final theme = Theme.of(context);
+    final bTheme = theme.extension<BiblePaneGeneralTheme>()!;
     final base = baseStyle ?? const TextStyle();
 
     return spans.map((span) {
@@ -31,7 +32,12 @@ class VerseSpanBuilder {
       }
 
       TextStyle style = _buildCombinedStyle(span, base, bTheme);
-      if (style.color == null) style = style.copyWith(color: bTheme.textColor);
+      if (style.color == null) {
+        style = style.copyWith(
+            color: bTheme.enableCustomTheme
+                ? bTheme.textColor
+                : theme.colorScheme.onSurfaceVariant);
+      }
       if (colorAlpha != null) {
         style = style.copyWith(color: style.color!.withAlpha(colorAlpha));
       }
