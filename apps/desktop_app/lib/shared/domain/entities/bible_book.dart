@@ -184,7 +184,11 @@ enum BibleBook {
     final normalized = _norm(id);
 
     return values
-        .where((b) => _norm(b.englishName).startsWith(normalized))
+        .where(
+          (b) =>
+              _norm(b.englishName).startsWith(normalized) ||
+              _norm(b.canonical).startsWith(normalized),
+        )
         .toList();
   }
 
