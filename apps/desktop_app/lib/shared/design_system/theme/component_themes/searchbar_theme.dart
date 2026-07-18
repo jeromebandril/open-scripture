@@ -13,7 +13,7 @@ abstract final class AppSearchBarTheme {
 
     final Color fill = isLight
         ? AppColors.surfaceContainerHigh
-        : AppColors.surfaceContainerLowestDark;
+        : AppColors.surfaceContainerHighDark;
     final Color fillHovered = isLight
         ? AppColors.surfaceContainer
         : AppColors.surfaceContainerLowDark;
