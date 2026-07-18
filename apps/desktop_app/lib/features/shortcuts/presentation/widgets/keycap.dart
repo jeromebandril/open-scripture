@@ -7,6 +7,7 @@ class Keycap extends StatelessWidget {
   final Color? textColor;
   final Color? borderColor;
   final double? fontSize;
+  final bool hasBorder;
 
   const Keycap(
     this.text, {
@@ -15,6 +16,7 @@ class Keycap extends StatelessWidget {
     this.textColor,
     this.borderColor,
     this.fontSize,
+    this.hasBorder = true,
   });
 
   @override
@@ -23,11 +25,13 @@ class Keycap extends StatelessWidget {
     final cs = theme.colorScheme;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: hasBorder ? 8 : 0, vertical: 4),
       decoration: BoxDecoration(
         color: fillColor ?? cs.surface,
         borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: borderColor ?? cs.outlineVariant),
+        border: hasBorder
+            ? Border.all(color: borderColor ?? cs.outlineVariant)
+            : null,
       ),
       child: Text(
         text,

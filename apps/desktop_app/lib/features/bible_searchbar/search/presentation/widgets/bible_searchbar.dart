@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../../app/state/fullscreen_cubit.dart';
 import '../../../../../app/state/interface_visibility_cubit.dart';
@@ -222,8 +223,8 @@ class _BSearchbarState extends State<BSearchbar> {
                 focusNode: _focusNode,
                 leading: Padding(
                   padding: const EdgeInsets.only(left: 4),
-                  child: Icon(Icons.search,
-                      size: 18,
+                  child: Icon(LucideIcons.search,
+                      size: 14,
                       color: Theme.of(context).colorScheme.onSurfaceVariant),
                 ),
                 hintText: 'Search reference',
@@ -238,14 +239,17 @@ class _BSearchbarState extends State<BSearchbar> {
                         }
                         return Container(
                           alignment: AlignmentDirectional.centerEnd,
+                          padding: const EdgeInsets.only(right: AppSpacing.sm),
                           child: ShortcutView(
                             activator:
                                 appCommandShortcuts[AppCommand.focusSearch],
-                            textColor:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
+                            textColor: Theme.of(context)
+                                .colorScheme
+                                .onSurfaceVariant
+                                .withAlpha(200),
                             fillColor: Colors.transparent,
-                            borderColor: null,
-                            fontSize: 10,
+                            hasBorders: false,
+                            fontSize: 12,
                           ),
                         );
                       },
