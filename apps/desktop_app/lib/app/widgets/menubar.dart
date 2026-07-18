@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 // import 'help_widget.dart';
 // import '../../shared/theme/tokens.dart';
@@ -31,7 +32,7 @@ class MyMenuBar extends StatelessWidget {
         // ),
         // if (screenWidth > AppBreakpoints.small)
         CustomIconButton(
-          Icons.settings_rounded,
+          LucideIcons.settings,
           onTap: () {
             context.read<WindowStackManagerBloc>().add(
                   WindowStackManagerOpen.selfManaged(

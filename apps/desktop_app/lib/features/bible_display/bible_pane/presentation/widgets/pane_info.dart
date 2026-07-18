@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../../shared/design_system/design_system.dart';
 import '../../../../../shared/domain/entities/bible_translation.dart';
@@ -7,13 +8,19 @@ import '../../../../customizer/presentation/state/customizer_cubit.dart';
 import '../../../../text_scaler/presentation/state/text_scaler_cubit.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../../../multi_pane_manager/presentation/widgets/active_pane_indicator.dart';
+import '../../domain/display_mode.dart';
 import '../cubit/selected_word_cubit.dart';
 import '../state/bible_pane_bloc.dart';
 
 class _PaneInfoItem extends StatelessWidget {
-  const _PaneInfoItem({required this.child, this.tooltip});
+  const _PaneInfoItem({
+    required this.text,
+    this.icon,
+    this.tooltip,
+  });
 
-  final Widget child;
+  final String text;
+  final IconData? icon;
   final String? tooltip;
 
   @override
@@ -21,7 +28,16 @@ class _PaneInfoItem extends StatelessWidget {
     return Tooltip(
       message: tooltip ?? '',
       child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8), child: child),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Row(
+            spacing: AppSpacing.sm,
+            children: [
+              Icon(icon,
+                  size: 12,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant),
+              Text(text),
+            ],
+          )),
     );
   }
 }
@@ -67,35 +83,27 @@ class _PaneInfoState extends State<PaneInfo> {
               builder: (context, state) {
                 return _PaneInfoItem(
                   tooltip: 'Zoom level',
-                  child: Row(
-                    spacing: 4,
-                    children: [
-                      Icon(
-                        Icons.zoom_in,
-                        size: 14,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                      Text('${state.textScaleFactor.toStringAsFixed(2)}x'),
-                    ],
-                  ),
+                  icon: LucideIcons.zoomIn,
+                  text: '${state.textScaleFactor.toStringAsFixed(2)}x',
                 );
               },
             ),
-            BlocBuilder<BiblePaneBloc, BiblePaneState>(
-              builder: (context, state) {
+            BlocSelector<BiblePaneBloc, BiblePaneState, DisplayMode>(
+              selector: (state) => state.dMode,
+              builder: (context, dMode) {
+                return _PaneInfoItem(
+                    tooltip: 'Display mode',
+                    icon: LucideIcons.monitor,
+                    text: dMode.name);
+              },
+            ),
+            BlocSelector<BiblePaneBloc, BiblePaneState, int?>(
+              selector: (state) => state.verseCount,
+              builder: (context, verseCount) {
                 return _PaneInfoItem(
                     tooltip: 'Verse count',
-                    child: Row(
-                      spacing: 2,
-                      children: [
-                        Icon(
-                          Icons.numbers_rounded,
-                          size: 14,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                        Text('${state.verseCount ?? '?'}'),
-                      ],
-                    ));
+                    icon: LucideIcons.hash,
+                    text: '${verseCount ?? '_'}');
               },
             ),
             if (enableStrongWords)
@@ -104,8 +112,8 @@ class _PaneInfoState extends State<PaneInfo> {
                   return wordInfo == null
                       ? const SizedBox()
                       : _PaneInfoItem(
-                          child: Text(
-                              '${wordInfo.text} ~ ${wordInfo.span.payload}'));
+                          icon: Icons.abc_rounded,
+                          text: '${wordInfo.text} ~ ${wordInfo.span.payload}');
                 },
               ),
             BlocSelector<BiblePaneBloc, BiblePaneState, List<BibleTranslation>>(
@@ -115,22 +123,14 @@ class _PaneInfoState extends State<PaneInfo> {
                 late final String text;
                 if (metas.isEmpty) text = '...';
                 if (metas.length > 1) {
-                  text = metas.map((m) => m.abbreviation).join('  |  ');
+                  text = metas.map((m) => m.abbreviation).join(' - ');
                 }
                 if (metas.length == 1) text = metas.first.abbreviation;
                 return _PaneInfoItem(
-                    tooltip: 'Open bibles',
-                    child: Row(
-                      spacing: 4,
-                      children: [
-                        Icon(
-                          Icons.book_rounded,
-                          size: 12,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                        Text(text),
-                      ],
-                    ));
+                  tooltip: 'Open bibles',
+                  icon: LucideIcons.bookOpen,
+                  text: text,
+                );
               },
             ),
             if (pl > 1) ActivePaneIndicator(id: paneId)

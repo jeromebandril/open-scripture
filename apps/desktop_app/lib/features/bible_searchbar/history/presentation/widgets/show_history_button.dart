@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../../app/state/interface_visibility_cubit.dart';
 import '../../../../../shared/widgets/dropdown_menu_anchor.dart';
@@ -54,7 +55,7 @@ class _ShowHistoryButtonState extends State<ShowHistoryButton> {
           // tooltip: 'History',
           visualDensity: VisualDensity.compact,
           icon: const Icon(
-            Icons.history,
+            LucideIcons.history,
             size: 20,
           ),
         ),

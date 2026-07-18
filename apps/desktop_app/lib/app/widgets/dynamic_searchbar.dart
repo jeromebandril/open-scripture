@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../features/bible_searchbar/search/presentation/widgets/bible_searchbar.dart';
 import '../../features/shortcuts/presentation/widgets/shortcuts_focus_scope.dart';
+import '../../shared/design_system/design_system.dart';
 import '../../shared/widgets/floating_panel.dart';
 
 class DynamicSearchbar extends StatelessWidget {
@@ -22,8 +23,8 @@ class DynamicSearchbar extends StatelessWidget {
         left: 0,
         right: 0,
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(28),
+          color: Theme.of(context).dividerColor,
+          borderRadius: AppRadius.input,
           border:
               BoxBorder.all(width: 4, color: Theme.of(context).dividerColor),
         ),

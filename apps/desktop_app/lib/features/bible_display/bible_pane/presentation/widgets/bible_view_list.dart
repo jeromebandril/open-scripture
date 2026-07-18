@@ -7,14 +7,21 @@ import '../../../../../shared/domain/entities/verse.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../../../../customizer/presentation/models/bible_view_list_theme.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
+import '../cubit/selected_word_cubit.dart';
+import '../rendering/verse_ref_label.dart';
+import '../rendering/verse_richtext_builder.dart';
 import '../state/bible_pane_bloc.dart';
 import 'verse_divider.dart';
-import 'verse_widget.dart';
 
 class BibleViewList extends StatefulWidget {
-  const BibleViewList({super.key, required this.uniqueId});
+  const BibleViewList({
+    super.key,
+    required this.uniqueId,
+    this.onVerseTap,
+  });
 
   final int uniqueId;
+  final void Function(BibleRef ref)? onVerseTap;
 
   @override
   State<BibleViewList> createState() => _BibleViewListState();
@@ -28,18 +35,16 @@ class _BibleViewListState extends State<BibleViewList> {
   bool _scrollScheduled = false;
   BibleRef? _pendingScrollRef;
 
-  bool _isIndexVisible(int index, Iterable<ItemPosition>? p) {
-    final positions = _itemPositionsListener.itemPositions.value;
-    return positions.any((p) {
-      return p.index == index &&
-          p.itemLeadingEdge > 0 &&
-          p.itemTrailingEdge < 1;
-    });
+  bool _isIndexVisible(int index, Iterable<ItemPosition> positions) {
+    return positions.any(
+      (p) =>
+          p.index == index && p.itemLeadingEdge > 0 && p.itemTrailingEdge < 1,
+    );
   }
 
   void _scheduleScrollAfterBuild({
     required List<BibleRef> items,
-    useAnimation = true,
+    bool useAnimation = true,
   }) {
     if (_scrollScheduled) return;
     _scrollScheduled = true;
@@ -92,16 +97,23 @@ class _BibleViewListState extends State<BibleViewList> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
       final bloc = context.read<BiblePaneBloc>();
-      final items = bloc.state.unionRefs.toList();
-      _pendingScrollRef = bloc.state.reference!.copyWith(verseEnd: () => null);
-      _scheduleScrollAfterBuild(items: items, useAnimation: false);
+      final initialRef = bloc.state.reference;
+      if (initialRef == null) return;
+
+      _pendingScrollRef = initialRef.copyWith(verseEnd: () => null);
+      _scheduleScrollAfterBuild(
+        items: bloc.state.unionRefs.toList(),
+        useAnimation: false,
+      );
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final screen = MediaQuery.of(context).size;
+    final screen = MediaQuery.sizeOf(context);
     final panes = context.read<MultiPaneManagerCubit>().state.panes;
     final thisPaneIndex = panes.indexWhere((e) => e.id == widget.uniqueId);
     final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
@@ -150,6 +162,7 @@ class _BibleViewListState extends State<BibleViewList> {
                 ref: ref,
                 isHighlighted: isHighlighted,
                 verses: verses,
+                onVerseTap: widget.onVerseTap,
               ),
             );
           },
@@ -164,11 +177,13 @@ class _ParallelView extends StatelessWidget {
     required this.verses,
     required this.ref,
     this.isHighlighted = false,
+    this.onVerseTap,
   });
 
   final BibleRef ref;
   final List<Verse?> verses;
   final bool isHighlighted;
+  final void Function(BibleRef ref)? onVerseTap;
 
   @override
   Widget build(BuildContext context) {
@@ -182,14 +197,109 @@ class _ParallelView extends StatelessWidget {
       children: verses.map((v) {
         if (v == null) return const Expanded(child: SizedBox());
 
-        // Verse owns all its data now — no span extraction needed here
         return Expanded(
-          child: VerseWidget(
+          child: _VerseWidget(
             verse: v,
             isHighlighted: isHighlighted,
+            onVerseTap: onVerseTap,
           ),
         );
       }).toList(),
     );
+  }
+}
+
+class _VerseWidget extends StatelessWidget {
+  final Verse verse;
+  final bool isHighlighted;
+  final void Function(BibleRef ref)? onVerseTap;
+
+  const _VerseWidget({
+    required this.verse,
+    this.isHighlighted = false,
+    this.onVerseTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final bTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
+    final listTheme = Theme.of(context).extension<BibleViewListTheme>()!;
+
+    final refLabel = VerseRefLabel.text(
+      verse.ref,
+      isHighlighted: isHighlighted,
+      showFullRefAlways: listTheme.showFullRefAlways,
+    );
+    final refStyle = VerseRefLabel.style(context, isHighlighted: isHighlighted);
+
+    final headingStyle = TextStyle(
+      fontWeight: FontWeight.bold,
+      color: bTheme.refColor,
+      height: 2.0,
+    );
+
+    return Listener(
+      onPointerDown: onVerseTap == null
+          ? null
+          : (_) => onVerseTap!(verse.ref.copyWith(verseEnd: () => null)),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: SelectableText.rich(
+              TextSpan(
+                style: TextStyle(
+                  height: 1.25,
+                  fontWeight: bTheme.textFontWeight,
+                ),
+                children: [
+                  TextSpan(text: refLabel, style: refStyle),
+                  const TextSpan(text: '  '),
+                  ..._buildSegmentSpans(context, headingStyle),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<InlineSpan> _buildSegmentSpans(
+    BuildContext context,
+    TextStyle headingStyle,
+  ) {
+    final result = <InlineSpan>[];
+
+    for (var i = 0; i < verse.segments.length; i++) {
+      final segment = verse.segments[i];
+
+      // Paragraph break; only insert if not the very first segment
+      if (segment.isParagraphStart && i > 0) {
+        result.add(const TextSpan(text: '\n'));
+      }
+
+      // Section heading above this segment
+      if (segment.heading != null) {
+        result.add(TextSpan(
+          text: '${segment.heading}\n',
+          style: headingStyle,
+        ));
+      }
+
+      // The actual spans
+      result.addAll(
+        VerseSpanBuilder.build(
+          spans: segment.spans,
+          context: context,
+          onWordTap: (VerseSpan span) =>
+              context.read<SelectedWordCubit>().setSelectedWord(
+                    WordInfo(span: span, text: span.text),
+                  ),
+        ),
+      );
+    }
+
+    return result;
   }
 }

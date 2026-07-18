@@ -12,6 +12,8 @@ class VerseSpanBuilder {
     required BuildContext context,
     TextStyle? baseStyle,
     void Function(VerseSpan span)? onWordTap,
+    VoidCallback? onVerseTap,
+    int? colorAlpha,
   }) {
     if (spans.isEmpty) return const [];
 
@@ -19,15 +21,26 @@ class VerseSpanBuilder {
     final base = baseStyle ?? const TextStyle();
 
     return spans.map((span) {
+      final isStrongsWord = span.activeStyles.contains(SpanType.strongs);
+
+      GestureRecognizer? recognizer;
+      if (isStrongsWord && onWordTap != null) {
+        recognizer = TapGestureRecognizer()..onTap = () => onWordTap(span);
+      } else if (onVerseTap != null) {
+        recognizer = TapGestureRecognizer()..onTap = onVerseTap;
+      }
+
+      TextStyle style = _buildCombinedStyle(span, base, bTheme);
+      if (style.color == null) style = style.copyWith(color: bTheme.textColor);
+      if (colorAlpha != null) {
+        style = style.copyWith(color: style.color!.withAlpha(colorAlpha));
+      }
+
       return TextSpan(
         text: span.text,
         // Apply all styles cumulatively
-        style: _buildCombinedStyle(span, base, bTheme),
-        // Trigger tap if any style in the set is strongs
-        recognizer:
-            (span.activeStyles.contains(SpanType.strongs) && onWordTap != null)
-                ? (TapGestureRecognizer()..onTap = () => onWordTap(span))
-                : null,
+        style: style,
+        recognizer: recognizer,
       );
     }).toList();
   }

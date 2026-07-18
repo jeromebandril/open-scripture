@@ -18,6 +18,7 @@ import 'component_themes/popup_menu_theme.dart';
 import 'component_themes/progress_indicator_theme.dart';
 import 'component_themes/radio_theme.dart';
 import 'component_themes/scrollbar_theme.dart';
+import 'component_themes/searchbar_theme.dart';
 import 'component_themes/switch_theme.dart';
 import 'component_themes/tab_bar_theme.dart';
 import 'component_themes/text_button_theme.dart';
@@ -147,6 +148,7 @@ abstract final class AppTheme {
       popupMenuTheme: AppPopupMenuTheme.build(brightness: brightness),
       scrollbarTheme: AppScrollbarTheme.build(brightness: brightness),
       tabBarTheme: AppTabBarTheme.build(brightness: brightness),
+      searchBarTheme: AppSearchBarTheme.buildBar(brightness: brightness),
 
       // -----------------------------------------------------------------------
       // Inline — simple enough to not warrant a separate file
