@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../app/state/fullscreen_cubit.dart';
 import '../../../../../app/state/interface_visibility_cubit.dart';
+import '../../../../../shared/design_system/design_system.dart';
 import '../../../../shortcuts/domain/models/app_command.dart';
 import '../../../../shortcuts/presentation/models/app_command_shortcuts.dart';
 import '../../../../shortcuts/presentation/widgets/shortcut_view.dart';
@@ -230,8 +231,7 @@ class _SearchBarWithErrorFeedbackState
   @override
   Widget build(BuildContext context) {
     final errorColor = Theme.of(context).colorScheme.error;
-    final borderRadius =
-        BorderRadius.circular(50); // match SearchBar's pill shape
+    final borderRadius = AppRadius.input; // match SearchBar's
 
     return AnimatedBuilder(
       animation: _progress,
