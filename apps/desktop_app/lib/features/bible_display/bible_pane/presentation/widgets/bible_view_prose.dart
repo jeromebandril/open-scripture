@@ -276,7 +276,7 @@ class _BibleViewProseState extends State<BibleViewProse> {
 
           currentSpans.add(
             TextSpan(
-              text: '${ref.verseStart}',
+              text: '${ref.verseStart} ',
               style: VerseRefLabel.style(context, isHighlighted: isHighlighted)
                   .copyWith(fontSize: 12),
               recognizer: widget.onVerseTap != null
