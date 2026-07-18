@@ -44,18 +44,12 @@ final Map<AppCommand, ShortcutActivator> appCommandShortcuts = {
       ? const SingleActivator(LogicalKeyboardKey.keyB,
           alt: true, includeRepeats: false)
       : SingleActivator(LogicalKeyboardKey.keyB,
-          control: !_isMacDesktop,
-          meta: _isMacDesktop,
-          shift: true,
-          includeRepeats: false),
+          control: !_isMacDesktop, meta: _isMacDesktop, includeRepeats: false),
   AppCommand.switchDisplayMode: kIsWeb
       ? const SingleActivator(LogicalKeyboardKey.keyM,
           alt: true, includeRepeats: false)
       : SingleActivator(LogicalKeyboardKey.keyD,
-          control: !_isMacDesktop,
-          meta: _isMacDesktop,
-          shift: true,
-          includeRepeats: false),
+          control: !_isMacDesktop, meta: _isMacDesktop, includeRepeats: false),
   AppCommand.closeWhatever: const SingleActivator(
     LogicalKeyboardKey.escape,
     includeRepeats: false,

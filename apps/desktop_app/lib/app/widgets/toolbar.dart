@@ -219,7 +219,7 @@ class _Control extends StatelessWidget {
             style: Theme.of(context).textTheme.bodySmall,
           ),
         Spacer(),
-        ShortcutView(activator: appCommandShortcuts[command], fontSize: 12),
+        ShortcutView(activator: appCommandShortcuts[command], fontSize: 11),
       ],
     );
   }
