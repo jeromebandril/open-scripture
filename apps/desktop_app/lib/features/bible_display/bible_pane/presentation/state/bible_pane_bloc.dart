@@ -203,11 +203,12 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
         ));
 
         // return feedback to searchbar
-        _navBus?.emit(SearchResultSuccess(
-          ref: event.ref,
-          source: event.source,
-        ));
-
+        if (!content.isContentEmpty) {
+          _navBus?.emit(SearchResultSuccess(
+            ref: event.ref,
+            source: event.source,
+          ));
+        }
         _sendTextToObsLiveOverlay(event.ref);
       } else {
         emit(state.copyWith(
