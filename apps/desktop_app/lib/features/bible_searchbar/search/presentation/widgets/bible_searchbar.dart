@@ -89,6 +89,12 @@ class _BSearchbarState extends State<BSearchbar> {
         );
       }
     } else {
+      // TODO: this prevents selecting suggestion option with mouse
+      // because focus change fires before the inkwell click event.
+      // possible solutions:
+      // - Future.delayed() ?
+      // - remove this line and rely on user input for dismiss
+      // - use focus scope to detect if menu is focused
       _menuVisible.value = false;
     }
   }
