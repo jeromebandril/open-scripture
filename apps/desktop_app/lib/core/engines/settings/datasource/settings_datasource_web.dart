@@ -16,8 +16,10 @@ class SettingsDatasourceWeb<T> implements SettingsDatasource<T> {
   final String prefsKey;
   final T Function(Map<String, dynamic>) fromJson;
   final Map<String, dynamic> Function(T) toJson;
-  final T defaultValue;
   final T Function(T)? sanitize;
+
+  @override
+  final T defaultValue;
 
   @override
   Future<T> loadSettings() async {
