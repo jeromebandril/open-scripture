@@ -36,7 +36,7 @@ Future<void> init(GetIt sl) async {
   );
 }
 
-void warmUpCore(GetIt sl) {
+void warmUp(GetIt sl) {
   sl<AppLifecycleService>();
   sl<MyLibraryCubit>(instanceName: BibleRepositoryType.cloudAPI.name);
 }

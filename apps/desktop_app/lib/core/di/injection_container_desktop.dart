@@ -236,7 +236,7 @@ void _registerLifecycle(GetIt sl) {
 
 // Called once from main.dart right after init() completes. this is where
 // "core" is actually decided, not in the registration style above.
-void warmUpCore(GetIt sl) {
+void warmUp(GetIt sl) {
   sl<AppLifecycleService>();
   sl<MyLibraryCubit>(instanceName: BibleRepositoryType.localDatabase.name);
 }
