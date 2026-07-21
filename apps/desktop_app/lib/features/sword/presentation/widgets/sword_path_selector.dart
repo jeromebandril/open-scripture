@@ -19,7 +19,7 @@ class SwordPathSelector extends StatelessWidget {
           Text(error.toString()), // TODO: Replace with a proper error widget
       builder: (context, cubit) {
         return BlocProvider.value(
-          value: cubit..loadSettings(),
+          value: cubit..reload(),
           child: const _PathSelector(),
         );
       },
