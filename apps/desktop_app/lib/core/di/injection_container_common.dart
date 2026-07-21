@@ -124,6 +124,7 @@ Future<void> init(GetIt sl) async {
         defaultValue: const MyLibrarySettings(),
       ),
     ),
+    dispose: (repo) => repo.dispose(),
   );
   sl.registerSingleton(MyLibrarySettingsCubit(repo: sl()));
 }

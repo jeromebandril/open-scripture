@@ -92,18 +92,21 @@ void _registerSwordBible(GetIt sl) {
     instanceName: type.name,
   );
 
-  sl.registerLazySingletonAsync<SettingsRepository<SwordEngineSettings>>(() async {
-    final supportDir = await getApplicationSupportDirectory();
-    final defaultPath = p.join(supportDir.path, 'sword');
-    return SettingsRepositoryImpl<SwordEngineSettings>(
-      SettingsDatasourceDesktop<SwordEngineSettings>(
-        fileName: 'sword_engine_settings.json',
-        fromJson: SwordEngineSettings.fromJson,
-        toJson: (s) => s.toJson(),
-        defaultValue: SwordEngineSettings(modulesPath: defaultPath),
-      ),
-    );
-  });
+  sl.registerLazySingletonAsync<SettingsRepository<SwordEngineSettings>>(
+    () async {
+      final supportDir = await getApplicationSupportDirectory();
+      final defaultPath = p.join(supportDir.path, 'sword');
+      return SettingsRepositoryImpl<SwordEngineSettings>(
+        SettingsDatasourceDesktop<SwordEngineSettings>(
+          fileName: 'sword_engine_settings.json',
+          fromJson: SwordEngineSettings.fromJson,
+          toJson: (s) => s.toJson(),
+          defaultValue: SwordEngineSettings(modulesPath: defaultPath),
+        ),
+      );
+    },
+    dispose: (repo) => repo.dispose(),
+  );
 
   sl.registerLazySingletonAsync<SwordEngineSettingsCubit>(() async => SwordEngineSettingsCubit(
         repo: await sl.getAsync<SettingsRepository<SwordEngineSettings>>(),
@@ -171,6 +174,7 @@ void _registerCustomizer(GetIt sl) {
         defaultValue: const CustomizerState(),
       ),
     ),
+    dispose: (repo) => repo.dispose(),
   );
 }
 
@@ -184,6 +188,7 @@ void _registerRemoteController(GetIt sl) {
         defaultValue: const RemoteControllerSettings(),
       ),
     ),
+    dispose: (repo) => repo.dispose(),
   );
   sl.registerFactory(() => RemoteControllerSettingsCubit(repo: sl()));
   sl.registerLazySingleton(() => RemoteControllerWSServer());
@@ -212,6 +217,7 @@ void _registerObsOverlay(GetIt sl) {
         defaultValue: const OverlaySettings(),
       ),
     ),
+    dispose: (repo) => repo.dispose(),
   );
   sl.registerFactory(() => ObsLiveOverlaySettingsCubit(repo: sl()));
 

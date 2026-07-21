@@ -23,6 +23,7 @@ Future<void> init(GetIt sl) async {
         defaultValue: const CustomizerState(),
       ),
     ),
+    dispose: (repo) => repo.dispose(),
   );
 
   sl.registerLazySingleton<BibleRepositoryFactory>(
