@@ -6,6 +6,7 @@ import '../../features/settings_window/presentation/models/settings_route.dart';
 import '../../features/settings_window/presentation/pages/settings_window.dart';
 import '../../features/window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import '../../shared/widgets/custom_icon_button.dart';
+import 'toolbar.dart';
 
 class MyMenuBar extends StatelessWidget {
   const MyMenuBar({super.key});
@@ -26,6 +27,7 @@ class MyMenuBar extends StatelessWidget {
                 );
           },
         ),
+        const ToolbarButton(),
       ]),
     );
   }
