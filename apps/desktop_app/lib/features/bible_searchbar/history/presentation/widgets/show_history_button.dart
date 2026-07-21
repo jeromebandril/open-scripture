@@ -62,7 +62,7 @@ class _ShowHistoryButtonState extends State<ShowHistoryButton> {
           onPressed: () =>
               context.read<InterfaceVisibilityCubit>().toggleHistory(),
           visualDensity: VisualDensity.compact,
-          icon: const Icon(LucideIcons.history, size: 16),
+          icon: const Icon(LucideIcons.history),
         ),
         menuVisible: _menuVisible,
       ),

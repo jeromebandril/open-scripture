@@ -15,6 +15,7 @@ class MyMenuBar extends StatelessWidget {
     return SizedBox(
       child: Row(children: [
         IconButton(
+          visualDensity: VisualDensity.compact,
           onPressed: () {
             context.read<WindowStackManagerBloc>().add(
                   WindowStackManagerOpen.selfManaged(

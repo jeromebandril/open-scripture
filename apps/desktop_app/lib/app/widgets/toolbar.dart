@@ -51,6 +51,7 @@ class _ToolbarButtonState extends State<ToolbarButton> {
             .setVisibility(toolmenu: false),
         trigger: IconButton(
           tooltip: 'Tools menu',
+          visualDensity: VisualDensity.compact,
           icon: Icon(LucideIcons.toolbox),
           onPressed: () =>
               context.read<InterfaceVisibilityCubit>().toggleToolMenu(),

@@ -47,6 +47,7 @@ class _ThreeTapNavigatorTriggerState extends State<ThreeTapNavigatorTrigger> {
       listener: (context, state) => _menuVisible.value = state.is3TapNavVisible,
       child: DropdownMenuAnchor(
         trigger: IconButton(
+          visualDensity: VisualDensity.compact,
           icon: Icon(Icons.navigation_rounded),
           onPressed: () =>
               context.read<InterfaceVisibilityCubit>().toggle3TapNav(),
