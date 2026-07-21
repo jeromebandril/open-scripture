@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../app/state/interface_visibility_cubit.dart';
 import '../../../../shared/design_system/design_system.dart';
@@ -48,7 +49,7 @@ class _ThreeTapNavigatorTriggerState extends State<ThreeTapNavigatorTrigger> {
       child: DropdownMenuAnchor(
         trigger: IconButton(
           visualDensity: VisualDensity.compact,
-          icon: Icon(Icons.navigation_rounded),
+          icon: Icon(LucideIcons.navigation2),
           onPressed: () =>
               context.read<InterfaceVisibilityCubit>().toggle3TapNav(),
         ),
