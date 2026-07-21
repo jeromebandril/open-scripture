@@ -111,6 +111,7 @@ abstract final class AppTheme {
       brightness: brightness,
       colorScheme: colorScheme,
       splashFactory: NoSplash.splashFactory,
+      visualDensity: VisualDensity.compact,
 
       // -----------------------------------------------------------------------
       // Typography
