@@ -15,14 +15,14 @@ class ShowHistoryButton extends StatefulWidget {
 
 class _ShowHistoryButtonState extends State<ShowHistoryButton> {
   late final ValueNotifier<bool> _menuVisible;
+  final _historyFocusNode = FocusNode(debugLabel: 'HistoryDropdown');
 
   @override
   void initState() {
     super.initState();
     final v = context.read<InterfaceVisibilityCubit>().state.isToolMenuVisible;
-    _menuVisible = ValueNotifier(v);
+    _menuVisible = ValueNotifier(v)..addListener(_onVisibilityChanged);
 
-    // Keep history open when re-instanciated (happens for example when toggling fullscreen)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final isVisible =
           context.read<InterfaceVisibilityCubit>().state.isHistoryVisible;
@@ -30,9 +30,18 @@ class _ShowHistoryButtonState extends State<ShowHistoryButton> {
     });
   }
 
+  void _onVisibilityChanged() {
+    if (!_menuVisible.value) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _historyFocusNode.requestFocus();
+    });
+  }
+
   @override
   void dispose() {
+    _menuVisible.removeListener(_onVisibilityChanged);
     _menuVisible.dispose();
+    _historyFocusNode.dispose();
     super.dispose();
   }
 
@@ -45,19 +54,15 @@ class _ShowHistoryButtonState extends State<ShowHistoryButton> {
       child: DropdownMenuAnchor(
         menuWidth: 250,
         menuHeight: 220,
-        menuContent: const HistoryList(),
+        menuContent: HistoryList(),
         onDismiss: () => context
             .read<InterfaceVisibilityCubit>()
             .setVisibility(history: false),
         trigger: IconButton(
           onPressed: () =>
               context.read<InterfaceVisibilityCubit>().toggleHistory(),
-          // tooltip: 'History',
           visualDensity: VisualDensity.compact,
-          icon: const Icon(
-            LucideIcons.history,
-            size: 16,
-          ),
+          icon: const Icon(LucideIcons.history, size: 16),
         ),
         menuVisible: _menuVisible,
       ),
