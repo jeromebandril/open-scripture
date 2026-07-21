@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../../../../core/infrastructure/event_bus/selected_verse_bus.dart';
-import '../../../domain/entities/overlay_models.dart';
-import '../../../domain/repostiory/overlay_repository.dart';
-import '../../../domain/service/verse_html_formatter.dart';
+import '../../../../core/infrastructure/event_bus/selected_verse_bus.dart';
+import '../../domain/entities/overlay_models.dart';
+import '../../domain/repostiory/overlay_repository.dart';
+import '../../domain/service/verse_html_formatter.dart';
 
 part 'obs_live_overlay_state.dart';
 

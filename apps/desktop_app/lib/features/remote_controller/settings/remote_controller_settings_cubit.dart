@@ -2,32 +2,34 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import '../../../../../core/engines/settings/settings_repository.dart';
 
-import '../../../domain/entities/overlay_settings.dart';
+import '../../../core/engines/settings/settings_repository.dart';
+import 'remote_controller_settings.dart';
 
-part 'obs_live_overlay_settings_state.dart';
+part 'remote_controller_settings_state.dart';
 
-class ObsLiveOverlaySettingsCubit extends Cubit<ObsLiveOverlaySettingsState> {
-  ObsLiveOverlaySettingsCubit({required this.repo})
-      : super(ObsLiveOverlaySettingsState()) {
+class RemoteControllerSettingsCubit
+    extends Cubit<RemoteControllerSettingsState> {
+  RemoteControllerSettingsCubit({required this.repo})
+      : super(RemoteControllerSettingsState()) {
     loadSettings();
   }
 
-  final SettingsRepository<OverlaySettings> repo;
+  final SettingsRepository<RemoteControllerSettings> repo;
 
   Timer? _saveDebounce;
+
+  void updateSettings(
+      RemoteControllerSettings Function(RemoteControllerSettings) settings) {
+    emit(RemoteControllerSettingsState(settings: settings(state.settings)));
+    _scheduleSave();
+  }
 
   void loadSettings() {
     repo.loadSettings().then((either) => either.fold(
           (l) => print('no settings found'),
-          (r) => emit(state.copyWith(settings: r)),
+          (r) => emit(RemoteControllerSettingsState(settings: r)),
         ));
-  }
-
-  void updateSettings(OverlaySettings Function(OverlaySettings) settings) {
-    emit(state.copyWith(settings: settings(state.settings)));
-    _scheduleSave();
   }
 
   void saveSettings() {

@@ -5,7 +5,7 @@ import '../../../../shared/widgets/service_status_indicator_shell.dart';
 import '../../../settings_window/presentation/models/settings_route.dart';
 import '../../../settings_window/presentation/pages/settings_window.dart';
 import '../../../window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
-import '../state/obs_overlay/obs_live_overlay_cubit.dart';
+import '../state/obs_live_overlay_cubit.dart';
 
 class ObsLiveOverlayIndicator extends StatelessWidget {
   const ObsLiveOverlayIndicator({super.key});

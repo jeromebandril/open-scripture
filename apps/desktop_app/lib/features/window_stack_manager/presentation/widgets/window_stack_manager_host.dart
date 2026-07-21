@@ -6,10 +6,10 @@ import '../../../../app/state/fullscreen_cubit.dart';
 import '../../../../app/widgets/titlebar.dart';
 import '../../../../shared/constants.dart';
 import '../../../../shared/design_system/design_system.dart';
-import '../../../obs_live_overlay/presentation/state/obs_overlay/obs_live_overlay_cubit.dart';
-import '../../../obs_live_overlay/presentation/state/obs_overlay_settinsg/obs_live_overlay_settings_cubit.dart';
-import '../../../remote_controller/presentation/state/remote_controller/remote_controller_cubit.dart';
-import '../../../remote_controller/presentation/state/remote_controller_settings/remote_controller_settings_cubit.dart';
+import '../../../obs_live_overlay/presentation/state/obs_live_overlay_cubit.dart';
+import '../../../obs_live_overlay/settings/obs_live_overlay_settings_cubit.dart';
+import '../../../remote_controller/presentation/state/remote_controller_cubit.dart';
+import '../../../remote_controller/settings/remote_controller_settings_cubit.dart';
 import '../../../shortcuts/presentation/widgets/shortcuts_scope_suppressed.dart';
 import '../state/window_stack_manager_bloc.dart';
 

@@ -5,7 +5,7 @@ import '../../../../core/di/injection_container.dart' as di;
 import '../../../../shared/widgets/async_singleton_builder.dart';
 import '../../../../shared/widgets/ui/inputs/path_input.dart';
 import '../../../settings_window/presentation/widgets/setting.dart';
-import '../state/sword_engine_settings_cubit.dart';
+import '../../settings/sword_engine_settings_cubit.dart';
 
 class SwordPathSelector extends StatelessWidget {
   const SwordPathSelector({super.key});

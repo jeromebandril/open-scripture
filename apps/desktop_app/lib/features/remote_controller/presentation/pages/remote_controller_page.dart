@@ -13,8 +13,8 @@ import '../../../settings_window/presentation/widgets/setting.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../../window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import '../../domain/entities/client_info.dart';
-import '../state/remote_controller/remote_controller_cubit.dart';
-import '../state/remote_controller_settings/remote_controller_settings_cubit.dart';
+import '../state/remote_controller_cubit.dart';
+import '../../settings/remote_controller_settings_cubit.dart';
 
 class RemoteControllerPage extends StatefulWidget {
   const RemoteControllerPage({super.key});

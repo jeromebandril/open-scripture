@@ -9,8 +9,8 @@ import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
 import '../../../settings_window/presentation/pages/not_available_page.dart';
 import '../../../settings_window/presentation/widgets/setting.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
-import '../state/obs_overlay/obs_live_overlay_cubit.dart';
-import '../state/obs_overlay_settinsg/obs_live_overlay_settings_cubit.dart';
+import '../state/obs_live_overlay_cubit.dart';
+import '../../settings/obs_live_overlay_settings_cubit.dart';
 
 class ObsLiveOverlayPage extends StatelessWidget {
   const ObsLiveOverlayPage({super.key});
