@@ -15,6 +15,10 @@ class TextScalerCubit extends Cubit<TextScalerState> {
     emit(TextScalerState(textScaleFactor: textScaleFactor));
   }
 
+  void initWith(double textScalerFactor) {
+    _setTextScaleFactor(textScalerFactor);
+  }
+
   void zoomIn({double multiplier = 1}) {
     _setTextScaleFactor(state.textScaleFactor + sensitivity * multiplier);
   }

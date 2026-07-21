@@ -52,7 +52,10 @@ class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
     final newId =
         (state.panes.map((p) => p.id).fold<int>(0, (m, e) => e > m ? e : m)) +
             1;
-    _ensureBloc(newId);
+
+    // Init new pane with same text scale
+    final currTextScale = activePane().textScalerCubit.state.textScaleFactor;
+    _ensureBloc(newId, initTextScale: currTextScale);
 
     final newCount = state.panes.length + 1;
     final evenFactor = 1.0 / newCount;
@@ -144,12 +147,15 @@ class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
     emit(PaneManagerState(panes: panes, activePaneId: state.activePaneId));
   }
 
-  void _ensureBloc(int paneId) {
+  void _ensureBloc(int paneId, {double? initTextScale}) {
+    final textScaler = sl<TextScalerCubit>();
+    if (initTextScale != null) textScaler.initWith(initTextScale);
+
     _blocs.putIfAbsent(
       paneId,
       () => PaneBlocComponents(
         bloc: sl<BiblePaneBloc>(param1: paneId),
-        textScalerCubit: sl<TextScalerCubit>(),
+        textScalerCubit: textScaler,
         // bibleSelectorCubit: sl<BibleSelectorCubit>(),
       ),
     );
