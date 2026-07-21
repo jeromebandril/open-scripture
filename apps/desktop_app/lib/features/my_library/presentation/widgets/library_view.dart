@@ -3,10 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../shared/design_system/design_system.dart';
 import '../../../../shared/domain/entities/bible_translation.dart';
-import '../../../../shared/widgets/bible_meta_editor.dart';
 import '../../../../shared/widgets/hoverable_container.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
-import '../../../window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import '../cubit/my_library_cubit.dart';
 
 // TODO: implement a refresh button
@@ -99,25 +97,7 @@ class LibraryManagerPage extends StatelessWidget {
             final meta = state.bibles[state.selectedBibleIndex!].toMap();
             return SettingSection.single(
               title: 'Metadata of selected',
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      context
-                          .read<WindowStackManagerBloc>()
-                          .add(WindowStackManagerOpen(
-                            title: 'Edit Metadata',
-                            widget: const BibleMetaEditor(),
-                            size: Size(600, 565),
-                          ));
-                    },
-                    child: const Row(
-                      spacing: 4,
-                      children: [
-                        Icon(Icons.edit),
-                        Text('Edit metadata'),
-                      ],
-                    ))
-              ],
+              actions: [],
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxHeight: 200),
                 child: SingleChildScrollView(
