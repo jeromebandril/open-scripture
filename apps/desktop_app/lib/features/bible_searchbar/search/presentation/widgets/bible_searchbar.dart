@@ -12,6 +12,7 @@ import '../../../../../shared/design_system/design_system.dart';
 import '../../../../../shared/domain/entities/bible_book.dart';
 import '../../../../../shared/domain/services/book_resolver.dart';
 import '../../../../../shared/widgets/dropdown_menu_anchor.dart';
+import '../../../../../shared/widgets/keyboard_list_navigator.dart';
 import '../../../../shortcuts/domain/models/app_command.dart';
 import '../../../../shortcuts/presentation/models/app_command_shortcuts.dart';
 import '../../../../shortcuts/presentation/widgets/keycap.dart';
@@ -131,13 +132,6 @@ class _BSearchbarState extends State<BSearchbar> {
     _menuVisible.value = isFocused && hasQuery && _candidates.isNotEmpty;
   }
 
-  void _moveHighlight(int delta) {
-    if (_candidates.isEmpty) return;
-    setState(() {
-      _highlightedIndex = (_highlightedIndex + delta) % _candidates.length;
-    });
-  }
-
   void _selectCandidate(BSearchSuggestion candidate) {
     _debounce?.cancel();
     _suppressNextQueryChange = true;
@@ -148,32 +142,6 @@ class _BSearchbarState extends State<BSearchbar> {
           TextSelection.collapsed(offset: candidate.englishName.length + 1),
     );
     _menuVisible.value = false;
-  }
-
-  KeyEventResult _handleKey(FocusNode node, KeyEvent event) {
-    if (event is KeyUpEvent) return KeyEventResult.ignored;
-    if (!_menuVisible.value) return KeyEventResult.ignored;
-
-    if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
-      _moveHighlight(1);
-      return KeyEventResult.handled;
-    }
-    if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
-      _moveHighlight(-1);
-      return KeyEventResult.handled;
-    }
-    if (event.logicalKey == LogicalKeyboardKey.tab) {
-      if (_highlightedIndex >= 0 && _highlightedIndex < _candidates.length) {
-        _selectCandidate(_candidates[_highlightedIndex]);
-        return KeyEventResult.handled;
-      }
-      return KeyEventResult.ignored;
-    }
-    if (event.logicalKey == LogicalKeyboardKey.escape) {
-      _menuVisible.value = false;
-      return KeyEventResult.handled;
-    }
-    return KeyEventResult.ignored;
   }
 
   @override
@@ -190,10 +158,19 @@ class _BSearchbarState extends State<BSearchbar> {
   Widget build(BuildContext context) {
     final popupTheme = Theme.of(context).popupMenuTheme;
 
-    return Focus(
-      onKeyEvent: _handleKey,
-      skipTraversal: true,
-      canRequestFocus: false,
+    return ValueListenableBuilder<bool>(
+      valueListenable: _menuVisible,
+      builder: (context, isVisible, child) => KeyboardListNavigator(
+        itemCount: _candidates.length,
+        highlightedIndex: _highlightedIndex,
+        active: isVisible,
+        canRequestFocus: false,
+        selectKeys: {LogicalKeyboardKey.tab},
+        onHighlightChanged: (i) => setState(() => _highlightedIndex = i),
+        onSelect: (i) => _selectCandidate(_candidates[i]),
+        onEscape: () => _menuVisible.value = false,
+        child: child!,
+      ),
       child: DropdownMenuAnchor(
         // this is redundant; It is only to specify it for later
         // when it is added to the menu height
