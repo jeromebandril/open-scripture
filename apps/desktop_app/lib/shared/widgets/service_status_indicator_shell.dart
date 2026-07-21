@@ -33,20 +33,10 @@ class ServiceStatusIndicatorShell extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                text,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  fontSize: 14,
-                ),
-              ),
+              Text(text, style: Theme.of(context).textTheme.bodySmall),
               const SizedBox(width: AppSpacing.sm),
               const SizedBox(width: AppSpacing.xs),
-              Icon(
-                icon,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                size: 16,
-              )
+              Icon(icon)
             ],
           ),
         ),
