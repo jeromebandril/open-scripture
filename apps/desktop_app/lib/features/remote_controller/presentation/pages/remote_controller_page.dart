@@ -13,8 +13,9 @@ import '../../../settings_window/presentation/widgets/setting.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../../window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import '../../domain/entities/client_info.dart';
-import '../state/remote_controller_cubit.dart';
+import '../../settings/remote_controller_settings.dart';
 import '../../settings/remote_controller_settings_cubit.dart';
+import '../state/remote_controller_cubit.dart';
 
 class RemoteControllerPage extends StatefulWidget {
   const RemoteControllerPage({super.key});
@@ -29,8 +30,6 @@ class _RemoteControllerPageState extends State<RemoteControllerPage> {
     const featureDescription =
         'Allows you to control this app remotely from your phone. To use it, make sure to be connected in the same network.';
 
-    final plat = TargetPlatform.windows;
-
     return kIsWeb
         ? const FeatureNotAvailablePage(featureDescription: featureDescription)
         : BlocProvider.value(
@@ -41,11 +40,10 @@ class _RemoteControllerPageState extends State<RemoteControllerPage> {
                 builder: (context, state) {
                   final enableFeature = context.select(
                       (RemoteControllerSettingsCubit c) =>
-                          c.state.settings.enableFeature);
+                          c.state.enableFeature);
 
                   final port = context.select(
-                      (RemoteControllerSettingsCubit c) =>
-                          c.state.settings.port);
+                      (RemoteControllerSettingsCubit c) => c.state.port);
 
                   return Column(
                     children: [
@@ -88,7 +86,6 @@ class _RemoteControllerPageState extends State<RemoteControllerPage> {
                                                           .read<
                                                               RemoteControllerSettingsCubit>()
                                                           .state
-                                                          .settings
                                                           .port),
                                           child: state.isRunning
                                               ? const Text(
@@ -133,7 +130,7 @@ class _RemoteControllerPageState extends State<RemoteControllerPage> {
                                 enabled: !(state.isRunning || state.isBusy),
                                 value: context.select(
                                     (RemoteControllerSettingsCubit c) =>
-                                        c.state.settings.enableFeature),
+                                        c.state.enableFeature),
                                 onChanged: (val) {
                                   context
                                       .read<RemoteControllerSettingsCubit>()
@@ -186,8 +183,8 @@ class __ConnectionDetailsState extends State<_ConnectionDetails> {
           future: NetworkUtils.getLocalIp().catchError((_) => 'Unknown'),
           builder: (context, asyncSnapshot) {
             return BlocSelector<RemoteControllerSettingsCubit,
-                    RemoteControllerSettingsState, int>(
-                selector: (state) => state.settings.port,
+                    RemoteControllerSettings, int>(
+                selector: (state) => state.port,
                 builder: (context, port) {
                   final serverUrl = 'http://${asyncSnapshot.data}:$port';
 

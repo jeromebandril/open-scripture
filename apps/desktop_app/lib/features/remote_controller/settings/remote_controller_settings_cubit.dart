@@ -1,53 +1,28 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
 
 import '../../../core/engines/settings/settings_repository.dart';
 import 'remote_controller_settings.dart';
 
-part 'remote_controller_settings_state.dart';
-
-class RemoteControllerSettingsCubit
-    extends Cubit<RemoteControllerSettingsState> {
-  RemoteControllerSettingsCubit({required this.repo})
-      : super(RemoteControllerSettingsState()) {
-    loadSettings();
+class RemoteControllerSettingsCubit extends Cubit<RemoteControllerSettings> {
+  RemoteControllerSettingsCubit({required this.repo}) : super(repo.current) {
+    _sub = repo.changes.listen(emit);
   }
 
   final SettingsRepository<RemoteControllerSettings> repo;
-
-  Timer? _saveDebounce;
+  late final StreamSubscription<RemoteControllerSettings> _sub;
 
   void updateSettings(
-      RemoteControllerSettings Function(RemoteControllerSettings) settings) {
-    emit(RemoteControllerSettingsState(settings: settings(state.settings)));
-    _scheduleSave();
-  }
-
-  void loadSettings() {
-    repo.loadSettings().then((either) => either.fold(
-          (l) => print('no settings found'),
-          (r) => emit(RemoteControllerSettingsState(settings: r)),
-        ));
-  }
-
-  void saveSettings() {
-    repo.saveSettings(state.settings).then((either) => either.fold(
-          (l) => print('error saving settings'),
-          (r) => print('settings saved'),
-        ));
-  }
-
-  void _scheduleSave() {
-    _saveDebounce?.cancel();
-    _saveDebounce = Timer(const Duration(seconds: 30), saveSettings);
+    RemoteControllerSettings Function(RemoteControllerSettings) update,
+  ) {
+    repo.saveSettings(update(state));
   }
 
   @override
   Future<void> close() async {
-    _saveDebounce?.cancel();
-    saveSettings();
+    await _sub.cancel();
+    await repo.flush();
     await super.close();
   }
 }
