@@ -9,8 +9,8 @@ import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
 import '../../../settings_window/presentation/pages/not_available_page.dart';
 import '../../../settings_window/presentation/widgets/setting.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
-import '../state/obs_live_overlay_cubit.dart';
 import '../../settings/obs_live_overlay_settings_cubit.dart';
+import '../state/obs_live_overlay_cubit.dart';
 
 class ObsLiveOverlayPage extends StatelessWidget {
   const ObsLiveOverlayPage({super.key});
@@ -31,8 +31,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                     curr.isRunning != prev.isRunning || curr.busy != prev.busy,
                 builder: (ctx, state) {
                   final enableFeature = ctx.select(
-                      (ObsLiveOverlaySettingsCubit c) =>
-                          c.state.settings.enableFeature);
+                      (ObsLiveOverlaySettingsCubit c) => c.state.enableFeature);
                   return Column(
                     children: [
                       SettingSection(
@@ -61,13 +60,11 @@ class ObsLiveOverlayPage extends StatelessWidget {
                                                 .read<
                                                     ObsLiveOverlaySettingsCubit>()
                                                 .state
-                                                .settings
                                                 .port,
                                             hideDebounceTimeSeconds: ctx
                                                 .read<
                                                     ObsLiveOverlaySettingsCubit>()
                                                 .state
-                                                .settings
                                                 .hideDebounceSeconds),
                                 child: state.isRunning
                                     ? const Text('Turn OBS Live Overlay Off')
@@ -138,7 +135,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                                 max: 65535,
                                 value: ctx.select(
                                     (ObsLiveOverlaySettingsCubit c) =>
-                                        c.state.settings.port),
+                                        c.state.port),
                                 onSubmitted: (p) {
                                   ctx
                                       .read<ObsLiveOverlaySettingsCubit>()
@@ -156,7 +153,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                                 max: 480,
                                 value: ctx.select(
                                     (ObsLiveOverlaySettingsCubit c) =>
-                                        c.state.settings.hideDebounceSeconds),
+                                        c.state.hideDebounceSeconds),
                                 onSubmitted: (p) {
                                   ctx
                                       .read<ObsLiveOverlaySettingsCubit>()

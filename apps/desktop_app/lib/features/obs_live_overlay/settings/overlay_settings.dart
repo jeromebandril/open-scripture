@@ -15,6 +15,8 @@ class OverlaySettings extends Equatable {
     this.hideDebounceSeconds = 30,
   });
 
+  String get url => 'http://localhost:$port/overlay';
+
   OverlaySettings copyWith({
     int? port,
     bool? enableFeature,

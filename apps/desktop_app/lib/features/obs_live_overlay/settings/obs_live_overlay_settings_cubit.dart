@@ -1,51 +1,26 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
-import '../../../core/engines/settings/settings_repository.dart';
 
+import '../../../core/engines/settings/settings_repository.dart';
 import 'overlay_settings.dart';
 
-part 'obs_live_overlay_settings_state.dart';
-
-class ObsLiveOverlaySettingsCubit extends Cubit<ObsLiveOverlaySettingsState> {
-  ObsLiveOverlaySettingsCubit({required this.repo})
-      : super(ObsLiveOverlaySettingsState()) {
-    loadSettings();
+class ObsLiveOverlaySettingsCubit extends Cubit<OverlaySettings> {
+  ObsLiveOverlaySettingsCubit({required this.repo}) : super(repo.current) {
+    _sub = repo.changes.listen(emit);
   }
 
   final SettingsRepository<OverlaySettings> repo;
+  late final StreamSubscription<OverlaySettings> _sub;
 
-  Timer? _saveDebounce;
-
-  void loadSettings() {
-    repo.loadSettings().then((either) => either.fold(
-          (l) => print('no settings found'),
-          (r) => emit(state.copyWith(settings: r)),
-        ));
-  }
-
-  void updateSettings(OverlaySettings Function(OverlaySettings) settings) {
-    emit(state.copyWith(settings: settings(state.settings)));
-    _scheduleSave();
-  }
-
-  void saveSettings() {
-    repo.saveSettings(state.settings).then((either) => either.fold(
-          (l) => print('error saving settings'),
-          (r) => print('settings saved'),
-        ));
-  }
-
-  void _scheduleSave() {
-    _saveDebounce?.cancel();
-    _saveDebounce = Timer(const Duration(seconds: 30), saveSettings);
+  void updateSettings(OverlaySettings Function(OverlaySettings) update) {
+    repo.saveSettings(update(state));
   }
 
   @override
   Future<void> close() async {
-    _saveDebounce?.cancel();
-    saveSettings();
+    await _sub.cancel();
+    await repo.flush();
     await super.close();
   }
 }
