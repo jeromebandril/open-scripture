@@ -4,12 +4,14 @@ import 'dart:collection';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../../../../core/engines/settings/settings_repository.dart';
 import '../../../../../core/infrastructure/event_bus/search_result_bus.dart';
 import '../../../../../core/infrastructure/event_bus/selected_verse_bus.dart';
 import '../../../../../shared/domain/entities/bible_id.dart';
 import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../../shared/domain/repositories/bible_pane_repository_factory.dart';
 import '../../../../../shared/enums/bible_repository_type.dart';
+import '../../../../my_library/settings/my_library_settings.dart';
 import '../../domain/display_mode.dart';
 import '../../domain/repositories/bible_pane_repository.dart';
 import '../models/parallel_bible_config.dart';
@@ -27,7 +29,9 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     required BibleRepositoryFactory repositoryFactory,
     SelectedVerseBus? notifier,
     SearchResultBus? navBus,
-  })  : _repositoryFactory = repositoryFactory,
+    SettingsRepository<MyLibrarySettings>? libSettings,
+  })  : _libSettings = libSettings,
+        _repositoryFactory = repositoryFactory,
         _navBus = navBus,
         _overlayNotifier = notifier,
         super(BiblePaneState(
@@ -38,12 +42,24 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     on<BiblePaneChooseBibles>(_onOpenBibleSelection);
     // on<BiblePaneDisplayVerses>(_onDisplayVerses);
     on<BiblePaneSetDisplayMode>(_onChangeDisplayMode);
+
+    // It should not be a problem if it causes state flashes
+    // TODO: think a better solution instead of calling event
+    // immediatly after constructor execution
+    _initConfiguration();
   }
 
   final SearchResultBus? _navBus;
   final SelectedVerseBus? _overlayNotifier;
   final BibleRepositoryFactory _repositoryFactory;
+  final SettingsRepository<MyLibrarySettings>? _libSettings;
   // final _resolver = sl<BibleRefResolver>();
+
+  void _initConfiguration() {
+    final preferredBibleId = _libSettings?.current.preferredBibleId;
+    if (preferredBibleId == null) return;
+    add(BiblePaneOpen(bibleIds: [preferredBibleId]));
+  }
 
   Future<BiblePaneRepository> get _repo async =>
       await _repositoryFactory.get(state.repoType);

@@ -14,6 +14,7 @@ import '../features/customizer/presentation/models/bible_pane_general_theme.dart
 import '../features/customizer/presentation/models/bible_view_list_theme.dart';
 import '../features/customizer/presentation/models/bible_view_presentation_theme.dart';
 import '../features/customizer/presentation/state/customizer_cubit.dart';
+import '../features/my_library/settings/my_library_settings_cubit.dart';
 import '../features/obs_live_overlay/presentation/state/obs_overlay/obs_live_overlay_cubit.dart';
 import '../features/obs_live_overlay/presentation/state/obs_overlay_settinsg/obs_live_overlay_settings_cubit.dart';
 import '../features/remote_controller/presentation/state/remote_controller/remote_controller_cubit.dart';
@@ -117,6 +118,7 @@ class _MyAppState extends State<MyApp> {
                     BlocProvider(create: (_) => di.sl<RemoteControllerCubit>()),
                     // BlocProvider(create: (_) => di.sl<InstallerBloc>()),
                   ],
+                  BlocProvider.value(value: di.sl<MyLibrarySettingsCubit>()),
                   BlocProvider(
                       create: (context) => di.sl<ThreeTapNavigatorCubit>()),
                   BlocProvider.value(value: di.sl<MultiPaneManagerCubit>()),

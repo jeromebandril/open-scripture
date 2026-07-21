@@ -15,6 +15,8 @@ import '../../features/bible_searchbar/search/domain/search_intent_resolver.dart
 import '../../features/bible_searchbar/search/presentation/state/search_bloc.dart';
 import '../../features/customizer/presentation/state/customizer_cubit.dart';
 import '../../features/font_loader/presentation/state/font_loader_cubit.dart';
+import '../../features/my_library/settings/my_library_settings.dart';
+import '../../features/my_library/settings/my_library_settings_cubit.dart';
 import '../../features/my_library/presentation/cubit/my_library_cubit.dart';
 import '../../features/shortcuts/data/repositories/shortcuts_repo_impl.dart';
 import '../../features/shortcuts/domain/repositories/shortcuts_repo.dart';
@@ -52,6 +54,8 @@ import '../../shared/utils/bible_ref_parser/bible_ref_parser.dart';
 import '../engines/bible_compiler/import/formats/osis_importer.dart';
 import '../engines/bible_compiler/import/formats/usfx_importer.dart';
 import '../engines/bible_compiler/import/importer_registry.dart';
+import '../engines/settings/datasource/settings_datasource_desktop.dart';
+import '../engines/settings/settings_repository.dart';
 import '../infrastructure/database/daos/bible_content_dao.dart';
 import '../infrastructure/database/daos/bible_installation_dao.dart';
 import '../infrastructure/database/daos/installed_bibles_dao.dart';
@@ -75,6 +79,7 @@ Future<void> init(GetIt sl) async {
   // bloc factory
   sl.registerFactoryParam<BiblePaneBloc, int, void>(
     (paneId, _) => BiblePaneBloc(
+      libSettings: sl<SettingsRepository<MyLibrarySettings>>(),
       repositoryFactory: sl<BibleRepositoryFactory>(),
       paneId: paneId,
       navBus: sl.isRegistered<SearchResultBus>() ? sl<SearchResultBus>() : null,
@@ -108,6 +113,19 @@ Future<void> init(GetIt sl) async {
       BibleRepositoryType>((selectedIds,
           repoType) =>
       BibleSelectorCubit(selectedBiblesIds: selectedIds, repoType: repoType));
+
+  // Configs / Settings
+  sl.registerLazySingleton<SettingsRepository<MyLibrarySettings>>(
+    () => SettingsRepositoryImpl<MyLibrarySettings>(
+      SettingsDatasourceDesktop<MyLibrarySettings>(
+        fileName: 'my_library_settings.json',
+        fromJson: MyLibrarySettings.fromJson,
+        toJson: (l) => l.toJson(),
+        defaultValue: const MyLibrarySettings(),
+      ),
+    ),
+  );
+  sl.registerSingleton(MyLibrarySettingsCubit(repo: sl()));
 }
 
 // ---------------------------------------------------------------------------
@@ -265,4 +283,9 @@ void _registerThreeTapNavigator(GetIt sl) {
     ),
   );
   sl.registerLazySingleton(() => ThreeTapNavigatorCubit(repo: sl()));
+}
+
+Future<void> warmUp(GetIt sl) async {
+  // warm up settings (only those necessary on first frame)
+  await sl<SettingsRepository<MyLibrarySettings>>().loadSettings();
 }

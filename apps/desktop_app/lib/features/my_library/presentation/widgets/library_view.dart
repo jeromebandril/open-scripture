@@ -5,6 +5,7 @@ import '../../../../shared/design_system/design_system.dart';
 import '../../../../shared/domain/entities/bible_translation.dart';
 import '../../../../shared/widgets/hoverable_container.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
+import '../../settings/my_library_settings_cubit.dart';
 import '../cubit/my_library_cubit.dart';
 
 // TODO: implement a refresh button
@@ -43,6 +44,9 @@ class LibraryManagerPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final pref =
+        context.select((MyLibrarySettingsCubit c) => c.state.preferredBibleId);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -79,6 +83,7 @@ class LibraryManagerPage extends StatelessWidget {
                       bibleMeta: bibles[index],
                       isUninstalling: isUninstalling,
                       supportUninstallation: supportUninstallation,
+                      isPreference: pref == bibles[index].extId,
                     ),
                   );
                 },
@@ -94,10 +99,36 @@ class LibraryManagerPage extends StatelessWidget {
               return const SizedBox.shrink();
             }
 
-            final meta = state.bibles[state.selectedBibleIndex!].toMap();
+            final bible = state.bibles[state.selectedBibleIndex!];
+            final bibleInfos = bible.toMap();
+            final isPreference = pref?.key == bible.extId.key;
+
             return SettingSection.single(
               title: 'Metadata of selected',
-              actions: [],
+              actions: [
+                TextButton(
+                    onPressed: isPreference
+                        ? () => context
+                            .read<MyLibrarySettingsCubit>()
+                            .updateSettings(
+                                (s) => s.copyWith(preferredBibleId: () => null))
+                        : () => context
+                            .read<MyLibrarySettingsCubit>()
+                            .updateSettings((s) => s.copyWith(
+                                preferredBibleId: () => bible.extId)),
+                    child: Row(
+                      spacing: 4,
+                      children: isPreference
+                          ? const [
+                              Icon(Icons.star_rounded),
+                              Text('Remove preference'),
+                            ]
+                          : const [
+                              Icon(Icons.star_outline_rounded),
+                              Text('Set as preference'),
+                            ],
+                    ))
+              ],
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxHeight: 200),
                 child: SingleChildScrollView(
@@ -105,7 +136,7 @@ class LibraryManagerPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     spacing: 2,
                     children: [
-                      for (final e in meta.entries)
+                      for (final e in bibleInfos.entries)
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -143,12 +174,14 @@ class _InstalledBiblesRow extends StatelessWidget {
   final bool isSelected;
   final bool isUninstalling;
   final bool supportUninstallation;
+  final bool isPreference;
 
   const _InstalledBiblesRow({
     required this.bibleMeta,
     this.isSelected = false,
     this.isUninstalling = false,
     this.supportUninstallation = false,
+    this.isPreference = false,
   });
 
   @override
@@ -168,6 +201,9 @@ class _InstalledBiblesRow extends StatelessWidget {
         child: Row(
           spacing: AppSpacing.lg,
           children: [
+            SizedBox(
+                width: 32,
+                child: isPreference ? Icon(Icons.star_rounded) : null),
             Expanded(
               child: Text(
                 bibleMeta.name.split("\\").last,
