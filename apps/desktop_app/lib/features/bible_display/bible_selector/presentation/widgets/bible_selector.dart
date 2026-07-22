@@ -101,7 +101,6 @@ class _BibleSelectorState extends State<BibleSelector> {
                 Expanded(
                   child: BContainerTabBar(
                     initialIndex: _initialIndex,
-                    scrollableView: true,
                     viewBackgroundColor:
                         Theme.of(context).colorScheme.surfaceContainerHigh,
                     tabs: _repoTypes.map((r) => r.label).toList(),

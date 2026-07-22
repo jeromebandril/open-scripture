@@ -119,65 +119,67 @@ class SharedCatalogSelector extends StatelessWidget {
                                           label: Text('Go to Import Page'))
                                   ],
                                 )))
-                            : ListView.separated(
-                                shrinkWrap: true,
-                                itemCount: bibles.length,
-                                separatorBuilder: (_, __) =>
-                                    const SizedBox(height: AppSpacing.xs),
-                                itemBuilder: (context, index) {
-                                  final bible = bibles[index];
-                                  final selected =
-                                      selectedIds.contains(bible.extId);
-                                  final hasLangInfo =
-                                      bible.langEngName != null ||
-                                          bible.langNativeName != null ||
-                                          bible.langIsoCode != null;
+                            : Expanded(
+                                child: ListView.separated(
+                                  itemCount: bibles.length,
+                                  separatorBuilder: (_, __) =>
+                                      const SizedBox(height: AppSpacing.xs),
+                                  itemBuilder: (context, index) {
+                                    final bible = bibles[index];
+                                    final selected =
+                                        selectedIds.contains(bible.extId);
+                                    final hasLangInfo =
+                                        bible.langEngName != null ||
+                                            bible.langNativeName != null ||
+                                            bible.langIsoCode != null;
 
-                                  final String titleText =
-                                      titleBuilder?.call(bible) ?? bible.name;
+                                    final String titleText =
+                                        titleBuilder?.call(bible) ?? bible.name;
 
-                                  final defaultSubtitle = Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                          bible.description ??
-                                              bible.localName ??
-                                              bible.name,
-                                          style: theme.textTheme.bodySmall),
-                                      if (hasLangInfo)
+                                    final defaultSubtitle = Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
                                         Text(
-                                            bible.langEngName ??
-                                                bible.langNativeName ??
-                                                bible.langIsoCode!,
+                                            bible.description ??
+                                                bible.localName ??
+                                                bible.name,
                                             style: theme.textTheme.bodySmall),
-                                    ],
-                                  );
+                                        if (hasLangInfo)
+                                          Text(
+                                              bible.langEngName ??
+                                                  bible.langNativeName ??
+                                                  bible.langIsoCode!,
+                                              style: theme.textTheme.bodySmall),
+                                      ],
+                                    );
 
-                                  return Card(
-                                    child: ListTile(
-                                      selected: selected,
-                                      title: Text(titleText),
-                                      subtitle: subtitleBuilder?.call(
-                                              context, bible) ??
-                                          defaultSubtitle,
-                                      isThreeLine: hasLangInfo,
-                                      trailing: selected
-                                          ? Text(
-                                              '${selectedIds.indexOf(bible.extId) + 1}',
-                                              style: theme.textTheme.titleLarge
-                                                  ?.copyWith(
-                                                color:
-                                                    theme.colorScheme.primary,
-                                              ),
-                                            )
-                                          : null,
-                                      onTap: () => context
-                                          .read<BibleSelectorCubit>()
-                                          .select(bible.extId),
-                                    ),
-                                  );
-                                },
+                                    return Card(
+                                      child: ListTile(
+                                        selected: selected,
+                                        title: Text(titleText),
+                                        subtitle: subtitleBuilder?.call(
+                                                context, bible) ??
+                                            defaultSubtitle,
+                                        isThreeLine: hasLangInfo,
+                                        trailing: selected
+                                            ? Text(
+                                                '${selectedIds.indexOf(bible.extId) + 1}',
+                                                style: theme
+                                                    .textTheme.titleLarge
+                                                    ?.copyWith(
+                                                  color:
+                                                      theme.colorScheme.primary,
+                                                ),
+                                              )
+                                            : null,
+                                        onTap: () => context
+                                            .read<BibleSelectorCubit>()
+                                            .select(bible.extId),
+                                      ),
+                                    );
+                                  },
+                                ),
                               ),
                       };
                     },
