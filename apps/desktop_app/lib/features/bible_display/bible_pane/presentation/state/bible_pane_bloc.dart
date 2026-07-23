@@ -194,15 +194,8 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
 
             // update bible info with verse counter
             // get the greatest count
-            final result = (await (await _repo)
-                    .getMaxVerse(
-                      ref: event.ref,
-                      book: event.ref.book,
-                    )
-                    .run())
-                .getOrElse((_) => 0);
-
-            if (result > maxVerseCount) maxVerseCount = result;
+            final verseCount = verses.length;
+            if (verseCount > maxVerseCount) maxVerseCount = verseCount;
 
             // set content of the pane
             newMap[id] = newMap[id]!.copyWith(
