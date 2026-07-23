@@ -8,7 +8,7 @@ import '../core/di/injection_container.dart' as di;
 import '../core/infrastructure/window/app_window_manager.dart';
 import '../core/lifecycle/app_lifecycle.dart';
 import '../features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
-import '../features/bible_searchbar/history/presentation/cubit/history_cubit.dart';
+import '../features/bible_searchbar/history/presentation/state/history_cubit.dart';
 import '../features/bible_searchbar/search/presentation/state/search_bloc.dart';
 import '../features/customizer/presentation/models/bible_pane_general_theme.dart';
 import '../features/customizer/presentation/models/bible_view_list_theme.dart';

@@ -2,7 +2,7 @@ import 'package:shared/rc_protocol/rc_protocol.dart';
 
 import '../../../../../core/engines/remote_controller/models/remote_command_custom_handler.dart';
 import '../../../../../shared/domain/entities/bible_id.dart';
-import '../../../../my_library/presentation/cubit/my_library_cubit.dart';
+import '../../../../my_library/presentation/state/my_library_cubit.dart';
 import '../../../bible_pane/domain/display_mode.dart';
 import '../../../bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../state/multi_pane_manager_cubit.dart';

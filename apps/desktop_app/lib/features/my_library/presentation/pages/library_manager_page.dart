@@ -6,7 +6,7 @@ import '../../../../core/di/injection_container.dart' as di;
 import '../../../../shared/enums/bible_repository_type.dart';
 import '../../../../shared/widgets/async_singleton_builder.dart';
 import '../../../../shared/widgets/ui/b_container_tab_bar.dart';
-import '../cubit/my_library_cubit.dart';
+import '../state/my_library_cubit.dart';
 import '../widgets/library_view.dart';
 
 class LibrariesPage extends StatefulWidget {

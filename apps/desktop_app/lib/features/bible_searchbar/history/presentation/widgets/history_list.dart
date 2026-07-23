@@ -11,7 +11,7 @@ import '../../../../shortcuts/presentation/models/app_command_shortcuts.dart';
 import '../../../../shortcuts/presentation/widgets/shortcut_view.dart';
 import '../../../search/presentation/state/search_bloc.dart';
 import '../../domain/entities/history_entry.dart';
-import '../cubit/history_cubit.dart';
+import '../state/history_cubit.dart';
 
 // TODO: the entries traversal using the focus system is not smooth
 // - it doesn't scroll bottom or top when looping the list

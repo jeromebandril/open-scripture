@@ -7,7 +7,7 @@ import '../../../../../shared/enums/bible_repository_type.dart';
 import '../../../../../shared/widgets/ui/b_container_tab_bar.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../../../../customizer/presentation/state/customizer_cubit.dart';
-import '../../../../my_library/presentation/cubit/my_library_cubit.dart';
+import '../../../../my_library/presentation/state/my_library_cubit.dart';
 import '../../../bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../cubit/bible_selector_cubit.dart';

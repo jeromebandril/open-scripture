@@ -8,14 +8,14 @@ import '../../features/bible_display/bible_pane/presentation/state/bible_pane_bl
 import '../../features/bible_display/bible_selector/presentation/cubit/bible_selector_cubit.dart';
 import '../../features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../../features/bible_importer/presentation/state/bible_importer_cubit/bible_importer_cubit.dart';
-import '../../features/bible_searchbar/history/presentation/cubit/history_cubit.dart';
+import '../../features/bible_searchbar/history/presentation/state/history_cubit.dart';
 import '../../features/bible_searchbar/search/data/repositories/search_repository_impl.dart';
 import '../../features/bible_searchbar/search/domain/repositories/search_repository.dart';
 import '../../features/bible_searchbar/search/domain/search_intent_resolver.dart';
 import '../../features/bible_searchbar/search/presentation/state/search_bloc.dart';
 import '../../features/customizer/presentation/state/customizer_cubit.dart';
 import '../../features/font_loader/presentation/state/font_loader_cubit.dart';
-import '../../features/my_library/presentation/cubit/my_library_cubit.dart';
+import '../../features/my_library/presentation/state/my_library_cubit.dart';
 import '../../features/my_library/settings/my_library_settings.dart';
 import '../../features/my_library/settings/my_library_settings_cubit.dart';
 import '../../features/shortcuts/data/repositories/shortcuts_repo_impl.dart';

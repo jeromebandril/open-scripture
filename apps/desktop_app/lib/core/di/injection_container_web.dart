@@ -2,7 +2,7 @@ import 'package:get_it/get_it.dart';
 
 import '../../features/bible_display/bible_pane/domain/repositories/bible_pane_repository.dart';
 import '../../features/customizer/presentation/state/customizer_cubit.dart';
-import '../../features/my_library/presentation/cubit/my_library_cubit.dart';
+import '../../features/my_library/presentation/state/my_library_cubit.dart';
 import '../../shared/data/repositories/bible_pane_repository_factory_impl.dart';
 import '../../shared/domain/repositories/bible_pane_repository_factory.dart';
 import '../../shared/enums/bible_repository_type.dart';

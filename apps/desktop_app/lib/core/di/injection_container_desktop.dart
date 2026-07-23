@@ -10,7 +10,7 @@ import '../../features/bible_display/multi_pane_manager/presentation/state/multi
 import '../../features/bible_searchbar/search/presentation/remote/search_handler.dart';
 import '../../features/bible_searchbar/search/presentation/state/search_bloc.dart';
 import '../../features/customizer/presentation/state/customizer_cubit.dart';
-import '../../features/my_library/presentation/cubit/my_library_cubit.dart';
+import '../../features/my_library/presentation/state/my_library_cubit.dart';
 import '../../features/obs_live_overlay/data/datasource/overlay_file_system.dart';
 import '../../features/obs_live_overlay/data/datasource/overlay_server_manager.dart';
 import '../../features/obs_live_overlay/data/repository/overlay_repository_impl.dart';

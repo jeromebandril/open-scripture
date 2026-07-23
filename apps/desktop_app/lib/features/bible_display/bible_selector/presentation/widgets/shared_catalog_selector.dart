@@ -7,7 +7,7 @@ import '../../../../../shared/design_system/design_system.dart';
 import '../../../../../shared/enums/bible_repository_type.dart';
 import '../../../../../shared/widgets/async_singleton_builder.dart';
 import '../../../../../shared/widgets/ui/inputs/app_input_text.dart';
-import '../../../../my_library/presentation/cubit/my_library_cubit.dart';
+import '../../../../my_library/presentation/state/my_library_cubit.dart';
 import '../../../../settings_window/presentation/models/settings_route.dart';
 import '../../../../settings_window/presentation/pages/settings_window.dart';
 import '../../../../window_stack_manager/presentation/state/window_stack_manager_bloc.dart';

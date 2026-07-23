@@ -6,7 +6,7 @@ import '../../../../shared/domain/entities/bible_translation.dart';
 import '../../../../shared/widgets/hoverable_container.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../settings/my_library_settings_cubit.dart';
-import '../cubit/my_library_cubit.dart';
+import '../state/my_library_cubit.dart';
 
 // TODO: implement a refresh button
 // TODO: improve layout
