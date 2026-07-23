@@ -113,7 +113,7 @@ class _PaneInfoState extends State<PaneInfo> {
                   return wordInfo == null
                       ? const SizedBox()
                       : _PaneInfoItem(
-                          icon: Icons.abc_rounded,
+                          icon: LucideIcons.squareDashedMousePointer,
                           text: '${wordInfo.text} ~ ${wordInfo.span.payload}');
                 },
               ),
