@@ -19,6 +19,4 @@ abstract class BiblePaneRepository {
     required BibleId bibleId,
     required BibleRef ref,
   });
-
-  TaskEither<Failure, int> getMaxVerse({required BibleRef ref});
 }

@@ -92,15 +92,4 @@ class BiblePaneRepositoryImpl implements BiblePaneRepository {
       },
     );
   }
-
-  @override
-  TaskEither<Failure, int> getMaxVerse({required BibleRef ref}) {
-    return TaskEither.tryCatch(
-      () async => (await _contentDatasource.getVerseBoundaryOf(
-        bookToken: ref.book.usfm,
-        chapter: ref.chapter,
-      )),
-      (error, st) => UnexpectedFailure(cause: error, stackTrace: st),
-    );
-  }
 }
