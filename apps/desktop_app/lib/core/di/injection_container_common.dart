@@ -192,6 +192,7 @@ void _registerSearch(GetIt sl) {
 void _registerMyLibrary(GetIt sl) {
   sl.registerLazySingleton<MyLibraryCubit>(
     () => MyLibraryCubit(
+      repoType: BibleRepositoryType.localDatabase,
       repo: sl.get<BibleCatalogRepository>(
           instanceName: BibleRepositoryType.localDatabase.name),
       notifier: sl(),
@@ -225,6 +226,7 @@ void _registerCloudBible(GetIt sl) {
       instanceName: type.name);
   sl.registerLazySingleton<MyLibraryCubit>(
       () => MyLibraryCubit(
+            repoType: type,
             repo: sl.get<BibleCatalogRepository>(instanceName: type.name),
             notifier: sl(),
           ),

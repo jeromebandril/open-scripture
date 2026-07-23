@@ -11,29 +11,35 @@ import '../../../../shared/enums/bible_repository_type.dart';
 part 'my_library_state.dart';
 
 class MyLibraryCubit extends Cubit<MyLibraryState> {
+  final BibleRepositoryType _repoType;
   final BibleCatalogRepository _catalogRepo;
   final BibleInstallRepository? _installRepo;
   late final StreamSubscription _sub;
 
   MyLibraryCubit({
+    required BibleRepositoryType repoType,
     required BibleCatalogRepository repo,
     required InstallNotifier notifier,
     BibleInstallRepository? installRepo,
-  })  : _installRepo = installRepo,
+  })  : _repoType = repoType,
+        _installRepo = installRepo,
         _catalogRepo = repo,
         super(MyLibraryState()) {
-    _sub = notifier.stream.listen((_) => getBibles());
+    _sub = notifier.stream.listen((repoType) {
+      if (repoType != _repoType && repoType != null) return;
+      getBibles();
+    });
   }
 
   Future<void> getBibles() async {
     emit(state.copywith(status: MyLibraryStatus.loading));
 
-    final result = await _catalogRepo.getAvailableBibles();
+    final result = await _catalogRepo.getAvailableBibles().run();
 
     result.fold((f) {
       emit(state.copywith(
         status: MyLibraryStatus.error,
-        errorMessage: () => f.message,
+        errorMessage: () => '${f.message} ${f.cause.toString()}',
       ));
     }, (b) {
       emit(state.copywith(

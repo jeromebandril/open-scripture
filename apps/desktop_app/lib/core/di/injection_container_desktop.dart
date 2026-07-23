@@ -15,16 +15,16 @@ import '../../features/obs_live_overlay/data/datasource/overlay_file_system.dart
 import '../../features/obs_live_overlay/data/datasource/overlay_server_manager.dart';
 import '../../features/obs_live_overlay/data/repository/overlay_repository_impl.dart';
 import '../../features/obs_live_overlay/data/service/verse_html_formatter_impl.dart';
-import '../../features/obs_live_overlay/settings/overlay_settings.dart';
 import '../../features/obs_live_overlay/domain/repostiory/overlay_repository.dart';
 import '../../features/obs_live_overlay/domain/service/verse_html_formatter.dart';
 import '../../features/obs_live_overlay/presentation/state/obs_live_overlay_cubit.dart';
 import '../../features/obs_live_overlay/settings/obs_live_overlay_settings_cubit.dart';
+import '../../features/obs_live_overlay/settings/overlay_settings.dart';
 import '../../features/remote_controller/data/datasource/remote_controller_ws.dart';
 import '../../features/remote_controller/data/repositories/remote_controller_repo_impl.dart';
-import '../../features/remote_controller/settings/remote_controller_settings.dart';
 import '../../features/remote_controller/domain/repositories/remote_controller_repo.dart';
 import '../../features/remote_controller/presentation/state/remote_controller_cubit.dart';
+import '../../features/remote_controller/settings/remote_controller_settings.dart';
 import '../../features/remote_controller/settings/remote_controller_settings_cubit.dart';
 import '../../features/sword/settings/sword_engine_settings.dart';
 import '../../features/sword/settings/sword_engine_settings_cubit.dart';
@@ -137,9 +137,10 @@ void _registerSwordBible(GetIt sl) {
 
   sl.registerLazySingletonAsync<MyLibraryCubit>(
     () async => MyLibraryCubit(
+      repoType: type,
       repo: await sl.getAsync<BibleCatalogRepository>(instanceName: type.name),
       notifier: sl(),
-      installRepo: sl(),
+      installRepo: sl(), 
     ),
     instanceName: type.name,
     onCreated: (c) => c.getBibles(),
