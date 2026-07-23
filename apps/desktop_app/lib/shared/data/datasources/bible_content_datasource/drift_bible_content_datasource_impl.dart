@@ -10,7 +10,7 @@ class DriftBibleContentDataSourceImpl implements BibleContentDatasource {
   DriftBibleContentDataSourceImpl({required BibleContentDao dao}) : _dao = dao;
 
   @override
-  Future<List<VerseSegmentDto>> getChapterWithSpans(
+  Future<List<VerseSegmentDto>> getChapter(
     String bibleExtId,
     BibleBook book,
     int chapter,

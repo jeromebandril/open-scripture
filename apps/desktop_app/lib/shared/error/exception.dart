@@ -11,7 +11,9 @@ abstract class AppException implements Exception {
 }
 
 class ServerException extends AppException {
-  const ServerException(super.details);
+  final int? statusCode;
+
+  const ServerException(super.message, {this.statusCode});
 }
 
 class NetworkException extends AppException {

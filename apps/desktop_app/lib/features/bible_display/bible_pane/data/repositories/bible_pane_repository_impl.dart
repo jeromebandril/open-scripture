@@ -53,7 +53,7 @@ class BiblePaneRepositoryImpl implements BiblePaneRepository {
   }) {
     return TaskEither.tryCatch(
       () async {
-        final dtos = await _contentDatasource.getChapterWithSpans(
+        final dtos = await _contentDatasource.getChapter(
           bibleId.externalId,
           ref.book,
           ref.chapter,
@@ -83,6 +83,10 @@ class BiblePaneRepositoryImpl implements BiblePaneRepository {
       },
       (error, st) => switch (error) {
         NotFoundException e =>
+          ChapterUnavailableFailure(cause: e, stackTrace: st),
+        ServerException e =>
+          ChapterUnavailableFailure(cause: e, stackTrace: st),
+        NetworkException e =>
           ChapterUnavailableFailure(cause: e, stackTrace: st),
         _ => UnexpectedFailure(cause: error, stackTrace: st),
       },

@@ -18,7 +18,7 @@ class SwordBibleContentDatasourceImpl implements BibleContentDatasource {
   }
 
   @override
-  Future<List<VerseSegmentDto>> getChapterWithSpans(
+  Future<List<VerseSegmentDto>> getChapter(
       String bibleExtId, BibleBook book, int chapter) async {
     print('getting this: $bibleExtId - ${book.osis}:$chapter');
 
