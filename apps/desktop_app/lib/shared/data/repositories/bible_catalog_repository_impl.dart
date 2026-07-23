@@ -1,8 +1,10 @@
 import 'package:fpdart/fpdart.dart';
 
+import '../../../features/my_library/error/failures.dart';
 import '../../domain/entities/bible_id.dart';
 import '../../domain/entities/bible_translation.dart';
 import '../../domain/repositories/bible_catalog_repository.dart';
+import '../../error/exception.dart';
 import '../../error/failure.dart';
 import '../datasources/bible_catalog_datasource/bible_catalog_datasource.dart';
 import '../models/bible_install_dto.dart';
@@ -13,26 +15,30 @@ class BibleCatalogRepositoryImpl implements BibleCatalogRepository {
   BibleCatalogRepositoryImpl(this._dataSource);
 
   @override
-  Future<Either<Failure, List<BibleTranslation>>> getAvailableBibles() async {
-    try {
+  TaskEither<Failure, List<BibleTranslation>> getAvailableBibles() {
+    return TaskEither.tryCatch(() async {
       final dtos = await _dataSource.getBibles();
-      return Right(dtos.map((dto) => dto.toDomain()).toList());
-    } catch (e) {
-      // TODO: implement proper failure
-      return Left(UnexpectedFailure());
-    }
+      return dtos.map((dto) => dto.toDomain()).toList();
+    },
+        (error, st) => switch (error) {
+              NetworkException e => NetworkFailure(cause: e, stackTrace: st),
+              ServerException e =>
+                TranslationsNotLoadingFailure(cause: e, stackTrace: st),
+              _ => UnexpectedFailure(cause: error, stackTrace: st),
+            });
   }
 
   @override
-  Future<Either<Failure, BibleTranslation>> getBibleDetails(
+  TaskEither<Failure, BibleTranslation> getBibleDetails(
     BibleId bibleId,
-  ) async {
-    try {
-      final dto = await _dataSource.getBible(bibleId.externalId);
-      return Right(dto.toDomain());
-    } catch (e) {
-      // TODO: implement proper failure
-      return Left(UnexpectedFailure());
-    }
+  ) {
+    return TaskEither.tryCatch(
+        () async => (await _dataSource.getBible(bibleId.externalId)).toDomain(),
+        (error, st) => switch (error) {
+              NetworkException e => NetworkFailure(cause: e, stackTrace: st),
+              ServerException e =>
+                TranslationsNotLoadingFailure(cause: e, stackTrace: st),
+              _ => UnexpectedFailure(cause: error, stackTrace: st),
+            });
   }
 }
