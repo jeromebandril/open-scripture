@@ -65,16 +65,17 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
   Future<BiblePaneRepository> get _repo async =>
       await _repositoryFactory.get(state.repoType);
 
-  // Add a bible translation to the content
   Future<void> _onBiblePaneOpen(
     BiblePaneOpen event,
     Emitter<BiblePaneState> emit,
   ) async {
     emit(state.copyWith(status: () => BiblePaneStatus.loading));
+
     final repoType = event.bibleIds.first.repoType;
     final repo = await _repositoryFactory.get(repoType);
-
     final newMap = ParallelBibleMap.from(state.content.asMap);
+    bool hasAtLeastOneSuccess = false;
+    late Failure failure;
 
     for (final id in event.bibleIds) {
       // check if bible actually exists
@@ -82,15 +83,10 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
 
       result.fold(
         (f) {
-          emit(state.copyWith(
-            status: () => BiblePaneStatus.error,
-            content: () => ParallelBibleConfig.empty,
-            errorMessage: () => '${f.message} ${f.cause.toString()}',
-          ));
-          // TODO: fix add partial error/success becaues of parallel view
-          return;
+          failure = f;
         },
         (bm) {
+          hasAtLeastOneSuccess = true;
           // Add only new translations
           if (newMap[id] != null) return;
           newMap[id] = BibleData(meta: bm);
@@ -103,17 +99,23 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
       if (!event.bibleIds.contains(id)) newMap.remove(id);
     }
 
-    emit(state.copyWith(
-      status: () => BiblePaneStatus.ready,
-      content: () => ParallelBibleConfig.from(newMap),
-      parallelOrder: () => event.bibleIds,
-      isMixed: () => false,
-      repoType: () => repoType,
-    ));
-
-    // fetch and update content if reference is not null
-    if (state.reference == null) return;
-    add(BiblePaneDisplayChapter(ref: state.reference!));
+    if (hasAtLeastOneSuccess) {
+      emit(state.copyWith(
+        status: () => BiblePaneStatus.ready,
+        content: () => ParallelBibleConfig.from(newMap),
+        parallelOrder: () => event.bibleIds,
+        isMixed: () => false,
+        repoType: () => repoType,
+      ));
+      // fetch and update content if reference is not null
+      if (state.reference == null) return;
+      add(BiblePaneDisplayChapter(ref: state.reference!));
+    } else {
+      emit(state.copyWith(
+        status: () => BiblePaneStatus.error,
+        errorMessage: () => '${failure.message} ${failure.cause.toString()}',
+      ));
+    }
   }
 
   /// Display passed bible refs directly
