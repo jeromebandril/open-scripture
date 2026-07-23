@@ -10,7 +10,7 @@ import '../../../../../shared/domain/entities/bible_translation.dart';
 import '../../../../../shared/domain/entities/verse.dart';
 import '../../../../../shared/error/exception.dart';
 import '../../../../../shared/error/failure.dart';
-import '../../domain/error/bible_failures.dart';
+import '../../error/bible_failures.dart';
 import '../../domain/repositories/bible_pane_repository.dart';
 
 class BiblePaneRepositoryImpl implements BiblePaneRepository {

@@ -9,7 +9,6 @@ import '../../../../../core/infrastructure/event_bus/search_result_bus.dart';
 import '../../../../../core/infrastructure/event_bus/selected_verse_bus.dart';
 import '../../../../../shared/domain/entities/bible_id.dart';
 import '../../../../../shared/domain/entities/bible_ref.dart';
-import '../../../../../shared/domain/entities/verse.dart';
 import '../../../../../shared/domain/repositories/bible_pane_repository_factory.dart';
 import '../../../../../shared/enums/bible_repository_type.dart';
 import '../../../../../shared/error/failure.dart';

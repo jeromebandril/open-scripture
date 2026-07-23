@@ -4,7 +4,7 @@ import '../../../../../shared/domain/entities/bible_ref_partial.dart';
 import '../../../../../shared/error/failure.dart';
 import '../../../../../shared/utils/bible_ref_parser/bible_ref_parser.dart';
 import '../../../../../shared/utils/bible_ref_parser/error/bible_ref_parser_exceptions.dart';
-import '../../domain/error/search_failures.dart';
+import '../../error/search_failures.dart';
 import '../../domain/repositories/search_repository.dart';
 
 class SearchRepositoryImpl implements SearchRepository {

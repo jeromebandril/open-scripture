@@ -1,4 +1,4 @@
-import '../../../../../shared/error/failure.dart';
+import '../../../../shared/error/failure.dart';
 
 sealed class SearchFailure extends Failure {
   const SearchFailure({required super.message, super.cause, super.stackTrace});

@@ -1,4 +1,4 @@
-import '../../../../../shared/error/failure.dart';
+import '../../../../shared/error/failure.dart';
 
 sealed class BibleFailure extends Failure {
   const BibleFailure({
