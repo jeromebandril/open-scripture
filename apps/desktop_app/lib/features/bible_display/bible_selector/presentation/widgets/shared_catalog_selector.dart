@@ -212,6 +212,7 @@ class _FilterInputState extends State<_FilterInput> {
       value: _value,
       hint: 'Search by name or language',
       prefixIcon: Icons.search_rounded,
+      debounce: const Duration(milliseconds: 250),
       onChanged: (v) => context.read<MyLibraryCubit>().filter(v),
     );
   }
