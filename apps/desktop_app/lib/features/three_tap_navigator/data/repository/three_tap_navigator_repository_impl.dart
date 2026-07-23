@@ -20,53 +20,52 @@ class ThreeTapNavigatorRepositoryImpl implements ThreeTapNavigatorRepository {
   //
   // As a workaround I will use the enum `BookLoadType.defaulted` to know when to pass a fixed constant value
   final BibleContentDatasource _contentDataSource;
-  final BibleBookLocalDataSource _booksLocalDataSource;
+  final BibleBookLocalDataSource _booksDataSource;
 
   ThreeTapNavigatorRepositoryImpl({
     required BibleContentDatasource contentDataSource,
     required BibleBookLocalDataSource booksLocalDataSource,
-  })  : _booksLocalDataSource = booksLocalDataSource,
+  })  : _booksDataSource = booksLocalDataSource,
         _contentDataSource = contentDataSource;
 
   @override
-  Future<Either<Failure, List<LocalizedBook>>> getBooks({
+  TaskEither<Failure, List<LocalizedBook>> getBooks({
     required BibleId bibleId,
-  }) async {
-    try {
-      final dtos =
-          await _booksLocalDataSource.getBooksForBible(bibleId.externalId);
-      final books = dtos.map((dto) => dto.toDomain()).toList();
-      return Right(books);
-    } catch (e) {
-      return Left(UnexpectedFailure(cause: e));
-    }
+  }) {
+    return TaskEither.tryCatch(() async {
+      final dtos = await _booksDataSource.getBooksForBible(bibleId.externalId);
+      return dtos.map((dto) => dto.toDomain()).toList();
+    },
+        (error, st) => switch (error) {
+              _ => UnexpectedFailure(cause: error, stackTrace: st),
+            });
   }
 
   @override
-  Future<Either<Failure, int>> getChapterBoundaryOf({
+  TaskEither<Failure, int> getChapterBoundaryOf({
     required String bookToken,
-  }) async {
-    try {
-      return Right(await _contentDataSource.getChapterBoundaryOf(
-        bookToken: bookToken,
-      ));
-    } catch (e) {
-      return Left(UnexpectedFailure(cause: e));
-    }
+  }) {
+    return TaskEither.tryCatch(
+        () async => await _contentDataSource.getChapterBoundaryOf(
+              bookToken: bookToken,
+            ),
+        (error, st) => switch (error) {
+              _ => UnexpectedFailure(cause: error, stackTrace: st),
+            });
   }
 
   @override
-  Future<Either<Failure, int>> getVerseBoundaryOf({
+  TaskEither<Failure, int> getVerseBoundaryOf({
     required String bookToken,
     required int chapter,
-  }) async {
-    try {
-      return Right(await _contentDataSource.getVerseBoundaryOf(
-        bookToken: bookToken,
-        chapter: chapter,
-      ));
-    } catch (e) {
-      return Left(UnexpectedFailure(cause: e));
-    }
+  }) {
+    return TaskEither.tryCatch(
+        () async => await _contentDataSource.getVerseBoundaryOf(
+              bookToken: bookToken,
+              chapter: chapter,
+            ),
+        (error, st) => switch (error) {
+              _ => UnexpectedFailure(cause: error, stackTrace: st),
+            });
   }
 }

@@ -29,7 +29,7 @@ class ThreeTapNavigatorCubit extends Cubit<ThreeTapNavigatorState> {
     if (_bibleId != bibleId) {
       _bibleId = bibleId;
 
-      final result = await _repo.getBooks(bibleId: bibleId);
+      final result = await _repo.getBooks(bibleId: bibleId).run();
 
       return result.fold(
         (f) {
@@ -79,9 +79,11 @@ class ThreeTapNavigatorCubit extends Cubit<ThreeTapNavigatorState> {
     }
 
     if (!_selectedBookIds.keys.contains(bookToken)) {
-      final result = await _repo.getChapterBoundaryOf(
-        bookToken: bookToken,
-      );
+      final result = await _repo
+          .getChapterBoundaryOf(
+            bookToken: bookToken,
+          )
+          .run();
 
       return result.fold(
         (f) => emit(state.copyWith(
@@ -114,10 +116,12 @@ class ThreeTapNavigatorCubit extends Cubit<ThreeTapNavigatorState> {
     final uniqueKey = '$bookToken-$chapter';
 
     if (!_selectedChapterIds.keys.contains(uniqueKey)) {
-      final result = await _repo.getVerseBoundaryOf(
-        bookToken: bookToken,
-        chapter: chapter,
-      );
+      final result = await _repo
+          .getVerseBoundaryOf(
+            bookToken: bookToken,
+            chapter: chapter,
+          )
+          .run();
 
       return result.fold(
         (f) => emit(state.copyWith(
