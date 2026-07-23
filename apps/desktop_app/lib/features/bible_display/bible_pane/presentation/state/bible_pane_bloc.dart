@@ -9,6 +9,7 @@ import '../../../../../core/infrastructure/event_bus/search_result_bus.dart';
 import '../../../../../core/infrastructure/event_bus/selected_verse_bus.dart';
 import '../../../../../shared/domain/entities/bible_id.dart';
 import '../../../../../shared/domain/entities/bible_ref.dart';
+import '../../../../../shared/domain/entities/verse.dart';
 import '../../../../../shared/domain/repositories/bible_pane_repository_factory.dart';
 import '../../../../../shared/enums/bible_repository_type.dart';
 import '../../../../../shared/error/failure.dart';
@@ -243,19 +244,26 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     }
   }
 
-  // TODO: reactive this function later
   void _sendTextToObsLiveOverlay(BibleRef ref) {
+    // TODO: should not execute if feature is not running/enabled
     if (_overlayNotifier == null || state.content.isContentEmpty) return;
 
-    // Display content of the first translation
-    final translationToDisplay = state.content.keys.first;
+    // Display content of the first translation available
+    for (final content in state.content.asMap.values) {
+      final verses = content.verses?.values
+          .where((verse) => ref.contains(verse.ref))
+          .toList();
 
-    final verses = state.content[translationToDisplay]!.verses!.values
-        .where((v) => ref.contains(v.ref))
-        .toList();
-    final sel = SelectedVerseBusItem(ref: ref, verses: verses);
-
-    _overlayNotifier.update(sel);
+      if (verses != null && verses.isNotEmpty) {
+        _overlayNotifier.update(
+          SelectedVerseBusItem(
+            ref: ref,
+            verses: verses,
+          ),
+        );
+        return;
+      }
+    }
   }
 
   /// Just change the selected verse
