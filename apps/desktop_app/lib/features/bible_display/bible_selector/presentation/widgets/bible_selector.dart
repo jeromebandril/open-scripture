@@ -44,14 +44,12 @@ class _BibleSelectorState extends State<BibleSelector> {
           color: Theme.of(context).colorScheme.onSurfaceVariant,
         ),
       ),
-      defaultErrorMessage: 'Failed to load Sword modules',
       onRetry: (context) => context.read<MyLibraryCubit>().getBibles(),
     ),
     BibleRepositoryType.cloudAPI: SharedCatalogSelector(
       repoType: BibleRepositoryType.cloudAPI,
       showFilter: true, // Enables the search bar
       emptyWidget: const Text('No results found'),
-      defaultErrorMessage: 'Unknown Error',
       onRetry: (context) => context.read<MyLibraryCubit>().getBibles(),
     ),
   };

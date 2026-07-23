@@ -17,7 +17,6 @@ class SharedCatalogSelector extends StatelessWidget {
   final BibleRepositoryType repoType;
   final bool showFilter;
   final Widget? emptyWidget;
-  final String defaultErrorMessage;
   final Function(BuildContext context)? onRetry;
   final String Function(dynamic bible)? titleBuilder;
   final Widget Function(BuildContext context, dynamic bible)? subtitleBuilder;
@@ -27,7 +26,6 @@ class SharedCatalogSelector extends StatelessWidget {
     required this.repoType,
     this.showFilter = false,
     this.emptyWidget,
-    this.defaultErrorMessage = 'Failed to load bibles',
     this.onRetry,
     this.titleBuilder,
     this.subtitleBuilder,
@@ -81,11 +79,9 @@ class SharedCatalogSelector extends StatelessWidget {
                                 mainAxisSize: MainAxisSize.min,
                                 spacing: 12,
                                 children: [
-                                  Text(state.errorMessage ??
-                                      defaultErrorMessage),
-                                  // Optional retry button from the original Drift selector
+                                  Text(state.errorMessage ?? 'Error'),
                                   if (onRetry != null)
-                                    ElevatedButton(
+                                    TextButton(
                                       onPressed: () => onRetry?.call(context),
                                       child: const Text('Retry'),
                                     ),
