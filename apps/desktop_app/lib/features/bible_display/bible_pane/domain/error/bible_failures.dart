@@ -23,3 +23,12 @@ final class BibleNotFoundFailure extends BibleFailure {
     super.stackTrace,
   });
 }
+
+final class SwordUnavailableFailure extends BibleFailure {
+  const SwordUnavailableFailure({
+    super.message =
+        'The Bible sword engine failed to load. Try restarting the app.',
+    super.cause,
+    super.stackTrace,
+  });
+}

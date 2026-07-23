@@ -88,6 +88,7 @@ class BiblePaneRepositoryImpl implements BiblePaneRepository {
           ChapterUnavailableFailure(cause: e, stackTrace: st),
         NetworkException e =>
           ChapterUnavailableFailure(cause: e, stackTrace: st),
+        SwordException e => SwordUnavailableFailure(cause: e, stackTrace: st),
         _ => UnexpectedFailure(cause: error, stackTrace: st),
       },
     );

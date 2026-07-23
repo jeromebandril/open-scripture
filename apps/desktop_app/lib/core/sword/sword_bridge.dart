@@ -77,13 +77,16 @@ class SwordBridge {
   }
 
   static SwordBridge? create(String modulePath) {
-    final bridge = SwordBridge._();
+    final SwordBridge bridge;
+    try {
+      bridge = SwordBridge._();
+    } catch (_) {
+      return null;
+    }
 
     final pathPtr = modulePath.toNativeUtf8();
     try {
-      final isSuccess = bridge._init(pathPtr) == 1;
-      if (isSuccess) return bridge;
-      return null;
+      return bridge._init(pathPtr) == 1 ? bridge : null;
     } finally {
       malloc.free(pathPtr);
     }

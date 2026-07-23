@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import '../../../domain/entities/bible_book.dart';
+import '../../../error/exception.dart';
 import '../../models/verse_segment_dto.dart';
 import '../../services/sword_service.dart';
 import 'bible_content_datasourcee.dart';
@@ -13,7 +14,6 @@ class SwordBibleContentDatasourceImpl implements BibleContentDatasource {
 
   @override
   Future<int> getChapterBoundaryOf({required String bookToken}) {
-    // TODO: implement getChapterBoundaryOf
     throw UnimplementedError();
   }
 
@@ -22,45 +22,37 @@ class SwordBibleContentDatasourceImpl implements BibleContentDatasource {
       String bibleExtId, BibleBook book, int chapter) async {
     print('getting this: $bibleExtId - ${book.osis}:$chapter');
 
-    final rawJson = (await _swordService.instance)
-        .getChapter(bibleExtId, book.osis, chapter);
+    final bridge = await _swordService.instance;
+    final rawJson = bridge.getChapter(bibleExtId, book.osis, chapter);
 
-    if (rawJson.isEmpty || rawJson == "[]") {
-      return Future.value([]);
+    if (rawJson.isEmpty || rawJson == '[]') {
+      throw NotFoundException(
+          'No verses found for $bibleExtId ${book.osis} $chapter');
     }
 
     try {
       final List<dynamic> parsedVerses = jsonDecode(rawJson);
-      final List<VerseSegmentDto> segments = [];
-
-      for (final verseData in parsedVerses) {
-        final int verseNum = verseData['verse'] as int;
-        String verseText = verseData['text'] as String;
-        bool isParagraphStart =
+      return parsedVerses.map((verseData) {
+        final verseNum = verseData['verse'] as int;
+        var verseText = verseData['text'] as String;
+        final isParagraphStart =
             verseText.startsWith('\n') || verseText.startsWith('\r\n');
         verseText = verseText.trim();
 
-        final String encodedSpans = jsonEncode([
-          {"text": verseText, "activeStyles": []}
-        ]);
-
-        segments.add(
-          VerseSegmentDto(
-            bibleId: bibleExtId.hashCode,
-            bookToken: book.osis,
-            chapterNumber: chapter,
-            verseNumber: verseNum,
-            segmentIndex: 0,
-            paragraphStart: isParagraphStart,
-            spansJson: encodedSpans,
-          ),
+        return VerseSegmentDto(
+          bibleId: bibleExtId.hashCode,
+          bookToken: book.osis,
+          chapterNumber: chapter,
+          verseNumber: verseNum,
+          segmentIndex: 0,
+          paragraphStart: isParagraphStart,
+          spansJson: jsonEncode([
+            {'text': verseText, 'activeStyles': []}
+          ]),
         );
-      }
-
-      return Future.value(segments);
+      }).toList();
     } catch (e) {
-      print('Error parsing chapter JSON from SWORD bridge: $e');
-      return Future.value([]);
+      throw SwordException('Malformed chapter JSON from SWORD bridge: $e');
     }
   }
 

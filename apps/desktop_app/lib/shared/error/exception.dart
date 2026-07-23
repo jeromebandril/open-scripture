@@ -20,6 +20,10 @@ class NetworkException extends AppException {
   const NetworkException(super.details);
 }
 
+class SwordException extends AppException {
+  const SwordException(super.message, {super.cause, super.stackTrace});
+}
+
 class ParseException extends AppException {
   const ParseException(super.details);
 }
