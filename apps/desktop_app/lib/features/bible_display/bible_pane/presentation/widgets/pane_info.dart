@@ -9,7 +9,7 @@ import '../../../../text_scaler/presentation/state/text_scaler_cubit.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../../../multi_pane_manager/presentation/widgets/active_pane_indicator.dart';
 import '../../domain/display_mode.dart';
-import '../cubit/selected_word_cubit.dart';
+import '../../domain/entities/word_info.dart';
 import '../state/bible_pane_bloc.dart';
 
 class _PaneInfoItem extends StatelessWidget {
@@ -107,7 +107,8 @@ class _PaneInfoState extends State<PaneInfo> {
               },
             ),
             if (enableStrongWords)
-              BlocBuilder<SelectedWordCubit, WordInfo?>(
+              BlocSelector<BiblePaneBloc, BiblePaneState, WordInfo?>(
+                selector: (state) => state.selectedWord,
                 builder: (context, wordInfo) {
                   return wordInfo == null
                       ? const SizedBox()

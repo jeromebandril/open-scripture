@@ -14,6 +14,7 @@ import '../../../../../shared/enums/bible_repository_type.dart';
 import '../../../../../shared/error/failure.dart';
 import '../../../../my_library/settings/my_library_settings.dart';
 import '../../domain/display_mode.dart';
+import '../../domain/entities/word_info.dart';
 import '../../domain/repositories/bible_pane_repository.dart';
 import '../models/parallel_bible_config.dart';
 
@@ -43,6 +44,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     on<BiblePaneChooseBibles>(_onOpenBibleSelection);
     // on<BiblePaneDisplayVerses>(_onDisplayVerses);
     on<BiblePaneSetDisplayMode>(_onChangeDisplayMode);
+    on<BiblePaneSelectWord>(_onSelectWord);
 
     // It should not be a problem if it causes state flashes
     // TODO: think a better solution instead of calling event
@@ -301,4 +303,6 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
       BiblePaneSetDisplayMode event, Emitter<BiblePaneState> emit) {
     emit(state.copyWith(dMode: () => event.dMode));
   }
+
+  void _onSelectWord(event, emit) => emit(state.copyWith());
 }

@@ -7,7 +7,7 @@ import '../../../../../shared/domain/entities/verse.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../../../../customizer/presentation/models/bible_view_list_theme.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
-import '../cubit/selected_word_cubit.dart';
+import '../../domain/entities/word_info.dart';
 import '../rendering/verse_ref_label.dart';
 import '../rendering/verse_richtext_builder.dart';
 import '../state/bible_pane_bloc.dart';
@@ -292,10 +292,9 @@ class _VerseWidget extends StatelessWidget {
         VerseSpanBuilder.build(
           spans: segment.spans,
           context: context,
-          onWordTap: (VerseSpan span) =>
-              context.read<SelectedWordCubit>().setSelectedWord(
-                    WordInfo(span: span, text: span.text),
-                  ),
+          onWordTap: (VerseSpan span) => context
+              .read<BiblePaneBloc>()
+              .add(BiblePaneSelectWord(WordInfo(span: span, text: span.text))),
         ),
       );
     }
