@@ -1,17 +1,13 @@
 import '../../../error/exception.dart';
 
-class InvalidInputException extends AppException {
-  const InvalidInputException(super.message, {super.cause, super.stackTrace});
-}
-
-class BibleRefInvalidFormatException extends InvalidInputException {
+class BibleRefInvalidFormatException extends AppException {
   const BibleRefInvalidFormatException(super.message);
 }
 
-class BibleRefInvalidNumberException extends InvalidInputException {
+class BibleRefInvalidNumberException extends AppException {
   const BibleRefInvalidNumberException(super.message);
 }
 
-class BibleRefOutOfRangeException extends InvalidInputException {
+class BibleRefOutOfRangeException extends AppException {
   const BibleRefOutOfRangeException(super.message);
 }
