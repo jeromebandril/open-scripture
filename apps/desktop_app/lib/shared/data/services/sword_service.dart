@@ -2,6 +2,7 @@ import '../../../core/engines/settings/settings_repository.dart';
 import '../../../core/infrastructure/event_bus/install_notifier.dart';
 import '../../../core/sword/sword_bridge.dart';
 import '../../../features/sword/settings/sword_engine_settings.dart';
+import '../../enums/bible_repository_type.dart';
 import '../../error/exception.dart';
 
 class SwordService {
@@ -50,6 +51,6 @@ class SwordService {
     if (!isInitialized) {
       throw SwordException('Failed to restart native Sword engine.');
     }
-    _installNotifier.refreshInstalledList();
+    _installNotifier.refreshInstalledList(repoType: BibleRepositoryType.sword);
   }
 }
