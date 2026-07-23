@@ -1,5 +1,4 @@
 import 'package:fpdart/fpdart.dart';
-import '../../../../../shared/domain/entities/bible_book.dart';
 import '../../../../../shared/domain/entities/bible_id.dart';
 import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../../shared/domain/entities/bible_translation.dart';
@@ -21,9 +20,5 @@ abstract class BiblePaneRepository {
     required BibleRef ref,
   });
 
-  // TODO: passing BibleRef is enough, delete book parameter
-  TaskEither<Failure, int> getMaxVerse({
-    required BibleBook book,
-    required BibleRef ref,
-  });
+  TaskEither<Failure, int> getMaxVerse({required BibleRef ref});
 }

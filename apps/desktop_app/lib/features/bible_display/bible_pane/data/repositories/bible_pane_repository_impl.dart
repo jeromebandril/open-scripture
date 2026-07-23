@@ -4,7 +4,6 @@ import '../../../../../shared/data/datasources/bible_catalog_datasource/bible_ca
 import '../../../../../shared/data/datasources/bible_content_datasource/bible_content_datasourcee.dart';
 import '../../../../../shared/data/models/bible_install_dto.dart';
 import '../../../../../shared/data/models/verse_segment_dto.dart';
-import '../../../../../shared/domain/entities/bible_book.dart';
 import '../../../../../shared/domain/entities/bible_id.dart';
 import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../../shared/domain/entities/bible_translation.dart';
@@ -91,13 +90,10 @@ class BiblePaneRepositoryImpl implements BiblePaneRepository {
   }
 
   @override
-  TaskEither<Failure, int> getMaxVerse({
-    required BibleBook book,
-    required BibleRef ref,
-  }) {
+  TaskEither<Failure, int> getMaxVerse({required BibleRef ref}) {
     return TaskEither.tryCatch(
       () async => (await _contentDatasource.getVerseBoundaryOf(
-        bookToken: book.usfm,
+        bookToken: ref.book.usfm,
         chapter: ref.chapter,
       )),
       (error, st) => UnexpectedFailure(cause: error, stackTrace: st),
