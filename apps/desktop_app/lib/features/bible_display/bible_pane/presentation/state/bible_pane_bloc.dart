@@ -304,5 +304,6 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     emit(state.copyWith(dMode: () => event.dMode));
   }
 
-  void _onSelectWord(event, emit) => emit(state.copyWith());
+  void _onSelectWord(BiblePaneSelectWord event, Emitter<BiblePaneState> emit) =>
+      emit(state.copyWith(selectedWord: () => event.word));
 }
