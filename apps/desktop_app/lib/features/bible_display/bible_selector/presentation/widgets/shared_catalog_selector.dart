@@ -72,8 +72,7 @@ class SharedCatalogSelector extends StatelessWidget {
                         MyLibraryStatus.loading ||
                         MyLibraryStatus.initial =>
                           Center(child: CircularProgressIndicator()),
-                        MyLibraryStatus.error => Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 32),
+                        MyLibraryStatus.error => Expanded(
                             child: Center(
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
