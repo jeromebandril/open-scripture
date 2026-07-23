@@ -1,5 +1,6 @@
 import '../../../../core/infrastructure/database/daos/bible_content_dao.dart';
 import '../../../domain/entities/bible_book.dart';
+import '../../../error/exception.dart';
 import '../../models/verse_segment_dto.dart';
 import 'bible_content_datasourcee.dart';
 
@@ -14,7 +15,17 @@ class DriftBibleContentDataSourceImpl implements BibleContentDatasource {
     BibleBook book,
     int chapter,
   ) async {
-    return _dao.getChapter(bibleExtId, book.usfm, chapter);
+    final List<VerseSegmentDto> result;
+    try {
+      result = await _dao.getChapter(bibleExtId, book.usfm, chapter);
+    } catch (e) {
+      throw Exception('Failed to query chapter: $e');
+    }
+
+    if (result.isEmpty) {
+      throw NotFoundException('No verses found for ${book.usfm} $chapter');
+    }
+    return result;
   }
 
   @override

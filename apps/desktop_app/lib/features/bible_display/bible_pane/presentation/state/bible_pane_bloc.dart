@@ -11,6 +11,7 @@ import '../../../../../shared/domain/entities/bible_id.dart';
 import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../../shared/domain/repositories/bible_pane_repository_factory.dart';
 import '../../../../../shared/enums/bible_repository_type.dart';
+import '../../../../../shared/error/failure.dart';
 import '../../../../my_library/settings/my_library_settings.dart';
 import '../../domain/display_mode.dart';
 import '../../domain/repositories/bible_pane_repository.dart';
@@ -77,15 +78,16 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
 
     for (final id in event.bibleIds) {
       // check if bible actually exists
-      final result = await repo.getBibleMetadata(bibleId: id);
+      final result = await repo.getBible(bibleId: id).run();
 
       result.fold(
         (f) {
           emit(state.copyWith(
             status: () => BiblePaneStatus.error,
             content: () => ParallelBibleConfig.empty,
-            errorMessage: () => f.message,
+            errorMessage: () => '${f.message} ${f.cause.toString()}',
           ));
+          // TODO: fix add partial error/success becaues of parallel view
           return;
         },
         (bm) {
@@ -161,13 +163,16 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     try {
       final newMap = ParallelBibleMap.from(state.content.asMap);
       bool hasAtLeastOneSuccess = false;
+      List<Failure> errors = [];
       int maxVerseCount = 0;
 
       final fetchFutures = state.openedBiblesIds.map((id) async {
-        final failureOrChapter = await (await _repo).getChapterWithSpans(
-          bibleId: id,
-          ref: event.ref,
-        );
+        final failureOrChapter = await (await _repo)
+            .getChapter(
+              bibleId: id,
+              ref: event.ref,
+            )
+            .run();
         return MapEntry(id, failureOrChapter);
       });
 
@@ -178,8 +183,8 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
         final failureOrChapter = entry.value;
 
         await failureOrChapter.fold<Future<void>>(
-          (fail) async {
-            // TODO: get failure details and reason
+          (failure) async {
+            errors.add(failure);
             newMap[id] = newMap[id]!.copyWith(
               verses: () => null,
             );
@@ -189,10 +194,12 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
 
             // update bible info with verse counter
             // get the greatest count
-            final result = (await (await _repo).getMaxVerse(
-              ref: event.ref,
-              book: event.ref.book,
-            ))
+            final result = (await (await _repo)
+                    .getMaxVerse(
+                      ref: event.ref,
+                      book: event.ref.book,
+                    )
+                    .run())
                 .getOrElse((_) => 0);
 
             if (result > maxVerseCount) maxVerseCount = result;
@@ -232,7 +239,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
           reference: () => event.ref,
           content: () => content,
           isMixed: () => false,
-          errorMessage: () => 'Not found in any translation',
+          errorMessage: () => errors.first.message,
           verseCount: () => maxVerseCount,
         ));
       }

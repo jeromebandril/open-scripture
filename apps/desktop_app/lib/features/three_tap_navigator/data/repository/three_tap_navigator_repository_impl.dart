@@ -38,7 +38,7 @@ class ThreeTapNavigatorRepositoryImpl implements ThreeTapNavigatorRepository {
       final books = dtos.map((dto) => dto.toDomain()).toList();
       return Right(books);
     } catch (e) {
-      return Left(UnknownFailure(details: e.toString()));
+      return Left(UnexpectedFailure(cause: e));
     }
   }
 
@@ -51,7 +51,7 @@ class ThreeTapNavigatorRepositoryImpl implements ThreeTapNavigatorRepository {
         bookToken: bookToken,
       ));
     } catch (e) {
-      return Left(UnknownFailure(details: e.toString()));
+      return Left(UnexpectedFailure(cause: e));
     }
   }
 
@@ -66,7 +66,7 @@ class ThreeTapNavigatorRepositoryImpl implements ThreeTapNavigatorRepository {
         chapter: chapter,
       ));
     } catch (e) {
-      return Left(UnknownFailure(details: e.toString()));
+      return Left(UnexpectedFailure(cause: e));
     }
   }
 }

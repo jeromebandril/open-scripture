@@ -47,18 +47,12 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     final intent = _resolver.resolve(event.query);
     switch (intent) {
       case ReferenceIntent():
-        final result = await _repo.parse(intent.rawQuery);
+        final result = await _repo.parse(intent.rawQuery).run();
         result.fold(
           (f) => emit(SearchError(
-            message: f.details,
-            errorCount: state.errorCount + 1,
-          )),
-          (ref) {
-            print('parsed ref: $ref');
-            // I should emit anything here right bro?
-            // emit(SearchReferenceResult(ref: ref));
-            _searchIntentBus.emit(ResolvedPartialRefIntent(ref: ref));
-          },
+              message: '${f.message}: ${f.cause.toString()}',
+              errorCount: state.errorCount + 1)),
+          (ref) => _searchIntentBus.emit(ResolvedPartialRefIntent(ref: ref)),
         );
         break;
 

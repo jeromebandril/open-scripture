@@ -41,7 +41,7 @@ class SettingsRepositoryImpl<T> implements SettingsRepository<T> {
       _controller.add(value);
       return Right(value);
     } catch (e) {
-      return Left(UnknownFailure(details: e.toString()));
+      return Left(UnexpectedFailure(cause: e));
     }
   }
 

@@ -7,27 +7,22 @@ import '../../../../../shared/domain/entities/verse.dart';
 import '../../../../../shared/error/failure.dart';
 
 abstract class BiblePaneRepository {
-  Future<Either<Failure, BibleTranslation>> getBibleMetadata({
+  TaskEither<Failure, BibleTranslation> getBible({
     required BibleId bibleId,
   });
 
-  Future<Either<Failure, List<Verse>>> getVersesWithSpans({
+  TaskEither<Failure, List<Verse>> getVerses({
     required BibleId bibleId,
     required List<BibleRef> refs,
   });
 
-  Future<Either<Failure, List<Verse>>> getChapterWithSpans({
-    required BibleId bibleId,
-    required BibleRef ref,
-  });
-
-  Future<Either<Failure, List<Verse>>> getChapter({
+  TaskEither<Failure, List<Verse>> getChapter({
     required BibleId bibleId,
     required BibleRef ref,
   });
 
   // TODO: passing BibleRef is enough, delete book parameter
-  Future<Either<Failure, int>> getMaxVerse({
+  TaskEither<Failure, int> getMaxVerse({
     required BibleBook book,
     required BibleRef ref,
   });

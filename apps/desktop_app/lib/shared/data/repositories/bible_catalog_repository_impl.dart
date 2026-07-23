@@ -19,7 +19,7 @@ class BibleCatalogRepositoryImpl implements BibleCatalogRepository {
       return Right(dtos.map((dto) => dto.toDomain()).toList());
     } catch (e) {
       // TODO: implement proper failure
-      return Left(UnknownFailure());
+      return Left(UnexpectedFailure());
     }
   }
 
@@ -32,7 +32,7 @@ class BibleCatalogRepositoryImpl implements BibleCatalogRepository {
       return Right(dto.toDomain());
     } catch (e) {
       // TODO: implement proper failure
-      return Left(UnknownFailure());
+      return Left(UnexpectedFailure());
     }
   }
 }

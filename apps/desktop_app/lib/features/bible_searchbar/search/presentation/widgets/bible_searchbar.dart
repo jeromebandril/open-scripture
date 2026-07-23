@@ -5,8 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-import '../../../../../app/state/fullscreen_cubit.dart';
-import '../../../../../app/state/interface_visibility_cubit.dart';
 import '../../../../../core/di/injection_container.dart' as di;
 import '../../../../../shared/design_system/design_system.dart';
 import '../../../../../shared/domain/entities/bible_book.dart';
@@ -184,10 +182,6 @@ class _BSearchbarState extends State<BSearchbar> {
               prev.errorCount != curr.errorCount && curr.errorCount > 0,
           listener: (context, state) {
             if (state is! SearchError) return;
-            final isFullscreen = context.read<FullscreenCubit>().state;
-            final showMenuBar =
-                context.read<InterfaceVisibilityCubit>().state.isToolbarVisible;
-            if (!isFullscreen || showMenuBar) return;
           },
           buildWhen: (prev, curr) =>
               prev.errorCount != curr.errorCount && curr.errorCount > 0,
