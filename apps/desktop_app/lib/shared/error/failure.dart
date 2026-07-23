@@ -24,3 +24,11 @@ class UnexpectedFailure extends Failure {
     super.stackTrace,
   });
 }
+
+class NetworkFailure extends Failure {
+  const NetworkFailure({
+    super.message = 'A network connection error happened',
+    super.cause,
+    super.stackTrace,
+  });
+}
