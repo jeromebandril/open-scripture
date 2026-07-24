@@ -66,75 +66,79 @@ class _InitalEmptyContentScreenState extends State<InitalEmptyContentScreen> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: 300),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          spacing: AppSpacing.sm,
-          children: [
-            Text(
-              'Ready',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            BlocBuilder<BiblePaneBloc, BiblePaneState>(
-              builder: (context, state) {
-                final openBibles =
-                    state.openedBiblesIds.map((ob) => ob.externalId);
-                return Text(
-                  openBibles.join(' | '),
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodySmall,
-                );
-              },
-            ),
-            SizedBox(height: AppSpacing.sm),
-            Text(
-              '"${verse.text}" - ${verse.reference.replaceAll(' ', '\u00A0')}',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodySmall
-                  ?.copyWith(fontStyle: FontStyle.italic),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: AppSpacing.sm),
-            _Control(
-              command: AppCommand.focusSearch,
-              label: 'Search reference',
-              icon: LucideIcons.search,
-            ),
-            _Control(
-              command: AppCommand.nextVerse,
-              label: 'Select next verse',
-              icon: LucideIcons.arrowRight,
-            ),
-            _Control(
-              command: AppCommand.toggleFullscreen,
-              label: 'Toggle Fullscreen',
-              icon: LucideIcons.maximize2,
-            ),
-            _Control(
-              command: AppCommand.toggleToolbar,
-              label: 'Toggle topbar',
-              icon: LucideIcons.panelTop,
-            ),
-            _Control(
-              command: AppCommand.changeBible,
-              label: 'Change bible',
-              icon: LucideIcons.bookOpen,
-            ),
-            _Control(
-              command: AppCommand.switchDisplayMode,
-              label: 'Switch display mode',
-              icon: LucideIcons.monitor,
-            ),
-            _Control(
-              command: AppCommand.addPane,
-              label: 'Add split screen',
-              icon: LucideIcons.squareSplitHorizontal,
-            ),
-          ],
+      child: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg, vertical: AppSpacing.xl2),
+          constraints: BoxConstraints(maxWidth: 332),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            spacing: AppSpacing.sm,
+            children: [
+              Text(
+                'Ready',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              BlocBuilder<BiblePaneBloc, BiblePaneState>(
+                builder: (context, state) {
+                  final openBibles =
+                      state.openedBiblesIds.map((ob) => ob.externalId);
+                  return Text(
+                    openBibles.join(' | '),
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  );
+                },
+              ),
+              SizedBox(height: AppSpacing.sm),
+              Text(
+                '"${verse.text}" - ${verse.reference.replaceAll(' ', '\u00A0')}',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall
+                    ?.copyWith(fontStyle: FontStyle.italic),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: AppSpacing.sm),
+              _Control(
+                command: AppCommand.focusSearch,
+                label: 'Search reference',
+                icon: LucideIcons.search,
+              ),
+              _Control(
+                command: AppCommand.nextVerse,
+                label: 'Select next verse',
+                icon: LucideIcons.arrowRight,
+              ),
+              _Control(
+                command: AppCommand.toggleFullscreen,
+                label: 'Toggle Fullscreen',
+                icon: LucideIcons.maximize2,
+              ),
+              _Control(
+                command: AppCommand.toggleToolbar,
+                label: 'Toggle topbar',
+                icon: LucideIcons.panelTop,
+              ),
+              _Control(
+                command: AppCommand.changeBible,
+                label: 'Change bible',
+                icon: LucideIcons.bookOpen,
+              ),
+              _Control(
+                command: AppCommand.switchDisplayMode,
+                label: 'Switch display mode',
+                icon: LucideIcons.monitor,
+              ),
+              _Control(
+                command: AppCommand.addPane,
+                label: 'Add split screen',
+                icon: LucideIcons.squareSplitHorizontal,
+              ),
+            ],
+          ),
         ),
       ),
     );
