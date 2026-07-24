@@ -105,6 +105,11 @@ class _InitalEmptyContentScreenState extends State<InitalEmptyContentScreen> {
               icon: LucideIcons.search,
             ),
             _Control(
+              command: AppCommand.nextVerse,
+              label: 'Select next verse',
+              icon: LucideIcons.arrowRight,
+            ),
+            _Control(
               command: AppCommand.toggleFullscreen,
               label: 'Toggle Fullscreen',
               icon: LucideIcons.maximize2,
