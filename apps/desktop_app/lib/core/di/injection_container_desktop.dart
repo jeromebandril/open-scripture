@@ -18,14 +18,12 @@ import '../../features/obs_live_overlay/data/service/verse_html_formatter_impl.d
 import '../../features/obs_live_overlay/domain/repostiory/overlay_repository.dart';
 import '../../features/obs_live_overlay/domain/service/verse_html_formatter.dart';
 import '../../features/obs_live_overlay/presentation/state/obs_live_overlay_cubit.dart';
-import '../../features/obs_live_overlay/settings/obs_live_overlay_settings_cubit.dart';
 import '../../features/obs_live_overlay/settings/overlay_settings.dart';
 import '../../features/remote_controller/data/datasource/remote_controller_ws.dart';
 import '../../features/remote_controller/data/repositories/remote_controller_repo_impl.dart';
 import '../../features/remote_controller/domain/repositories/remote_controller_repo.dart';
 import '../../features/remote_controller/presentation/state/remote_controller_cubit.dart';
 import '../../features/remote_controller/settings/remote_controller_settings.dart';
-import '../../features/remote_controller/settings/remote_controller_settings_cubit.dart';
 import '../../features/sword/settings/sword_engine_settings.dart';
 import '../../features/sword/settings/sword_engine_settings_cubit.dart';
 import '../../shared/data/datasources/bible_catalog_datasource/bible_catalog_datasource.dart';
@@ -42,9 +40,10 @@ import '../../shared/domain/repositories/bible_install_repository.dart';
 import '../../shared/domain/repositories/bible_pane_repository_factory.dart';
 import '../../shared/enums/bible_repository_type.dart';
 import '../engines/remote_controller/remote_command_router.dart';
-import '../settings/datasource/settings_datasource_desktop.dart';
-import '../settings/settings_repository.dart';
 import '../infrastructure/event_bus/selected_verse_bus.dart';
+import '../settings/datasource/settings_datasource_desktop.dart';
+import '../settings/settings_cubit.dart';
+import '../settings/settings_repository.dart';
 import '../lifecycle/app_lifecycle.dart';
 import '../lifecycle/app_lifecycle_desktop_impl.dart';
 
@@ -191,7 +190,7 @@ void _registerRemoteController(GetIt sl) {
     ),
     dispose: (repo) => repo.dispose(),
   );
-  sl.registerFactory(() => RemoteControllerSettingsCubit(repo: sl()));
+  sl.registerFactory(() => SettingsCubit<RemoteControllerSettings>(sl()));
   sl.registerLazySingleton(() => RemoteControllerWSServer());
   sl.registerLazySingleton<RemoteCommandRouter>(
     () => RemoteCommandRouter(
@@ -220,7 +219,7 @@ void _registerObsOverlay(GetIt sl) {
     ),
     dispose: (repo) => repo.dispose(),
   );
-  sl.registerFactory(() => ObsLiveOverlaySettingsCubit(repo: sl()));
+  sl.registerFactory(() => SettingsCubit<OverlaySettings>(sl()));
 
   sl.registerLazySingleton<VerseHtmlFormatter>(() => VerseHtmlFormatterImpl());
 

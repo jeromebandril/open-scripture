@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/settings/settings_cubit.dart';
 import '../../../../shared/design_system/design_system.dart';
 import '../../../../shared/domain/entities/bible_translation.dart';
 import '../../../../shared/widgets/hoverable_container.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
-import '../../settings/my_library_settings_cubit.dart';
+import '../../settings/my_library_settings.dart';
 import '../state/my_library_cubit.dart';
 
 // TODO: implement a refresh button
@@ -44,8 +45,8 @@ class LibraryManagerPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pref =
-        context.select((MyLibrarySettingsCubit c) => c.state.preferredBibleId);
+    final pref = context.select(
+        (SettingsCubit<MyLibrarySettings> c) => c.state.preferredBibleId);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -109,12 +110,12 @@ class LibraryManagerPage extends StatelessWidget {
                 TextButton(
                     onPressed: isPreference
                         ? () => context
-                            .read<MyLibrarySettingsCubit>()
-                            .updateSettings(
+                            .read<SettingsCubit<MyLibrarySettings>>()
+                            .update(
                                 (s) => s.copyWith(preferredBibleId: () => null))
                         : () => context
-                            .read<MyLibrarySettingsCubit>()
-                            .updateSettings((s) => s.copyWith(
+                            .read<SettingsCubit<MyLibrarySettings>>()
+                            .update((s) => s.copyWith(
                                 preferredBibleId: () => bible.extId)),
                     child: Row(
                       spacing: 4,

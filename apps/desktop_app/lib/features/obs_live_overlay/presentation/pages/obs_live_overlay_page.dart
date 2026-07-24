@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/settings/settings_cubit.dart';
 import '../../../../shared/widgets/dot.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
 import '../../../settings_window/presentation/pages/not_available_page.dart';
 import '../../../settings_window/presentation/widgets/setting.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
-import '../../settings/obs_live_overlay_settings_cubit.dart';
+import '../../settings/overlay_settings.dart';
 import '../state/obs_live_overlay_cubit.dart';
 
 class ObsLiveOverlayPage extends StatelessWidget {
@@ -23,7 +24,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
     return kIsWeb
         ? const FeatureNotAvailablePage(featureDescription: featureDescription)
         : BlocProvider.value(
-            value: context.read<ObsLiveOverlaySettingsCubit>(),
+            value: context.read<SettingsCubit<OverlaySettings>>(),
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(42, 0, 42, 42),
               child: BlocBuilder<ObsLiveOverlayCubit, ObsLiveOverlayState>(
@@ -31,7 +32,8 @@ class ObsLiveOverlayPage extends StatelessWidget {
                     curr.isRunning != prev.isRunning || curr.busy != prev.busy,
                 builder: (ctx, state) {
                   final enableFeature = ctx.select(
-                      (ObsLiveOverlaySettingsCubit c) => c.state.enableFeature);
+                      (SettingsCubit<OverlaySettings> c) =>
+                          c.state.enableFeature);
                   return Column(
                     children: [
                       SettingSection(
@@ -55,17 +57,21 @@ class ObsLiveOverlayPage extends StatelessWidget {
                                         ? ctx
                                             .read<ObsLiveOverlayCubit>()
                                             .stopServer()
-                                        : ctx.read<ObsLiveOverlayCubit>().startServer(
-                                            port: ctx
-                                                .read<
-                                                    ObsLiveOverlaySettingsCubit>()
-                                                .state
-                                                .port,
-                                            hideDebounceTimeSeconds: ctx
-                                                .read<
-                                                    ObsLiveOverlaySettingsCubit>()
-                                                .state
-                                                .hideDebounceSeconds),
+                                        : ctx
+                                            .read<ObsLiveOverlayCubit>()
+                                            .startServer(
+                                                port: ctx
+                                                    .read<
+                                                        SettingsCubit<
+                                                            OverlaySettings>>()
+                                                    .state
+                                                    .port,
+                                                hideDebounceTimeSeconds: ctx
+                                                    .read<
+                                                        SettingsCubit<
+                                                            OverlaySettings>>()
+                                                    .state
+                                                    .hideDebounceSeconds),
                                 child: state.isRunning
                                     ? const Text('Turn OBS Live Overlay Off')
                                     : const Text('Turn OBS Live Overlay On'),
@@ -86,9 +92,9 @@ class ObsLiveOverlayPage extends StatelessWidget {
                                 value: enableFeature,
                                 onChanged: (val) {
                                   ctx
-                                      .read<ObsLiveOverlaySettingsCubit>()
-                                      .updateSettings((settings) => settings
-                                          .copyWith(enableFeature: val));
+                                      .read<SettingsCubit<OverlaySettings>>()
+                                      .update((settings) => settings.copyWith(
+                                          enableFeature: val));
                                 },
                               )),
                           Setting(
@@ -99,11 +105,11 @@ class ObsLiveOverlayPage extends StatelessWidget {
                               child: AppInputBool(
                                 enabled: false, //state.isRunning || state.busy,
                                 value: false,
-                                // ctx.select((ObsLiveOverlaySettingsCubit c) =>
+                                // ctx.select((SettingsCubit<OverlaySettings> c) =>
                                 //     c.state.settings.enableAutoStart),
                                 onChanged: (val) {
                                   // ctx
-                                  //     .read<ObsLiveOverlaySettingsCubit>()
+                                  //     .read<SettingsCubit<OverlaySettings>>()
                                   //     .updateSettings((settings) =>
                                   //         settings.copyWith(enableAutoStart: val));
                                 },
@@ -116,13 +122,13 @@ class ObsLiveOverlayPage extends StatelessWidget {
                                 enabled: false,
                                 value: false,
                                 // enabled: !(state.isRunning || state.busy),
-                                // value: ctx.select((ObsLiveOverlaySettingsCubit c) =>
+                                // value: ctx.select((SettingsCubit<OverlaySettings> c) =>
                                 //     c.state.settings.enableManualControl),
                                 onChanged: (val) {
                                   ctx
-                                      .read<ObsLiveOverlaySettingsCubit>()
-                                      .updateSettings((settings) => settings
-                                          .copyWith(enableManualControl: val));
+                                      .read<SettingsCubit<OverlaySettings>>()
+                                      .update((settings) => settings.copyWith(
+                                          enableManualControl: val));
                                 },
                               )),
                           Setting(
@@ -134,12 +140,12 @@ class ObsLiveOverlayPage extends StatelessWidget {
                                 min: 49152,
                                 max: 65535,
                                 value: ctx.select(
-                                    (ObsLiveOverlaySettingsCubit c) =>
+                                    (SettingsCubit<OverlaySettings> c) =>
                                         c.state.port),
                                 onSubmitted: (p) {
                                   ctx
-                                      .read<ObsLiveOverlaySettingsCubit>()
-                                      .updateSettings((settings) =>
+                                      .read<SettingsCubit<OverlaySettings>>()
+                                      .update((settings) =>
                                           settings.copyWith(port: p.toInt()));
                                 },
                               )),
@@ -152,14 +158,13 @@ class ObsLiveOverlayPage extends StatelessWidget {
                                 min: 5,
                                 max: 480,
                                 value: ctx.select(
-                                    (ObsLiveOverlaySettingsCubit c) =>
+                                    (SettingsCubit<OverlaySettings> c) =>
                                         c.state.hideDebounceSeconds),
                                 onSubmitted: (p) {
                                   ctx
-                                      .read<ObsLiveOverlaySettingsCubit>()
-                                      .updateSettings((settings) =>
-                                          settings.copyWith(
-                                              hideDebounceSeconds: p.toInt()));
+                                      .read<SettingsCubit<OverlaySettings>>()
+                                      .update((settings) => settings.copyWith(
+                                          hideDebounceSeconds: p.toInt()));
                                 },
                               )),
                           Setting(
@@ -169,7 +174,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                               settingWidth: 300,
                               child: Builder(builder: (context) {
                                 final url = context.select(
-                                    (ObsLiveOverlaySettingsCubit c) =>
+                                    (SettingsCubit<OverlaySettings> c) =>
                                         c.state.url);
 
                                 return Row(

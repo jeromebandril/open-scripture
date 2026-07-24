@@ -17,7 +17,6 @@ import '../../features/customizer/presentation/state/customizer_cubit.dart';
 import '../../features/font_loader/presentation/state/font_loader_cubit.dart';
 import '../../features/my_library/presentation/state/my_library_cubit.dart';
 import '../../features/my_library/settings/my_library_settings.dart';
-import '../../features/my_library/settings/my_library_settings_cubit.dart';
 import '../../features/shortcuts/data/repositories/shortcuts_repo_impl.dart';
 import '../../features/shortcuts/domain/repositories/shortcuts_repo.dart';
 import '../../features/shortcuts/presentation/models/app_command_dispatcher.dart';
@@ -55,6 +54,7 @@ import '../engines/bible_compiler/import/formats/osis_importer.dart';
 import '../engines/bible_compiler/import/formats/usfx_importer.dart';
 import '../engines/bible_compiler/import/importer_registry.dart';
 import '../settings/datasource/settings_datasource_desktop.dart';
+import '../settings/settings_cubit.dart';
 import '../settings/settings_repository.dart';
 import '../infrastructure/database/daos/bible_content_dao.dart';
 import '../infrastructure/database/daos/bible_installation_dao.dart';
@@ -126,7 +126,7 @@ Future<void> init(GetIt sl) async {
     ),
     dispose: (repo) => repo.dispose(),
   );
-  sl.registerSingleton(MyLibrarySettingsCubit(repo: sl()));
+  sl.registerSingleton(SettingsCubit<MyLibrarySettings>(sl()));
 }
 
 // ---------------------------------------------------------------------------
