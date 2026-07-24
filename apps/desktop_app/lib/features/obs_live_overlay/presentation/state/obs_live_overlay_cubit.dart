@@ -13,12 +13,12 @@ part 'obs_live_overlay_state.dart';
 class ObsLiveOverlayCubit extends Cubit<ObsLiveOverlayState> {
   ObsLiveOverlayCubit({
     required OverlayRepository repo,
-    required SelectedVerseBus notifier,
+    required SelectedVerseBus selectedVerseBus,
     required VerseHtmlFormatter htmlFormatter,
   })  : _htmlFormatter = htmlFormatter,
         _repo = repo,
         super(ObsLiveOverlayState.initial()) {
-    _sub = notifier.stream.listen((data) {
+    _sub = selectedVerseBus.stream.listen((data) {
       if (!_repo.isRunning) return;
 
       final spans = data.verses.expand((v) => v.spans).toList();
@@ -36,8 +36,8 @@ class ObsLiveOverlayCubit extends Cubit<ObsLiveOverlayState> {
   final OverlayRepository _repo;
   final VerseHtmlFormatter _htmlFormatter;
   late final StreamSubscription _sub;
-  Timer? _hideDebounce;
-  int? _debounceTime;
+  Timer? _hideDebounceTimer;
+  int? _hideDebounceSeconds;
 
   void _setEmptySnapshot() {
     final emptySnapshot = OverlaySnapshot.initial();
@@ -45,9 +45,9 @@ class ObsLiveOverlayCubit extends Cubit<ObsLiveOverlayState> {
   }
 
   void _scheduleHideDeb() {
-    _hideDebounce?.cancel();
-    _hideDebounce = Timer(
-        Duration(seconds: _debounceTime ?? 30), () => _setEmptySnapshot());
+    _hideDebounceTimer?.cancel();
+    _hideDebounceTimer = Timer(Duration(seconds: _hideDebounceSeconds ?? 30),
+        () => _setEmptySnapshot());
   }
 
   Future<void> startServer({
@@ -57,7 +57,7 @@ class ObsLiveOverlayCubit extends Cubit<ObsLiveOverlayState> {
     emit(state.copyWith(busy: true, error: null));
     try {
       await _repo.start(port: port, controllerToken: '123456');
-      _debounceTime = hideDebounceTimeSeconds;
+      _hideDebounceSeconds = hideDebounceTimeSeconds;
       emit(state.copyWith(
         busy: false,
         isRunning: _repo.isRunning,
@@ -72,7 +72,7 @@ class ObsLiveOverlayCubit extends Cubit<ObsLiveOverlayState> {
   Future<void> stopServer() async {
     emit(state.copyWith(busy: true, error: null));
     try {
-      _hideDebounce?.cancel();
+      _hideDebounceTimer?.cancel();
       await _repo.stop();
       emit(state.copyWith(
         busy: false,
