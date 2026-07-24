@@ -119,8 +119,8 @@ class ToolbarMenu extends StatelessWidget {
                         ? const Text('Hide top bar')
                         : const Text('Show top bar'),
                     icon: state.isToolbarVisible
-                        ? const Icon(LucideIcons.eye)
-                        : const Icon(LucideIcons.eyeClosed),
+                        ? const Icon(LucideIcons.panelTopClose)
+                        : const Icon(LucideIcons.panelTopOpen),
                   );
                 }),
               ),

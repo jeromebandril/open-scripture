@@ -112,7 +112,7 @@ class _InitalEmptyContentScreenState extends State<InitalEmptyContentScreen> {
             _Control(
               command: AppCommand.toggleToolbar,
               label: 'Toggle topbar',
-              icon: LucideIcons.eye,
+              icon: LucideIcons.panelTop,
             ),
             _Control(
               command: AppCommand.changeBible,
