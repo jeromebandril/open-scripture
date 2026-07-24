@@ -37,11 +37,9 @@ class ObsLiveOverlayCubit extends Cubit<ObsLiveOverlayState> {
   final VerseHtmlFormatter _htmlFormatter;
   late final StreamSubscription _sub;
   Timer? _hideDebounceTimer;
-  int? _hideDebounceSeconds;
 
-  Future<void> startServer({required int port, int? hideDebounceTimeSeconds}) {
-    _hideDebounceSeconds = hideDebounceTimeSeconds;
-    return _run(() => _repo.start(port: port, controllerToken: '123456'));
+  Future<void> startServer() {
+    return _run(() => _repo.start());
   }
 
   Future<void> stopServer() {
@@ -75,7 +73,7 @@ class ObsLiveOverlayCubit extends Cubit<ObsLiveOverlayState> {
 
   void _scheduleHideDeb() {
     _hideDebounceTimer?.cancel();
-    _hideDebounceTimer = Timer(Duration(seconds: _hideDebounceSeconds ?? 30),
+    _hideDebounceTimer = Timer(const Duration(seconds: 30),
         () => setSnapshot(OverlaySnapshot.initial()));
   }
 

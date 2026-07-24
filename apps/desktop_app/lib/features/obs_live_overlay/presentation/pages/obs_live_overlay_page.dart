@@ -59,19 +59,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                                             .stopServer()
                                         : ctx
                                             .read<ObsLiveOverlayCubit>()
-                                            .startServer(
-                                                port: ctx
-                                                    .read<
-                                                        SettingsCubit<
-                                                            OverlaySettings>>()
-                                                    .state
-                                                    .port,
-                                                hideDebounceTimeSeconds: ctx
-                                                    .read<
-                                                        SettingsCubit<
-                                                            OverlaySettings>>()
-                                                    .state
-                                                    .hideDebounceSeconds),
+                                            .startServer(),
                                 child: state.isRunning
                                     ? const Text('Turn OBS Live Overlay Off')
                                     : const Text('Turn OBS Live Overlay On'),

@@ -1,18 +1,25 @@
+import '../../../../core/settings/settings_repository.dart';
 import '../../domain/entities/overlay_models.dart';
 import '../../domain/repostiory/overlay_repository.dart';
+import '../../settings/overlay_settings.dart';
 import '../datasource/overlay_control_server.dart';
 
 class OverlayRepositoryImpl implements OverlayRepository {
   final OverlayControlServer server;
+  final SettingsRepository<OverlaySettings> settings;
 
-  OverlayRepositoryImpl({required this.server});
+  OverlayRepositoryImpl({required this.server, required this.settings});
 
   @override
   bool get isRunning => server.isRunning;
 
   @override
-  Future<void> start({required int port, required String controllerToken}) =>
-      server.start(port: port, controllerToken: controllerToken);
+  Future<void> start() =>
+      // TODO: remove this hardcoded controller token
+      server.start(
+        port: settings.current.port,
+        controllerToken: '123456',
+      );
 
   @override
   Future<void> stop() async {

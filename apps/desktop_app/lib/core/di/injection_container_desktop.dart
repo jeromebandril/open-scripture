@@ -229,7 +229,7 @@ void _registerObsOverlay(GetIt sl) {
     ensureAssetsExtracted: sl<OverlayFilesystem>().ensureExtracted, 
     readOverlayFile: sl<OverlayFilesystem>().readOverlayFile 
   ));
-  sl.registerLazySingleton<OverlayRepository>(() => OverlayRepositoryImpl(server: sl<OverlayControlServer>()));
+  sl.registerLazySingleton<OverlayRepository>(() => OverlayRepositoryImpl(server: sl<OverlayControlServer>(), settings: sl<SettingsRepository<OverlaySettings>>()));
   sl.registerFactory(() => ObsLiveOverlayCubit(repo: sl(), selectedVerseBus: sl(), htmlFormatter: sl()));
 }
 
