@@ -39,25 +39,20 @@ class ObsLiveOverlayCubit extends Cubit<ObsLiveOverlayState> {
   Timer? _hideDebounceTimer;
   int? _hideDebounceSeconds;
 
-  void _setEmptySnapshot() {
-    final emptySnapshot = OverlaySnapshot.initial();
-    setSnapshot(emptySnapshot);
+  Future<void> startServer({required int port, int? hideDebounceTimeSeconds}) {
+    _hideDebounceSeconds = hideDebounceTimeSeconds;
+    return _run(() => _repo.start(port: port, controllerToken: '123456'));
   }
 
-  void _scheduleHideDeb() {
+  Future<void> stopServer() {
     _hideDebounceTimer?.cancel();
-    _hideDebounceTimer = Timer(Duration(seconds: _hideDebounceSeconds ?? 30),
-        () => _setEmptySnapshot());
+    return _run(() => _repo.stop());
   }
 
-  Future<void> startServer({
-    required int port,
-    int? hideDebounceTimeSeconds,
-  }) async {
+  Future<void> _run(Future<void> Function() action) async {
     emit(state.copyWith(busy: true, error: null));
     try {
-      await _repo.start(port: port, controllerToken: '123456');
-      _hideDebounceSeconds = hideDebounceTimeSeconds;
+      await action();
       emit(state.copyWith(
         busy: false,
         isRunning: _repo.isRunning,
@@ -65,23 +60,10 @@ class ObsLiveOverlayCubit extends Cubit<ObsLiveOverlayState> {
       ));
     } catch (e) {
       emit(state.copyWith(
-          busy: false, error: e.toString(), isRunning: _repo.isRunning));
-    }
-  }
-
-  Future<void> stopServer() async {
-    emit(state.copyWith(busy: true, error: null));
-    try {
-      _hideDebounceTimer?.cancel();
-      await _repo.stop();
-      emit(state.copyWith(
         busy: false,
+        error: e.toString(),
         isRunning: _repo.isRunning,
-        snapshot: _repo.snapshot,
       ));
-    } catch (e) {
-      emit(state.copyWith(
-          busy: false, error: e.toString(), isRunning: _repo.isRunning));
     }
   }
 
@@ -89,6 +71,12 @@ class ObsLiveOverlayCubit extends Cubit<ObsLiveOverlayState> {
     _repo.setSnapshot(snapshot: snapshot);
     emit(state.copyWith(snapshot: _repo.snapshot));
     _scheduleHideDeb();
+  }
+
+  void _scheduleHideDeb() {
+    _hideDebounceTimer?.cancel();
+    _hideDebounceTimer = Timer(Duration(seconds: _hideDebounceSeconds ?? 30),
+        () => setSnapshot(OverlaySnapshot.initial()));
   }
 
   @override
