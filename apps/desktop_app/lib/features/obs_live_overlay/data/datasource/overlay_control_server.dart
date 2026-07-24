@@ -4,30 +4,31 @@ import 'dart:io';
 import '../../domain/entities/overlay_models.dart';
 
 class OverlayControlServer {
-  final int port;
-  final String controllerToken; // shown in desktop UI
   final Future<String> Function(String fileName) readOverlayFile;
+  final Future<void> Function() ensureAssetsExtracted;
 
   HttpServer? _server;
-
+  String? _controllerToken;
   final _clients = <WebSocket>{};
   OverlaySnapshot _snapshot = OverlaySnapshot.initial();
 
-  OverlayControlServer({
-    required this.port,
-    required this.controllerToken,
-    required this.readOverlayFile,
-  });
-
+  bool get isRunning => _server != null;
   OverlaySnapshot get snapshot => _snapshot;
   void setSnapshot(OverlaySnapshot next) => _snapshot = next;
 
-  Future<void> start() async {
-    // One bind that supports both:
-    // - OBS: http://127.0.0.1:port/overlay
-    // - Phone: http://<LAN-IP>:port/ (for controller app)
-    _server = await HttpServer.bind(InternetAddress.anyIPv4, port);
+  OverlayControlServer({
+    required this.ensureAssetsExtracted,
+    required this.readOverlayFile,
+  });
 
+  Future<void> start({
+    required int port,
+    required String controllerToken,
+  }) async {
+    if (isRunning) return;
+    await ensureAssetsExtracted();
+    _controllerToken = controllerToken;
+    _server = await HttpServer.bind(InternetAddress.anyIPv4, port);
     _server!.listen(_handleHttp);
   }
 
@@ -139,7 +140,7 @@ class OverlayControlServer {
           // Controllers from LAN must provide token
           if (role == 'controller' && !isLoopback) {
             final token = (msg['token'] ?? '') as String;
-            if (token != controllerToken) {
+            if (token != _controllerToken) {
               ws.add(WsMsg('error', {
                 'code': 'UNAUTH',
                 'message': 'Invalid token',

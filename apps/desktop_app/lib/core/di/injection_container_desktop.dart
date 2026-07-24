@@ -11,8 +11,8 @@ import '../../features/bible_searchbar/search/presentation/remote/search_handler
 import '../../features/bible_searchbar/search/presentation/state/search_bloc.dart';
 import '../../features/customizer/presentation/state/customizer_cubit.dart';
 import '../../features/my_library/presentation/state/my_library_cubit.dart';
+import '../../features/obs_live_overlay/data/datasource/overlay_control_server.dart';
 import '../../features/obs_live_overlay/data/datasource/overlay_file_system.dart';
-import '../../features/obs_live_overlay/data/datasource/overlay_server_manager.dart';
 import '../../features/obs_live_overlay/data/repository/overlay_repository_impl.dart';
 import '../../features/obs_live_overlay/data/service/verse_html_formatter_impl.dart';
 import '../../features/obs_live_overlay/domain/repostiory/overlay_repository.dart';
@@ -226,8 +226,11 @@ void _registerObsOverlay(GetIt sl) {
 
   sl.registerLazySingleton<SelectedVerseBus>(() => SelectedVerseBus());
   sl.registerLazySingleton<OverlayFilesystem>(() => OverlayFilesystem());
-  sl.registerLazySingleton<OverlayServerManager>(() => OverlayServerManager(fs: sl()));
-  sl.registerLazySingleton<OverlayRepository>(() => OverlayRepositoryImpl(mgr: sl()));
+  sl.registerLazySingleton<OverlayControlServer>(() => OverlayControlServer(
+    ensureAssetsExtracted: sl<OverlayFilesystem>().ensureExtracted, 
+    readOverlayFile: sl<OverlayFilesystem>().readOverlayFile 
+  ));
+  sl.registerLazySingleton<OverlayRepository>(() => OverlayRepositoryImpl(server: sl<OverlayControlServer>()));
   sl.registerFactory(() => ObsLiveOverlayCubit(repo: sl(), notifier: sl(), htmlFormatter: sl()));
 }
 
