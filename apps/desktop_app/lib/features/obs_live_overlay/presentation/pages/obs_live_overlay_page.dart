@@ -46,7 +46,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                                 overrideColor: Theme.of(context)
                                     .colorScheme
                                     .onSurfaceVariant,
-                                overrideGlowingColor: Colors.red,
+                                overrideGlowingColor: Colors.green,
                               ),
                               TextButton(
                                 onPressed: state.busy || !enableFeature
