@@ -149,7 +149,7 @@ class _ThreeTapNavigatorOverlayState extends State<_ThreeTapNavigatorOverlay> {
                                 textAlign: TextAlign.center,
                                 book?.shortName ?? 'Book',
                               )),
-                          const Icon(Icons.arrow_forward_ios_rounded, size: 12),
+                          const Icon(LucideIcons.chevronRight, size: 12),
                           TextButton(
                               onPressed: () => setState(() => chpt = null),
                               child: Text(
@@ -158,7 +158,7 @@ class _ThreeTapNavigatorOverlayState extends State<_ThreeTapNavigatorOverlay> {
                                 textAlign: TextAlign.center,
                                 'Chapter ${chpt ?? ''}',
                               )),
-                          const Icon(Icons.arrow_forward_ios_rounded, size: 12),
+                          const Icon(LucideIcons.chevronRight, size: 12),
                           TextButton(
                               onPressed: () {},
                               child: Text(
