@@ -102,11 +102,14 @@ class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
     }
 
     // Get new active Id
-    final newPanes = state.panes.where((p) => p.id != paneId).toList();
-    final indexOfClosed = state.panes.indexWhere((p) => p.id == paneId);
-    final newActiveId = state.activePaneId == paneId
-        ? _wrapIndex(indexOfClosed - 1, newPanes.length)
-        : state.activePaneId;
+    final int newActiveId;
+    if (state.activePaneId == paneId) {
+      final indexOfClosed = state.panes.indexWhere((p) => p.id == paneId);
+      newActiveId =
+          state.panes[_wrapIndex(indexOfClosed - 1, state.panes.length)].id;
+    } else {
+      newActiveId = state.activePaneId;
+    }
 
     emit(PaneManagerState(
       panes: remainingPanes,
