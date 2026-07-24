@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 
-import '../../../core/engines/settings/settings_repository.dart';
+import '../../../core/settings/settings_repository.dart';
 import 'remote_controller_settings.dart';
 
 class RemoteControllerSettingsCubit extends Cubit<RemoteControllerSettings> {

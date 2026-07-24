@@ -1,4 +1,4 @@
-import '../../../core/engines/settings/settings_repository.dart';
+import '../../../core/settings/settings_repository.dart';
 import '../../../core/infrastructure/event_bus/install_notifier.dart';
 import '../../../core/sword/sword_bridge.dart';
 import '../../../features/sword/settings/sword_engine_settings.dart';

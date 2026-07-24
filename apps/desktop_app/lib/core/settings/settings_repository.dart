@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:fpdart/fpdart.dart';
 
-import '../../../shared/error/failure.dart';
+import '../../shared/error/failure.dart';
 import 'datasource/settings_datasource.dart';
 
 abstract class SettingsRepository<T> {

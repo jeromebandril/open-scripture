@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../core/engines/settings/settings_repository.dart';
+import '../../../core/settings/settings_repository.dart';
 import 'my_library_settings.dart';
 
 class MyLibrarySettingsCubit extends Cubit<MyLibrarySettings> {

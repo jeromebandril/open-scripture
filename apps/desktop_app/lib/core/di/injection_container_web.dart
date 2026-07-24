@@ -6,8 +6,8 @@ import '../../features/my_library/presentation/state/my_library_cubit.dart';
 import '../../shared/data/repositories/bible_pane_repository_factory_impl.dart';
 import '../../shared/domain/repositories/bible_pane_repository_factory.dart';
 import '../../shared/enums/bible_repository_type.dart';
-import '../engines/settings/datasource/settings_datasource_web.dart';
-import '../engines/settings/settings_repository.dart';
+import '../settings/datasource/settings_datasource_web.dart';
+import '../settings/settings_repository.dart';
 import '../lifecycle/app_lifecycle.dart';
 import '../lifecycle/app_lifecycle_web_impl.dart';
 

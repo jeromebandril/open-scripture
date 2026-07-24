@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../../../core/engines/settings/settings_repository.dart';
+import '../../../../core/settings/settings_repository.dart';
 import '../../domain/entities/app_theme_settings.dart';
 import '../../domain/entities/bible_pane_general_theme_settings.dart';
 import '../../domain/entities/bible_pane_presentation_theme_settings.dart';

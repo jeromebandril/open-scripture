@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../../core/engines/settings/settings_repository.dart';
+import '../../../core/settings/settings_repository.dart';
 import '../../../shared/data/services/sword_service.dart';
 import 'sword_engine_settings.dart';
 

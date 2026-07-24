@@ -4,7 +4,7 @@ import 'dart:collection';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../../../../core/engines/settings/settings_repository.dart';
+import '../../../../../core/settings/settings_repository.dart';
 import '../../../../../core/infrastructure/event_bus/search_result_bus.dart';
 import '../../../../../core/infrastructure/event_bus/selected_verse_bus.dart';
 import '../../../../../shared/domain/entities/bible_id.dart';

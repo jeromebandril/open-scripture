@@ -1,4 +1,4 @@
-import '../../../../core/engines/settings/settings_repository.dart';
+import '../../../../core/settings/settings_repository.dart';
 import '../../../../features/sword/settings/sword_engine_settings.dart';
 import '../../../domain/entities/bible_download_progress.dart';
 import '../../../domain/entities/bible_source.dart';
