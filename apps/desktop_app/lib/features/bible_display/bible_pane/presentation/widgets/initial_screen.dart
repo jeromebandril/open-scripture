@@ -1,6 +1,14 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
+
+import '../../../../../shared/design_system/design_system.dart';
+import '../../../../shortcuts/domain/models/app_command.dart';
+import '../../../../shortcuts/presentation/models/app_command_shortcuts.dart';
+import '../../../../shortcuts/presentation/widgets/shortcut_view.dart';
+import '../state/bible_pane_bloc.dart';
 
 const _welcomeVerses = [
   (
@@ -57,16 +65,97 @@ class _InitalEmptyContentScreenState extends State<InitalEmptyContentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      spacing: 16,
-      children: [
-        Text(
-          "\"${verse.text}\"",
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
+    return Center(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: 300),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          spacing: AppSpacing.sm,
+          children: [
+            Text(
+              'Ready',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            BlocBuilder<BiblePaneBloc, BiblePaneState>(
+              builder: (context, state) {
+                final openBibles =
+                    state.openedBiblesIds.map((ob) => ob.externalId);
+                return Text(
+                  openBibles.join(' | '),
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodySmall,
+                );
+              },
+            ),
+            SizedBox(height: AppSpacing.sm),
+            Text(
+              '"${verse.text}" - ${verse.reference.replaceAll(' ', '\u00A0')}',
+              style: Theme.of(context)
+                  .textTheme
+                  .bodySmall
+                  ?.copyWith(fontStyle: FontStyle.italic),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: AppSpacing.sm),
+            _Control(
+              command: AppCommand.focusSearch,
+              label: 'Search reference',
+              icon: LucideIcons.search,
+            ),
+            _Control(
+              command: AppCommand.toggleFullscreen,
+              label: 'Toggle Fullscreen',
+              icon: LucideIcons.maximize2,
+            ),
+            _Control(
+              command: AppCommand.toggleToolbar,
+              label: 'Toggle topbar',
+              icon: LucideIcons.eye,
+            ),
+            _Control(
+              command: AppCommand.changeBible,
+              label: 'Change bible',
+              icon: LucideIcons.bookOpen,
+            ),
+            _Control(
+              command: AppCommand.switchDisplayMode,
+              label: 'Switch display mode',
+              icon: LucideIcons.monitor,
+            ),
+            _Control(
+              command: AppCommand.addPane,
+              label: 'Add split screen',
+              icon: LucideIcons.squareSplitHorizontal,
+            ),
+          ],
         ),
-        Text(verse.reference),
+      ),
+    );
+  }
+}
+
+class _Control extends StatelessWidget {
+  const _Control({
+    required this.command,
+    required this.label,
+    required this.icon,
+  });
+
+  final AppCommand command;
+  final String label;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon),
+        const SizedBox(width: AppSpacing.sm),
+        Text(label),
+        const Spacer(),
+        ShortcutView(activator: appCommandShortcuts[command], fontSize: 11),
       ],
     );
   }
