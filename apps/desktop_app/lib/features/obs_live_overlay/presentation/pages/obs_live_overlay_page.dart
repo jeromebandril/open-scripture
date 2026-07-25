@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/settings/settings_cubit.dart';
+import '../../../../shared/design_system/design_system.dart';
 import '../../../../shared/widgets/dot.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
@@ -182,11 +186,74 @@ class ObsLiveOverlayPage extends StatelessWidget {
                               }))
                         ],
                       ),
+                      SettingSection(
+                        title: 'Assets & Customization',
+                        children: [const ResetAssetsAction()],
+                      ),
                     ],
                   );
                 },
               ),
             ),
           );
+  }
+}
+
+class ResetAssetsAction extends StatefulWidget {
+  const ResetAssetsAction({super.key});
+
+  @override
+  State<ResetAssetsAction> createState() => _ResetAssetsActionState();
+}
+
+class _ResetAssetsActionState extends State<ResetAssetsAction> {
+  // removed this because if nothing wrong happens,
+  // it is pratically instantenous
+  // bool _isExec = false;
+  bool _showFeedback = false;
+  Timer? _feedbackTimer;
+
+  Future<void> _resetAssets() async {
+    setState(() {
+      // _isExec = true;
+      _showFeedback = false;
+    });
+    await context.read<ObsLiveOverlayCubit>().resetAssetsToDefaults();
+    setState(() {
+      // _isExec = false;
+      _showFeedback = true;
+    });
+    _feedbackTimer = Timer(const Duration(seconds: 2), () {
+      setState(() => _showFeedback = false);
+      _feedbackTimer = null;
+    });
+  }
+
+  @override
+  void dispose() {
+    _feedbackTimer?.cancel();
+    _feedbackTimer = null;
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final successColor = Theme.of(context).brightness == Brightness.light
+        ? AppColors.success
+        : AppColors.successDark;
+
+    return Setting(
+      label: 'Reset assets to defaults',
+      description:
+          'Copy/Paste defaults assets file, overwriting all customizations',
+      child: TextButton.icon(
+          onPressed: _showFeedback ? null : () async => await _resetAssets(),
+          icon: _showFeedback
+              ? Icon(LucideIcons.circleCheckBig, color: successColor)
+              : const Icon(LucideIcons.rotateCcw),
+          label: _showFeedback
+              ? Text('Assets reseted', style: TextStyle(color: successColor))
+              : const Text('Execute asset reset')),
+    );
   }
 }

@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../../core/infrastructure/event_bus/selected_verse_bus.dart';
+import '../../data/datasource/overlay_file_system.dart';
 import '../../domain/entities/overlay_models.dart';
 import '../../domain/repostiory/overlay_repository.dart';
 import '../../domain/service/verse_html_formatter.dart';
@@ -13,9 +14,11 @@ part 'obs_live_overlay_state.dart';
 class ObsLiveOverlayCubit extends Cubit<ObsLiveOverlayState> {
   ObsLiveOverlayCubit({
     required OverlayRepository repo,
+    required OverlayFilesystem filesystem,
     required SelectedVerseBus selectedVerseBus,
     required VerseHtmlFormatter htmlFormatter,
-  })  : _htmlFormatter = htmlFormatter,
+  })  : _filesystem = filesystem,
+        _htmlFormatter = htmlFormatter,
         _repo = repo,
         super(ObsLiveOverlayState.initial()) {
     _sub = selectedVerseBus.stream.listen((data) {
@@ -34,6 +37,7 @@ class ObsLiveOverlayCubit extends Cubit<ObsLiveOverlayState> {
   }
 
   final OverlayRepository _repo;
+  final OverlayFilesystem _filesystem;
   final VerseHtmlFormatter _htmlFormatter;
   late final StreamSubscription _sub;
   Timer? _hideDebounceTimer;
@@ -70,6 +74,9 @@ class ObsLiveOverlayCubit extends Cubit<ObsLiveOverlayState> {
     emit(state.copyWith(snapshot: _repo.snapshot));
     _scheduleHideDeb();
   }
+
+  Future<void> resetAssetsToDefaults() async =>
+      await _filesystem.resetToDefaults();
 
   void _scheduleHideDeb() {
     _hideDebounceTimer?.cancel();
