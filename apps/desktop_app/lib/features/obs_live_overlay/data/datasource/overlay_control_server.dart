@@ -121,61 +121,68 @@ class OverlayControlServer {
           return;
         }
 
-        final type = (msg['type'] ?? '') as String;
+        try {
+          final type = (msg['type'] ?? '') as String;
 
-        // Handshake
-        if (type == 'hello') {
-          role = (msg['role'] ?? '') as String;
+          // Handshake
+          if (type == 'hello') {
+            role = (msg['role'] ?? '') as String;
 
-          // Overlay is read-only and only meant for the local OBS browser source.
-          if (role == 'overlay' && !isLoopback) {
-            ws.add(WsMsg('error', {
-              'code': 'FORBIDDEN',
-              'message': 'Overlay role only allowed from localhost',
-            }).encode());
-            ws.close();
-            return;
-          }
-
-          // Controller/desktop can mutate state, so they always need the token,
-          // including from localhost.
-          if (role == 'controller' || role == 'desktop') {
-            final token = (msg['token'] ?? '') as String;
-            if (!_tokenMatches(token)) {
+            // Overlay is read-only and only meant for the local OBS browser source.
+            if (role == 'overlay' && !isLoopback) {
               ws.add(WsMsg('error', {
-                'code': 'UNAUTH',
-                'message': 'Invalid token',
+                'code': 'FORBIDDEN',
+                'message': 'Overlay role only allowed from localhost',
               }).encode());
               ws.close();
               return;
             }
+
+            // Controller/desktop can mutate state, so they always need the token,
+            // including from localhost.
+            if (role == 'controller' || role == 'desktop') {
+              final token = (msg['token'] ?? '') as String;
+              if (!_tokenMatches(token)) {
+                ws.add(WsMsg('error', {
+                  'code': 'UNAUTH',
+                  'message': 'Invalid token',
+                }).encode());
+                ws.close();
+                return;
+              }
+            }
+
+            authed = true;
+            ws.add(WsMsg('state', {'payload': _snapshot.toJson()}).encode());
+            ws.add(WsMsg('ok').encode());
+            return;
           }
 
-          authed = true;
-          ws.add(WsMsg('state', {'payload': _snapshot.toJson()}).encode());
-          ws.add(WsMsg('ok').encode());
-          return;
-        }
-
-        if (!authed) {
-          ws.add(WsMsg('error', {
-            'code': 'UNAUTH',
-            'message': 'Send hello first',
-          }).encode());
-          return;
-        }
-
-        // Only controllers can send commands
-        if (type == 'command') {
-          if (role != 'controller' && role != 'desktop') {
+          if (!authed) {
             ws.add(WsMsg('error', {
-              'code': 'FORBIDDEN',
-              'message': 'Not allowed',
+              'code': 'UNAUTH',
+              'message': 'Send hello first',
             }).encode());
             return;
           }
-          _handleCommand(ws, msg);
-          return;
+
+          // Only controllers can send commands
+          if (type == 'command') {
+            if (role != 'controller' && role != 'desktop') {
+              ws.add(WsMsg('error', {
+                'code': 'FORBIDDEN',
+                'message': 'Not allowed',
+              }).encode());
+              return;
+            }
+            _handleCommand(ws, msg);
+            return;
+          }
+        } catch (e) {
+          ws.add(WsMsg('error', {
+            'code': 'BAD_REQUEST',
+            'message': 'Malformed message'
+          }).encode());
         }
       },
       onDone: () => _clients.remove(ws),
