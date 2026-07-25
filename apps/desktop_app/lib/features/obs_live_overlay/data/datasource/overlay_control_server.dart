@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:math';
 
 import '../../domain/entities/overlay_models.dart';
+import '../../domain/entities/overlay_roles.dart';
 
 class OverlayControlServer {
   final Future<String> Function(String fileName) readOverlayFile;
@@ -109,7 +110,7 @@ class OverlayControlServer {
     final ws = await WebSocketTransformer.upgrade(req);
     _clients.add(ws);
 
-    String? role;
+    ClientRole? role;
     bool authed = false;
 
     // Require a hello first
@@ -133,10 +134,19 @@ class OverlayControlServer {
 
           // Handshake
           if (type == 'hello') {
-            role = (msg['role'] ?? '') as String;
+            final roleField = msg['role'];
+            final requestedRole =
+                roleField is String ? ClientRole.fromWire(roleField) : null;
+            if (requestedRole == null) {
+              ws.add(WsMsg('error',
+                  {'code': 'BAD_REQUEST', 'message': 'Unknown role'}).encode());
+              ws.close();
+              return;
+            }
+            role = requestedRole;
 
             // Overlay is read-only and only meant for the local OBS browser source.
-            if (role == 'overlay' && !isLoopback) {
+            if (role == ClientRole.overlay && !isLoopback) {
               ws.add(WsMsg('error', {
                 'code': 'FORBIDDEN',
                 'message': 'Overlay role only allowed from localhost',
@@ -147,7 +157,7 @@ class OverlayControlServer {
 
             // Controller/desktop can mutate state, so they always need the token,
             // including from localhost.
-            if (role == 'controller' || role == 'desktop') {
+            if (role == ClientRole.controller || role == ClientRole.desktop) {
               final token = (msg['token'] ?? '') as String;
               if (!_tokenMatches(token)) {
                 ws.add(WsMsg('error', {
