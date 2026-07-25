@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import '../../../../core/settings/settings_repository.dart';
@@ -11,6 +12,10 @@ class OverlayRepositoryImpl implements OverlayRepository {
   final OverlayControlServer _server;
   final SettingsRepository<OverlaySettings> _settings;
   final OverlayFilesystem _filesystem;
+
+  // Timer that sends a snapshot
+  // to set the web page blank
+  Timer? _setBlankTimer;
 
   OverlayRepositoryImpl({
     required OverlayControlServer server,
@@ -28,6 +33,7 @@ class OverlayRepositoryImpl implements OverlayRepository {
 
   @override
   Future<void> stop() async {
+    _setBlankTimer?.cancel();
     if (isRunning) {
       _server.setSnapshot(OverlaySnapshot.initial());
       _server.broadcastState();
@@ -57,6 +63,7 @@ class OverlayRepositoryImpl implements OverlayRepository {
     if (!isRunning) return;
     _server.setSnapshot(snapshot);
     _server.broadcastState();
+    _scheduleHideDeb();
   }
 
   @override
@@ -66,4 +73,12 @@ class OverlayRepositoryImpl implements OverlayRepository {
   @override
   Future<void> resetAssetsToDefault() async =>
       await _filesystem.resetToDefaults();
+
+  void _scheduleHideDeb() {
+    _setBlankTimer?.cancel();
+    _setBlankTimer = Timer(
+      const Duration(seconds: 30),
+      () => _server.setSnapshot(OverlaySnapshot.initial()),
+    );
+  }
 }

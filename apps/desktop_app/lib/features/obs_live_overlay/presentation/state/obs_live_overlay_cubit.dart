@@ -37,14 +37,12 @@ class ObsLiveOverlayCubit extends Cubit<ObsLiveOverlayState> {
   final OverlayRepository _repo;
   final VerseHtmlFormatter _htmlFormatter;
   late final StreamSubscription _sub;
-  Timer? _hideDebounceTimer;
 
   Future<void> startServer() {
     return _run(() => _repo.start());
   }
 
   Future<void> stopServer() {
-    _hideDebounceTimer?.cancel();
     return _run(() => _repo.stop());
   }
 
@@ -69,7 +67,6 @@ class ObsLiveOverlayCubit extends Cubit<ObsLiveOverlayState> {
   void setSnapshot(OverlaySnapshot snapshot) {
     _repo.setSnapshot(snapshot: snapshot);
     emit(state.copyWith(snapshot: _repo.snapshot));
-    _scheduleHideDeb();
   }
 
   Future<void> openAssetsFolder() async {
@@ -80,12 +77,6 @@ class ObsLiveOverlayCubit extends Cubit<ObsLiveOverlayState> {
 
   Future<void> resetAssetsToDefaults() async =>
       await _repo.resetAssetsToDefault();
-
-  void _scheduleHideDeb() {
-    _hideDebounceTimer?.cancel();
-    _hideDebounceTimer = Timer(const Duration(seconds: 30),
-        () => setSnapshot(OverlaySnapshot.initial()));
-  }
 
   @override
   Future<void> close() async {
