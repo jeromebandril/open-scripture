@@ -197,7 +197,6 @@ class OverlayControlServer {
 
     switch (name) {
       case 'setText':
-        print('setting text now...');
         final id = (payload['id'] ?? '') as String;
         final text = (payload['text'] ?? '') as String;
         if (id.isEmpty) {
@@ -206,8 +205,7 @@ class OverlayControlServer {
                   .encode());
           return;
         }
-        final existing =
-            _snapshot.items[id] ?? const OverlayItem(text: '', visible: true);
+        final existing = _itemOrDefault(id);
         _snapshot = _snapshot.copyWithItem(id, existing.copyWith(text: text));
         broadcastState();
         ws.add(WsMsg('ok').encode());
@@ -223,8 +221,7 @@ class OverlayControlServer {
           }).encode());
           return;
         }
-        final existing =
-            _snapshot.items[id] ?? const OverlayItem(text: '', visible: true);
+        final existing = _itemOrDefault(id);
         _snapshot =
             _snapshot.copyWithItem(id, existing.copyWith(visible: visible));
         broadcastState();
@@ -267,4 +264,7 @@ class OverlayControlServer {
     }
     return diff == 0;
   }
+
+  OverlayItem _itemOrDefault(String id) =>
+      _snapshot.items[id] ?? const OverlayItem(text: '', visible: true);
 }
