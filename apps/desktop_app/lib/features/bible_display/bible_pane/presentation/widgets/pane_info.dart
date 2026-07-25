@@ -43,6 +43,7 @@ class _PaneInfoItem extends StatelessWidget {
 }
 
 class PaneInfo extends StatefulWidget {
+  static const double kHeight = 24;
   const PaneInfo({super.key});
 
   @override
@@ -65,7 +66,7 @@ class _PaneInfoState extends State<PaneInfo> {
         fontSize: 12,
       ),
       child: Container(
-        height: 24,
+        height: PaneInfo.kHeight,
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.only(

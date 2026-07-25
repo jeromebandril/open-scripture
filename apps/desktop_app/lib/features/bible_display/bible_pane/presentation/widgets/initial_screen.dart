@@ -9,6 +9,7 @@ import '../../../../shortcuts/domain/models/app_command.dart';
 import '../../../../shortcuts/presentation/models/app_command_shortcuts.dart';
 import '../../../../shortcuts/presentation/widgets/shortcut_view.dart';
 import '../state/bible_pane_bloc.dart';
+import 'pane_info.dart';
 
 const _welcomeVerses = [
   (
@@ -68,8 +69,12 @@ class _InitalEmptyContentScreenState extends State<InitalEmptyContentScreen> {
     return Center(
       child: SingleChildScrollView(
         child: Container(
-          padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.lg, vertical: AppSpacing.xl2),
+          padding: const EdgeInsets.only(
+            left: AppSpacing.lg,
+            right: AppSpacing.lg,
+            top: AppSpacing.xl2,
+            bottom: AppSpacing.xl2 + PaneInfo.kHeight,
+          ),
           constraints: BoxConstraints(maxWidth: 332),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

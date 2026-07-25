@@ -9,6 +9,7 @@ import '../../../../customizer/presentation/models/bible_pane_general_theme.dart
 import '../../../../customizer/presentation/state/customizer_cubit.dart';
 import '../../../../my_library/presentation/state/my_library_cubit.dart';
 import '../../../bible_pane/presentation/state/bible_pane_bloc.dart';
+import '../../../bible_pane/presentation/widgets/pane_info.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../cubit/bible_selector_cubit.dart';
 import 'shared_catalog_selector.dart';
@@ -82,7 +83,10 @@ class _BibleSelectorState extends State<BibleSelector> {
       child: Builder(builder: (context) {
         return Center(
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 24),
+            padding: const EdgeInsets.only(
+              top: AppSpacing.xl2,
+              bottom: AppSpacing.xl2 + PaneInfo.kHeight,
+            ),
             width: 400,
             height: 580,
             child: Column(
