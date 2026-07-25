@@ -1,33 +1,43 @@
+import 'dart:io';
+
 import '../../../../core/settings/settings_repository.dart';
 import '../../domain/entities/overlay_models.dart';
 import '../../domain/repostiory/overlay_repository.dart';
 import '../../settings/overlay_settings.dart';
 import '../datasource/overlay_control_server.dart';
+import '../datasource/overlay_file_system.dart';
 
 class OverlayRepositoryImpl implements OverlayRepository {
-  final OverlayControlServer server;
-  final SettingsRepository<OverlaySettings> settings;
+  final OverlayControlServer _server;
+  final SettingsRepository<OverlaySettings> _settings;
+  final OverlayFilesystem _filesystem;
 
-  OverlayRepositoryImpl({required this.server, required this.settings});
+  OverlayRepositoryImpl({
+    required OverlayControlServer server,
+    required SettingsRepository<OverlaySettings> settings,
+    required OverlayFilesystem filesystem,
+  })  : _server = server,
+        _settings = settings,
+        _filesystem = filesystem;
 
   @override
-  bool get isRunning => server.isRunning;
+  bool get isRunning => _server.isRunning;
 
   @override
-  Future<void> start() => server.start(port: settings.current.port);
+  Future<void> start() => _server.start(port: _settings.current.port);
 
   @override
   Future<void> stop() async {
     if (isRunning) {
-      server.setSnapshot(OverlaySnapshot.initial());
-      server.broadcastState();
+      _server.setSnapshot(OverlaySnapshot.initial());
+      _server.broadcastState();
     }
-    await server.stop();
+    await _server.stop();
   }
 
   @override
   OverlaySnapshot get snapshot =>
-      isRunning ? server.snapshot : OverlaySnapshot.initial();
+      isRunning ? _server.snapshot : OverlaySnapshot.initial();
 
   @override
   void setProperty({required OverlayId id, String? text, bool? visible}) {
@@ -38,14 +48,22 @@ class OverlayRepositoryImpl implements OverlayRepository {
       text: text ?? overlayItem.text,
       visible: visible ?? overlayItem.visible,
     );
-    server.setSnapshot(snapshot.copyWithItem(id, overlayItem));
-    server.broadcastState();
+    _server.setSnapshot(snapshot.copyWithItem(id, overlayItem));
+    _server.broadcastState();
   }
 
   @override
   void setSnapshot({required OverlaySnapshot snapshot}) {
     if (!isRunning) return;
-    server.setSnapshot(snapshot);
-    server.broadcastState();
+    _server.setSnapshot(snapshot);
+    _server.broadcastState();
   }
+
+  @override
+  Future<Directory> getOverlayDirectory() async =>
+      await _filesystem.getOverlayDir();
+
+  @override
+  Future<void> resetAssetsToDefault() async =>
+      await _filesystem.resetToDefaults();
 }

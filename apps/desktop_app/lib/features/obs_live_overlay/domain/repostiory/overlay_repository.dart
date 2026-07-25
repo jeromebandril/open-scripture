@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import '../entities/overlay_models.dart';
 
 abstract class OverlayRepository {
@@ -9,4 +11,6 @@ abstract class OverlayRepository {
 
   void setProperty({required OverlayId id, String? text, bool? visible});
   void setSnapshot({required OverlaySnapshot snapshot});
+  Future<void> resetAssetsToDefault();
+  Future<Directory> getOverlayDirectory();
 }
