@@ -27,7 +27,14 @@ class OverlayControlServer {
     if (isRunning) return;
     await ensureAssetsExtracted();
     _controllerToken = _generateToken();
-    _server = await HttpServer.bind(InternetAddress.anyIPv4, port);
+    _server = await HttpServer.bind(
+      // for now I want it to work only on the same machine,
+      // but it can make sense to expose it so a different
+      // machine in the LAN can run OBS and listen to this
+      // ip address. In that case use [InternetAddress.anyIPv4]
+      InternetAddress.loopbackIPv4,
+      port,
+    );
     _server!.listen(_handleHttp);
   }
 
