@@ -66,20 +66,20 @@ class OverlayControlServer {
         // Serve overlay.html (used by OBS)
         final html = await readOverlayFile('overlay.html');
 
-        _respondText(req, html, contentType: ContentType.html);
+        await _respondText(req, html, contentType: ContentType.html);
         return;
       }
 
       if (req.uri.path == '/overlay.js') {
         final js = await readOverlayFile('overlay.js');
-        _respondText(req, js,
+        await _respondText(req, js,
             contentType: ContentType('application', 'javascript'));
         return;
       }
 
       if (req.uri.path == '/overlay.css') {
         final css = await readOverlayFile('overlay.css');
-        _respondText(req, css, contentType: ContentType('text', 'css'));
+        await _respondText(req, css, contentType: ContentType('text', 'css'));
         return;
       }
 
@@ -239,11 +239,14 @@ class OverlayControlServer {
     }
   }
 
-  void _respondText(HttpRequest req, String body,
-      {required ContentType contentType}) async {
+  Future<void> _respondText(
+    HttpRequest req,
+    String body, {
+    required ContentType contentType,
+  }) async {
     req.response.headers.contentType = contentType;
-    req.response.headers
-        .set('Cache-Control', 'no-store'); // avoid stale overlay
+    // avoid stale overlay
+    req.response.headers.set('Cache-Control', 'no-store');
     req.response.write(body);
     await req.response.close();
   }
