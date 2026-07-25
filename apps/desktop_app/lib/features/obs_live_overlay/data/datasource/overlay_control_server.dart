@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import '../../domain/entities/overlay_models.dart';
 
@@ -21,13 +23,10 @@ class OverlayControlServer {
     required this.readOverlayFile,
   });
 
-  Future<void> start({
-    required int port,
-    required String controllerToken,
-  }) async {
+  Future<void> start({required int port}) async {
     if (isRunning) return;
     await ensureAssetsExtracted();
-    _controllerToken = controllerToken;
+    _controllerToken = _generateToken();
     _server = await HttpServer.bind(InternetAddress.anyIPv4, port);
     _server!.listen(_handleHttp);
   }
@@ -140,7 +139,7 @@ class OverlayControlServer {
           // Controllers from LAN must provide token
           if (role == 'controller' && !isLoopback) {
             final token = (msg['token'] ?? '') as String;
-            if (token != _controllerToken) {
+            if (!_tokenMatches(token)) {
               ws.add(WsMsg('error', {
                 'code': 'UNAUTH',
                 'message': 'Invalid token',
@@ -241,5 +240,22 @@ class OverlayControlServer {
         .set('Cache-Control', 'no-store'); // avoid stale overlay
     req.response.write(body);
     await req.response.close();
+  }
+
+  static String _generateToken({int bytesLength = 32}) {
+    final rand = Random.secure();
+    final bytes = List<int>.generate(bytesLength, (_) => rand.nextInt(256));
+    return base64Url.encode(bytes).replaceAll('=', '');
+  }
+
+  bool _tokenMatches(String provided) {
+    final expected = _controllerToken;
+    if (expected == null || expected.isEmpty) return false;
+    if (provided.length != expected.length) return false;
+    var diff = 0;
+    for (var i = 0; i < expected.length; i++) {
+      diff |= provided.codeUnitAt(i) ^ expected.codeUnitAt(i);
+    }
+    return diff == 0;
   }
 }

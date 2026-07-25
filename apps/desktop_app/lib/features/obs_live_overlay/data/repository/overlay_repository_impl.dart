@@ -14,12 +14,7 @@ class OverlayRepositoryImpl implements OverlayRepository {
   bool get isRunning => server.isRunning;
 
   @override
-  Future<void> start() =>
-      // TODO: remove this hardcoded controller token
-      server.start(
-        port: settings.current.port,
-        controllerToken: '123456',
-      );
+  Future<void> start() => server.start(port: settings.current.port);
 
   @override
   Future<void> stop() async {
