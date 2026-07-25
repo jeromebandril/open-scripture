@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/infrastructure/event_bus/selected_verse_bus.dart';
 import '../../data/datasource/overlay_file_system.dart';
@@ -73,6 +74,14 @@ class ObsLiveOverlayCubit extends Cubit<ObsLiveOverlayState> {
     _repo.setSnapshot(snapshot: snapshot);
     emit(state.copyWith(snapshot: _repo.snapshot));
     _scheduleHideDeb();
+  }
+
+  Future<void> openAssetsFolder() async {
+    final overlayDir = await _filesystem.getOverlayDir();
+
+    final uri = Uri.directory(overlayDir.path);
+
+    await launchUrl(uri);
   }
 
   Future<void> resetAssetsToDefaults() async =>

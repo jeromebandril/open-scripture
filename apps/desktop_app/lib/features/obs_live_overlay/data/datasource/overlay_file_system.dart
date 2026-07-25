@@ -12,14 +12,14 @@ class OverlayFilesystem {
     'overlay.css',
   ];
 
-  Future<Directory> _getOverlayDir() async {
+  Future<Directory> getOverlayDir() async {
     final supportDir = await getApplicationSupportDirectory();
     return Directory(p.join(supportDir.path, 'overlay_web'));
   }
 
   /// Copies bundled assets to disk if missing (e.g. first run).
   Future<void> ensureExtracted() async {
-    final dir = await _getOverlayDir();
+    final dir = await getOverlayDir();
     if (!await dir.exists()) {
       await dir.create(recursive: true);
     }
@@ -36,7 +36,7 @@ class OverlayFilesystem {
 
   /// Overwrites disk files with bundled defaults.
   Future<void> resetToDefaults() async {
-    final dir = await _getOverlayDir();
+    final dir = await getOverlayDir();
     if (!await dir.exists()) {
       await dir.create(recursive: true);
     }
@@ -49,7 +49,7 @@ class OverlayFilesystem {
   }
 
   Future<String> readOverlayFile(String fileName) async {
-    final dir = await _getOverlayDir();
+    final dir = await getOverlayDir();
     final file = File(p.join(dir.path, fileName));
 
     if (await file.exists()) {

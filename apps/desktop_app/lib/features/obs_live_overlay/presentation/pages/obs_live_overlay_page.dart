@@ -188,7 +188,21 @@ class ObsLiveOverlayPage extends StatelessWidget {
                       ),
                       SettingSection(
                         title: 'Assets & Customization',
-                        children: [const ResetAssetsAction()],
+                        children: [
+                          Setting(
+                            label:
+                                'Start editing assets for overlay customization',
+                            description:
+                                'The customization is for advanced users that knows how to work with HTML and CSS files',
+                            child: TextButton.icon(
+                                onPressed: () async => await context
+                                    .read<ObsLiveOverlayCubit>()
+                                    .openAssetsFolder(),
+                                icon: const Icon(LucideIcons.folderOpen),
+                                label: const Text('Open assets folder')),
+                          ),
+                          const ResetAssetsAction(),
+                        ],
                       ),
                     ],
                   );
