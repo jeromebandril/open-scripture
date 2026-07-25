@@ -123,10 +123,11 @@ class OverlayControlServer {
 
         final type = (msg['type'] ?? '') as String;
 
+        // Handshake
         if (type == 'hello') {
           role = (msg['role'] ?? '') as String;
 
-          // Prevent LAN from acting as overlay client
+          // Overlay is read-only and only meant for the local OBS browser source.
           if (role == 'overlay' && !isLoopback) {
             ws.add(WsMsg('error', {
               'code': 'FORBIDDEN',
@@ -136,21 +137,21 @@ class OverlayControlServer {
             return;
           }
 
-          // Controllers from LAN must provide token
-          if (role == 'controller' && !isLoopback) {
+          // Controller/desktop can mutate state, so they always need the token,
+          // including from localhost.
+          if (role == 'controller' || role == 'desktop') {
             final token = (msg['token'] ?? '') as String;
             if (!_tokenMatches(token)) {
               ws.add(WsMsg('error', {
                 'code': 'UNAUTH',
                 'message': 'Invalid token',
               }).encode());
+              ws.close();
               return;
             }
           }
 
           authed = true;
-
-          // Immediately send snapshot
           ws.add(WsMsg('state', {'payload': _snapshot.toJson()}).encode());
           ws.add(WsMsg('ok').encode());
           return;
@@ -166,15 +167,13 @@ class OverlayControlServer {
 
         // Only controllers can send commands
         if (type == 'command') {
-          print('command verified');
-          if (role != 'controller' && !(isLoopback && role == 'desktop')) {
+          if (role != 'controller' && role != 'desktop') {
             ws.add(WsMsg('error', {
               'code': 'FORBIDDEN',
               'message': 'Not allowed',
             }).encode());
             return;
           }
-
           _handleCommand(ws, msg);
           return;
         }
