@@ -60,7 +60,6 @@ class BibleImporterCubit extends Cubit<BibleImporterState> {
       emit(state.copyWith(status: BibleImporterStatus.failed));
       return;
     }
-    print('Picked file: $name, source: $src, type: ${src.runtimeType}');
 
     // Cancel any ongoing install
     await _sub?.cancel();

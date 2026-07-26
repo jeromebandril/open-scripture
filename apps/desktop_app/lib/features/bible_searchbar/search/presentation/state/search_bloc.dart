@@ -34,7 +34,6 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     on<_SearchResultReceived>(_onSearchResultReceived);
 
     _searchResultBus.stream.listen((event) {
-      // print('search bloc received search result event: $event');
       if (event.source != IntentSource.searchbar) return;
       add(_SearchResultReceived(event));
     });

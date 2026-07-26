@@ -51,13 +51,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<AppExitResponse> _handleExitRequested() async {
-    try {
-      final canExit = await di.sl<AppLifecycleService>().onExitRequested();
-      return canExit ? AppExitResponse.exit : AppExitResponse.cancel;
-    } catch (e) {
-      print("Error during shutdown: $e");
-    }
-    return AppExitResponse.exit;
+    final canExit = await di.sl<AppLifecycleService>().onExitRequested();
+    return canExit ? AppExitResponse.exit : AppExitResponse.cancel;
   }
 
   @override
