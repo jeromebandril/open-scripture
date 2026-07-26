@@ -7,6 +7,7 @@ import '../../features/bible_display/bible_pane/domain/repositories/bible_pane_r
 import '../../features/bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../../features/bible_display/bible_selector/presentation/cubit/bible_selector_cubit.dart';
 import '../../features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
+import '../../features/bible_display/settings/bible_view_settings.dart';
 import '../../features/bible_importer/presentation/state/bible_importer_cubit/bible_importer_cubit.dart';
 import '../../features/bible_searchbar/history/presentation/state/history_cubit.dart';
 import '../../features/bible_searchbar/search/data/repositories/search_repository_impl.dart';
@@ -128,6 +129,19 @@ Future<void> init(GetIt sl) async {
     dispose: (repo) => repo.dispose(),
   );
   sl.registerSingleton(SettingsCubit<MyLibrarySettings>(sl()));
+
+  sl.registerLazySingleton<SettingsRepository<BibleViewSettings>>(
+    () => SettingsRepositoryImpl<BibleViewSettings>(
+      SettingsDatasourceDesktop<BibleViewSettings>(
+        fileName: 'my_library_settings.json',
+        fromJson: BibleViewSettings.fromJson,
+        toJson: (l) => l.toJson(),
+        defaultValue: const BibleViewSettings(),
+      ),
+    ),
+    dispose: (repo) => repo.dispose(),
+  );
+  sl.registerSingleton(SettingsCubit<BibleViewSettings>(sl()));
 }
 
 // ---------------------------------------------------------------------------

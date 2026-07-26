@@ -9,6 +9,7 @@ import '../core/infrastructure/window/app_window_manager.dart';
 import '../core/lifecycle/app_lifecycle.dart';
 import '../core/settings/settings_cubit.dart';
 import '../features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
+import '../features/bible_display/settings/bible_view_settings.dart';
 import '../features/bible_searchbar/history/presentation/state/history_cubit.dart';
 import '../features/bible_searchbar/search/presentation/state/search_bloc.dart';
 import '../features/bible_searchbar/settings/search_settings.dart';
@@ -120,6 +121,8 @@ class _MyAppState extends State<MyApp> {
                       value: di.sl<SettingsCubit<MyLibrarySettings>>()),
                   BlocProvider.value(
                       value: di.sl<SettingsCubit<SearchSettings>>()),
+                  BlocProvider.value(
+                      value: di.sl<SettingsCubit<BibleViewSettings>>()),
                   BlocProvider(
                       create: (context) => di.sl<ThreeTapNavigatorCubit>()),
                   BlocProvider.value(value: di.sl<MultiPaneManagerCubit>()),
