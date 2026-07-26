@@ -78,7 +78,7 @@ class OverlayRepositoryImpl implements OverlayRepository {
   void _scheduleHideDeb() {
     _setBlankTimer?.cancel();
     _setBlankTimer = Timer(
-      const Duration(seconds: settings.current.hideDebounceSeconds),
+      const Duration(seconds: _settings.current.hideDebounceSeconds),
       () => setSnapshot(snapshot: OverlaySnapshot.initial()),
     );
   }
