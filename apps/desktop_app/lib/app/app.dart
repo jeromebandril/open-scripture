@@ -11,6 +11,7 @@ import '../core/settings/settings_cubit.dart';
 import '../features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../features/bible_searchbar/history/presentation/state/history_cubit.dart';
 import '../features/bible_searchbar/search/presentation/state/search_bloc.dart';
+import '../features/bible_searchbar/settings/search_settings.dart';
 import '../features/customizer/presentation/models/bible_pane_general_theme.dart';
 import '../features/customizer/presentation/models/bible_view_list_theme.dart';
 import '../features/customizer/presentation/models/bible_view_presentation_theme.dart';
@@ -117,6 +118,8 @@ class _MyAppState extends State<MyApp> {
                   ],
                   BlocProvider.value(
                       value: di.sl<SettingsCubit<MyLibrarySettings>>()),
+                  BlocProvider.value(
+                      value: di.sl<SettingsCubit<SearchSettings>>()),
                   BlocProvider(
                       create: (context) => di.sl<ThreeTapNavigatorCubit>()),
                   BlocProvider.value(value: di.sl<MultiPaneManagerCubit>()),

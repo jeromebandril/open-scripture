@@ -13,6 +13,7 @@ import '../../features/bible_searchbar/search/data/repositories/search_repositor
 import '../../features/bible_searchbar/search/domain/repositories/search_repository.dart';
 import '../../features/bible_searchbar/search/domain/search_intent_resolver.dart';
 import '../../features/bible_searchbar/search/presentation/state/search_bloc.dart';
+import '../../features/bible_searchbar/settings/search_settings.dart';
 import '../../features/customizer/presentation/state/customizer_cubit.dart';
 import '../../features/font_loader/presentation/state/font_loader_cubit.dart';
 import '../../features/my_library/presentation/state/my_library_cubit.dart';
@@ -186,6 +187,18 @@ void _registerSearch(GetIt sl) {
         searchIntentBus: sl(),
         searchResultBus: sl()),
   );
+  sl.registerLazySingleton<SettingsRepository<SearchSettings>>(
+    () => SettingsRepositoryImpl<SearchSettings>(
+      SettingsDatasourceDesktop<SearchSettings>(
+        fileName: 'search_settings.json',
+        fromJson: SearchSettings.fromJson,
+        toJson: (l) => l.toJson(),
+        defaultValue: const SearchSettings(),
+      ),
+    ),
+    dispose: (repo) => repo.dispose(),
+  );
+  sl.registerSingleton(SettingsCubit<SearchSettings>(sl()));
 }
 
 // ---------------------------------------------------------------------------

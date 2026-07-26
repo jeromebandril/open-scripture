@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../../core/di/injection_container.dart' as di;
+import '../../../../../core/settings/settings_cubit.dart';
 import '../../../../../shared/design_system/design_system.dart';
 import '../../../../../shared/domain/entities/bible_book.dart';
 import '../../../../../shared/domain/services/book_resolver.dart';
@@ -16,6 +17,7 @@ import '../../../../shortcuts/presentation/models/app_command_shortcuts.dart';
 import '../../../../shortcuts/presentation/widgets/keycap.dart';
 import '../../../../shortcuts/presentation/widgets/shortcut_view.dart';
 import '../../../../shortcuts/presentation/widgets/shortcuts_focus_scope.dart';
+import '../../../settings/search_settings.dart';
 import '../state/search_bloc.dart';
 
 // note: I have commented out the empty canidates state for the suggestion list
@@ -104,6 +106,17 @@ class _BSearchbarState extends State<BSearchbar> {
       return;
     }
 
+    // do nothing if this feature is not enabled
+    final suggestionsEnabled = context
+        .read<SettingsCubit<SearchSettings>>()
+        .state
+        .enableBookSuggestion;
+    if (!suggestionsEnabled) {
+      _debounce?.cancel();
+      if (_candidates.isNotEmpty) _applyCandidates(const []);
+      return;
+    }
+
     _debounce?.cancel();
     final query = _ctrl.text;
 
@@ -155,6 +168,77 @@ class _BSearchbarState extends State<BSearchbar> {
   @override
   Widget build(BuildContext context) {
     final popupTheme = Theme.of(context).popupMenuTheme;
+    final suggestionsEnabled = context.select(
+        (SettingsCubit<SearchSettings> s) => s.state.enableBookSuggestion);
+
+    final searchbarBody = BlocConsumer<SearchBloc, SearchState>(
+      listenWhen: (prev, curr) =>
+          prev.errorCount != curr.errorCount && curr.errorCount > 0,
+      listener: (context, state) {
+        if (state is! SearchError) return;
+      },
+      buildWhen: (prev, curr) =>
+          prev.errorCount != curr.errorCount && curr.errorCount > 0,
+      builder: (context, state) {
+        return _SearchBarWithErrorFeedback(
+          hasError: state is SearchError,
+          errorTrigger: state.errorCount,
+          child: SearchBar(
+            // theme overwrites
+            backgroundColor: widget.theme?.backgroundColor,
+            side: widget.theme?.side,
+            //
+            controller: _ctrl,
+            constraints: BoxConstraints(
+                maxWidth: widget.width, minHeight: widget.height),
+            focusNode: _focusNode,
+            leading: Padding(
+              padding: const EdgeInsets.only(left: 4),
+              child: Icon(LucideIcons.search,
+                  size: 14,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant),
+            ),
+            hintText: 'Search reference',
+            elevation: const WidgetStatePropertyAll(0),
+            trailing: [
+              if (_focusNode != null)
+                ListenableBuilder(
+                  listenable: _focusNode!,
+                  builder: (context, __) {
+                    if (_focusNode!.hasFocus) {
+                      return const SizedBox.shrink();
+                    }
+                    return Container(
+                      alignment: AlignmentDirectional.centerEnd,
+                      padding: const EdgeInsets.only(right: AppSpacing.sm),
+                      child: ShortcutView(
+                        activator: appCommandShortcuts[AppCommand.focusSearch],
+                        textColor: Theme.of(context)
+                            .colorScheme
+                            .onSurfaceVariant
+                            .withAlpha(200),
+                        fillColor: Colors.transparent,
+                        hasBorders: false,
+                        fontSize: 12,
+                      ),
+                    );
+                  },
+                ),
+            ],
+            onSubmitted: (input) {
+              if (widget.onSubmitted != null) widget.onSubmitted!();
+              if (input.isEmpty) return;
+              BlocProvider.of<SearchBloc>(context)
+                  .add(SearchParseIntent(input));
+            },
+          ),
+        );
+      },
+    );
+
+    if (!suggestionsEnabled) {
+      return searchbarBody;
+    }
 
     return ValueListenableBuilder<bool>(
       valueListenable: _menuVisible,
@@ -177,71 +261,7 @@ class _BSearchbarState extends State<BSearchbar> {
         menuWidth: widget.width,
         menuHeight: _menuHeight + (popupTheme.menuPadding!.vertical / 2),
         menuAlignment: Alignment.topLeft,
-        trigger: BlocConsumer<SearchBloc, SearchState>(
-          listenWhen: (prev, curr) =>
-              prev.errorCount != curr.errorCount && curr.errorCount > 0,
-          listener: (context, state) {
-            if (state is! SearchError) return;
-          },
-          buildWhen: (prev, curr) =>
-              prev.errorCount != curr.errorCount && curr.errorCount > 0,
-          builder: (context, state) {
-            return _SearchBarWithErrorFeedback(
-              hasError: state is SearchError,
-              errorTrigger: state.errorCount,
-              child: SearchBar(
-                // theme overwrites
-                backgroundColor: widget.theme?.backgroundColor,
-                side: widget.theme?.side,
-                //
-                controller: _ctrl,
-                constraints: BoxConstraints(
-                    maxWidth: widget.width, minHeight: widget.height),
-                focusNode: _focusNode,
-                leading: Padding(
-                  padding: const EdgeInsets.only(left: 4),
-                  child: Icon(LucideIcons.search,
-                      size: 14,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant),
-                ),
-                hintText: 'Search reference',
-                elevation: const WidgetStatePropertyAll(0),
-                trailing: [
-                  if (_focusNode != null)
-                    ListenableBuilder(
-                      listenable: _focusNode!,
-                      builder: (context, __) {
-                        if (_focusNode!.hasFocus) {
-                          return const SizedBox.shrink();
-                        }
-                        return Container(
-                          alignment: AlignmentDirectional.centerEnd,
-                          padding: const EdgeInsets.only(right: AppSpacing.sm),
-                          child: ShortcutView(
-                            activator:
-                                appCommandShortcuts[AppCommand.focusSearch],
-                            textColor: Theme.of(context)
-                                .colorScheme
-                                .onSurfaceVariant
-                                .withAlpha(200),
-                            fillColor: Colors.transparent,
-                            hasBorders: false,
-                            fontSize: 12,
-                          ),
-                        );
-                      },
-                    ),
-                ],
-                onSubmitted: (input) {
-                  if (widget.onSubmitted != null) widget.onSubmitted!();
-                  if (input.isEmpty) return;
-                  BlocProvider.of<SearchBloc>(context)
-                      .add(SearchParseIntent(input));
-                },
-              ),
-            );
-          },
-        ),
+        trigger: searchbarBody,
         menuContent: _SuggestionsList(
           candidates: _candidates,
           highlightedIndex: _highlightedIndex,
