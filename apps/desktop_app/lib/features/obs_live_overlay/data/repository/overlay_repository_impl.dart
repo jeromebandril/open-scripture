@@ -63,6 +63,7 @@ class OverlayRepositoryImpl implements OverlayRepository {
     if (!isRunning) return;
     _server.setSnapshot(snapshot);
     _server.broadcastState();
+    if (snapshot == OverlaySnapshot.initial()) return;
     _scheduleHideDeb();
   }
 
@@ -78,7 +79,7 @@ class OverlayRepositoryImpl implements OverlayRepository {
     _setBlankTimer?.cancel();
     _setBlankTimer = Timer(
       const Duration(seconds: 30),
-      () => _server.setSnapshot(OverlaySnapshot.initial()),
+      () => setSnapshot(snapshot: OverlaySnapshot.initial()),
     );
   }
 }
