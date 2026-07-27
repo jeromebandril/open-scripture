@@ -13,10 +13,6 @@ class OverlayRepositoryImpl implements OverlayRepository {
   final SettingsRepository<OverlaySettings> _settings;
   final OverlayFilesystem _filesystem;
 
-  // Timer that sends a snapshot
-  // to set the web page blank
-  Timer? _setBlankTimer;
-
   OverlayRepositoryImpl({
     required OverlayControlServer server,
     required SettingsRepository<OverlaySettings> settings,
@@ -33,7 +29,6 @@ class OverlayRepositoryImpl implements OverlayRepository {
 
   @override
   Future<void> stop() async {
-    _setBlankTimer?.cancel();
     if (isRunning) {
       _server.setSnapshot(OverlaySnapshot.initial());
       _server.broadcastState();
@@ -63,8 +58,6 @@ class OverlayRepositoryImpl implements OverlayRepository {
     if (!isRunning) return;
     _server.setSnapshot(snapshot);
     _server.broadcastState();
-    if (snapshot == OverlaySnapshot.initial()) return;
-    _scheduleHideDeb();
   }
 
   @override
@@ -74,12 +67,4 @@ class OverlayRepositoryImpl implements OverlayRepository {
   @override
   Future<void> resetAssetsToDefault() async =>
       await _filesystem.resetToDefaults();
-
-  void _scheduleHideDeb() {
-    _setBlankTimer?.cancel();
-    _setBlankTimer = Timer(
-      Duration(seconds: _settings.current.hideDebounceSeconds),
-      () => setSnapshot(snapshot: OverlaySnapshot.initial()),
-    );
-  }
 }
