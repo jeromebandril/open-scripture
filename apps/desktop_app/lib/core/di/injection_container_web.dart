@@ -43,10 +43,10 @@ Future<void> init(GetIt sl) async {
 
   sl.registerLazySingleton(
     () => AppCommandDispatcher(
-      paneManagerCubit: sl<MultiPaneManagerCubit>(),
-      searchbarBloc: sl<SearchBloc>(),
-      fullscreenCubit: sl<FullscreenCubit>(),
-      interfaceVisibilityCubit: sl<InterfaceVisibilityCubit>(),
+      paneManagerCubit: () => sl<MultiPaneManagerCubit>(),
+      searchbarBloc: () => sl<SearchBloc>(),
+      fullscreenCubit: () => sl<FullscreenCubit>(),
+      interfaceVisibilityCubit: () => sl<InterfaceVisibilityCubit>(),
     ),
   );
 }

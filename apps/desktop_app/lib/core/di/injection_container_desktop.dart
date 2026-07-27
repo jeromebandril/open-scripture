@@ -250,11 +250,11 @@ void _registerLifecycle(GetIt sl) {
 void _registerShortcuts(GetIt sl) {
   sl.registerLazySingleton(
     () => AppCommandDispatcher(
-      paneManagerCubit: sl<MultiPaneManagerCubit>(),
-      searchbarBloc: sl<SearchBloc>(),
-      fullscreenCubit: sl<FullscreenCubit>(),
-      interfaceVisibilityCubit: sl<InterfaceVisibilityCubit>(),
-      overlayCubit: sl<ObsLiveOverlayCubit>(),
+      paneManagerCubit: () => sl<MultiPaneManagerCubit>(),
+      searchbarBloc: () => sl<SearchBloc>(),
+      fullscreenCubit: () => sl<FullscreenCubit>(),
+      interfaceVisibilityCubit: () => sl<InterfaceVisibilityCubit>(),
+      overlayCubit: () => sl<ObsLiveOverlayCubit>(),
     ),
   );
 }
