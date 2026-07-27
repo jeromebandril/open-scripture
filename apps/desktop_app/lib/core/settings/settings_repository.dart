@@ -18,7 +18,10 @@ class SettingsRepositoryImpl<T> implements SettingsRepository<T> {
   SettingsRepositoryImpl(
     this._datasource, {
     this.saveDebounce = const Duration(milliseconds: 800),
-  }) : _cache = _datasource.defaultValue;
+  }) : _cache = _datasource.defaultValue {
+    // on created load settings immediatly
+    loadSettings();
+  }
 
   final SettingsDatasource<T> _datasource;
   final Duration saveDebounce;
