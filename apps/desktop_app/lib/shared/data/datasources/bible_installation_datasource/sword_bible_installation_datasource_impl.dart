@@ -39,13 +39,9 @@ class SwordBibleInstallationDatasourceImpl
     if (await targetFile.exists()) {
       try {
         await targetFile.delete();
-        print('Successfully deleted modules-conf.cache');
       } catch (e) {
-        print('Error deleting file: $e');
         rethrow;
       }
-    } else {
-      print('The file modules-conf.cache does not exist in this directory.');
     }
 
     _swordService.restart();

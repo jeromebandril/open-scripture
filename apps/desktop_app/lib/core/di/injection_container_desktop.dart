@@ -3,6 +3,8 @@ import 'package:get_it/get_it.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
+import '../../app/state/fullscreen_cubit.dart';
+import '../../app/state/interface_visibility_cubit.dart';
 import '../../features/bible_display/bible_pane/data/repositories/bible_pane_repository_impl.dart';
 import '../../features/bible_display/bible_pane/domain/repositories/bible_pane_repository.dart';
 import '../../features/bible_display/multi_pane_manager/presentation/remote/pane_manager_handler.dart';
@@ -10,24 +12,23 @@ import '../../features/bible_display/multi_pane_manager/presentation/state/multi
 import '../../features/bible_searchbar/search/presentation/remote/search_handler.dart';
 import '../../features/bible_searchbar/search/presentation/state/search_bloc.dart';
 import '../../features/customizer/presentation/state/customizer_cubit.dart';
-import '../../features/my_library/presentation/cubit/my_library_cubit.dart';
+import '../../features/my_library/presentation/state/my_library_cubit.dart';
+import '../../features/obs_live_overlay/data/datasource/overlay_control_server.dart';
 import '../../features/obs_live_overlay/data/datasource/overlay_file_system.dart';
-import '../../features/obs_live_overlay/data/datasource/overlay_server_manager.dart';
 import '../../features/obs_live_overlay/data/repository/overlay_repository_impl.dart';
 import '../../features/obs_live_overlay/data/service/verse_html_formatter_impl.dart';
-import '../../features/obs_live_overlay/domain/entities/overlay_settings.dart';
 import '../../features/obs_live_overlay/domain/repostiory/overlay_repository.dart';
 import '../../features/obs_live_overlay/domain/service/verse_html_formatter.dart';
-import '../../features/obs_live_overlay/presentation/state/obs_overlay/obs_live_overlay_cubit.dart';
-import '../../features/obs_live_overlay/presentation/state/obs_overlay_settinsg/obs_live_overlay_settings_cubit.dart';
+import '../../features/obs_live_overlay/presentation/state/obs_live_overlay_cubit.dart';
+import '../../features/obs_live_overlay/settings/overlay_settings.dart';
 import '../../features/remote_controller/data/datasource/remote_controller_ws.dart';
 import '../../features/remote_controller/data/repositories/remote_controller_repo_impl.dart';
-import '../../features/remote_controller/domain/entities/remote_controller_settings.dart';
 import '../../features/remote_controller/domain/repositories/remote_controller_repo.dart';
-import '../../features/remote_controller/presentation/state/remote_controller/remote_controller_cubit.dart';
-import '../../features/remote_controller/presentation/state/remote_controller_settings/remote_controller_settings_cubit.dart';
-import '../../features/sword/entities/sword_engine_settings.dart';
-import '../../features/sword/presentation/state/sword_engine_settings_cubit.dart';
+import '../../features/remote_controller/presentation/state/remote_controller_cubit.dart';
+import '../../features/remote_controller/settings/remote_controller_settings.dart';
+import '../../features/shortcuts/presentation/models/app_command_dispatcher.dart';
+import '../../features/sword/settings/sword_engine_settings.dart';
+import '../../features/sword/settings/sword_engine_settings_cubit.dart';
 import '../../shared/data/datasources/bible_catalog_datasource/bible_catalog_datasource.dart';
 import '../../shared/data/datasources/bible_catalog_datasource/sword_bible_catalog_datasource_impl.dart';
 import '../../shared/data/datasources/bible_content_datasource/bible_content_datasourcee.dart';
@@ -42,9 +43,10 @@ import '../../shared/domain/repositories/bible_install_repository.dart';
 import '../../shared/domain/repositories/bible_pane_repository_factory.dart';
 import '../../shared/enums/bible_repository_type.dart';
 import '../engines/remote_controller/remote_command_router.dart';
-import '../engines/settings/datasource/settings_datasource_desktop.dart';
-import '../engines/settings/settings_repository.dart';
 import '../infrastructure/event_bus/selected_verse_bus.dart';
+import '../settings/datasource/settings_datasource_desktop.dart';
+import '../settings/settings_cubit.dart';
+import '../settings/settings_repository.dart';
 import '../lifecycle/app_lifecycle.dart';
 import '../lifecycle/app_lifecycle_desktop_impl.dart';
 
@@ -56,6 +58,7 @@ Future<void> init(GetIt sl) async {
   _registerCustomizer(sl);
   _registerRemoteController(sl);
   _registerObsOverlay(sl);
+  _registerShortcuts(sl);
   _registerLifecycle(sl);
 }
 
@@ -92,18 +95,21 @@ void _registerSwordBible(GetIt sl) {
     instanceName: type.name,
   );
 
-  sl.registerLazySingletonAsync<SettingsRepository<SwordEngineSettings>>(() async {
-    final supportDir = await getApplicationSupportDirectory();
-    final defaultPath = p.join(supportDir.path, 'sword');
-    return SettingsRepositoryImpl<SwordEngineSettings>(
-      SettingsDatasourceDesktop<SwordEngineSettings>(
-        fileName: 'sword_engine_settings.json',
-        fromJson: SwordEngineSettings.fromJson,
-        toJson: (s) => s.toJson(),
-        defaultValue: SwordEngineSettings(modulesPath: defaultPath),
-      ),
-    );
-  });
+  sl.registerLazySingletonAsync<SettingsRepository<SwordEngineSettings>>(
+    () async {
+      final supportDir = await getApplicationSupportDirectory();
+      final defaultPath = p.join(supportDir.path, 'sword');
+      return SettingsRepositoryImpl<SwordEngineSettings>(
+        SettingsDatasourceDesktop<SwordEngineSettings>(
+          fileName: 'sword_engine_settings.json',
+          fromJson: SwordEngineSettings.fromJson,
+          toJson: (s) => s.toJson(),
+          defaultValue: SwordEngineSettings(modulesPath: defaultPath),
+        ),
+      );
+    },
+    dispose: (repo) => repo.dispose(),
+  );
 
   sl.registerLazySingletonAsync<SwordEngineSettingsCubit>(() async => SwordEngineSettingsCubit(
         repo: await sl.getAsync<SettingsRepository<SwordEngineSettings>>(),
@@ -134,9 +140,10 @@ void _registerSwordBible(GetIt sl) {
 
   sl.registerLazySingletonAsync<MyLibraryCubit>(
     () async => MyLibraryCubit(
+      repoType: type,
       repo: await sl.getAsync<BibleCatalogRepository>(instanceName: type.name),
       notifier: sl(),
-      installRepo: sl(),
+      installRepo: sl(), 
     ),
     instanceName: type.name,
     onCreated: (c) => c.getBibles(),
@@ -171,6 +178,7 @@ void _registerCustomizer(GetIt sl) {
         defaultValue: const CustomizerState(),
       ),
     ),
+    dispose: (repo) => repo.dispose(),
   );
 }
 
@@ -184,8 +192,9 @@ void _registerRemoteController(GetIt sl) {
         defaultValue: const RemoteControllerSettings(),
       ),
     ),
+    dispose: (repo) => repo.dispose(),
   );
-  sl.registerFactory(() => RemoteControllerSettingsCubit(repo: sl()));
+  sl.registerFactory(() => SettingsCubit<RemoteControllerSettings>(sl()));
   sl.registerLazySingleton(() => RemoteControllerWSServer());
   sl.registerLazySingleton<RemoteCommandRouter>(
     () => RemoteCommandRouter(
@@ -212,16 +221,20 @@ void _registerObsOverlay(GetIt sl) {
         defaultValue: const OverlaySettings(),
       ),
     ),
+    dispose: (repo) => repo.dispose(),
   );
-  sl.registerFactory(() => ObsLiveOverlaySettingsCubit(repo: sl()));
+  sl.registerFactory(() => SettingsCubit<OverlaySettings>(sl()));
 
   sl.registerLazySingleton<VerseHtmlFormatter>(() => VerseHtmlFormatterImpl());
 
   sl.registerLazySingleton<SelectedVerseBus>(() => SelectedVerseBus());
   sl.registerLazySingleton<OverlayFilesystem>(() => OverlayFilesystem());
-  sl.registerLazySingleton<OverlayServerManager>(() => OverlayServerManager(fs: sl()));
-  sl.registerLazySingleton<OverlayRepository>(() => OverlayRepositoryImpl(mgr: sl()));
-  sl.registerFactory(() => ObsLiveOverlayCubit(repo: sl(), notifier: sl(), htmlFormatter: sl()));
+  sl.registerLazySingleton<OverlayControlServer>(() => OverlayControlServer(
+    ensureAssetsExtracted: sl<OverlayFilesystem>().ensureExtracted, 
+    readOverlayFile: sl<OverlayFilesystem>().readOverlayFile 
+  ));
+  sl.registerLazySingleton<OverlayRepository>(() => OverlayRepositoryImpl(server: sl<OverlayControlServer>(), settings: sl<SettingsRepository<OverlaySettings>>(), filesystem: sl()));
+  sl.registerLazySingleton(() => ObsLiveOverlayCubit(repo: sl(), selectedVerseBus: sl(), htmlFormatter: sl(), settings: sl()));
 }
 
 void _registerLifecycle(GetIt sl) {
@@ -234,9 +247,22 @@ void _registerLifecycle(GetIt sl) {
   );
 }
 
+void _registerShortcuts(GetIt sl) {
+  sl.registerLazySingleton(
+    () => AppCommandDispatcher(
+      paneManagerCubit: () => sl<MultiPaneManagerCubit>(),
+      searchbarBloc: () => sl<SearchBloc>(),
+      fullscreenCubit: () => sl<FullscreenCubit>(),
+      interfaceVisibilityCubit: () => sl<InterfaceVisibilityCubit>(),
+      overlayCubit: () => sl<ObsLiveOverlayCubit>(),
+    ),
+  );
+}
+
 // Called once from main.dart right after init() completes. this is where
 // "core" is actually decided, not in the registration style above.
-void warmUpCore(GetIt sl) {
+void warmUp(GetIt sl) {
   sl<AppLifecycleService>();
   sl<MyLibraryCubit>(instanceName: BibleRepositoryType.localDatabase.name);
 }
+

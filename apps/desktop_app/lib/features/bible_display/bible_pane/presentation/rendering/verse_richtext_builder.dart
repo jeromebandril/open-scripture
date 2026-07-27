@@ -83,7 +83,9 @@ class VerseSpanBuilder {
               : TextDecoration.none,
           decorationStyle: TextDecorationStyle.dotted,
           decorationColor: Colors.black26,
-          fontWeight: span.payload == _strongWordBold ? FontWeight.w500 : null,
+          fontWeight: span.payload == _strongWordBold
+              ? bTheme.textFontWeight.stepUp()
+              : null,
         ),
       SpanType.underline =>
         const TextStyle(decoration: TextDecoration.underline),
@@ -92,5 +94,15 @@ class VerseSpanBuilder {
       SpanType.superscript => const TextStyle(fontSize: 10, height: 0.5),
       _ => const TextStyle(),
     };
+  }
+}
+
+extension _FontWeightX on FontWeight {
+  FontWeight stepUp() {
+    final currentIndex = FontWeight.values.indexOf(this);
+    if (currentIndex == -1 || currentIndex >= FontWeight.values.length - 1) {
+      return FontWeight.w900;
+    }
+    return FontWeight.values[currentIndex + 1];
   }
 }

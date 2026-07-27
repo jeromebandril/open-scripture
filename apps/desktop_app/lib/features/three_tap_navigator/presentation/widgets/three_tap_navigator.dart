@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../app/state/interface_visibility_cubit.dart';
 import '../../../../shared/design_system/design_system.dart';
 import '../../../../shared/domain/entities/bible_book.dart';
 import '../../../../shared/domain/entities/bible_id.dart';
 import '../../../../shared/domain/entities/localized_book.dart';
-import '../../../../shared/widgets/custom_icon_button.dart';
 import '../../../../shared/widgets/dropdown_menu_anchor.dart';
 import '../../../bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../../../bible_searchbar/search/presentation/state/search_bloc.dart';
@@ -47,9 +47,11 @@ class _ThreeTapNavigatorTriggerState extends State<ThreeTapNavigatorTrigger> {
           prev.is3TapNavVisible != curr.is3TapNavVisible,
       listener: (context, state) => _menuVisible.value = state.is3TapNavVisible,
       child: DropdownMenuAnchor(
-        trigger: CustomIconButton(
-          Icons.navigation_rounded,
-          onTap: () => context.read<InterfaceVisibilityCubit>().toggle3TapNav(),
+        trigger: IconButton(
+          visualDensity: VisualDensity.compact,
+          icon: Icon(LucideIcons.navigation2),
+          onPressed: () =>
+              context.read<InterfaceVisibilityCubit>().toggle3TapNav(),
         ),
         onDismiss: _dismiss,
         menuWidth: 500,
@@ -147,7 +149,7 @@ class _ThreeTapNavigatorOverlayState extends State<_ThreeTapNavigatorOverlay> {
                                 textAlign: TextAlign.center,
                                 book?.shortName ?? 'Book',
                               )),
-                          const Icon(Icons.arrow_forward_ios_rounded, size: 12),
+                          const Icon(LucideIcons.chevronRight, size: 12),
                           TextButton(
                               onPressed: () => setState(() => chpt = null),
                               child: Text(
@@ -156,7 +158,7 @@ class _ThreeTapNavigatorOverlayState extends State<_ThreeTapNavigatorOverlay> {
                                 textAlign: TextAlign.center,
                                 'Chapter ${chpt ?? ''}',
                               )),
-                          const Icon(Icons.arrow_forward_ios_rounded, size: 12),
+                          const Icon(LucideIcons.chevronRight, size: 12),
                           TextButton(
                               onPressed: () {},
                               child: Text(

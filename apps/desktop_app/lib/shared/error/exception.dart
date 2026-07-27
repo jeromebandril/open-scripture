@@ -11,11 +11,17 @@ abstract class AppException implements Exception {
 }
 
 class ServerException extends AppException {
-  const ServerException(super.details);
+  final int? statusCode;
+
+  const ServerException(super.message, {this.statusCode});
 }
 
 class NetworkException extends AppException {
   const NetworkException(super.details);
+}
+
+class SwordException extends AppException {
+  const SwordException(super.message, {super.cause, super.stackTrace});
 }
 
 class ParseException extends AppException {

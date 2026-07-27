@@ -52,7 +52,10 @@ class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
     final newId =
         (state.panes.map((p) => p.id).fold<int>(0, (m, e) => e > m ? e : m)) +
             1;
-    _ensureBloc(newId);
+
+    // Init new pane with same text scale
+    final currTextScale = activePane().textScalerCubit.state.textScaleFactor;
+    _ensureBloc(newId, initTextScale: currTextScale);
 
     final newCount = state.panes.length + 1;
     final evenFactor = 1.0 / newCount;
@@ -99,11 +102,14 @@ class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
     }
 
     // Get new active Id
-    final newPanes = state.panes.where((p) => p.id != paneId).toList();
-    final indexOfClosed = state.panes.indexWhere((p) => p.id == paneId);
-    final newActiveId = state.activePaneId == paneId
-        ? _wrapIndex(indexOfClosed - 1, newPanes.length)
-        : state.activePaneId;
+    final int newActiveId;
+    if (state.activePaneId == paneId) {
+      final indexOfClosed = state.panes.indexWhere((p) => p.id == paneId);
+      newActiveId =
+          state.panes[_wrapIndex(indexOfClosed - 1, state.panes.length)].id;
+    } else {
+      newActiveId = state.activePaneId;
+    }
 
     emit(PaneManagerState(
       panes: remainingPanes,
@@ -144,12 +150,15 @@ class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
     emit(PaneManagerState(panes: panes, activePaneId: state.activePaneId));
   }
 
-  void _ensureBloc(int paneId) {
+  void _ensureBloc(int paneId, {double? initTextScale}) {
+    final textScaler = sl<TextScalerCubit>();
+    if (initTextScale != null) textScaler.initWith(initTextScale);
+
     _blocs.putIfAbsent(
       paneId,
       () => PaneBlocComponents(
         bloc: sl<BiblePaneBloc>(param1: paneId),
-        textScalerCubit: sl<TextScalerCubit>(),
+        textScalerCubit: textScaler,
         // bibleSelectorCubit: sl<BibleSelectorCubit>(),
       ),
     );

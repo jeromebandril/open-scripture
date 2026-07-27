@@ -5,6 +5,7 @@ import '../../../bible_display/bible_pane/domain/display_mode.dart';
 import '../../../bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../../../bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../../../bible_searchbar/search/presentation/state/search_bloc.dart';
+import '../../../obs_live_overlay/presentation/state/obs_live_overlay_cubit.dart';
 import '../../domain/models/app_command.dart';
 
 typedef CommandHandler = void Function();
@@ -17,13 +18,14 @@ class AppCommandDispatcher {
     required this.searchbarBloc,
     required this.fullscreenCubit,
     required this.interfaceVisibilityCubit,
+    this.overlayCubit,
   });
 
-  final MultiPaneManagerCubit paneManagerCubit;
-  final SearchBloc searchbarBloc;
-
-  final FullscreenCubit fullscreenCubit;
-  final InterfaceVisibilityCubit interfaceVisibilityCubit;
+  final MultiPaneManagerCubit Function() paneManagerCubit;
+  final SearchBloc Function() searchbarBloc;
+  final FullscreenCubit Function() fullscreenCubit;
+  final InterfaceVisibilityCubit Function() interfaceVisibilityCubit;
+  final ObsLiveOverlayCubit Function()? overlayCubit;
 
   void dispatch(AppCommand command) {
     final handler = _handlers[command];
@@ -34,16 +36,13 @@ class AppCommandDispatcher {
   late final Map<AppCommand, CommandHandler> _handlers = {
     // AppCommand.focusSearch: () => searchbarVisibilityCubit.set(true),
     AppCommand.closeWhatever: () {
-      interfaceVisibilityCubit.hideAll();
+      interfaceVisibilityCubit().hideAll();
     },
-    AppCommand.toggleHistory: () => interfaceVisibilityCubit.toggleHistory(),
+    AppCommand.toggleHistory: () => interfaceVisibilityCubit().toggleHistory(),
     AppCommand.toggleToolbar: () {
-      interfaceVisibilityCubit.toggleToolbar();
+      interfaceVisibilityCubit().toggleToolbar();
     },
-    AppCommand.toggleFullscreen: () {
-      print('toggle fullscreen triggered~');
-      fullscreenCubit.toggle();
-    },
+    AppCommand.toggleFullscreen: () => fullscreenCubit().toggle(),
     AppCommand.nextPane: () => _cyclePane(1),
     AppCommand.prevPane: () => _cyclePane(-1),
     AppCommand.prevVerse: () => _moveVerse(-1),
@@ -51,47 +50,49 @@ class AppCommandDispatcher {
     AppCommand.addNextVerseToSelection: () => _extendSelection(1),
     AppCommand.removeVerseFromSelection: () => _extendSelection(-1),
     AppCommand.changeBible: () {
-      final pane = paneManagerCubit.activePane();
+      final pane = paneManagerCubit().activePane();
       pane.bloc.add(BiblePaneChooseBibles());
       // pane.bibleSelectorCubit.set(_prevBibleId);
     },
     AppCommand.switchDisplayMode: () => _cycleDisplayMode(),
     AppCommand.displayChapterOfSelected: () => _displayChapterOfSelected(),
-    AppCommand.addPane: () => paneManagerCubit.splitNewPane(),
+    AppCommand.addPane: () => paneManagerCubit().splitNewPane(),
     AppCommand.removePane: () =>
-        paneManagerCubit.closePane(paneManagerCubit.state.activePaneId),
+        paneManagerCubit().closePane(paneManagerCubit().state.activePaneId),
     AppCommand.zoomIn: () =>
-        paneManagerCubit.activePane().textScalerCubit.zoomIn(),
+        paneManagerCubit().activePane().textScalerCubit.zoomIn(),
     AppCommand.zoomOut: () =>
-        paneManagerCubit.activePane().textScalerCubit.zoomOut(),
-    AppCommand.movePaneToRight: () => paneManagerCubit.swapPanesWithDelta(
-        paneManagerCubit.state.activePaneId, 1),
-    AppCommand.movePaneToLeft: () => paneManagerCubit.swapPanesWithDelta(
-        paneManagerCubit.state.activePaneId, -1),
+        paneManagerCubit().activePane().textScalerCubit.zoomOut(),
+    AppCommand.movePaneToRight: () => paneManagerCubit()
+        .swapPanesWithDelta(paneManagerCubit().state.activePaneId, 1),
+    AppCommand.movePaneToLeft: () => paneManagerCubit()
+        .swapPanesWithDelta(paneManagerCubit().state.activePaneId, -1),
+    AppCommand.flushOverlayBuffer: () => overlayCubit?.call().flushBuffer(),
   };
 
   T? _withActiveRef<T>(T Function(BiblePaneBloc bloc, BibleRef ref) fn) {
-    final bloc = paneManagerCubit.activePane().bloc;
+    final bloc = paneManagerCubit().activePane().bloc;
     final ref = bloc.state.reference;
     if (ref == null) return null;
     return fn(bloc, ref);
   }
 
   void _cyclePane(int delta) {
-    final panes = paneManagerCubit.state.panes;
+    final cubit = paneManagerCubit();
+    final panes = cubit.state.panes;
     if (panes.isEmpty) return;
 
-    final activeId = paneManagerCubit.state.activePaneId;
+    final activeId = cubit.state.activePaneId;
     final index = panes.indexWhere((p) => p.id == activeId);
     if (index == -1) return;
 
     final wrapped = _wrapIndex(index + delta, panes.length);
-    paneManagerCubit.setActive(panes[wrapped].id);
+    cubit.setActive(panes[wrapped].id);
   }
 
   void _moveVerse(int delta) {
     _withActiveRef<void>((bloc, ref) {
-      final searchState = searchbarBloc.state;
+      final searchState = searchbarBloc().state;
 
       // If in string search mode, cycle through the results.
       if (searchState is SearchStringResult) {
@@ -114,7 +115,7 @@ class AppCommandDispatcher {
 
   void _extendSelection(int delta) {
     _withActiveRef<void>((bloc, ref) {
-      if (searchbarBloc.state is SearchStringResult) return;
+      if (searchbarBloc().state is SearchStringResult) return;
 
       final last =
           bloc.state.verseCount ?? bloc.state.unionRefs.last.verseStart ?? 0;
@@ -136,7 +137,7 @@ class AppCommandDispatcher {
   }
 
   void _cycleDisplayMode() {
-    final bloc = paneManagerCubit.activePane().bloc;
+    final bloc = paneManagerCubit().activePane().bloc;
     final modes = DisplayMode.values;
     final i = modes.indexOf(bloc.state.dMode);
     final next = (i < modes.length - 1) ? i + 1 : 0;
@@ -144,7 +145,7 @@ class AppCommandDispatcher {
   }
 
   void _displayChapterOfSelected() {
-    final bloc = paneManagerCubit.activePane().bloc;
+    final bloc = paneManagerCubit().activePane().bloc;
     if (!bloc.state.isMixed) return;
 
     final ref = bloc.state.reference;

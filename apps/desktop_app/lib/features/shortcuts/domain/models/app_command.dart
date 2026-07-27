@@ -17,6 +17,7 @@ enum AppCommand {
   switchDisplayMode,
   zoomIn,
   zoomOut,
+  flushOverlayBuffer,
   // private shortcuts
   // do not show as shortcut in the app
   closeWhatever,

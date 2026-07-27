@@ -3,7 +3,8 @@ import 'package:fpdart/fpdart.dart';
 import '../../../../../shared/domain/entities/bible_ref_partial.dart';
 import '../../../../../shared/error/failure.dart';
 import '../../../../../shared/utils/bible_ref_parser/bible_ref_parser.dart';
-import '../../../../../shared/utils/bible_ref_parser/bible_ref_parser_exceptions.dart';
+import '../../../../../shared/utils/bible_ref_parser/error/bible_ref_parser_exceptions.dart';
+import '../../error/search_failures.dart';
 import '../../domain/repositories/search_repository.dart';
 
 class SearchRepositoryImpl implements SearchRepository {
@@ -14,20 +15,20 @@ class SearchRepositoryImpl implements SearchRepository {
   }) : _parser = parser;
 
   @override
-  Future<Either<Failure, BibleRefPartial>> parse(String query) async {
-    try {
-      final ref = await _parser.parse(query);
-      return Right(ref);
-    } on BibleRefInvalidFormatException catch (e) {
-      return Left(InvalidInputFailure(details: e.message));
-    } on BibleRefInvalidNumberException catch (e) {
-      return Left(InvalidInputFailure(details: e.message));
-    } on BibleRefOutOfRangeException catch (e) {
-      return Left(InvalidInputFailure(details: e.message));
-    } catch (e) {
-      return Left(UnknownFailure(details: e.toString()));
-    }
+  TaskEither<Failure, BibleRefPartial> parse(String query) {
+    return TaskEither.tryCatch(
+      () async => await _parser.parse(query),
+      _mapToFailure,
+    );
   }
+
+  Failure _mapToFailure(Object error, StackTrace st) => switch (error) {
+        BibleRefInvalidFormatException e =>
+          InvalidInputFailure(cause: e, stackTrace: st),
+        BibleRefOutOfRangeException e =>
+          InvalidInputFailure(cause: e, stackTrace: st),
+        _ => UnexpectedFailure(cause: error, stackTrace: st),
+      };
 
   // String _ftsPhrase(String input) {
   //   final trimmed = input.trim(); // Escape quotes for FTS

@@ -48,7 +48,6 @@ class OverlayFilesystem {
     }
   }
 
-  /// Read disk file; fallback to asset if missing.
   Future<String> readOverlayFile(String fileName) async {
     final dir = await getOverlayDir();
     final file = File(p.join(dir.path, fileName));

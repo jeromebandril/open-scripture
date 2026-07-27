@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/settings/settings_cubit.dart';
 import '../../../../shared/design_system/design_system.dart';
 import '../../../../shared/domain/entities/bible_translation.dart';
-import '../../../../shared/widgets/bible_meta_editor.dart';
 import '../../../../shared/widgets/hoverable_container.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
-import '../../../window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
-import '../cubit/my_library_cubit.dart';
+import '../../settings/my_library_settings.dart';
+import '../state/my_library_cubit.dart';
 
 // TODO: implement a refresh button
 // TODO: improve layout
@@ -45,6 +45,9 @@ class LibraryManagerPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final pref = context.select(
+        (SettingsCubit<MyLibrarySettings> c) => c.state.preferredBibleId);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -58,7 +61,7 @@ class LibraryManagerPage extends StatelessWidget {
                 isLoading: state.status == MyLibraryStatus.loading,
                 isError: state.status == MyLibraryStatus.error,
                 emptyListPlaceholder: Text('Empty'),
-                errorPlaceholder: Text('Error'),
+                errorPlaceholder: Text(state.errorMessage ?? 'Error'),
                 filterInitValue:
                     context.read<MyLibraryCubit>().state.filterQuery,
                 onFilter: (query) =>
@@ -81,6 +84,7 @@ class LibraryManagerPage extends StatelessWidget {
                       bibleMeta: bibles[index],
                       isUninstalling: isUninstalling,
                       supportUninstallation: supportUninstallation,
+                      isPreference: pref == bibles[index].extId,
                     ),
                   );
                 },
@@ -96,26 +100,34 @@ class LibraryManagerPage extends StatelessWidget {
               return const SizedBox.shrink();
             }
 
-            final meta = state.bibles[state.selectedBibleIndex!].toMap();
+            final bible = state.bibles[state.selectedBibleIndex!];
+            final bibleInfos = bible.toMap();
+            final isPreference = pref?.key == bible.extId.key;
+
             return SettingSection.single(
               title: 'Metadata of selected',
               actions: [
                 TextButton(
-                    onPressed: () {
-                      context
-                          .read<WindowStackManagerBloc>()
-                          .add(WindowStackManagerOpen(
-                            title: 'Edit Metadata',
-                            widget: const BibleMetaEditor(),
-                            size: Size(600, 565),
-                          ));
-                    },
-                    child: const Row(
+                    onPressed: isPreference
+                        ? () => context
+                            .read<SettingsCubit<MyLibrarySettings>>()
+                            .update(
+                                (s) => s.copyWith(preferredBibleId: () => null))
+                        : () => context
+                            .read<SettingsCubit<MyLibrarySettings>>()
+                            .update((s) => s.copyWith(
+                                preferredBibleId: () => bible.extId)),
+                    child: Row(
                       spacing: 4,
-                      children: [
-                        Icon(Icons.edit),
-                        Text('Edit metadata'),
-                      ],
+                      children: isPreference
+                          ? const [
+                              Icon(Icons.star_rounded),
+                              Text('Remove preference'),
+                            ]
+                          : const [
+                              Icon(Icons.star_outline_rounded),
+                              Text('Set as preference'),
+                            ],
                     ))
               ],
               child: ConstrainedBox(
@@ -125,7 +137,7 @@ class LibraryManagerPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     spacing: 2,
                     children: [
-                      for (final e in meta.entries)
+                      for (final e in bibleInfos.entries)
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -163,12 +175,14 @@ class _InstalledBiblesRow extends StatelessWidget {
   final bool isSelected;
   final bool isUninstalling;
   final bool supportUninstallation;
+  final bool isPreference;
 
   const _InstalledBiblesRow({
     required this.bibleMeta,
     this.isSelected = false,
     this.isUninstalling = false,
     this.supportUninstallation = false,
+    this.isPreference = false,
   });
 
   @override
@@ -188,6 +202,9 @@ class _InstalledBiblesRow extends StatelessWidget {
         child: Row(
           spacing: AppSpacing.lg,
           children: [
+            SizedBox(
+                width: 32,
+                child: isPreference ? Icon(Icons.star_rounded) : null),
             Expanded(
               child: Text(
                 bibleMeta.name.split("\\").last,

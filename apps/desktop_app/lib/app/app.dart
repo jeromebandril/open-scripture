@@ -7,17 +7,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../core/di/injection_container.dart' as di;
 import '../core/infrastructure/window/app_window_manager.dart';
 import '../core/lifecycle/app_lifecycle.dart';
+import '../core/settings/settings_cubit.dart';
 import '../features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
-import '../features/bible_searchbar/history/presentation/cubit/history_cubit.dart';
+import '../features/bible_display/settings/bible_view_settings.dart';
+import '../features/bible_searchbar/history/presentation/state/history_cubit.dart';
 import '../features/bible_searchbar/search/presentation/state/search_bloc.dart';
+import '../features/bible_searchbar/settings/search_settings.dart';
 import '../features/customizer/presentation/models/bible_pane_general_theme.dart';
 import '../features/customizer/presentation/models/bible_view_list_theme.dart';
 import '../features/customizer/presentation/models/bible_view_presentation_theme.dart';
 import '../features/customizer/presentation/state/customizer_cubit.dart';
-import '../features/obs_live_overlay/presentation/state/obs_overlay/obs_live_overlay_cubit.dart';
-import '../features/obs_live_overlay/presentation/state/obs_overlay_settinsg/obs_live_overlay_settings_cubit.dart';
-import '../features/remote_controller/presentation/state/remote_controller/remote_controller_cubit.dart';
-import '../features/remote_controller/presentation/state/remote_controller_settings/remote_controller_settings_cubit.dart';
+import '../features/my_library/settings/my_library_settings.dart';
+import '../features/obs_live_overlay/presentation/state/obs_live_overlay_cubit.dart';
+import '../features/obs_live_overlay/settings/overlay_settings.dart';
+import '../features/remote_controller/presentation/state/remote_controller_cubit.dart';
+import '../features/remote_controller/settings/remote_controller_settings.dart';
 import '../features/shortcuts/presentation/state/shortcuts_cubit.dart';
 import '../features/three_tap_navigator/presentation/state/three_tap_navigator_cubit.dart';
 import '../features/window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
@@ -49,13 +53,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<AppExitResponse> _handleExitRequested() async {
-    try {
-      final canExit = await di.sl<AppLifecycleService>().onExitRequested();
-      return canExit ? AppExitResponse.exit : AppExitResponse.cancel;
-    } catch (e) {
-      print("Error during shutdown: $e");
-    }
-    return AppExitResponse.exit;
+    final canExit = await di.sl<AppLifecycleService>().onExitRequested();
+    return canExit ? AppExitResponse.exit : AppExitResponse.cancel;
   }
 
   @override
@@ -111,12 +110,19 @@ class _MyAppState extends State<MyApp> {
                   if (!kIsWeb) ...[
                     BlocProvider(create: (_) => di.sl<ObsLiveOverlayCubit>()),
                     BlocProvider(
-                        create: (_) => di.sl<ObsLiveOverlaySettingsCubit>()),
+                        create: (_) => di.sl<SettingsCubit<OverlaySettings>>()),
                     BlocProvider(
-                        create: (_) => di.sl<RemoteControllerSettingsCubit>()),
+                        create: (_) =>
+                            di.sl<SettingsCubit<RemoteControllerSettings>>()),
                     BlocProvider(create: (_) => di.sl<RemoteControllerCubit>()),
                     // BlocProvider(create: (_) => di.sl<InstallerBloc>()),
                   ],
+                  BlocProvider.value(
+                      value: di.sl<SettingsCubit<MyLibrarySettings>>()),
+                  BlocProvider.value(
+                      value: di.sl<SettingsCubit<SearchSettings>>()),
+                  BlocProvider.value(
+                      value: di.sl<SettingsCubit<BibleViewSettings>>()),
                   BlocProvider(
                       create: (context) => di.sl<ThreeTapNavigatorCubit>()),
                   BlocProvider.value(value: di.sl<MultiPaneManagerCubit>()),

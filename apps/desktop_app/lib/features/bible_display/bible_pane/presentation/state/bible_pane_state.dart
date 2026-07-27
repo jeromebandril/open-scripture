@@ -20,6 +20,7 @@ class BiblePaneState extends Equatable {
     required this.dMode,
     required this.verseCount,
     required this.repoType,
+    this.selectedWord,
   }) : _unionRefs = unionRefs;
 
   factory BiblePaneState({
@@ -33,6 +34,7 @@ class BiblePaneState extends Equatable {
     DisplayMode dMode = DisplayMode.list,
     int? verseCount,
     BibleRepositoryType repoType = BibleRepositoryType.localDatabase,
+    WordInfo? selectedWord,
   }) {
     return BiblePaneState._(
       paneId: paneId,
@@ -46,6 +48,7 @@ class BiblePaneState extends Equatable {
       dMode: dMode,
       verseCount: verseCount,
       repoType: repoType,
+      selectedWord: selectedWord,
     );
   }
 
@@ -59,6 +62,7 @@ class BiblePaneState extends Equatable {
   final DisplayMode dMode;
   final int? verseCount;
   final BibleRepositoryType repoType;
+  final WordInfo? selectedWord;
 
   final SplayTreeSet<BibleRef> _unionRefs;
   SplayTreeSet<BibleRef> get unionRefs => SplayTreeSet.of(_unionRefs);
@@ -76,6 +80,7 @@ class BiblePaneState extends Equatable {
     DisplayMode Function()? dMode,
     int? Function()? verseCount,
     BibleRepositoryType Function()? repoType,
+    WordInfo? Function()? selectedWord,
   }) {
     return BiblePaneState(
       paneId: paneId != null ? paneId() : this.paneId,
@@ -89,6 +94,7 @@ class BiblePaneState extends Equatable {
       dMode: dMode != null ? dMode() : this.dMode,
       verseCount: verseCount != null ? verseCount() : this.verseCount,
       repoType: repoType != null ? repoType() : this.repoType,
+      selectedWord: selectedWord != null ? selectedWord() : this.selectedWord,
     );
   }
 
@@ -104,5 +110,6 @@ class BiblePaneState extends Equatable {
         dMode,
         verseCount,
         repoType,
+        selectedWord,
       ];
 }

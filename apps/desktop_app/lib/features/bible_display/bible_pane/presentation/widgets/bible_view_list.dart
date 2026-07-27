@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
+import '../../../../../core/settings/settings_cubit.dart';
 import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../../shared/domain/entities/verse.dart';
 import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
 import '../../../../customizer/presentation/models/bible_view_list_theme.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
-import '../cubit/selected_word_cubit.dart';
+import '../../../settings/bible_view_settings.dart';
+import '../../domain/entities/word_info.dart';
 import '../rendering/verse_ref_label.dart';
 import '../rendering/verse_richtext_builder.dart';
 import '../state/bible_pane_bloc.dart';
@@ -35,6 +37,11 @@ class _BibleViewListState extends State<BibleViewList> {
   bool _scrollScheduled = false;
   BibleRef? _pendingScrollRef;
 
+  bool get _autoScrollEnabled => context
+      .read<SettingsCubit<BibleViewSettings>>()
+      .state
+      .enableAutoScrollToVerse;
+
   bool _isIndexVisible(int index, Iterable<ItemPosition> positions) {
     return positions.any(
       (p) =>
@@ -46,12 +53,14 @@ class _BibleViewListState extends State<BibleViewList> {
     required List<BibleRef> items,
     bool useAnimation = true,
   }) {
+    if (!_autoScrollEnabled) return;
     if (_scrollScheduled) return;
     _scrollScheduled = true;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _scrollScheduled = false;
       if (!mounted) return;
+      if (!_autoScrollEnabled) return;
 
       final target = _pendingScrollRef;
       if (target == null) return;
@@ -292,10 +301,9 @@ class _VerseWidget extends StatelessWidget {
         VerseSpanBuilder.build(
           spans: segment.spans,
           context: context,
-          onWordTap: (VerseSpan span) =>
-              context.read<SelectedWordCubit>().setSelectedWord(
-                    WordInfo(span: span, text: span.text),
-                  ),
+          onWordTap: (VerseSpan span) => context
+              .read<BiblePaneBloc>()
+              .add(BiblePaneSelectWord(WordInfo(span: span, text: span.text))),
         ),
       );
     }

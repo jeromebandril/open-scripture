@@ -8,7 +8,6 @@ import '../../../../text_scaler/presentation/widgets/text_scaler_host.dart';
 import '../../../bible_selector/presentation/widgets/bible_selector.dart';
 import '../../../multi_pane_manager/presentation/models/multi_pane_data.dart';
 import '../../domain/display_mode.dart';
-import '../cubit/selected_word_cubit.dart';
 import '../state/bible_pane_bloc.dart';
 import 'bible_view_list.dart';
 import 'bible_view_presentation.dart';
@@ -74,7 +73,6 @@ class BiblePane extends StatelessWidget {
       providers: [
         BlocProvider.value(value: blocComponents.bloc),
         BlocProvider.value(value: blocComponents.textScalerCubit),
-        BlocProvider(create: (_) => SelectedWordCubit()),
       ],
       //
       // Its theming can be indipendent from the app's theme

@@ -1,5 +1,5 @@
 import '../../domain/entities/bible_ref_partial.dart';
-import 'bible_ref_parser_exceptions.dart';
+import 'error/bible_ref_parser_exceptions.dart';
 
 class BibleRefParser {
   static const _searchPromptRegex =

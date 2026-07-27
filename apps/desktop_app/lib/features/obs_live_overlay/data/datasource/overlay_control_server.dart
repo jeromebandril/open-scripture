@@ -1,33 +1,41 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import '../../domain/entities/overlay_models.dart';
+import '../../domain/entities/overlay_roles.dart';
 
 class OverlayControlServer {
-  final int port;
-  final String controllerToken; // shown in desktop UI
   final Future<String> Function(String fileName) readOverlayFile;
+  final Future<void> Function() ensureAssetsExtracted;
 
   HttpServer? _server;
-
+  String? _controllerToken;
   final _clients = <WebSocket>{};
   OverlaySnapshot _snapshot = OverlaySnapshot.initial();
 
-  OverlayControlServer({
-    required this.port,
-    required this.controllerToken,
-    required this.readOverlayFile,
-  });
-
+  bool get isRunning => _server != null;
   OverlaySnapshot get snapshot => _snapshot;
   void setSnapshot(OverlaySnapshot next) => _snapshot = next;
 
-  Future<void> start() async {
-    // One bind that supports both:
-    // - OBS: http://127.0.0.1:port/overlay
-    // - Phone: http://<LAN-IP>:port/ (for controller app)
-    _server = await HttpServer.bind(InternetAddress.anyIPv4, port);
+  OverlayControlServer({
+    required this.ensureAssetsExtracted,
+    required this.readOverlayFile,
+  });
 
+  Future<void> start({required int port}) async {
+    if (isRunning) return;
+    await ensureAssetsExtracted();
+    _controllerToken = _generateToken();
+    _server = await HttpServer.bind(
+      // for now I want it to work only on the same machine,
+      // but it can make sense to expose it so a different
+      // machine in the LAN can run OBS and listen to this
+      // ip address. In that case use [InternetAddress.anyIPv4]
+      InternetAddress.loopbackIPv4,
+      port,
+    );
     _server!.listen(_handleHttp);
   }
 
@@ -66,20 +74,20 @@ class OverlayControlServer {
         // Serve overlay.html (used by OBS)
         final html = await readOverlayFile('overlay.html');
 
-        _respondText(req, html, contentType: ContentType.html);
+        await _respondText(req, html, contentType: ContentType.html);
         return;
       }
 
       if (req.uri.path == '/overlay.js') {
         final js = await readOverlayFile('overlay.js');
-        _respondText(req, js,
+        await _respondText(req, js,
             contentType: ContentType('application', 'javascript'));
         return;
       }
 
       if (req.uri.path == '/overlay.css') {
         final css = await readOverlayFile('overlay.css');
-        _respondText(req, css, contentType: ContentType('text', 'css'));
+        await _respondText(req, css, contentType: ContentType('text', 'css'));
         return;
       }
 
@@ -102,7 +110,7 @@ class OverlayControlServer {
     final ws = await WebSocketTransformer.upgrade(req);
     _clients.add(ws);
 
-    String? role;
+    ClientRole? role;
     bool authed = false;
 
     // Require a hello first
@@ -121,62 +129,77 @@ class OverlayControlServer {
           return;
         }
 
-        final type = (msg['type'] ?? '') as String;
+        try {
+          final type = (msg['type'] ?? '') as String;
 
-        if (type == 'hello') {
-          role = (msg['role'] ?? '') as String;
+          // Handshake
+          if (type == 'hello') {
+            final roleField = msg['role'];
+            final requestedRole =
+                roleField is String ? ClientRole.fromWire(roleField) : null;
+            if (requestedRole == null) {
+              ws.add(WsMsg('error',
+                  {'code': 'BAD_REQUEST', 'message': 'Unknown role'}).encode());
+              ws.close();
+              return;
+            }
+            role = requestedRole;
 
-          // Prevent LAN from acting as overlay client
-          if (role == 'overlay' && !isLoopback) {
-            ws.add(WsMsg('error', {
-              'code': 'FORBIDDEN',
-              'message': 'Overlay role only allowed from localhost',
-            }).encode());
-            ws.close();
+            // Overlay is read-only and only meant for the local OBS browser source.
+            if (role == ClientRole.overlay && !isLoopback) {
+              ws.add(WsMsg('error', {
+                'code': 'FORBIDDEN',
+                'message': 'Overlay role only allowed from localhost',
+              }).encode());
+              ws.close();
+              return;
+            }
+
+            // Controller/desktop can mutate state, so they always need the token,
+            // including from localhost.
+            if (role == ClientRole.controller || role == ClientRole.desktop) {
+              final token = (msg['token'] ?? '') as String;
+              if (!_tokenMatches(token)) {
+                ws.add(WsMsg('error', {
+                  'code': 'UNAUTH',
+                  'message': 'Invalid token',
+                }).encode());
+                ws.close();
+                return;
+              }
+            }
+
+            authed = true;
+            ws.add(WsMsg('state', {'payload': _snapshot.toJson()}).encode());
+            ws.add(WsMsg('ok').encode());
             return;
           }
 
-          // Controllers from LAN must provide token
-          if (role == 'controller' && !isLoopback) {
-            final token = (msg['token'] ?? '') as String;
-            if (token != controllerToken) {
+          if (!authed) {
+            ws.add(WsMsg('error', {
+              'code': 'UNAUTH',
+              'message': 'Send hello first',
+            }).encode());
+            return;
+          }
+
+          // Only controllers can send commands
+          if (type == 'command') {
+            if (role != 'controller' && role != 'desktop') {
               ws.add(WsMsg('error', {
-                'code': 'UNAUTH',
-                'message': 'Invalid token',
+                'code': 'FORBIDDEN',
+                'message': 'Not allowed',
               }).encode());
               return;
             }
-          }
-
-          authed = true;
-
-          // Immediately send snapshot
-          ws.add(WsMsg('state', {'payload': _snapshot.toJson()}).encode());
-          ws.add(WsMsg('ok').encode());
-          return;
-        }
-
-        if (!authed) {
-          ws.add(WsMsg('error', {
-            'code': 'UNAUTH',
-            'message': 'Send hello first',
-          }).encode());
-          return;
-        }
-
-        // Only controllers can send commands
-        if (type == 'command') {
-          print('command verified');
-          if (role != 'controller' && !(isLoopback && role == 'desktop')) {
-            ws.add(WsMsg('error', {
-              'code': 'FORBIDDEN',
-              'message': 'Not allowed',
-            }).encode());
+            _handleCommand(ws, msg);
             return;
           }
-
-          _handleCommand(ws, msg);
-          return;
+        } catch (e) {
+          ws.add(WsMsg('error', {
+            'code': 'BAD_REQUEST',
+            'message': 'Malformed message'
+          }).encode());
         }
       },
       onDone: () => _clients.remove(ws),
@@ -191,7 +214,6 @@ class OverlayControlServer {
 
     switch (name) {
       case 'setText':
-        print('setting text now...');
         final id = (payload['id'] ?? '') as String;
         final text = (payload['text'] ?? '') as String;
         if (id.isEmpty) {
@@ -200,8 +222,7 @@ class OverlayControlServer {
                   .encode());
           return;
         }
-        final existing =
-            _snapshot.items[id] ?? const OverlayItem(text: '', visible: true);
+        final existing = _itemOrDefault(id);
         _snapshot = _snapshot.copyWithItem(id, existing.copyWith(text: text));
         broadcastState();
         ws.add(WsMsg('ok').encode());
@@ -217,8 +238,7 @@ class OverlayControlServer {
           }).encode());
           return;
         }
-        final existing =
-            _snapshot.items[id] ?? const OverlayItem(text: '', visible: true);
+        final existing = _itemOrDefault(id);
         _snapshot =
             _snapshot.copyWithItem(id, existing.copyWith(visible: visible));
         broadcastState();
@@ -233,12 +253,35 @@ class OverlayControlServer {
     }
   }
 
-  void _respondText(HttpRequest req, String body,
-      {required ContentType contentType}) async {
+  Future<void> _respondText(
+    HttpRequest req,
+    String body, {
+    required ContentType contentType,
+  }) async {
     req.response.headers.contentType = contentType;
-    req.response.headers
-        .set('Cache-Control', 'no-store'); // avoid stale overlay
+    // avoid stale overlay
+    req.response.headers.set('Cache-Control', 'no-store');
     req.response.write(body);
     await req.response.close();
   }
+
+  static String _generateToken({int bytesLength = 32}) {
+    final rand = Random.secure();
+    final bytes = List<int>.generate(bytesLength, (_) => rand.nextInt(256));
+    return base64Url.encode(bytes).replaceAll('=', '');
+  }
+
+  bool _tokenMatches(String provided) {
+    final expected = _controllerToken;
+    if (expected == null || expected.isEmpty) return false;
+    if (provided.length != expected.length) return false;
+    var diff = 0;
+    for (var i = 0; i < expected.length; i++) {
+      diff |= provided.codeUnitAt(i) ^ expected.codeUnitAt(i);
+    }
+    return diff == 0;
+  }
+
+  OverlayItem _itemOrDefault(String id) =>
+      _snapshot.items[id] ?? const OverlayItem(text: '', visible: true);
 }

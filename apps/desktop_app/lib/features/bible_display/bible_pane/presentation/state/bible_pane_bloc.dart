@@ -4,13 +4,17 @@ import 'dart:collection';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../../../../core/settings/settings_repository.dart';
 import '../../../../../core/infrastructure/event_bus/search_result_bus.dart';
 import '../../../../../core/infrastructure/event_bus/selected_verse_bus.dart';
 import '../../../../../shared/domain/entities/bible_id.dart';
 import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../../shared/domain/repositories/bible_pane_repository_factory.dart';
 import '../../../../../shared/enums/bible_repository_type.dart';
+import '../../../../../shared/error/failure.dart';
+import '../../../../my_library/settings/my_library_settings.dart';
 import '../../domain/display_mode.dart';
+import '../../domain/entities/word_info.dart';
 import '../../domain/repositories/bible_pane_repository.dart';
 import '../models/parallel_bible_config.dart';
 
@@ -27,7 +31,9 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     required BibleRepositoryFactory repositoryFactory,
     SelectedVerseBus? notifier,
     SearchResultBus? navBus,
-  })  : _repositoryFactory = repositoryFactory,
+    SettingsRepository<MyLibrarySettings>? libSettings,
+  })  : _libSettings = libSettings,
+        _repositoryFactory = repositoryFactory,
         _navBus = navBus,
         _overlayNotifier = notifier,
         super(BiblePaneState(
@@ -38,41 +44,51 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     on<BiblePaneChooseBibles>(_onOpenBibleSelection);
     // on<BiblePaneDisplayVerses>(_onDisplayVerses);
     on<BiblePaneSetDisplayMode>(_onChangeDisplayMode);
+    on<BiblePaneSelectWord>(_onSelectWord);
+
+    // It should not be a problem if it causes state flashes
+    // TODO: think a better solution instead of calling event
+    // immediatly after constructor execution
+    _initConfiguration();
   }
 
   final SearchResultBus? _navBus;
   final SelectedVerseBus? _overlayNotifier;
   final BibleRepositoryFactory _repositoryFactory;
+  final SettingsRepository<MyLibrarySettings>? _libSettings;
   // final _resolver = sl<BibleRefResolver>();
+
+  void _initConfiguration() {
+    final preferredBibleId = _libSettings?.current.preferredBibleId;
+    if (preferredBibleId == null) return;
+    add(BiblePaneOpen(bibleIds: [preferredBibleId]));
+  }
 
   Future<BiblePaneRepository> get _repo async =>
       await _repositoryFactory.get(state.repoType);
 
-  // Add a bible translation to the content
   Future<void> _onBiblePaneOpen(
     BiblePaneOpen event,
     Emitter<BiblePaneState> emit,
   ) async {
     emit(state.copyWith(status: () => BiblePaneStatus.loading));
+
     final repoType = event.bibleIds.first.repoType;
     final repo = await _repositoryFactory.get(repoType);
-
     final newMap = ParallelBibleMap.from(state.content.asMap);
+    bool hasAtLeastOneSuccess = false;
+    late Failure failure;
 
     for (final id in event.bibleIds) {
       // check if bible actually exists
-      final result = await repo.getBibleMetadata(bibleId: id);
+      final result = await repo.getBible(bibleId: id).run();
 
       result.fold(
         (f) {
-          emit(state.copyWith(
-            status: () => BiblePaneStatus.error,
-            content: () => ParallelBibleConfig.empty,
-            errorMessage: () => f.message,
-          ));
-          return;
+          failure = f;
         },
         (bm) {
+          hasAtLeastOneSuccess = true;
           // Add only new translations
           if (newMap[id] != null) return;
           newMap[id] = BibleData(meta: bm);
@@ -85,17 +101,23 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
       if (!event.bibleIds.contains(id)) newMap.remove(id);
     }
 
-    emit(state.copyWith(
-      status: () => BiblePaneStatus.ready,
-      content: () => ParallelBibleConfig.from(newMap),
-      parallelOrder: () => event.bibleIds,
-      isMixed: () => false,
-      repoType: () => repoType,
-    ));
-
-    // fetch and update content if reference is not null
-    if (state.reference == null) return;
-    add(BiblePaneDisplayChapter(ref: state.reference!));
+    if (hasAtLeastOneSuccess) {
+      emit(state.copyWith(
+        status: () => BiblePaneStatus.ready,
+        content: () => ParallelBibleConfig.from(newMap),
+        parallelOrder: () => event.bibleIds,
+        isMixed: () => false,
+        repoType: () => repoType,
+      ));
+      // fetch and update content if reference is not null
+      if (state.reference == null) return;
+      add(BiblePaneDisplayChapter(ref: state.reference!));
+    } else {
+      emit(state.copyWith(
+        status: () => BiblePaneStatus.error,
+        errorMessage: () => '${failure.message} ${failure.cause.toString()}',
+      ));
+    }
   }
 
   /// Display passed bible refs directly
@@ -145,13 +167,16 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     try {
       final newMap = ParallelBibleMap.from(state.content.asMap);
       bool hasAtLeastOneSuccess = false;
+      List<Failure> errors = [];
       int maxVerseCount = 0;
 
       final fetchFutures = state.openedBiblesIds.map((id) async {
-        final failureOrChapter = await (await _repo).getChapterWithSpans(
-          bibleId: id,
-          ref: event.ref,
-        );
+        final failureOrChapter = await (await _repo)
+            .getChapter(
+              bibleId: id,
+              ref: event.ref,
+            )
+            .run();
         return MapEntry(id, failureOrChapter);
       });
 
@@ -162,8 +187,8 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
         final failureOrChapter = entry.value;
 
         await failureOrChapter.fold<Future<void>>(
-          (fail) async {
-            // TODO: get failure details and reason
+          (failure) async {
+            errors.add(failure);
             newMap[id] = newMap[id]!.copyWith(
               verses: () => null,
             );
@@ -173,13 +198,8 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
 
             // update bible info with verse counter
             // get the greatest count
-            final result = (await (await _repo).getMaxVerse(
-              ref: event.ref,
-              book: event.ref.book,
-            ))
-                .getOrElse((_) => 0);
-
-            if (result > maxVerseCount) maxVerseCount = result;
+            final verseCount = verses.length;
+            if (verseCount > maxVerseCount) maxVerseCount = verseCount;
 
             // set content of the pane
             newMap[id] = newMap[id]!.copyWith(
@@ -203,11 +223,12 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
         ));
 
         // return feedback to searchbar
-        _navBus?.emit(SearchResultSuccess(
-          ref: event.ref,
-          source: event.source,
-        ));
-
+        if (!content.isContentEmpty) {
+          _navBus?.emit(SearchResultSuccess(
+            ref: event.ref,
+            source: event.source,
+          ));
+        }
         _sendTextToObsLiveOverlay(event.ref);
       } else {
         emit(state.copyWith(
@@ -215,7 +236,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
           reference: () => event.ref,
           content: () => content,
           isMixed: () => false,
-          errorMessage: () => 'Not found in any translation',
+          errorMessage: () => errors.first.message,
           verseCount: () => maxVerseCount,
         ));
       }
@@ -224,19 +245,26 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     }
   }
 
-  // TODO: reactive this function later
   void _sendTextToObsLiveOverlay(BibleRef ref) {
+    // TODO: should not execute if feature is not running/enabled
     if (_overlayNotifier == null || state.content.isContentEmpty) return;
 
-    // Display content of the first translation
-    final translationToDisplay = state.content.keys.first;
+    // Display content of the first translation available
+    for (final content in state.content.asMap.values) {
+      final verses = content.verses?.values
+          .where((verse) => ref.contains(verse.ref))
+          .toList();
 
-    final verses = state.content[translationToDisplay]!.verses!.values
-        .where((v) => ref.contains(v.ref))
-        .toList();
-    final sel = SelectedVerseBusItem(ref: ref, verses: verses);
-
-    _overlayNotifier.update(sel);
+      if (verses != null && verses.isNotEmpty) {
+        _overlayNotifier.update(
+          SelectedVerseBusItem(
+            ref: ref,
+            verses: verses,
+          ),
+        );
+        return;
+      }
+    }
   }
 
   /// Just change the selected verse
@@ -275,4 +303,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
       BiblePaneSetDisplayMode event, Emitter<BiblePaneState> emit) {
     emit(state.copyWith(dMode: () => event.dMode));
   }
+
+  void _onSelectWord(BiblePaneSelectWord event, Emitter<BiblePaneState> emit) =>
+      emit(state.copyWith(selectedWord: () => event.word));
 }

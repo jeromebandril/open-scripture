@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/settings/settings_cubit.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_color.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_option.dart';
+import '../../../bible_display/settings/bible_view_settings.dart';
+import '../../../bible_searchbar/settings/search_settings.dart';
 import '../../../settings_window/presentation/widgets/setting.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../domain/entities/bible_pane_general_theme_settings.dart';
@@ -125,6 +128,37 @@ class _GlobalCustomizerScreenState extends State<GlobalCustomizerScreen> {
                       cubit.updateTheme(
                           appTheme: (a) =>
                               a.copyWith(enable3TapNavigator: val));
+                    },
+                  )),
+            ],
+          ),
+          SettingSection(
+            title: 'Behavior',
+            children: [
+              Setting(
+                  label: 'Enable searchbar book suggestions',
+                  description:
+                      'Shows a dropdown menu with book name candidates while typing',
+                  child: AppInputBool(
+                    value: context.select((SettingsCubit<SearchSettings> c) =>
+                        c.state.enableBookSuggestion),
+                    onChanged: (val) {
+                      context
+                          .read<SettingsCubit<SearchSettings>>()
+                          .update((s) => s.copyWith(enableBookSuggestion: val));
+                    },
+                  )),
+              Setting(
+                  label: 'Enable auto scroll to verse for bible list view',
+                  description:
+                      'Automatically scrolls to selected verse when it is out of view',
+                  child: AppInputBool(
+                    value: context.select(
+                        (SettingsCubit<BibleViewSettings> c) =>
+                            c.state.enableAutoScrollToVerse),
+                    onChanged: (val) {
+                      context.read<SettingsCubit<BibleViewSettings>>().update(
+                          (s) => s.copyWith(enableAutoScrollToVerse: val));
                     },
                   )),
             ],

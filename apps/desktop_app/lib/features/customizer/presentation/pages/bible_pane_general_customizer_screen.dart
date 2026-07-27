@@ -133,105 +133,23 @@ class _BiblePaneGeneralCustomizerScreenState
                             (CustomizerCubit c) => c.state.pane.textColor,
                           ),
                         )),
-                    Setting(
-                        label: 'Horizontal padding',
-                        description: 'Set horizontal padding',
-                        child: AppInputNumber(
-                          suffixIcon: Icons.percent,
-                          min: 0,
-                          max: 100,
-                          onSubmitted: (n) {
-                            cubit.updateTheme(
-                                paneTheme: (p) =>
-                                    p.copyWith(xPadding: n / 100));
-                          },
-                          value: context.select(
-                            (CustomizerCubit c) =>
-                                (c.state.pane.xPadding * 100),
-                          ),
-                        )),
-                  ],
-                ),
-                SettingSection(
-                  title: 'Typography',
-                  children: [
-                    Setting(
-                      label: 'Reference Font',
-                      description: 'Set font for the reference text',
-                      child: FontPicker(
-                        selected: kAppFonts.firstWhere((f) =>
-                            f.family ==
-                            context.select(
-                              (CustomizerCubit c) => c.state.pane.referenceFont,
-                            )),
-                        onChanged: (appFont) => cubit.updateTheme(
-                            paneTheme: (p) =>
-                                p.copyWith(referenceFont: appFont.family)),
-                      ),
-                    ),
-                    Setting(
-                        label: 'Reference Font Weight',
-                        description:
-                            'Set font weight for unselected references',
-                        child: AppInputOption<AppFontWeight>(
-                          value: context.select((CustomizerCubit c) =>
-                              c.state.pane.refFontWeight),
-                          onChanged: (fw) {
-                            cubit.updateTheme(
-                                paneTheme: (p) =>
-                                    p.copyWith(refFontWeight: fw));
-                          },
-                          items: AppFontWeight.values
-                              .map((fw) => AppDropdownItem<AppFontWeight>(
-                                  value: fw, label: fw.wire))
-                              .toList(),
-                        )),
-                    Setting(
-                        label: 'Selected reference Font Weight',
-                        description: 'Set font weight for selected references',
-                        child: AppInputOption<AppFontWeight>(
-                          value: context.select((CustomizerCubit c) =>
-                              c.state.pane.selectedRefFontWeight),
-                          onChanged: (fw) {
-                            cubit.updateTheme(
-                                paneTheme: (p) =>
-                                    p.copyWith(selectedRefFontWeight: fw));
-                          },
-                          items: AppFontWeight.values
-                              .map((fw) => AppDropdownItem<AppFontWeight>(
-                                  value: fw, label: fw.wire))
-                              .toList(),
-                        )),
-                    Setting(
-                      label: 'Text Font',
-                      description: 'Set font for the verse text',
-                      child: FontPicker(
-                        selected: kAppFonts.firstWhere((f) =>
-                            f.family ==
-                            context.select(
-                              (CustomizerCubit c) => c.state.pane.textFont,
-                            )),
-                        onChanged: (appFont) => cubit.updateTheme(
-                            paneTheme: (p) =>
-                                p.copyWith(textFont: appFont.family)),
-                      ),
-                    ),
-                    Setting(
-                        label: 'Text Font Weight',
-                        description: 'Set font weight for verse text',
-                        child: AppInputOption<AppFontWeight>(
-                          value: context.select((CustomizerCubit c) =>
-                              c.state.pane.textFontWeight),
-                          onChanged: (fw) {
-                            cubit.updateTheme(
-                                paneTheme: (p) =>
-                                    p.copyWith(textFontWeight: fw));
-                          },
-                          items: AppFontWeight.values
-                              .map((fw) => AppDropdownItem<AppFontWeight>(
-                                  value: fw, label: fw.wire))
-                              .toList(),
-                        )),
+                    // Setting(
+                    //     label: 'Horizontal padding',
+                    //     description: 'Set horizontal padding',
+                    //     child: AppInputNumber(
+                    //       suffixIcon: Icons.percent,
+                    //       min: 0,
+                    //       max: 100,
+                    //       onSubmitted: (n) {
+                    //         cubit.updateTheme(
+                    //             paneTheme: (p) =>
+                    //                 p.copyWith(xPadding: n / 100));
+                    //       },
+                    //       value: context.select(
+                    //         (CustomizerCubit c) =>
+                    //             (c.state.pane.xPadding * 100),
+                    //       ),
+                    //     )),
                   ],
                 ),
                 SettingSection(
@@ -290,6 +208,94 @@ class _BiblePaneGeneralCustomizerScreenState
                                     p.copyWith(underlineStrongWords: val));
                           },
                         )),
+                  ],
+                ),
+                SettingSection(
+                  title: 'Typography',
+                  children: [
+                    SettingSection(title: 'Font weight', children: [
+                      Setting(
+                          label: 'Text font weight',
+                          description: 'Set font weight for verse text',
+                          child: AppInputOption<AppFontWeight>(
+                            value: context.select((CustomizerCubit c) =>
+                                c.state.pane.textFontWeight),
+                            onChanged: (fw) {
+                              cubit.updateTheme(
+                                  paneTheme: (p) =>
+                                      p.copyWith(textFontWeight: fw));
+                            },
+                            items: AppFontWeight.values
+                                .map((fw) => AppDropdownItem<AppFontWeight>(
+                                    value: fw, label: fw.wire))
+                                .toList(),
+                          )),
+                      Setting(
+                          label: 'Reference font weight',
+                          description:
+                              'Set font weight for unselected references',
+                          child: AppInputOption<AppFontWeight>(
+                            value: context.select((CustomizerCubit c) =>
+                                c.state.pane.refFontWeight),
+                            onChanged: (fw) {
+                              cubit.updateTheme(
+                                  paneTheme: (p) =>
+                                      p.copyWith(refFontWeight: fw));
+                            },
+                            items: AppFontWeight.values
+                                .map((fw) => AppDropdownItem<AppFontWeight>(
+                                    value: fw, label: fw.wire))
+                                .toList(),
+                          )),
+                      Setting(
+                          label: 'Selected reference font weight',
+                          description:
+                              'Set font weight for selected references',
+                          child: AppInputOption<AppFontWeight>(
+                            value: context.select((CustomizerCubit c) =>
+                                c.state.pane.selectedRefFontWeight),
+                            onChanged: (fw) {
+                              cubit.updateTheme(
+                                  paneTheme: (p) =>
+                                      p.copyWith(selectedRefFontWeight: fw));
+                            },
+                            items: AppFontWeight.values
+                                .map((fw) => AppDropdownItem<AppFontWeight>(
+                                    value: fw, label: fw.wire))
+                                .toList(),
+                          )),
+                    ]),
+                    SettingSection(title: 'Font family', children: [
+                      Setting(
+                        label: 'Text font',
+                        description: 'Set font for the verse text',
+                        child: FontPicker(
+                          selected: kAppFonts.firstWhere((f) =>
+                              f.family ==
+                              context.select(
+                                (CustomizerCubit c) => c.state.pane.textFont,
+                              )),
+                          onChanged: (appFont) => cubit.updateTheme(
+                              paneTheme: (p) =>
+                                  p.copyWith(textFont: appFont.family)),
+                        ),
+                      ),
+                      Setting(
+                        label: 'Reference font',
+                        description: 'Set font for the reference text',
+                        child: FontPicker(
+                          selected: kAppFonts.firstWhere((f) =>
+                              f.family ==
+                              context.select(
+                                (CustomizerCubit c) =>
+                                    c.state.pane.referenceFont,
+                              )),
+                          onChanged: (appFont) => cubit.updateTheme(
+                              paneTheme: (p) =>
+                                  p.copyWith(referenceFont: appFont.family)),
+                        ),
+                      ),
+                    ]),
                   ],
                 ),
                 SettingSection(

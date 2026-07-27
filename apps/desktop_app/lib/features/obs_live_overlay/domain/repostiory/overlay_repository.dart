@@ -1,13 +1,16 @@
+import 'dart:io';
+
 import '../entities/overlay_models.dart';
 
 abstract class OverlayRepository {
   OverlaySnapshot get snapshot;
   bool get isRunning;
 
-  Future<void> start({required int port, required String controllerToken});
+  Future<void> start();
   Future<void> stop();
 
-  void setText({required OverlayId id, required String text});
-  void setVisible({required OverlayId id, required bool visible});
+  void setProperty({required OverlayId id, String? text, bool? visible});
   void setSnapshot({required OverlaySnapshot snapshot});
+  Future<void> resetAssetsToDefault();
+  Future<Directory> getOverlayDirectory();
 }

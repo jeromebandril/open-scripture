@@ -7,18 +7,20 @@ import '../../features/bible_display/bible_pane/domain/repositories/bible_pane_r
 import '../../features/bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../../features/bible_display/bible_selector/presentation/cubit/bible_selector_cubit.dart';
 import '../../features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
+import '../../features/bible_display/settings/bible_view_settings.dart';
 import '../../features/bible_importer/presentation/state/bible_importer_cubit/bible_importer_cubit.dart';
-import '../../features/bible_searchbar/history/presentation/cubit/history_cubit.dart';
+import '../../features/bible_searchbar/history/presentation/state/history_cubit.dart';
 import '../../features/bible_searchbar/search/data/repositories/search_repository_impl.dart';
 import '../../features/bible_searchbar/search/domain/repositories/search_repository.dart';
 import '../../features/bible_searchbar/search/domain/search_intent_resolver.dart';
 import '../../features/bible_searchbar/search/presentation/state/search_bloc.dart';
+import '../../features/bible_searchbar/settings/search_settings.dart';
 import '../../features/customizer/presentation/state/customizer_cubit.dart';
 import '../../features/font_loader/presentation/state/font_loader_cubit.dart';
-import '../../features/my_library/presentation/cubit/my_library_cubit.dart';
+import '../../features/my_library/presentation/state/my_library_cubit.dart';
+import '../../features/my_library/settings/my_library_settings.dart';
 import '../../features/shortcuts/data/repositories/shortcuts_repo_impl.dart';
 import '../../features/shortcuts/domain/repositories/shortcuts_repo.dart';
-import '../../features/shortcuts/presentation/models/app_command_dispatcher.dart';
 import '../../features/shortcuts/presentation/state/shortcuts_cubit.dart';
 import '../../features/text_scaler/presentation/state/text_scaler_cubit.dart';
 import '../../features/three_tap_navigator/data/repository/three_tap_navigator_repository_impl.dart';
@@ -52,6 +54,9 @@ import '../../shared/utils/bible_ref_parser/bible_ref_parser.dart';
 import '../engines/bible_compiler/import/formats/osis_importer.dart';
 import '../engines/bible_compiler/import/formats/usfx_importer.dart';
 import '../engines/bible_compiler/import/importer_registry.dart';
+import '../settings/datasource/settings_datasource_desktop.dart';
+import '../settings/settings_cubit.dart';
+import '../settings/settings_repository.dart';
 import '../infrastructure/database/daos/bible_content_dao.dart';
 import '../infrastructure/database/daos/bible_installation_dao.dart';
 import '../infrastructure/database/daos/installed_bibles_dao.dart';
@@ -75,6 +80,7 @@ Future<void> init(GetIt sl) async {
   // bloc factory
   sl.registerFactoryParam<BiblePaneBloc, int, void>(
     (paneId, _) => BiblePaneBloc(
+      libSettings: sl<SettingsRepository<MyLibrarySettings>>(),
       repositoryFactory: sl<BibleRepositoryFactory>(),
       paneId: paneId,
       navBus: sl.isRegistered<SearchResultBus>() ? sl<SearchResultBus>() : null,
@@ -108,6 +114,33 @@ Future<void> init(GetIt sl) async {
       BibleRepositoryType>((selectedIds,
           repoType) =>
       BibleSelectorCubit(selectedBiblesIds: selectedIds, repoType: repoType));
+
+  // Configs / Settings
+  sl.registerLazySingleton<SettingsRepository<MyLibrarySettings>>(
+    () => SettingsRepositoryImpl<MyLibrarySettings>(
+      SettingsDatasourceDesktop<MyLibrarySettings>(
+        fileName: 'my_library_settings.json',
+        fromJson: MyLibrarySettings.fromJson,
+        toJson: (l) => l.toJson(),
+        defaultValue: const MyLibrarySettings(),
+      ),
+    ),
+    dispose: (repo) => repo.dispose(),
+  );
+  sl.registerSingleton(SettingsCubit<MyLibrarySettings>(sl()));
+
+  sl.registerLazySingleton<SettingsRepository<BibleViewSettings>>(
+    () => SettingsRepositoryImpl<BibleViewSettings>(
+      SettingsDatasourceDesktop<BibleViewSettings>(
+        fileName: 'my_library_settings.json',
+        fromJson: BibleViewSettings.fromJson,
+        toJson: (l) => l.toJson(),
+        defaultValue: const BibleViewSettings(),
+      ),
+    ),
+    dispose: (repo) => repo.dispose(),
+  );
+  sl.registerSingleton(SettingsCubit<BibleViewSettings>(sl()));
 }
 
 // ---------------------------------------------------------------------------
@@ -167,12 +200,25 @@ void _registerSearch(GetIt sl) {
         searchIntentBus: sl(),
         searchResultBus: sl()),
   );
+  sl.registerLazySingleton<SettingsRepository<SearchSettings>>(
+    () => SettingsRepositoryImpl<SearchSettings>(
+      SettingsDatasourceDesktop<SearchSettings>(
+        fileName: 'search_settings.json',
+        fromJson: SearchSettings.fromJson,
+        toJson: (l) => l.toJson(),
+        defaultValue: const SearchSettings(),
+      ),
+    ),
+    dispose: (repo) => repo.dispose(),
+  );
+  sl.registerSingleton(SettingsCubit<SearchSettings>(sl()));
 }
 
 // ---------------------------------------------------------------------------
 void _registerMyLibrary(GetIt sl) {
   sl.registerLazySingleton<MyLibraryCubit>(
     () => MyLibraryCubit(
+      repoType: BibleRepositoryType.localDatabase,
       repo: sl.get<BibleCatalogRepository>(
           instanceName: BibleRepositoryType.localDatabase.name),
       notifier: sl(),
@@ -206,6 +252,7 @@ void _registerCloudBible(GetIt sl) {
       instanceName: type.name);
   sl.registerLazySingleton<MyLibraryCubit>(
       () => MyLibraryCubit(
+            repoType: type,
             repo: sl.get<BibleCatalogRepository>(instanceName: type.name),
             notifier: sl(),
           ),
@@ -215,14 +262,6 @@ void _registerCloudBible(GetIt sl) {
 
 // ----------------------------------------------------------------------------
 void _registerShortcuts(GetIt sl) {
-  sl.registerLazySingleton(
-    () => AppCommandDispatcher(
-      paneManagerCubit: sl<MultiPaneManagerCubit>(),
-      searchbarBloc: sl<SearchBloc>(),
-      fullscreenCubit: sl<FullscreenCubit>(),
-      interfaceVisibilityCubit: sl<InterfaceVisibilityCubit>(),
-    ),
-  );
   sl.registerLazySingleton<ShortcutsRepo>(
     () => ShortcutsRepoImpl(dispatcher: sl()),
   );
@@ -265,4 +304,10 @@ void _registerThreeTapNavigator(GetIt sl) {
     ),
   );
   sl.registerLazySingleton(() => ThreeTapNavigatorCubit(repo: sl()));
+}
+
+// ----------------------------------------------------------------------------
+Future<void> warmUp(GetIt sl) async {
+  // warm up settings (only those necessary on first frame)
+  await sl<SettingsRepository<MyLibrarySettings>>().loadSettings();
 }

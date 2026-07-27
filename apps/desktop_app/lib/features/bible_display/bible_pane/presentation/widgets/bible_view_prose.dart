@@ -8,7 +8,7 @@ import '../../../../customizer/presentation/models/bible_pane_general_theme.dart
 import '../../../../customizer/presentation/models/bible_view_list_theme.dart';
 import '../../../../customizer/presentation/state/customizer_cubit.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
-import '../cubit/selected_word_cubit.dart';
+import '../../domain/entities/word_info.dart';
 import '../rendering/verse_ref_label.dart';
 import '../rendering/verse_richtext_builder.dart';
 import '../state/bible_pane_bloc.dart';
@@ -129,9 +129,9 @@ class _BibleViewProseState extends State<BibleViewProse> {
   }
 
   void _onStrongsWordTap(BuildContext context, VerseSpan span) {
-    context.read<SelectedWordCubit>().setSelectedWord(
-          WordInfo(span: span, text: span.text),
-        );
+    context
+        .read<BiblePaneBloc>()
+        .add(BiblePaneSelectWord(WordInfo(span: span, text: span.text)));
   }
 
   @override

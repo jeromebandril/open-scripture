@@ -1,16 +1,21 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../../core/settings/settings_cubit.dart';
+import '../../../../shared/design_system/design_system.dart';
 import '../../../../shared/widgets/dot.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
 import '../../../settings_window/presentation/pages/not_available_page.dart';
 import '../../../settings_window/presentation/widgets/setting.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
-import '../state/obs_overlay/obs_live_overlay_cubit.dart';
-import '../state/obs_overlay_settinsg/obs_live_overlay_settings_cubit.dart';
+import '../../settings/overlay_settings.dart';
+import '../state/obs_live_overlay_cubit.dart';
 
 class ObsLiveOverlayPage extends StatelessWidget {
   const ObsLiveOverlayPage({super.key});
@@ -23,7 +28,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
     return kIsWeb
         ? const FeatureNotAvailablePage(featureDescription: featureDescription)
         : BlocProvider.value(
-            value: context.read<ObsLiveOverlaySettingsCubit>(),
+            value: context.read<SettingsCubit<OverlaySettings>>(),
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(42, 0, 42, 42),
               child: BlocBuilder<ObsLiveOverlayCubit, ObsLiveOverlayState>(
@@ -31,8 +36,8 @@ class ObsLiveOverlayPage extends StatelessWidget {
                     curr.isRunning != prev.isRunning || curr.busy != prev.busy,
                 builder: (ctx, state) {
                   final enableFeature = ctx.select(
-                      (ObsLiveOverlaySettingsCubit c) =>
-                          c.state.settings.enableFeature);
+                      (SettingsCubit<OverlaySettings> c) =>
+                          c.state.enableFeature);
                   return Column(
                     children: [
                       SettingSection(
@@ -47,7 +52,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                                 overrideColor: Theme.of(context)
                                     .colorScheme
                                     .onSurfaceVariant,
-                                overrideGlowingColor: Colors.red,
+                                overrideGlowingColor: Colors.green,
                               ),
                               TextButton(
                                 onPressed: state.busy || !enableFeature
@@ -56,19 +61,9 @@ class ObsLiveOverlayPage extends StatelessWidget {
                                         ? ctx
                                             .read<ObsLiveOverlayCubit>()
                                             .stopServer()
-                                        : ctx.read<ObsLiveOverlayCubit>().startServer(
-                                            port: ctx
-                                                .read<
-                                                    ObsLiveOverlaySettingsCubit>()
-                                                .state
-                                                .settings
-                                                .port,
-                                            hideDebounceTimeSeconds: ctx
-                                                .read<
-                                                    ObsLiveOverlaySettingsCubit>()
-                                                .state
-                                                .settings
-                                                .hideDebounceSeconds),
+                                        : ctx
+                                            .read<ObsLiveOverlayCubit>()
+                                            .startServer(),
                                 child: state.isRunning
                                     ? const Text('Turn OBS Live Overlay Off')
                                     : const Text('Turn OBS Live Overlay On'),
@@ -89,9 +84,9 @@ class ObsLiveOverlayPage extends StatelessWidget {
                                 value: enableFeature,
                                 onChanged: (val) {
                                   ctx
-                                      .read<ObsLiveOverlaySettingsCubit>()
-                                      .updateSettings((settings) => settings
-                                          .copyWith(enableFeature: val));
+                                      .read<SettingsCubit<OverlaySettings>>()
+                                      .update((settings) => settings.copyWith(
+                                          enableFeature: val));
                                 },
                               )),
                           Setting(
@@ -102,11 +97,11 @@ class ObsLiveOverlayPage extends StatelessWidget {
                               child: AppInputBool(
                                 enabled: false, //state.isRunning || state.busy,
                                 value: false,
-                                // ctx.select((ObsLiveOverlaySettingsCubit c) =>
+                                // ctx.select((SettingsCubit<OverlaySettings> c) =>
                                 //     c.state.settings.enableAutoStart),
                                 onChanged: (val) {
                                   // ctx
-                                  //     .read<ObsLiveOverlaySettingsCubit>()
+                                  //     .read<SettingsCubit<OverlaySettings>>()
                                   //     .updateSettings((settings) =>
                                   //         settings.copyWith(enableAutoStart: val));
                                 },
@@ -114,18 +109,17 @@ class ObsLiveOverlayPage extends StatelessWidget {
                           Setting(
                               label: 'Enable manual control',
                               description:
-                                  'Decide if to pass the selected verse to the overlay manually (not available yet)',
+                                  'Decide if to pass the selected verse to the overlay manually',
                               child: AppInputBool(
-                                enabled: false,
-                                value: false,
-                                // enabled: !(state.isRunning || state.busy),
-                                // value: ctx.select((ObsLiveOverlaySettingsCubit c) =>
-                                //     c.state.settings.enableManualControl),
+                                enabled: !(state.isRunning || state.busy),
+                                value: ctx.select(
+                                    (SettingsCubit<OverlaySettings> c) =>
+                                        c.state.enableManualControl),
                                 onChanged: (val) {
                                   ctx
-                                      .read<ObsLiveOverlaySettingsCubit>()
-                                      .updateSettings((settings) => settings
-                                          .copyWith(enableManualControl: val));
+                                      .read<SettingsCubit<OverlaySettings>>()
+                                      .update((settings) => settings.copyWith(
+                                          enableManualControl: val));
                                 },
                               )),
                           Setting(
@@ -137,12 +131,12 @@ class ObsLiveOverlayPage extends StatelessWidget {
                                 min: 49152,
                                 max: 65535,
                                 value: ctx.select(
-                                    (ObsLiveOverlaySettingsCubit c) =>
-                                        c.state.settings.port),
+                                    (SettingsCubit<OverlaySettings> c) =>
+                                        c.state.port),
                                 onSubmitted: (p) {
                                   ctx
-                                      .read<ObsLiveOverlaySettingsCubit>()
-                                      .updateSettings((settings) =>
+                                      .read<SettingsCubit<OverlaySettings>>()
+                                      .update((settings) =>
                                           settings.copyWith(port: p.toInt()));
                                 },
                               )),
@@ -155,14 +149,13 @@ class ObsLiveOverlayPage extends StatelessWidget {
                                 min: 5,
                                 max: 480,
                                 value: ctx.select(
-                                    (ObsLiveOverlaySettingsCubit c) =>
-                                        c.state.settings.hideDebounceSeconds),
+                                    (SettingsCubit<OverlaySettings> c) =>
+                                        c.state.hideDebounceSeconds),
                                 onSubmitted: (p) {
                                   ctx
-                                      .read<ObsLiveOverlaySettingsCubit>()
-                                      .updateSettings((settings) =>
-                                          settings.copyWith(
-                                              hideDebounceSeconds: p.toInt()));
+                                      .read<SettingsCubit<OverlaySettings>>()
+                                      .update((settings) => settings.copyWith(
+                                          hideDebounceSeconds: p.toInt()));
                                 },
                               )),
                           Setting(
@@ -172,7 +165,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                               settingWidth: 300,
                               child: Builder(builder: (context) {
                                 final url = context.select(
-                                    (ObsLiveOverlaySettingsCubit c) =>
+                                    (SettingsCubit<OverlaySettings> c) =>
                                         c.state.url);
 
                                 return Row(
@@ -192,11 +185,88 @@ class ObsLiveOverlayPage extends StatelessWidget {
                               }))
                         ],
                       ),
+                      SettingSection(
+                        title: 'Assets & Customization',
+                        children: [
+                          Setting(
+                            label:
+                                'Start editing assets for overlay customization',
+                            description:
+                                'The customization is for advanced users that knows how to work with HTML and CSS files',
+                            child: TextButton.icon(
+                                onPressed: () async => await context
+                                    .read<ObsLiveOverlayCubit>()
+                                    .openAssetsFolder(),
+                                icon: const Icon(LucideIcons.folderOpen),
+                                label: const Text('Open assets folder')),
+                          ),
+                          const ResetAssetsAction(),
+                        ],
+                      ),
                     ],
                   );
                 },
               ),
             ),
           );
+  }
+}
+
+class ResetAssetsAction extends StatefulWidget {
+  const ResetAssetsAction({super.key});
+
+  @override
+  State<ResetAssetsAction> createState() => _ResetAssetsActionState();
+}
+
+class _ResetAssetsActionState extends State<ResetAssetsAction> {
+  // removed this because if nothing wrong happens,
+  // it is pratically instantenous
+  // bool _isExec = false;
+  bool _showFeedback = false;
+  Timer? _feedbackTimer;
+
+  Future<void> _resetAssets() async {
+    setState(() {
+      // _isExec = true;
+      _showFeedback = false;
+    });
+    await context.read<ObsLiveOverlayCubit>().resetAssetsToDefaults();
+    setState(() {
+      // _isExec = false;
+      _showFeedback = true;
+    });
+    _feedbackTimer = Timer(const Duration(seconds: 2), () {
+      setState(() => _showFeedback = false);
+      _feedbackTimer = null;
+    });
+  }
+
+  @override
+  void dispose() {
+    _feedbackTimer?.cancel();
+    _feedbackTimer = null;
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final successColor = Theme.of(context).brightness == Brightness.light
+        ? AppColors.success
+        : AppColors.successDark;
+
+    return Setting(
+      label: 'Reset assets to defaults',
+      description:
+          'Copy/Paste defaults assets file, overwriting all customizations',
+      child: TextButton.icon(
+          onPressed: _showFeedback ? null : () async => await _resetAssets(),
+          icon: _showFeedback
+              ? Icon(LucideIcons.circleCheckBig, color: successColor)
+              : const Icon(LucideIcons.rotateCcw),
+          label: _showFeedback
+              ? Text('Assets reseted', style: TextStyle(color: successColor))
+              : const Text('Execute asset reset')),
+    );
   }
 }

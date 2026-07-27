@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
+import '../../../../core/settings/settings_cubit.dart';
 import '../../../../shared/design_system/design_system.dart';
 import '../../../../shared/utils/network_utils.dart';
 import '../../../../shared/widgets/dot.dart';
@@ -13,8 +14,8 @@ import '../../../settings_window/presentation/widgets/setting.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../../window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import '../../domain/entities/client_info.dart';
-import '../state/remote_controller/remote_controller_cubit.dart';
-import '../state/remote_controller_settings/remote_controller_settings_cubit.dart';
+import '../../settings/remote_controller_settings.dart';
+import '../state/remote_controller_cubit.dart';
 
 class RemoteControllerPage extends StatefulWidget {
   const RemoteControllerPage({super.key});
@@ -29,8 +30,6 @@ class _RemoteControllerPageState extends State<RemoteControllerPage> {
     const featureDescription =
         'Allows you to control this app remotely from your phone. To use it, make sure to be connected in the same network.';
 
-    final plat = TargetPlatform.windows;
-
     return kIsWeb
         ? const FeatureNotAvailablePage(featureDescription: featureDescription)
         : BlocProvider.value(
@@ -40,12 +39,12 @@ class _RemoteControllerPageState extends State<RemoteControllerPage> {
               child: BlocBuilder<RemoteControllerCubit, RemoteControllerState>(
                 builder: (context, state) {
                   final enableFeature = context.select(
-                      (RemoteControllerSettingsCubit c) =>
-                          c.state.settings.enableFeature);
+                      (SettingsCubit<RemoteControllerSettings> c) =>
+                          c.state.enableFeature);
 
                   final port = context.select(
-                      (RemoteControllerSettingsCubit c) =>
-                          c.state.settings.port);
+                      (SettingsCubit<RemoteControllerSettings> c) =>
+                          c.state.port);
 
                   return Column(
                     children: [
@@ -86,9 +85,9 @@ class _RemoteControllerPageState extends State<RemoteControllerPage> {
                                                           RemoteControllerCubit>()
                                                       .start(context
                                                           .read<
-                                                              RemoteControllerSettingsCubit>()
+                                                              SettingsCubit<
+                                                                  RemoteControllerSettings>>()
                                                           .state
-                                                          .settings
                                                           .port),
                                           child: state.isRunning
                                               ? const Text(
@@ -132,13 +131,16 @@ class _RemoteControllerPageState extends State<RemoteControllerPage> {
                               child: AppInputBool(
                                 enabled: !(state.isRunning || state.isBusy),
                                 value: context.select(
-                                    (RemoteControllerSettingsCubit c) =>
-                                        c.state.settings.enableFeature),
+                                    (SettingsCubit<RemoteControllerSettings>
+                                            c) =>
+                                        c.state.enableFeature),
                                 onChanged: (val) {
                                   context
-                                      .read<RemoteControllerSettingsCubit>()
-                                      .updateSettings((settings) => settings
-                                          .copyWith(enableFeature: val));
+                                      .read<
+                                          SettingsCubit<
+                                              RemoteControllerSettings>>()
+                                      .update((settings) => settings.copyWith(
+                                          enableFeature: val));
                                 },
                               )),
                           Setting(
@@ -151,8 +153,10 @@ class _RemoteControllerPageState extends State<RemoteControllerPage> {
                                 value: port,
                                 onSubmitted: (p) {
                                   context
-                                      .read<RemoteControllerSettingsCubit>()
-                                      .updateSettings((settings) =>
+                                      .read<
+                                          SettingsCubit<
+                                              RemoteControllerSettings>>()
+                                      .update((settings) =>
                                           settings.copyWith(port: p.toInt()));
                                 },
                               )),
@@ -185,9 +189,9 @@ class __ConnectionDetailsState extends State<_ConnectionDetails> {
         FutureBuilder(
           future: NetworkUtils.getLocalIp().catchError((_) => 'Unknown'),
           builder: (context, asyncSnapshot) {
-            return BlocSelector<RemoteControllerSettingsCubit,
-                    RemoteControllerSettingsState, int>(
-                selector: (state) => state.settings.port,
+            return BlocSelector<SettingsCubit<RemoteControllerSettings>,
+                    RemoteControllerSettings, int>(
+                selector: (state) => state.port,
                 builder: (context, port) {
                   final serverUrl = 'http://${asyncSnapshot.data}:$port';
 

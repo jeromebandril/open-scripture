@@ -18,7 +18,6 @@ import 'state/fullscreen_cubit.dart';
 import 'state/interface_visibility_cubit.dart';
 import 'widgets/dynamic_searchbar.dart';
 import 'widgets/titlebar.dart';
-import 'widgets/toolbar.dart';
 
 class AppShell extends StatelessWidget {
   const AppShell({super.key});
@@ -51,9 +50,6 @@ class AppShell extends StatelessWidget {
                   showMenuBar: true,
                   showLogo: !isFullscreen && !kIsWeb,
                   showButtons: !isFullscreen && !kIsWeb,
-                  leftItems: [
-                    const ToolbarButton(),
-                  ],
                   centerItems: [
                     const _AppHeader(),
                   ],

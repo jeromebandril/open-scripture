@@ -17,33 +17,29 @@ class BibleContentDao extends DatabaseAccessor<AppDb>
     int chapter,
   ) async {
     // get bible id
-    final q = select(db.bibles)
-      ..addColumns([db.bibles.id])
-      ..where((tbl) => tbl.extId.equals(bibleExtId));
-    // TODO: add safety here!
-    final int? bibleId = await q.map((row) => row.id).getSingleOrNull();
-    bibleId!;
+    final bibleId = await (select(db.bibles)
+          ..addColumns([db.bibles.id])
+          ..where((tbl) => tbl.extId.equals(bibleExtId)))
+        .map((row) => row.id)
+        .getSingleOrNull();
 
-    // 1. Build the type-safe JOIN query
+    if (bibleId == null) return const [];
+
     final query = select(db.verseSegments).join([
       innerJoin(
         db.canonicalBooks,
         db.canonicalBooks.id.equalsExp(db.verseSegments.bookId),
       ),
     ])
-      // 2. Apply your filters
       ..where(db.verseSegments.bibleId.equals(bibleId) &
           db.canonicalBooks.bookToken.equals(bookToken) &
           db.verseSegments.chapterNumber.equals(chapter))
-      // 3. Ensure verses and segments are sorted properly for rendering
       ..orderBy([
         OrderingTerm.asc(db.verseSegments.verseNumber),
         OrderingTerm.asc(db.verseSegments.segmentIndex),
       ]);
 
     final results = await query.get();
-
-    // 4. Map the Drift TypedResult directly into your Agnostic DTO
     return results.map((row) {
       final segment = row.readTable(db.verseSegments);
       final book = row.readTable(db.canonicalBooks);
@@ -54,10 +50,8 @@ class BibleContentDao extends DatabaseAccessor<AppDb>
         chapterNumber: segment.chapterNumber,
         verseNumber: segment.verseNumber,
         segmentIndex: segment.segmentIndex,
-        // Since SQLite handles booleans as 0/1, Drift maps it automatically
         paragraphStart: segment.paragraphStart == 1,
         heading: segment.heading,
-        // Grab the raw JSON string text
         spansJson: segment.spansJson,
       );
     }).toList();

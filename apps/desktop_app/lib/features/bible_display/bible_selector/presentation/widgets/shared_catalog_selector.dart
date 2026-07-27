@@ -7,7 +7,7 @@ import '../../../../../shared/design_system/design_system.dart';
 import '../../../../../shared/enums/bible_repository_type.dart';
 import '../../../../../shared/widgets/async_singleton_builder.dart';
 import '../../../../../shared/widgets/ui/inputs/app_input_text.dart';
-import '../../../../my_library/presentation/cubit/my_library_cubit.dart';
+import '../../../../my_library/presentation/state/my_library_cubit.dart';
 import '../../../../settings_window/presentation/models/settings_route.dart';
 import '../../../../settings_window/presentation/pages/settings_window.dart';
 import '../../../../window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
@@ -17,7 +17,6 @@ class SharedCatalogSelector extends StatelessWidget {
   final BibleRepositoryType repoType;
   final bool showFilter;
   final Widget? emptyWidget;
-  final String defaultErrorMessage;
   final Function(BuildContext context)? onRetry;
   final String Function(dynamic bible)? titleBuilder;
   final Widget Function(BuildContext context, dynamic bible)? subtitleBuilder;
@@ -27,7 +26,6 @@ class SharedCatalogSelector extends StatelessWidget {
     required this.repoType,
     this.showFilter = false,
     this.emptyWidget,
-    this.defaultErrorMessage = 'Failed to load bibles',
     this.onRetry,
     this.titleBuilder,
     this.subtitleBuilder,
@@ -74,18 +72,16 @@ class SharedCatalogSelector extends StatelessWidget {
                         MyLibraryStatus.loading ||
                         MyLibraryStatus.initial =>
                           Center(child: CircularProgressIndicator()),
-                        MyLibraryStatus.error => Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 32),
+                        MyLibraryStatus.error => Expanded(
                             child: Center(
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 spacing: 12,
                                 children: [
-                                  Text(state.errorMessage ??
-                                      defaultErrorMessage),
-                                  // Optional retry button from the original Drift selector
+                                  Text(state.errorMessage ?? 'Error',
+                                      textAlign: TextAlign.center),
                                   if (onRetry != null)
-                                    ElevatedButton(
+                                    TextButton(
                                       onPressed: () => onRetry?.call(context),
                                       child: const Text('Retry'),
                                     ),
@@ -93,92 +89,96 @@ class SharedCatalogSelector extends StatelessWidget {
                               ),
                             ),
                           ),
-                        MyLibraryStatus.ready => bibles.isEmpty
-                            ? SizedBox(
-                                height: 300,
-                                child: Center(
-                                    child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    emptyWidget ?? Text('No items found'),
-                                    if (repoType !=
-                                        BibleRepositoryType.cloudAPI)
-                                      TextButton.icon(
-                                          onPressed: () {
-                                            context
-                                                .read<WindowStackManagerBloc>()
-                                                .add(WindowStackManagerOpen
-                                                    .selfManaged(
-                                                        widget: SettingsWindow(
-                                                            initialPage:
-                                                                SettingsPage
-                                                                    .importer)));
-                                          },
-                                          icon:
-                                              Icon(Icons.file_upload_outlined),
-                                          label: Text('Go to Import Page'))
-                                  ],
-                                )))
-                            : ListView.separated(
-                                shrinkWrap: true,
-                                itemCount: bibles.length,
-                                separatorBuilder: (_, __) =>
-                                    const SizedBox(height: AppSpacing.xs),
-                                itemBuilder: (context, index) {
-                                  final bible = bibles[index];
-                                  final selected =
-                                      selectedIds.contains(bible.extId);
-                                  final hasLangInfo =
-                                      bible.langEngName != null ||
-                                          bible.langNativeName != null ||
-                                          bible.langIsoCode != null;
-
-                                  final String titleText =
-                                      titleBuilder?.call(bible) ?? bible.name;
-
-                                  final defaultSubtitle = Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                        MyLibraryStatus.ready => Expanded(
+                            child: bibles.isEmpty
+                                ? Column(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text(
-                                          bible.description ??
-                                              bible.localName ??
-                                              bible.name,
-                                          style: theme.textTheme.bodySmall),
-                                      if (hasLangInfo)
-                                        Text(
-                                            bible.langEngName ??
-                                                bible.langNativeName ??
-                                                bible.langIsoCode!,
-                                            style: theme.textTheme.bodySmall),
+                                      emptyWidget ??
+                                          const Text('No items found'),
+                                      if (repoType !=
+                                          BibleRepositoryType.cloudAPI)
+                                        TextButton.icon(
+                                            onPressed: () {
+                                              context
+                                                  .read<
+                                                      WindowStackManagerBloc>()
+                                                  .add(WindowStackManagerOpen
+                                                      .selfManaged(
+                                                          widget: SettingsWindow(
+                                                              initialPage:
+                                                                  SettingsPage
+                                                                      .importer)));
+                                            },
+                                            icon: Icon(
+                                                Icons.file_upload_outlined),
+                                            label: Text('Go to Import Page'))
                                     ],
-                                  );
+                                  )
+                                : ListView.separated(
+                                    itemCount: bibles.length,
+                                    separatorBuilder: (_, __) =>
+                                        const SizedBox(height: AppSpacing.xs),
+                                    itemBuilder: (context, index) {
+                                      final bible = bibles[index];
+                                      final selected =
+                                          selectedIds.contains(bible.extId);
+                                      final hasLangInfo =
+                                          bible.langEngName != null ||
+                                              bible.langNativeName != null ||
+                                              bible.langIsoCode != null;
 
-                                  return Card(
-                                    child: ListTile(
-                                      selected: selected,
-                                      title: Text(titleText),
-                                      subtitle: subtitleBuilder?.call(
-                                              context, bible) ??
-                                          defaultSubtitle,
-                                      isThreeLine: hasLangInfo,
-                                      trailing: selected
-                                          ? Text(
-                                              '${selectedIds.indexOf(bible.extId) + 1}',
-                                              style: theme.textTheme.titleLarge
-                                                  ?.copyWith(
-                                                color:
-                                                    theme.colorScheme.primary,
-                                              ),
-                                            )
-                                          : null,
-                                      onTap: () => context
-                                          .read<BibleSelectorCubit>()
-                                          .select(bible.extId),
-                                    ),
-                                  );
-                                },
-                              ),
+                                      final String titleText =
+                                          titleBuilder?.call(bible) ??
+                                              bible.name;
+
+                                      final defaultSubtitle = Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                              bible.description ??
+                                                  bible.localName ??
+                                                  bible.name,
+                                              style: theme.textTheme.bodySmall),
+                                          if (hasLangInfo)
+                                            Text(
+                                                bible.langEngName ??
+                                                    bible.langNativeName ??
+                                                    bible.langIsoCode!,
+                                                style:
+                                                    theme.textTheme.bodySmall),
+                                        ],
+                                      );
+
+                                      return Card(
+                                        child: ListTile(
+                                          selected: selected,
+                                          title: Text(titleText),
+                                          subtitle: subtitleBuilder?.call(
+                                                  context, bible) ??
+                                              defaultSubtitle,
+                                          isThreeLine: hasLangInfo,
+                                          trailing: selected
+                                              ? Text(
+                                                  '${selectedIds.indexOf(bible.extId) + 1}',
+                                                  style: theme
+                                                      .textTheme.titleLarge
+                                                      ?.copyWith(
+                                                    color: theme
+                                                        .colorScheme.primary,
+                                                  ),
+                                                )
+                                              : null,
+                                          onTap: () => context
+                                              .read<BibleSelectorCubit>()
+                                              .select(bible.extId),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                          ),
                       };
                     },
                   ),
@@ -212,6 +212,7 @@ class _FilterInputState extends State<_FilterInput> {
       value: _value,
       hint: 'Search by name or language',
       prefixIcon: Icons.search_rounded,
+      debounce: const Duration(milliseconds: 250),
       onChanged: (v) => context.read<MyLibraryCubit>().filter(v),
     );
   }

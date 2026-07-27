@@ -68,3 +68,9 @@ class BiblePaneSetDisplayMode extends BiblePaneEvent {
 class BiblePaneAddParallel extends BiblePaneEvent {}
 
 class BiblePaneRemoveParallel extends BiblePaneEvent {}
+
+class BiblePaneSelectWord extends BiblePaneEvent {
+  final WordInfo? word;
+
+  const BiblePaneSelectWord(this.word);
+}

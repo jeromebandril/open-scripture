@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
 import '../../../constants.dart';
 import '../../../domain/entities/bible_book.dart';
+import '../../../error/exception.dart';
 import '../../models/verse_segment_dto.dart';
 import 'bible_content_datasourcee.dart';
 
@@ -15,35 +18,56 @@ class RemoteBibleContentDatasourceImpl implements BibleContentDatasource {
   }
 
   @override
-  Future<List<VerseSegmentDto>> getChapterWithSpans(
+  Future<List<VerseSegmentDto>> getChapter(
     String bibleExtId,
     BibleBook book,
     int chapter,
   ) async {
     final query =
         '$kApiGetBibleV2Url/$bibleExtId/${book.osisIndex}/$chapter.json';
-    final response = await http.get(Uri.parse(query));
+
+    final http.Response response;
+    try {
+      response = await http.get(Uri.parse(query));
+    } on SocketException catch (e) {
+      throw NetworkException(e.message);
+    } on TimeoutException {
+      throw const NetworkException('Request timed out');
+    }
+
     if (response.statusCode != 200) {
-      throw Exception('Failed to fetch verses: $query');
+      throw ServerException(
+        'Failed to fetch verses: $query',
+        statusCode: response.statusCode,
+      );
     }
 
-    final rawJson = response.body;
-    if (rawJson.isEmpty || rawJson == "[]") {
-      return Future.value([]);
-    }
+    final List<VerseSegmentDto> segments;
+    try {
+      final rawJson = response.body;
+      if (rawJson.isEmpty || rawJson == '[]') {
+        throw NotFoundException(
+            'No verses found for $bibleExtId ${book.osisIndex} $chapter');
+      }
 
-    final Map<String, dynamic> json = jsonDecode(rawJson);
-    final List<dynamic>? parsedVerses = json['verses'];
-    if (parsedVerses == null || parsedVerses.isEmpty) return [];
+      final Map<String, dynamic> json = jsonDecode(rawJson);
+      final List<dynamic>? parsedVerses = json['verses'];
+      if (parsedVerses == null || parsedVerses.isEmpty) {
+        throw NotFoundException(
+            'No verses found for $bibleExtId ${book.osisIndex} $chapter');
+      }
 
-    final List<VerseSegmentDto> segments = [];
-
-    for (final verseData in parsedVerses) {
-      segments.add(VerseSegmentDto.fromGetBibleApiV2(
-        verseData: verseData,
-        book: book,
-        bibleExtId: bibleExtId,
-      ));
+      segments = parsedVerses
+          .map((verseData) => VerseSegmentDto.fromGetBibleApiV2(
+                verseData: verseData,
+                book: book,
+                bibleExtId: bibleExtId,
+              ))
+          .toList();
+    } on NotFoundException {
+      rethrow;
+    } catch (e) {
+      throw ServerException('Malformed verse response: $e');
     }
 
     return segments;
