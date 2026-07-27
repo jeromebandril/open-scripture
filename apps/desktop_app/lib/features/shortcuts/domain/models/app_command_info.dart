@@ -1,6 +1,6 @@
 import 'app_command.dart';
 
-enum AppCommandScope { main, navigation, pane, interface }
+enum AppCommandScope { main, navigation, pane, interface, other }
 
 extension AppCommandScopeX on AppCommandScope {
   String get displayName => name[0].toUpperCase() + name.substring(1);
@@ -121,4 +121,11 @@ const List<AppCommandGroup> appCommandGroups = [
       ),
     },
   ),
+  AppCommandGroup(scope: AppCommandScope.other, commands: {
+    AppCommand.flushOverlayBuffer: AppCommandInfo(
+      label: 'Flush overlay buffer',
+      description:
+          'Flush obs live overlay flutter when manual control is enabled',
+    ),
+  })
 ];

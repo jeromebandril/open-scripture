@@ -5,6 +5,7 @@ import '../../../bible_display/bible_pane/domain/display_mode.dart';
 import '../../../bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../../../bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../../../bible_searchbar/search/presentation/state/search_bloc.dart';
+import '../../../obs_live_overlay/presentation/state/obs_live_overlay_cubit.dart';
 import '../../domain/models/app_command.dart';
 
 typedef CommandHandler = void Function();
@@ -17,13 +18,14 @@ class AppCommandDispatcher {
     required this.searchbarBloc,
     required this.fullscreenCubit,
     required this.interfaceVisibilityCubit,
+    this.overlayCubit,
   });
 
   final MultiPaneManagerCubit paneManagerCubit;
   final SearchBloc searchbarBloc;
-
   final FullscreenCubit fullscreenCubit;
   final InterfaceVisibilityCubit interfaceVisibilityCubit;
+  final ObsLiveOverlayCubit? overlayCubit;
 
   void dispatch(AppCommand command) {
     final handler = _handlers[command];
@@ -65,6 +67,7 @@ class AppCommandDispatcher {
         paneManagerCubit.state.activePaneId, 1),
     AppCommand.movePaneToLeft: () => paneManagerCubit.swapPanesWithDelta(
         paneManagerCubit.state.activePaneId, -1),
+    AppCommand.flushOverlayBuffer: () => overlayCubit?.flushBuffer(),
   };
 
   T? _withActiveRef<T>(T Function(BiblePaneBloc bloc, BibleRef ref) fn) {

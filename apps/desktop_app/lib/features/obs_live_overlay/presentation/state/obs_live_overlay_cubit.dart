@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/infrastructure/event_bus/selected_verse_bus.dart';
 import '../../../../core/settings/settings_repository.dart';
+import '../../../../shared/domain/entities/bible_ref.dart';
 import '../../domain/entities/overlay_models.dart';
 import '../../domain/repostiory/overlay_repository.dart';
 import '../../domain/service/verse_html_formatter.dart';
@@ -23,19 +24,7 @@ class ObsLiveOverlayCubit extends Cubit<ObsLiveOverlayState> {
         _htmlFormatter = htmlFormatter,
         _repo = repo,
         super(ObsLiveOverlayState.initial()) {
-    _sub = selectedVerseBus.stream.listen((data) {
-      if (!_repo.isRunning) return;
-
-      final spans = data.verses.expand((v) => v.spans).toList();
-      final verseHtml = _htmlFormatter.toHtml(spans);
-
-      final snapshot = OverlaySnapshot(items: {
-        'ref': OverlayItem(text: data.ref.toDisplayString(), visible: true),
-        'content': OverlayItem(text: verseHtml, visible: true)
-      });
-
-      setSnapshot(snapshot);
-    });
+    _sub = selectedVerseBus.stream.listen(_onVerseSelected);
   }
 
   final OverlayRepository _repo;
@@ -46,6 +35,9 @@ class ObsLiveOverlayCubit extends Cubit<ObsLiveOverlayState> {
   /// Timer that sends a snapshot
   /// to set the web page blank
   Timer? _setBlankTimer;
+
+  /// buffer data for manual control
+  SelectedVerseBusItem? _pendingVerse;
 
   Future<void> startServer() {
     return _run(() => _repo.start());
@@ -96,6 +88,35 @@ class ObsLiveOverlayCubit extends Cubit<ObsLiveOverlayState> {
       Duration(seconds: _settings.current.hideDebounceSeconds),
       () => setSnapshot(OverlaySnapshot.initial()),
     );
+  }
+
+  void _onVerseSelected(SelectedVerseBusItem data) {
+    if (!_repo.isRunning) return;
+
+    if (_settings.current.enableManualControl) {
+      _pendingVerse = data;
+      emit(state.copyWith(pendingVerse: () => data.ref));
+      return;
+    }
+
+    setSnapshot(_snapshotFrom(data));
+  }
+
+  void flushBuffer() {
+    if (_pendingVerse == null) return;
+    setSnapshot(_snapshotFrom(_pendingVerse!));
+  }
+
+  OverlaySnapshot _snapshotFrom(SelectedVerseBusItem data) {
+    final spans = data.verses.expand((v) => v.spans).toList();
+    final verseHtml = _htmlFormatter.toHtml(spans);
+
+    final snapshot = OverlaySnapshot(items: {
+      'ref': OverlayItem(text: data.ref.toDisplayString(), visible: true),
+      'content': OverlayItem(text: verseHtml, visible: true)
+    });
+
+    return snapshot;
   }
 
   @override

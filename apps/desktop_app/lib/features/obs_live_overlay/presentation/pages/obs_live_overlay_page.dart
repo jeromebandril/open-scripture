@@ -109,13 +109,12 @@ class ObsLiveOverlayPage extends StatelessWidget {
                           Setting(
                               label: 'Enable manual control',
                               description:
-                                  'Decide if to pass the selected verse to the overlay manually (not available yet)',
+                                  'Decide if to pass the selected verse to the overlay manually',
                               child: AppInputBool(
-                                enabled: false,
-                                value: false,
-                                // enabled: !(state.isRunning || state.busy),
-                                // value: ctx.select((SettingsCubit<OverlaySettings> c) =>
-                                //     c.state.settings.enableManualControl),
+                                enabled: !(state.isRunning || state.busy),
+                                value: ctx.select(
+                                    (SettingsCubit<OverlaySettings> c) =>
+                                        c.state.enableManualControl),
                                 onChanged: (val) {
                                   ctx
                                       .read<SettingsCubit<OverlaySettings>>()

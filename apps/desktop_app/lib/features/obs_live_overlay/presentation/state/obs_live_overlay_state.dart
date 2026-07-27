@@ -7,6 +7,7 @@ class ObsLiveOverlayState extends Equatable {
     this.status = OverlayStatus.initial,
     required this.snapshot,
     required this.isRunning,
+    this.pendingVerse,
     this.busy = false,
     this.error,
   });
@@ -14,6 +15,7 @@ class ObsLiveOverlayState extends Equatable {
   final OverlayStatus status;
   final OverlaySnapshot snapshot;
   final bool isRunning;
+  final BibleRef? pendingVerse;
   final bool busy;
   final String? error;
 
@@ -27,12 +29,14 @@ class ObsLiveOverlayState extends Equatable {
     OverlayStatus? status,
     OverlaySnapshot? snapshot,
     bool? isRunning,
+    BibleRef? Function()? pendingVerse,
     bool? busy,
     String? error,
   }) {
     return ObsLiveOverlayState(
       status: status ?? this.status,
       snapshot: snapshot ?? this.snapshot,
+      pendingVerse: pendingVerse != null ? pendingVerse() : this.pendingVerse,
       isRunning: isRunning ?? this.isRunning,
       busy: busy ?? this.busy,
       error: error,
@@ -40,5 +44,6 @@ class ObsLiveOverlayState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [status, snapshot, isRunning, busy, error];
+  List<Object?> get props =>
+      [status, snapshot, isRunning, pendingVerse, busy, error];
 }

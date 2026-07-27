@@ -21,7 +21,6 @@ import '../../features/my_library/presentation/state/my_library_cubit.dart';
 import '../../features/my_library/settings/my_library_settings.dart';
 import '../../features/shortcuts/data/repositories/shortcuts_repo_impl.dart';
 import '../../features/shortcuts/domain/repositories/shortcuts_repo.dart';
-import '../../features/shortcuts/presentation/models/app_command_dispatcher.dart';
 import '../../features/shortcuts/presentation/state/shortcuts_cubit.dart';
 import '../../features/text_scaler/presentation/state/text_scaler_cubit.dart';
 import '../../features/three_tap_navigator/data/repository/three_tap_navigator_repository_impl.dart';
@@ -263,14 +262,6 @@ void _registerCloudBible(GetIt sl) {
 
 // ----------------------------------------------------------------------------
 void _registerShortcuts(GetIt sl) {
-  sl.registerLazySingleton(
-    () => AppCommandDispatcher(
-      paneManagerCubit: sl<MultiPaneManagerCubit>(),
-      searchbarBloc: sl<SearchBloc>(),
-      fullscreenCubit: sl<FullscreenCubit>(),
-      interfaceVisibilityCubit: sl<InterfaceVisibilityCubit>(),
-    ),
-  );
   sl.registerLazySingleton<ShortcutsRepo>(
     () => ShortcutsRepoImpl(dispatcher: sl()),
   );

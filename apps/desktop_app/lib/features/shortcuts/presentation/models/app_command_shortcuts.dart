@@ -122,4 +122,6 @@ final Map<AppCommand, ShortcutActivator> appCommandShortcuts = {
       ? const SingleActivator(LogicalKeyboardKey.minus, alt: true)
       : SingleActivator(LogicalKeyboardKey.minus,
           control: !_isMacDesktop, meta: _isMacDesktop),
+  AppCommand.flushOverlayBuffer: SingleActivator(LogicalKeyboardKey.keyU,
+      control: !_isMacDesktop, meta: _isMacDesktop)
 };

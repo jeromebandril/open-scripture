@@ -3,6 +3,8 @@ import 'package:get_it/get_it.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
+import '../../app/state/fullscreen_cubit.dart';
+import '../../app/state/interface_visibility_cubit.dart';
 import '../../features/bible_display/bible_pane/data/repositories/bible_pane_repository_impl.dart';
 import '../../features/bible_display/bible_pane/domain/repositories/bible_pane_repository.dart';
 import '../../features/bible_display/multi_pane_manager/presentation/remote/pane_manager_handler.dart';
@@ -24,6 +26,7 @@ import '../../features/remote_controller/data/repositories/remote_controller_rep
 import '../../features/remote_controller/domain/repositories/remote_controller_repo.dart';
 import '../../features/remote_controller/presentation/state/remote_controller_cubit.dart';
 import '../../features/remote_controller/settings/remote_controller_settings.dart';
+import '../../features/shortcuts/presentation/models/app_command_dispatcher.dart';
 import '../../features/sword/settings/sword_engine_settings.dart';
 import '../../features/sword/settings/sword_engine_settings_cubit.dart';
 import '../../shared/data/datasources/bible_catalog_datasource/bible_catalog_datasource.dart';
@@ -55,6 +58,7 @@ Future<void> init(GetIt sl) async {
   _registerCustomizer(sl);
   _registerRemoteController(sl);
   _registerObsOverlay(sl);
+  _registerShortcuts(sl);
   _registerLifecycle(sl);
 }
 
@@ -230,7 +234,7 @@ void _registerObsOverlay(GetIt sl) {
     readOverlayFile: sl<OverlayFilesystem>().readOverlayFile 
   ));
   sl.registerLazySingleton<OverlayRepository>(() => OverlayRepositoryImpl(server: sl<OverlayControlServer>(), settings: sl<SettingsRepository<OverlaySettings>>(), filesystem: sl()));
-  sl.registerFactory(() => ObsLiveOverlayCubit(repo: sl(), selectedVerseBus: sl(), htmlFormatter: sl(), settings: sl()));
+  sl.registerLazySingleton(() => ObsLiveOverlayCubit(repo: sl(), selectedVerseBus: sl(), htmlFormatter: sl(), settings: sl()));
 }
 
 void _registerLifecycle(GetIt sl) {
@@ -243,9 +247,22 @@ void _registerLifecycle(GetIt sl) {
   );
 }
 
+void _registerShortcuts(GetIt sl) {
+  sl.registerLazySingleton(
+    () => AppCommandDispatcher(
+      paneManagerCubit: sl<MultiPaneManagerCubit>(),
+      searchbarBloc: sl<SearchBloc>(),
+      fullscreenCubit: sl<FullscreenCubit>(),
+      interfaceVisibilityCubit: sl<InterfaceVisibilityCubit>(),
+      overlayCubit: sl<ObsLiveOverlayCubit>(),
+    ),
+  );
+}
+
 // Called once from main.dart right after init() completes. this is where
 // "core" is actually decided, not in the registration style above.
 void warmUp(GetIt sl) {
   sl<AppLifecycleService>();
   sl<MyLibraryCubit>(instanceName: BibleRepositoryType.localDatabase.name);
 }
+

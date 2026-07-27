@@ -6,13 +6,15 @@ class ServiceStatusIndicatorShell extends StatelessWidget {
     super.key,
     this.onTap,
     this.tooltipMessage,
-    required this.text,
+    this.text,
     required this.icon,
+    this.label,
   });
 
   final Function()? onTap;
   final String? tooltipMessage;
-  final String text;
+  final Widget? label;
+  final String? text;
   final IconData icon;
 
   @override
@@ -33,7 +35,9 @@ class ServiceStatusIndicatorShell extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(text, style: Theme.of(context).textTheme.bodySmall),
+              if (label != null) label!,
+              if (text != null)
+                Text(text!, style: Theme.of(context).textTheme.bodySmall),
               const SizedBox(width: AppSpacing.sm),
               const SizedBox(width: AppSpacing.xs),
               Icon(icon)
