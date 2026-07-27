@@ -11,8 +11,8 @@ Open Scripture is a desktop app for reading and presenting scripture during chur
 - Splitscreen and parallel view with different translations
 - Clean interface with less clutter
 - Keyboard shortcuts
-- Live overlay graphic for OBS _(desktop only)_
-- Remote control via the mobile app _(desktop only)_
+- Live overlay graphic for OBS _(windows only)_
+- Remote control via the mobile app _(windows only)_
 
 **Supported platforms:** Windows, Web
 
@@ -32,6 +32,5 @@ packages/shared   # Shared packages between the apps (example: the RC protocols)
 Open Scripture is under active development.
 Upcoming focus areas include:
 
-- custom image backgrounds
-- smarter search/command bar (autocomplete, reference-list search, token-based search).
+- smarter search/command bar (reference-list search, token-based search).
 - bible periscopes
