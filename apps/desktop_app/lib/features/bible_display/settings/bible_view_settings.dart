@@ -219,8 +219,8 @@ class BibleViewSettings extends Equatable {
   factory BibleViewSettings.fromJson(Map<String, dynamic> json) {
     return BibleViewSettings(
       enableAutoScrollToVerse: json['enableAutoScrollToVerse'] as bool? ?? true,
-      verseFontFamily: json['fontFamily'] as String? ?? 'General Sans',
-      verseColor: json['textColor'] != null
+      verseFontFamily: json['verseFontFamily'] as String? ?? 'General Sans',
+      verseColor: json['verseColor'] != null
           ? Color(ColorsUtil.parseHex(json['textColor'] as String))
           : const Color(0xFFB9B9B9),
       backgroundColor: json['backgroundColor'] != null
@@ -233,12 +233,12 @@ class BibleViewSettings extends Equatable {
           ? Color(ColorsUtil.parseHex(json['refColor'] as String))
           : const Color(0xFF81811E),
       useAppTheme: json['useAppTheme'] as bool? ?? false,
-      verseFontWeight: json['textFontWeight'] != null
-          ? AppFontWeightWire.fromWire(json['textFontWeight'] as String)
+      verseFontWeight: json['verseFontWeight'] != null
+          ? AppFontWeightWire.fromWire(json['verseFontWeight'] as String)
           : BibleViewFontWeight.semiBold,
       widthAdjustmentOffset:
           (json['widthAdjustmentOffset'] as num?)?.toDouble() ?? 0.0,
-      refFontFamily: json['referenceFont'] as String? ?? 'General Sans',
+      refFontFamily: json['refFontFamily'] as String? ?? 'General Sans',
       xPadding: (json['xPadding'] as num?)?.toDouble() ?? 0.01,
       splitscreenGap: json['splitscreenGap'] as double? ?? 16,
       quoteColor: json['quoteColor'] != null
@@ -256,27 +256,30 @@ class BibleViewSettings extends Equatable {
           : BibleViewFontWeight.semiBold,
       underlineRefs: json['underlineRef'] as bool? ?? false,
       showVerseDivider: json['showVerseDivider'] as bool? ?? true,
-      showAlwaysFullRef: json['showFullRefAlways'] as bool? ?? true,
+      showAlwaysFullRef: json['showAlwaysFullRef'] as bool? ?? true,
       highlightRenderMode: json['highlightRenderMode'] != null
           ? HighlightRenderModeWire.fromWire(
               json['highlightRenderMode'] as String)
           : HighlightRenderMode.fullRefWithColor,
-      listParallelSpacing: json['parallelSpacing'] as double? ?? 32,
-      presentationTitleTextAlign: json['titleTextAlign'] != null
-          ? BibleViewTextAlignWire.fromWire(json['titleTextAlign'] as String)
+      listParallelSpacing: json['listParallelSpacing'] as double? ?? 32,
+      presentationTitleTextAlign: json['presentationTitleTextAlign'] != null
+          ? BibleViewTextAlignWire.fromWire(
+              json['presentationTitleTextAlign'] as String)
           : BibleViewTextAlign.center,
-      presentationSubtitleTextAlign: json['textAlign'] != null
-          ? BibleViewTextAlignWire.fromWire(json['textAlign'] as String)
-          : BibleViewTextAlign.center,
+      presentationSubtitleTextAlign:
+          json['presentationSubtitleTextAlign'] != null
+              ? BibleViewTextAlignWire.fromWire(
+                  json['presentationSubtitleTextAlign'] as String)
+              : BibleViewTextAlign.center,
       subtitleFontWeight: json['subtitleFontWeight'] != null
           ? AppFontWeightWire.fromWire(json['subtitleFontWeight'] as String)
           : BibleViewFontWeight.semiBold,
-      inlineVerseNumberStyle: json['verseNumberStyle'] != null
+      inlineVerseNumberStyle: json['inlineVerseNumberStyle'] != null
           ? InlineVerseNumberStyleWire.fromWire(
-              json['verseNumberStyle'] as String)
+              json['inlineVerseNumberStyle'] as String)
           : InlineVerseNumberStyle.simple,
       presentationParallelSpacing:
-          (json['parallelDistance'] as num?)?.toDouble() ?? 16,
+          (json['presentationParallelSpacing'] as num?)?.toDouble() ?? 16,
       emphasizeSelectedVerses: json['emphasizeSelectedVerses'] as bool? ?? true,
       unselectedOpacityLevel:
           (json['unselectedOpacityLevel'] as num?)?.toDouble() ?? 0.43,
