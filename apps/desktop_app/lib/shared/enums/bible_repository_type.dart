@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 
 enum BibleRepositoryType {
   localDatabase(
-    label: 'Installed',
+    label: 'Canonical',
     description:
         'Bibles installed in the local database, imported from compatible source files. Currently the only repository that support formatting decoration (red lettering, strong words etc...)',
   ),
