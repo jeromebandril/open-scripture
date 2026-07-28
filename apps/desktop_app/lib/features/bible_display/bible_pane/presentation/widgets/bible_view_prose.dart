@@ -4,9 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../../shared/domain/entities/verse.dart';
-import '../../../../customizer/presentation/models/app_font_weight.dart';
+import '../../../settings/presentation/models/bible_view_font_weight_flutter.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
-import '../../../settings/bible_view_settings_provider.dart';
+import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
 import '../../domain/entities/word_info.dart';
 import '../rendering/verse_ref_label.dart';
 import '../rendering/verse_richtext_builder.dart';

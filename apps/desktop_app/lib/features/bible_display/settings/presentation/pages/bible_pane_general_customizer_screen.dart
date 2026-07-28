@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../app/settings/app_settings.dart';
-import '../../../../app/widgets/font_picker.dart';
-import '../../../../core/settings/settings_cubit.dart';
-import '../../../../shared/fonts/app_font.dart';
-import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
-import '../../../../shared/widgets/ui/inputs/app_input_color.dart';
-import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
-import '../../../../shared/widgets/ui/inputs/app_input_option.dart';
-import '../../../bible_display/settings/bible_view_settings.dart';
-import '../../../settings_window/presentation/widgets/setting.dart';
-import '../../../settings_window/presentation/widgets/setting_section.dart';
-import '../../domain/entities/app_font_weight.dart';
+import '../../../../../app/settings/app_settings.dart';
+import '../../../../../app/widgets/font_picker.dart';
+import '../../../../../core/settings/settings_cubit.dart';
+import '../../../../../shared/fonts/app_font.dart';
+import '../../../../../shared/widgets/ui/inputs/app_input_bool.dart';
+import '../../../../../shared/widgets/ui/inputs/app_input_color.dart';
+import '../../../../../shared/widgets/ui/inputs/app_input_number.dart';
+import '../../../../../shared/widgets/ui/inputs/app_input_option.dart';
+import '../../bible_view_settings.dart';
+import '../../../../settings_window/presentation/widgets/setting.dart';
+import '../../../../settings_window/presentation/widgets/setting_section.dart';
+import '../../domain/entities/bible_view_font_weight.dart';
 
 class BiblePaneGeneralCustomizerScreen extends StatefulWidget {
   const BiblePaneGeneralCustomizerScreen({super.key, this.showPreview = false});
@@ -219,7 +219,7 @@ class _BiblePaneGeneralCustomizerScreenState
                       Setting(
                           label: 'Text font weight',
                           description: 'Set font weight for verse text',
-                          child: AppInputOption<AppFontWeight>(
+                          child: AppInputOption<BibleViewFontWeight>(
                             value: context.select(
                                 (SettingsCubit<BibleViewSettings> c) =>
                                     c.state.textFontWeight),
@@ -227,16 +227,17 @@ class _BiblePaneGeneralCustomizerScreenState
                               cubit.update(
                                   (p) => p.copyWith(textFontWeight: fw));
                             },
-                            items: AppFontWeight.values
-                                .map((fw) => AppDropdownItem<AppFontWeight>(
-                                    value: fw, label: fw.wire))
+                            items: BibleViewFontWeight.values
+                                .map((fw) =>
+                                    AppDropdownItem<BibleViewFontWeight>(
+                                        value: fw, label: fw.wire))
                                 .toList(),
                           )),
                       Setting(
                           label: 'Reference font weight',
                           description:
                               'Set font weight for unselected references',
-                          child: AppInputOption<AppFontWeight>(
+                          child: AppInputOption<BibleViewFontWeight>(
                             value: context.select(
                                 (SettingsCubit<BibleViewSettings> c) =>
                                     c.state.refFontWeight),
@@ -244,16 +245,17 @@ class _BiblePaneGeneralCustomizerScreenState
                               cubit
                                   .update((p) => p.copyWith(refFontWeight: fw));
                             },
-                            items: AppFontWeight.values
-                                .map((fw) => AppDropdownItem<AppFontWeight>(
-                                    value: fw, label: fw.wire))
+                            items: BibleViewFontWeight.values
+                                .map((fw) =>
+                                    AppDropdownItem<BibleViewFontWeight>(
+                                        value: fw, label: fw.wire))
                                 .toList(),
                           )),
                       Setting(
                           label: 'Selected reference font weight',
                           description:
                               'Set font weight for selected references',
-                          child: AppInputOption<AppFontWeight>(
+                          child: AppInputOption<BibleViewFontWeight>(
                             value: context.select(
                                 (SettingsCubit<BibleViewSettings> c) =>
                                     c.state.selectedRefFontWeight),
@@ -261,9 +263,10 @@ class _BiblePaneGeneralCustomizerScreenState
                               cubit.update(
                                   (p) => p.copyWith(selectedRefFontWeight: fw));
                             },
-                            items: AppFontWeight.values
-                                .map((fw) => AppDropdownItem<AppFontWeight>(
-                                    value: fw, label: fw.wire))
+                            items: BibleViewFontWeight.values
+                                .map((fw) =>
+                                    AppDropdownItem<BibleViewFontWeight>(
+                                        value: fw, label: fw.wire))
                                 .toList(),
                           )),
                     ]),

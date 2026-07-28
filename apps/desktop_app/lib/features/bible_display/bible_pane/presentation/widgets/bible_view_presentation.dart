@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../shared/domain/entities/bible_ref.dart';
-import '../../../../customizer/domain/entities/presentation_verse_number_style.dart';
-import '../../../../customizer/presentation/models/app_font_weight.dart';
-import '../../../../customizer/presentation/models/app_text_alignment.dart';
+import '../../../settings/domain/entities/inline_verse_number_style.dart';
+import '../../../settings/presentation/models/bible_view_font_weight_flutter.dart';
+import '../../../settings/presentation/models/bible_view_text_alignment_flutter.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../../../settings/bible_view_settings.dart';
-import '../../../settings/bible_view_settings_provider.dart';
+import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
 import '../rendering/verse_richtext_builder.dart';
 import '../state/bible_pane_bloc.dart';
 
@@ -210,7 +210,7 @@ class BibleViewPresentation extends StatelessWidget {
   ) {
     final label = number.toString();
 
-    if (viewSettings.verseNumberStyle == PresentationVerseNumberStyle.simple) {
+    if (viewSettings.verseNumberStyle == InlineVerseNumberStyle.simple) {
       return TextSpan(
         text: label,
         style: TextStyle(

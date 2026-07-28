@@ -5,7 +5,7 @@ import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../text_scaler/presentation/widgets/text_scaler_host.dart';
 import '../../../bible_selector/presentation/widgets/bible_selector.dart';
 import '../../../multi_pane_manager/presentation/models/multi_pane_data.dart';
-import '../../../settings/bible_view_settings_provider.dart';
+import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
 import '../../domain/display_mode.dart';
 import '../state/bible_pane_bloc.dart';
 import 'bible_view_list.dart';

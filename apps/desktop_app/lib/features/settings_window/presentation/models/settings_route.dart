@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../bible_importer/presentation/pages/importer_page.dart';
-import '../../../customizer/presentation/pages/bible_pane_customizer_screen.dart';
-import '../../../customizer/presentation/pages/global_customizer_screen.dart';
+import '../../../bible_display/settings/presentation/pages/bible_pane_customizer_screen.dart';
+import '../../../../app/settings/presentation/pages/global_customizer_screen.dart';
 import '../../../my_library/presentation/pages/library_manager_page.dart';
 import '../../../obs_live_overlay/presentation/pages/obs_live_overlay_page.dart';
 import '../../../remote_controller/presentation/pages/remote_controller_page.dart';

@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../app/settings/app_settings.dart';
+import '../../app_settings.dart';
 import '../../../../core/settings/settings_cubit.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_color.dart';
-import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_option.dart';
-import '../../../bible_display/settings/bible_view_settings.dart';
-import '../../../bible_searchbar/settings/search_settings.dart';
-import '../../../settings_window/presentation/widgets/setting.dart';
-import '../../../settings_window/presentation/widgets/setting_section.dart';
+import '../../../../features/bible_searchbar/settings/search_settings.dart';
+import '../../../../features/settings_window/presentation/widgets/setting.dart';
+import '../../../../features/settings_window/presentation/widgets/setting_section.dart';
+import '../../../../features/bible_display/settings/bible_view_settings.dart';
 
 extension _ThemeModeIcons on ThemeMode {
   IconData get icon {

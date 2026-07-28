@@ -7,7 +7,7 @@ import '../../../../../shared/domain/entities/bible_translation.dart';
 import '../../../../text_scaler/presentation/state/text_scaler_cubit.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../../../multi_pane_manager/presentation/widgets/active_pane_indicator.dart';
-import '../../../settings/bible_view_settings_provider.dart';
+import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
 import '../../domain/display_mode.dart';
 import '../../domain/entities/word_info.dart';
 import '../state/bible_pane_bloc.dart';

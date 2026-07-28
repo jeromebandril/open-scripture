@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../shared/widgets/ui/b_container_tab_bar.dart';
+import '../../../../../shared/widgets/ui/b_container_tab_bar.dart';
 import 'bible_pane_general_customizer_screen.dart';
 import 'bible_view_list_customizer_screen.dart';
 import 'bible_view_presentation_customizer_screen.dart';

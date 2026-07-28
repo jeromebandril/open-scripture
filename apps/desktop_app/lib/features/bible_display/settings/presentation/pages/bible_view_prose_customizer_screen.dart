@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/settings/settings_cubit.dart';
-import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
-import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
-import '../../../bible_display/settings/bible_view_settings.dart';
-import '../../../settings_window/presentation/widgets/setting.dart';
-import '../../../settings_window/presentation/widgets/setting_section.dart';
+import '../../../../../core/settings/settings_cubit.dart';
+import '../../../../../shared/widgets/ui/inputs/app_input_bool.dart';
+import '../../../../../shared/widgets/ui/inputs/app_input_number.dart';
+import '../../bible_view_settings.dart';
+import '../../../../settings_window/presentation/widgets/setting.dart';
+import '../../../../settings_window/presentation/widgets/setting_section.dart';
 
 class BibleViewProseCustomizerScreen extends StatefulWidget {
   const BibleViewProseCustomizerScreen({super.key});

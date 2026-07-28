@@ -9,7 +9,7 @@ import '../../../../../app/state/interface_visibility_cubit.dart';
 import '../../../../../shared/design_system/design_system.dart';
 import '../../../../../shared/widgets/draggable_divider.dart';
 import '../../../bible_pane/presentation/widgets/bible_pane.dart';
-import '../../../settings/bible_view_settings_provider.dart';
+import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
 import '../models/multi_pane_data.dart';
 import '../pane_animation_constants.dart';
 import '../state/multi_pane_manager_cubit.dart';

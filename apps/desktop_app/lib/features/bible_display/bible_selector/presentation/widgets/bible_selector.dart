@@ -9,7 +9,7 @@ import '../../../../my_library/presentation/state/my_library_cubit.dart';
 import '../../../bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../../../bible_pane/presentation/widgets/pane_info.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
-import '../../../settings/bible_view_settings_provider.dart';
+import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
 import '../cubit/bible_selector_cubit.dart';
 import 'shared_catalog_selector.dart';
 

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../core/settings/settings_cubit.dart';
-import 'bible_view_settings.dart';
+import '../../../../../core/settings/settings_cubit.dart';
+import '../../bible_view_settings.dart';
 
+/// This is how I inject theming and settings tha affect UI
+/// for bible views
 class BibleViewSettingsProvider extends StatelessWidget {
   const BibleViewSettingsProvider({super.key, required this.child});
   final Widget child;
@@ -17,8 +19,6 @@ class BibleViewSettingsProvider extends StatelessWidget {
   }
 }
 
-/// This is how I inject theming and settings tha affect UI
-/// for bible views
 class BibleViewSettingsScope extends InheritedWidget {
   const BibleViewSettingsScope({
     super.key,
