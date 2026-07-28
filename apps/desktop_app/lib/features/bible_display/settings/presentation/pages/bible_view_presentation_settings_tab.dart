@@ -4,26 +4,25 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/settings/settings_cubit.dart';
 import '../../../../../shared/widgets/ui/inputs/app_input_number.dart';
 import '../../../../../shared/widgets/ui/inputs/app_input_option.dart';
-import '../../bible_view_settings.dart';
 import '../../../../settings_window/presentation/widgets/setting.dart';
 import '../../../../settings_window/presentation/widgets/setting_section.dart';
+import '../../bible_view_settings.dart';
 import '../../domain/entities/bible_view_font_weight.dart';
 import '../../domain/entities/bible_view_text_align.dart';
 import '../../domain/entities/inline_verse_number_style.dart';
 
-class BibleViewPresentationCustomizerScreen extends StatefulWidget {
-  const BibleViewPresentationCustomizerScreen(
-      {super.key, this.showPreview = false});
+class BibleViewPresentationSettingsTab extends StatefulWidget {
+  const BibleViewPresentationSettingsTab({super.key, this.showPreview = false});
 
   final bool showPreview;
 
   @override
-  State<BibleViewPresentationCustomizerScreen> createState() =>
-      _BibleViewPresentationCustomizerScreenState();
+  State<BibleViewPresentationSettingsTab> createState() =>
+      _BibleViewPresentationSettingsTabState();
 }
 
-class _BibleViewPresentationCustomizerScreenState
-    extends State<BibleViewPresentationCustomizerScreen> {
+class _BibleViewPresentationSettingsTabState
+    extends State<BibleViewPresentationSettingsTab> {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<SettingsCubit<BibleViewSettings>>();

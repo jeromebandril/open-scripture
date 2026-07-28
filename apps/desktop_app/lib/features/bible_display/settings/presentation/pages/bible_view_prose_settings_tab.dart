@@ -4,20 +4,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/settings/settings_cubit.dart';
 import '../../../../../shared/widgets/ui/inputs/app_input_bool.dart';
 import '../../../../../shared/widgets/ui/inputs/app_input_number.dart';
-import '../../bible_view_settings.dart';
 import '../../../../settings_window/presentation/widgets/setting.dart';
 import '../../../../settings_window/presentation/widgets/setting_section.dart';
+import '../../bible_view_settings.dart';
 
-class BibleViewProseCustomizerScreen extends StatefulWidget {
-  const BibleViewProseCustomizerScreen({super.key});
+class BibleViewProseSettingsTab extends StatefulWidget {
+  const BibleViewProseSettingsTab({super.key});
 
   @override
-  State<BibleViewProseCustomizerScreen> createState() =>
-      _BibleViewProseCustomizerScreenState();
+  State<BibleViewProseSettingsTab> createState() =>
+      _BibleViewProseSettingsTabState();
 }
 
-class _BibleViewProseCustomizerScreenState
-    extends State<BibleViewProseCustomizerScreen> {
+class _BibleViewProseSettingsTabState extends State<BibleViewProseSettingsTab> {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<SettingsCubit<BibleViewSettings>>();

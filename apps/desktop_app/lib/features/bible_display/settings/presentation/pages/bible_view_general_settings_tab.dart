@@ -9,23 +9,23 @@ import '../../../../../shared/widgets/ui/inputs/app_input_bool.dart';
 import '../../../../../shared/widgets/ui/inputs/app_input_color.dart';
 import '../../../../../shared/widgets/ui/inputs/app_input_number.dart';
 import '../../../../../shared/widgets/ui/inputs/app_input_option.dart';
-import '../../bible_view_settings.dart';
 import '../../../../settings_window/presentation/widgets/setting.dart';
 import '../../../../settings_window/presentation/widgets/setting_section.dart';
+import '../../bible_view_settings.dart';
 import '../../domain/entities/bible_view_font_weight.dart';
 
-class BiblePaneGeneralCustomizerScreen extends StatefulWidget {
-  const BiblePaneGeneralCustomizerScreen({super.key, this.showPreview = false});
+class BibleViewGeneralSettingsTab extends StatefulWidget {
+  const BibleViewGeneralSettingsTab({super.key, this.showPreview = false});
 
   final bool showPreview;
 
   @override
-  State<BiblePaneGeneralCustomizerScreen> createState() =>
-      _BiblePaneGeneralCustomizerScreenState();
+  State<BibleViewGeneralSettingsTab> createState() =>
+      _BibleViewGeneralSettingsTabState();
 }
 
-class _BiblePaneGeneralCustomizerScreenState
-    extends State<BiblePaneGeneralCustomizerScreen> {
+class _BibleViewGeneralSettingsTabState
+    extends State<BibleViewGeneralSettingsTab> {
   @override
   void dispose() {
     super.dispose();

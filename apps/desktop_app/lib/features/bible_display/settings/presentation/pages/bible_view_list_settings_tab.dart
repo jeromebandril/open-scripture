@@ -5,23 +5,22 @@ import '../../../../../core/settings/settings_cubit.dart';
 import '../../../../../shared/widgets/ui/inputs/app_input_bool.dart';
 import '../../../../../shared/widgets/ui/inputs/app_input_number.dart';
 import '../../../../../shared/widgets/ui/inputs/app_input_option.dart';
-import '../../bible_view_settings.dart';
 import '../../../../settings_window/presentation/widgets/setting.dart';
 import '../../../../settings_window/presentation/widgets/setting_section.dart';
+import '../../bible_view_settings.dart';
 import '../../domain/entities/highlight_render_mode.dart';
 
-class BibleViewListCustomizerScreen extends StatefulWidget {
-  const BibleViewListCustomizerScreen({super.key, this.showPreview = false});
+class BibleViewListSettingsTab extends StatefulWidget {
+  const BibleViewListSettingsTab({super.key, this.showPreview = false});
 
   final bool showPreview;
 
   @override
-  State<BibleViewListCustomizerScreen> createState() =>
-      _BibleViewListCustomizerScreenState();
+  State<BibleViewListSettingsTab> createState() =>
+      _BibleViewListSettingsTabState();
 }
 
-class _BibleViewListCustomizerScreenState
-    extends State<BibleViewListCustomizerScreen> {
+class _BibleViewListSettingsTabState extends State<BibleViewListSettingsTab> {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<SettingsCubit<BibleViewSettings>>();

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../bible_importer/presentation/pages/importer_page.dart';
-import '../../../bible_display/settings/presentation/pages/bible_pane_customizer_screen.dart';
+import '../../../bible_display/settings/presentation/pages/bible_view_settings_page.dart';
 import '../../../../app/settings/presentation/pages/global_customizer_screen.dart';
 import '../../../my_library/presentation/pages/library_manager_page.dart';
 import '../../../obs_live_overlay/presentation/pages/obs_live_overlay_page.dart';
@@ -99,7 +99,7 @@ enum SettingsPage {
 
 final Map<SettingsPage, WidgetBuilder> settingsBuilders = {
   SettingsPage.globalAppearance: (_) => const GlobalCustomizerScreen(),
-  SettingsPage.bibleViewer: (_) => const BiblePaneCustomizerScreen(),
+  SettingsPage.bibleViewer: (_) => const BibleViewSettingsPage(),
   SettingsPage.library: (_) => const LibrariesPage(),
   SettingsPage.importer: (_) => const ImporterPage(),
   SettingsPage.obsLiveOverlay: (_) => const ObsLiveOverlayPage(),
