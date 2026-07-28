@@ -72,6 +72,33 @@ class ObsLiveOverlayPage extends StatelessWidget {
                           ),
                         ],
                       ),
+                      SettingSection(title: 'Setup', children: [
+                        Setting(
+                            label: 'URL',
+                            description:
+                                'Copy this link and paste it into OBS Web source scene. You can also preview it by pasting it in a browser searchbar',
+                            settingWidth: 300,
+                            child: Builder(builder: (context) {
+                              final url = context.select(
+                                  (SettingsCubit<OverlaySettings> c) =>
+                                      c.state.url);
+
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  IconButton(
+                                    tooltip: 'Copy',
+                                    onPressed: () {
+                                      Clipboard.setData(
+                                          ClipboardData(text: url));
+                                    },
+                                    icon: Icon(Icons.copy_rounded),
+                                  ),
+                                  Text(url)
+                                ],
+                              );
+                            }))
+                      ]),
                       SettingSection(
                         title: 'Preferences',
                         children: [
@@ -158,31 +185,6 @@ class ObsLiveOverlayPage extends StatelessWidget {
                                           hideDebounceSeconds: p.toInt()));
                                 },
                               )),
-                          Setting(
-                              label: 'URL',
-                              description:
-                                  'Copy this link and paste it into OBS Web source scene. You can also preview it by pasting it in a browser searchbar',
-                              settingWidth: 300,
-                              child: Builder(builder: (context) {
-                                final url = context.select(
-                                    (SettingsCubit<OverlaySettings> c) =>
-                                        c.state.url);
-
-                                return Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    IconButton(
-                                      tooltip: 'Copy',
-                                      onPressed: () {
-                                        Clipboard.setData(
-                                            ClipboardData(text: url));
-                                      },
-                                      icon: Icon(Icons.copy_rounded),
-                                    ),
-                                    Text(url)
-                                  ],
-                                );
-                              }))
                         ],
                       ),
                       SettingSection(
