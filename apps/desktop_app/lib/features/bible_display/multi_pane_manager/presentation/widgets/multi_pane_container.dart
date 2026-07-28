@@ -35,7 +35,6 @@ class _PaneContainerDecoration extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewSettings = BibleViewSettingsScope.of(context);
-    final enableCustom = viewSettings.enableCustomTheme;
     final offset = viewSettings.widthAdjustmentOffset;
     final isFullscreen = context.select((FullscreenCubit f) => f.state);
     final showMenuBar = context.select(
@@ -50,9 +49,9 @@ class _PaneContainerDecoration extends StatelessWidget {
                 topLeft: Radius.circular(AppRadius.sm),
                 topRight: Radius.circular(AppRadius.sm),
               ),
-        color: enableCustom
-            ? viewSettings.backgroundColor
-            : Theme.of(context).colorScheme.surface,
+        color: viewSettings.useAppTheme
+            ? Theme.of(context).colorScheme.surface
+            : viewSettings.backgroundColor,
       ),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 12 + offset),

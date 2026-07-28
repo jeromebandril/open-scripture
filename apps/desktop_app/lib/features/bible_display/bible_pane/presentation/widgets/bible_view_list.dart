@@ -197,7 +197,7 @@ class _ParallelView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final spacing = BibleViewSettingsScope.of(context).parallelSpacing;
+    final spacing = BibleViewSettingsScope.of(context).listParallelSpacing;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -237,7 +237,7 @@ class _VerseWidget extends StatelessWidget {
     final refLabel = VerseRefLabel.text(
       verse.ref,
       isHighlighted: isHighlighted,
-      showFullRefAlways: viewSettings.showFullRefAlways,
+      showFullRefAlways: viewSettings.showAlwaysFullRef,
     );
     final refStyle = VerseRefLabel.style(context, isHighlighted: isHighlighted);
 
@@ -259,7 +259,7 @@ class _VerseWidget extends StatelessWidget {
               TextSpan(
                 style: TextStyle(
                   height: 1.25,
-                  fontWeight: viewSettings.textFontWeight.toFlutter(),
+                  fontWeight: viewSettings.verseFontWeight.toFlutter(),
                 ),
                 children: [
                   TextSpan(text: refLabel, style: refStyle),

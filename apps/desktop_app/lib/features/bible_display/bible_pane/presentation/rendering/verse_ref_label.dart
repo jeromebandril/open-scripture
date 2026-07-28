@@ -19,26 +19,25 @@ abstract final class VerseRefLabel {
 
   static TextStyle style(BuildContext context, {required bool isHighlighted}) {
     final viewSettings = BibleViewSettingsScope.of(context);
-    final useCustom = viewSettings.enableCustomTheme;
 
     return TextStyle(
-      decoration: viewSettings.underlineRef ? TextDecoration.underline : null,
+      decoration: viewSettings.underlineRefs ? TextDecoration.underline : null,
       decorationColor: isHighlighted
           ? viewSettings.accentColor
-          : useCustom
-              ? viewSettings.refColor
-              : Theme.of(context).colorScheme.secondary,
+          : viewSettings.useAppTheme
+              ? Theme.of(context).colorScheme.secondary
+              : viewSettings.refColor,
       height: 1.25,
-      fontFamily: viewSettings.referenceFont,
+      fontFamily: viewSettings.refFontFamily,
       fontWeight: (isHighlighted
               ? viewSettings.selectedRefFontWeight
               : viewSettings.refFontWeight)
           .toFlutter(),
       color: isHighlighted
           ? viewSettings.accentColor
-          : useCustom
-              ? viewSettings.refColor
-              : Theme.of(context).colorScheme.tertiary,
+          : viewSettings.useAppTheme
+              ? Theme.of(context).colorScheme.tertiary
+              : viewSettings.refColor,
     );
   }
 }

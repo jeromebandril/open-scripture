@@ -62,7 +62,7 @@ class BibleViewPresentation extends StatelessWidget {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
-                    spacing: viewSettings.parallelDistance,
+                    spacing: viewSettings.presentationParallelSpacing,
                     children: [
                       for (final block in translations)
                         Column(
@@ -98,10 +98,10 @@ class BibleViewPresentation extends StatelessWidget {
 
     return Text(
       title,
-      textAlign: viewSettings.titleTextAlign.toFlutter(),
+      textAlign: viewSettings.presentationTitleTextAlign.toFlutter(),
       style: TextStyle(
         fontWeight: viewSettings.selectedRefFontWeight.toFlutter(),
-        fontFamily: viewSettings.referenceFont,
+        fontFamily: viewSettings.refFontFamily,
         color: viewSettings.accentColor,
         fontSize: 16,
       ),
@@ -115,11 +115,11 @@ class BibleViewPresentation extends StatelessWidget {
   ) {
     return Text(
       subtitle,
-      textAlign: viewSettings.titleTextAlign.toFlutter(),
+      textAlign: viewSettings.presentationTitleTextAlign.toFlutter(),
       style: TextStyle(
-        color: viewSettings.enableCustomTheme
-            ? viewSettings.refColor
-            : Theme.of(context).colorScheme.primary,
+        color: viewSettings.useAppTheme
+            ? Theme.of(context).colorScheme.primary
+            : viewSettings.refColor,
         fontWeight: viewSettings.subtitleFontWeight.toFlutter(),
         fontSize: 8,
       ),
@@ -167,10 +167,10 @@ class BibleViewPresentation extends StatelessWidget {
         content: Text.rich(
           TextSpan(
             style:
-                TextStyle(fontWeight: viewSettings.textFontWeight.toFlutter()),
+                TextStyle(fontWeight: viewSettings.verseFontWeight.toFlutter()),
             children: children,
           ),
-          textAlign: viewSettings.textAlign.toFlutter(),
+          textAlign: viewSettings.presentationSubtitleTextAlign.toFlutter(),
         ),
       ));
     }
@@ -210,7 +210,7 @@ class BibleViewPresentation extends StatelessWidget {
   ) {
     final label = number.toString();
 
-    if (viewSettings.verseNumberStyle == InlineVerseNumberStyle.simple) {
+    if (viewSettings.inlineVerseNumberStyle == InlineVerseNumberStyle.simple) {
       return TextSpan(
         text: label,
         style: TextStyle(

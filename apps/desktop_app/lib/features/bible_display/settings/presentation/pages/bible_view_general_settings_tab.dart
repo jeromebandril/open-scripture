@@ -53,16 +53,16 @@ class _BibleViewGeneralSettingsTabState
                   title: 'Bible viewer theme',
                   children: [
                     Setting(
-                        label: 'Enable custom colors',
+                        label: 'Use app\'s theme',
                         description:
-                            'Enables custom color theming or use app\'s theme',
+                            'Use app\'s theme and its colorscheme. To use custom colors, disabled this.',
+                        settingWidth: 100,
                         child: AppInputBool(
                           value: context.select(
                               (SettingsCubit<BibleViewSettings> c) =>
-                                  c.state.enableCustomTheme),
+                                  c.state.useAppTheme),
                           onChanged: (val) {
-                            cubit.update(
-                                (p) => p.copyWith(enableCustomTheme: val));
+                            cubit.update((p) => p.copyWith(useAppTheme: val));
                           },
                         )),
                     Setting(
@@ -79,7 +79,7 @@ class _BibleViewGeneralSettingsTabState
                           },
                           isDisabled: !context.select(
                               (SettingsCubit<BibleViewSettings> c) =>
-                                  c.state.enableCustomTheme),
+                                  c.state.useAppTheme),
                           onColorChanged: (c) {
                             cubit.update((p) => p.copyWith(backgroundColor: c));
                           },
@@ -103,7 +103,7 @@ class _BibleViewGeneralSettingsTabState
                           },
                           isDisabled: !context.select(
                               (SettingsCubit<BibleViewSettings> c) =>
-                                  c.state.enableCustomTheme),
+                                  c.state.useAppTheme),
                           onColorChanged: (c) {
                             cubit.update((p) => p.copyWith(refColor: c));
                           },
@@ -116,23 +116,23 @@ class _BibleViewGeneralSettingsTabState
                         label: 'Text color',
                         description: 'Set color for the verse text',
                         child: AppInputColor(
-                          showReset: defaultTheme.textColor !=
+                          showReset: defaultTheme.verseColor !=
                               context.select(
                                   (SettingsCubit<BibleViewSettings> c) =>
-                                      c.state.textColor),
+                                      c.state.verseColor),
                           onReset: () {
-                            cubit.update((a) =>
-                                a.copyWith(textColor: defaultTheme.textColor));
+                            cubit.update((a) => a.copyWith(
+                                verseColor: defaultTheme.verseColor));
                           },
                           isDisabled: !context.select(
                               (SettingsCubit<BibleViewSettings> c) =>
-                                  c.state.enableCustomTheme),
+                                  c.state.useAppTheme),
                           onColorChanged: (c) {
-                            cubit.update((p) => p.copyWith(textColor: c));
+                            cubit.update((p) => p.copyWith(verseColor: c));
                           },
                           color: context.select(
                             (SettingsCubit<BibleViewSettings> c) =>
-                                c.state.textColor,
+                                c.state.verseColor,
                           ),
                         )),
                     // Setting(
@@ -209,10 +209,10 @@ class _BibleViewGeneralSettingsTabState
                           child: AppInputOption<BibleViewFontWeight>(
                             value: context.select(
                                 (SettingsCubit<BibleViewSettings> c) =>
-                                    c.state.textFontWeight),
+                                    c.state.verseFontWeight),
                             onChanged: (fw) {
                               cubit.update(
-                                  (p) => p.copyWith(textFontWeight: fw));
+                                  (p) => p.copyWith(verseFontWeight: fw));
                             },
                             items: BibleViewFontWeight.values
                                 .map((fw) =>
@@ -268,10 +268,10 @@ class _BibleViewGeneralSettingsTabState
                                 f.family ==
                                 context.select(
                                   (SettingsCubit<BibleViewSettings> c) =>
-                                      c.state.textFont,
+                                      c.state.verseFontFamily,
                                 )),
-                            onChanged: (appFont) => cubit.update(
-                                (p) => p.copyWith(textFont: appFont.family)),
+                            onChanged: (appFont) => cubit.update((p) =>
+                                p.copyWith(verseFontFamily: appFont.family)),
                           ),
                         ),
                         Setting(
@@ -282,10 +282,10 @@ class _BibleViewGeneralSettingsTabState
                                 f.family ==
                                 context.select(
                                   (SettingsCubit<BibleViewSettings> c) =>
-                                      c.state.referenceFont,
+                                      c.state.refFontFamily,
                                 )),
                             onChanged: (appFont) => cubit.update((p) =>
-                                p.copyWith(referenceFont: appFont.family)),
+                                p.copyWith(refFontFamily: appFont.family)),
                           ),
                         ),
                       ],
@@ -319,10 +319,10 @@ class _BibleViewGeneralSettingsTabState
                         child: AppInputBool(
                           value: context.select(
                               (SettingsCubit<BibleViewSettings> c) =>
-                                  c.state.underlineStrongWords),
+                                  c.state.enableStrongWordsRender),
                           onChanged: (val) {
-                            cubit.update(
-                                (p) => p.copyWith(underlineStrongWords: val));
+                            cubit.update((p) =>
+                                p.copyWith(enableStrongWordsRender: val));
                           },
                         )),
                   ],
@@ -338,8 +338,8 @@ class _BibleViewGeneralSettingsTabState
                           min: 0,
                           max: 256,
                           onSubmitted: (n) {
-                            cubit.update(
-                                (p) => p.copyWith(splitscreenGap: n.toInt()));
+                            cubit.update((p) =>
+                                p.copyWith(splitscreenGap: n.toDouble()));
                           },
                           value: context.select(
                             (SettingsCubit<BibleViewSettings> c) =>

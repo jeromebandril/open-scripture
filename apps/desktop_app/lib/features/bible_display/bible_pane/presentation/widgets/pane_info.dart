@@ -57,7 +57,7 @@ class _PaneInfoState extends State<PaneInfo> {
         context.select((MultiPaneManagerCubit b) => b.state.panes.length);
     final paneId = context.select((BiblePaneBloc b) => b.state.paneId);
     final enableStrongWords =
-        BibleViewSettingsScope.of(context).underlineStrongWords;
+        BibleViewSettingsScope.of(context).enableStrongWordsRender;
 
     return DefaultTextStyle(
       style: TextStyle(

@@ -51,10 +51,10 @@ class _BibleViewListSettingsTabState extends State<BibleViewListSettingsTab> {
                   child: AppInputBool(
                     value: context.select(
                       (SettingsCubit<BibleViewSettings> c) =>
-                          c.state.showFullRefAlways,
+                          c.state.showAlwaysFullRef,
                     ),
                     onChanged: (val) {
-                      cubit.update((s) => s.copyWith(showFullRefAlways: val));
+                      cubit.update((s) => s.copyWith(showAlwaysFullRef: val));
                     },
                   )),
               Setting(
@@ -63,9 +63,9 @@ class _BibleViewListSettingsTabState extends State<BibleViewListSettingsTab> {
                   child: AppInputBool(
                     value: context.select(
                         (SettingsCubit<BibleViewSettings> c) =>
-                            c.state.underlineRef),
+                            c.state.underlineRefs),
                     onChanged: (val) {
-                      cubit.update((s) => s.copyWith(underlineRef: val));
+                      cubit.update((s) => s.copyWith(underlineRefs: val));
                     },
                   )),
               Setting(
@@ -97,9 +97,9 @@ class _BibleViewListSettingsTabState extends State<BibleViewListSettingsTab> {
                   max: 300,
                   min: 0,
                   value: context.select((SettingsCubit<BibleViewSettings> c) =>
-                      c.state.parallelSpacing),
+                      c.state.listParallelSpacing),
                   onSubmitted: (val) => cubit.update((l) => l.copyWith(
-                        parallelSpacing: val.toInt(),
+                        listParallelSpacing: val.toDouble(),
                       )),
                 ),
               )

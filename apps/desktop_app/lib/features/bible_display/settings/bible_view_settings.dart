@@ -11,37 +11,39 @@ class BibleViewSettings extends Equatable {
   final bool enableAutoScrollToVerse;
 
   // --- GENERAL (shared appearance, applies to every view type) ---
-  final String textFont;
-  final double fontSize;
-  final Color textColor;
+  final String verseFontFamily;
+  final String refFontFamily;
+  final BibleViewFontWeight verseFontWeight;
+  final BibleViewFontWeight refFontWeight;
+  final BibleViewFontWeight selectedRefFontWeight;
   final Color backgroundColor;
   final Color accentColor;
+  final Color verseColor;
   final Color refColor;
-  final bool enableCustomTheme;
-  final BibleViewFontWeight textFontWeight;
+  // other
   final double widthAdjustmentOffset;
-  final String referenceFont;
   final double xPadding;
-  final int splitscreenGap;
+  final double splitscreenGap;
+  // behavior
+  final bool useAppTheme;
+  final bool enableStrongWordsRender;
+  // special render
   final Color quoteColor;
   final Color addColor;
-  final bool underlineStrongWords;
-  final BibleViewFontWeight selectedRefFontWeight;
-  final BibleViewFontWeight refFontWeight;
 
   // --- LIST view ---
-  final bool underlineRef;
+  final bool underlineRefs;
   final bool showVerseDivider;
-  final bool showFullRefAlways;
+  final bool showAlwaysFullRef;
   final HighlightRenderMode highlightRenderMode;
-  final int parallelSpacing;
+  final double listParallelSpacing;
 
   // --- PRESENTATION view ---
-  final BibleViewTextAlign titleTextAlign;
-  final BibleViewTextAlign textAlign;
+  final BibleViewTextAlign presentationTitleTextAlign;
+  final BibleViewTextAlign presentationSubtitleTextAlign;
   final BibleViewFontWeight subtitleFontWeight;
-  final InlineVerseNumberStyle verseNumberStyle;
-  final double parallelDistance;
+  final InlineVerseNumberStyle inlineVerseNumberStyle;
+  final double presentationParallelSpacing;
 
   // --- PROSE view ---
   final bool emphasizeSelectedVerses;
@@ -49,125 +51,128 @@ class BibleViewSettings extends Equatable {
 
   const BibleViewSettings({
     this.enableAutoScrollToVerse = true,
-    this.textFont = 'General Sans',
-    this.fontSize = 14,
-    this.textColor = const Color(0xFFB9B9B9),
+    this.verseFontFamily = 'General Sans',
+    this.verseColor = const Color(0xFFB9B9B9),
     this.backgroundColor = const Color(0xFF0C0C0C),
     this.accentColor = const Color(0xFFA390FF),
     this.refColor = const Color(0xFF81811E),
-    this.enableCustomTheme = false,
-    this.textFontWeight = BibleViewFontWeight.semiBold,
+    this.useAppTheme = false,
+    this.verseFontWeight = BibleViewFontWeight.semiBold,
     this.widthAdjustmentOffset = 0.0,
-    this.referenceFont = 'General Sans',
+    this.refFontFamily = 'General Sans',
     this.xPadding = 0.01,
     this.splitscreenGap = 16,
     this.quoteColor = const Color(0xFFE04A4A),
     this.addColor = const Color(0xFFD2D2D2),
-    this.underlineStrongWords = false,
+    this.enableStrongWordsRender = false,
     this.selectedRefFontWeight = BibleViewFontWeight.extraBold,
     this.refFontWeight = BibleViewFontWeight.semiBold,
-    this.underlineRef = false,
+    this.underlineRefs = false,
     this.showVerseDivider = true,
-    this.showFullRefAlways = true,
+    this.showAlwaysFullRef = true,
     this.highlightRenderMode = HighlightRenderMode.fullRefWithColor,
-    this.parallelSpacing = 32,
-    this.titleTextAlign = BibleViewTextAlign.center,
-    this.textAlign = BibleViewTextAlign.center,
+    this.listParallelSpacing = 32,
+    this.presentationTitleTextAlign = BibleViewTextAlign.center,
+    this.presentationSubtitleTextAlign = BibleViewTextAlign.center,
     this.subtitleFontWeight = BibleViewFontWeight.semiBold,
-    this.verseNumberStyle = InlineVerseNumberStyle.simple,
-    this.parallelDistance = 16,
+    this.inlineVerseNumberStyle = InlineVerseNumberStyle.simple,
+    this.presentationParallelSpacing = 16,
     this.emphasizeSelectedVerses = true,
     this.unselectedOpacityLevel = 0.43,
   });
 
   factory BibleViewSettings.defaultThemeDark() => const BibleViewSettings(
-        textColor: Color(0xFFB9B9B9),
+        verseColor: Color(0xFFB9B9B9),
         backgroundColor: Color(0xFF0C0C0C),
         accentColor: Color(0xFFA390FF),
         refColor: Color(0xFF81811E),
         addColor: Color(0xFFD2D2D2),
         quoteColor: Color(0xFFE04A4A),
-        textFontWeight: BibleViewFontWeight.semiBold,
+        verseFontWeight: BibleViewFontWeight.semiBold,
         selectedRefFontWeight: BibleViewFontWeight.semiBold,
         refFontWeight: BibleViewFontWeight.semiBold,
       );
 
   factory BibleViewSettings.defaultThemeLight() => const BibleViewSettings(
-        textColor: Color(0xFF0C0C0C),
+        verseColor: Color(0xFF0C0C0C),
         backgroundColor: Color.fromARGB(255, 240, 240, 240),
         accentColor: Color.fromARGB(255, 114, 34, 218),
         refColor: Color(0xFF81811E),
         addColor: Color(0xFF858585),
         quoteColor: Color(0xFFE04A4A),
-        textFontWeight: BibleViewFontWeight.bold,
+        verseFontWeight: BibleViewFontWeight.bold,
         selectedRefFontWeight: BibleViewFontWeight.bold,
         refFontWeight: BibleViewFontWeight.bold,
       );
 
   BibleViewSettings copyWith({
     bool? enableAutoScrollToVerse,
-    String? textFont,
+    String? verseFontFamily,
     double? fontSize,
-    Color? textColor,
+    Color? verseColor,
     Color? backgroundColor,
     Color? accentColor,
     Color? refColor,
-    bool? enableCustomTheme,
-    BibleViewFontWeight? textFontWeight,
+    bool? useAppTheme,
+    BibleViewFontWeight? verseFontWeight,
     double? widthAdjustmentOffset,
-    String? referenceFont,
+    String? refFontFamily,
     double? xPadding,
-    int? splitscreenGap,
+    double? splitscreenGap,
     Color? quoteColor,
     Color? addColor,
-    bool? underlineStrongWords,
+    bool? enableStrongWordsRender,
     BibleViewFontWeight? selectedRefFontWeight,
     BibleViewFontWeight? refFontWeight,
-    bool? underlineRef,
+    bool? underlineRefs,
     bool? showVerseDivider,
-    bool? showFullRefAlways,
+    bool? showAlwaysFullRef,
     HighlightRenderMode? highlightRenderMode,
-    int? parallelSpacing,
-    BibleViewTextAlign? titleTextAlign,
-    BibleViewTextAlign? textAlign,
+    double? listParallelSpacing,
+    BibleViewTextAlign? presentationTitleTextAlign,
+    BibleViewTextAlign? presentationSubtitleTextAlign,
     BibleViewFontWeight? subtitleFontWeight,
-    InlineVerseNumberStyle? verseNumberStyle,
-    double? parallelDistance,
+    InlineVerseNumberStyle? inlineVerseNumberStyle,
+    double? presentationParallelSpacing,
     bool? emphasizeSelectedVerses,
     double? unselectedOpacityLevel,
   }) {
     return BibleViewSettings(
       enableAutoScrollToVerse:
           enableAutoScrollToVerse ?? this.enableAutoScrollToVerse,
-      textFont: textFont ?? this.textFont,
-      fontSize: fontSize ?? this.fontSize,
-      textColor: textColor ?? this.textColor,
+      verseFontFamily: verseFontFamily ?? this.verseFontFamily,
+      verseColor: verseColor ?? this.verseColor,
       backgroundColor: backgroundColor ?? this.backgroundColor,
       accentColor: accentColor ?? this.accentColor,
       refColor: refColor ?? this.refColor,
-      enableCustomTheme: enableCustomTheme ?? this.enableCustomTheme,
-      textFontWeight: textFontWeight ?? this.textFontWeight,
+      useAppTheme: useAppTheme ?? this.useAppTheme,
+      verseFontWeight: verseFontWeight ?? this.verseFontWeight,
       widthAdjustmentOffset:
           widthAdjustmentOffset ?? this.widthAdjustmentOffset,
-      referenceFont: referenceFont ?? this.referenceFont,
+      refFontFamily: refFontFamily ?? this.refFontFamily,
       xPadding: xPadding ?? this.xPadding,
       splitscreenGap: splitscreenGap ?? this.splitscreenGap,
       quoteColor: quoteColor ?? this.quoteColor,
       addColor: addColor ?? this.addColor,
-      underlineStrongWords: underlineStrongWords ?? this.underlineStrongWords,
+      enableStrongWordsRender:
+          enableStrongWordsRender ?? this.enableStrongWordsRender,
       selectedRefFontWeight:
           selectedRefFontWeight ?? this.selectedRefFontWeight,
       refFontWeight: refFontWeight ?? this.refFontWeight,
-      underlineRef: underlineRef ?? this.underlineRef,
+      underlineRefs: underlineRefs ?? this.underlineRefs,
       showVerseDivider: showVerseDivider ?? this.showVerseDivider,
-      showFullRefAlways: showFullRefAlways ?? this.showFullRefAlways,
+      showAlwaysFullRef: showAlwaysFullRef ?? this.showAlwaysFullRef,
       highlightRenderMode: highlightRenderMode ?? this.highlightRenderMode,
-      parallelSpacing: parallelSpacing ?? this.parallelSpacing,
-      titleTextAlign: titleTextAlign ?? this.titleTextAlign,
-      textAlign: textAlign ?? this.textAlign,
+      listParallelSpacing: listParallelSpacing ?? this.listParallelSpacing,
+      presentationTitleTextAlign:
+          presentationTitleTextAlign ?? this.presentationTitleTextAlign,
+      presentationSubtitleTextAlign:
+          presentationSubtitleTextAlign ?? this.presentationSubtitleTextAlign,
       subtitleFontWeight: subtitleFontWeight ?? this.subtitleFontWeight,
-      verseNumberStyle: verseNumberStyle ?? this.verseNumberStyle,
-      parallelDistance: parallelDistance ?? this.parallelDistance,
+      inlineVerseNumberStyle:
+          inlineVerseNumberStyle ?? this.inlineVerseNumberStyle,
+      presentationParallelSpacing:
+          presentationParallelSpacing ?? this.presentationParallelSpacing,
       emphasizeSelectedVerses:
           emphasizeSelectedVerses ?? this.emphasizeSelectedVerses,
       unselectedOpacityLevel:
@@ -177,33 +182,32 @@ class BibleViewSettings extends Equatable {
 
   Map<String, dynamic> toJson() => {
         'enableAutoScrollToVerse': enableAutoScrollToVerse,
-        'fontFamily': textFont,
-        'fontSize': fontSize,
-        'textColor': ColorsUtil.colorToHex(textColor),
+        'verseFontFamily': verseFontFamily,
+        'verseColor': ColorsUtil.colorToHex(verseColor),
         'backgroundColor': ColorsUtil.colorToHex(backgroundColor),
         'accentColor': ColorsUtil.colorToHex(accentColor),
         'refColor': ColorsUtil.colorToHex(refColor),
-        'enableCustomTheme': enableCustomTheme,
-        'textFontWeight': textFontWeight.wire,
+        'useAppTheme': useAppTheme,
+        'verseFontWeight': verseFontWeight.wire,
         'widthAdjustmentOffset': widthAdjustmentOffset,
-        'referenceFont': referenceFont,
+        'refFontFamily': refFontFamily,
         'xPadding': xPadding,
         'splitscreenGap': splitscreenGap,
         'quoteColor': ColorsUtil.colorToHex(quoteColor),
         'addColor': ColorsUtil.colorToHex(addColor),
-        'underlineStrongWords': underlineStrongWords,
+        'enableStrongWordsRender': enableStrongWordsRender,
         'selectedRefFontWeight': selectedRefFontWeight.wire,
         'refFontWeight': refFontWeight.wire,
-        'underlineRef': underlineRef,
+        'underlineRefs': underlineRefs,
         'showVerseDivider': showVerseDivider,
-        'showFullRefAlways': showFullRefAlways,
+        'showAlwaysFullRef': showAlwaysFullRef,
         'highlightRenderMode': highlightRenderMode.wire,
-        'parallelSpacing': parallelSpacing,
-        'titleTextAlign': titleTextAlign.wire,
-        'textAlign': textAlign.wire,
+        'listParallelSpacing': listParallelSpacing,
+        'presentationTitleTextAlign': presentationTitleTextAlign.wire,
+        'presentationSubtitleTextAlign': presentationSubtitleTextAlign.wire,
         'subtitleFontWeight': subtitleFontWeight.wire,
-        'verseNumberStyle': verseNumberStyle.wire,
-        'parallelDistance': parallelDistance,
+        'inlineVerseNumberStyle': inlineVerseNumberStyle.wire,
+        'presentationParallelSpacing': presentationParallelSpacing,
         'emphasizeSelectedVerses': emphasizeSelectedVerses,
         'unselectedOpacityLevel': unselectedOpacityLevel,
       };
@@ -215,9 +219,8 @@ class BibleViewSettings extends Equatable {
   factory BibleViewSettings.fromJson(Map<String, dynamic> json) {
     return BibleViewSettings(
       enableAutoScrollToVerse: json['enableAutoScrollToVerse'] as bool? ?? true,
-      textFont: json['fontFamily'] as String? ?? 'General Sans',
-      fontSize: (json['fontSize'] as num?)?.toDouble() ?? 14,
-      textColor: json['textColor'] != null
+      verseFontFamily: json['fontFamily'] as String? ?? 'General Sans',
+      verseColor: json['textColor'] != null
           ? Color(ColorsUtil.parseHex(json['textColor'] as String))
           : const Color(0xFFB9B9B9),
       backgroundColor: json['backgroundColor'] != null
@@ -229,50 +232,51 @@ class BibleViewSettings extends Equatable {
       refColor: json['refColor'] != null
           ? Color(ColorsUtil.parseHex(json['refColor'] as String))
           : const Color(0xFF81811E),
-      enableCustomTheme: json['enableCustomTheme'] as bool? ?? false,
-      textFontWeight: json['textFontWeight'] != null
+      useAppTheme: json['useAppTheme'] as bool? ?? false,
+      verseFontWeight: json['textFontWeight'] != null
           ? AppFontWeightWire.fromWire(json['textFontWeight'] as String)
           : BibleViewFontWeight.semiBold,
       widthAdjustmentOffset:
           (json['widthAdjustmentOffset'] as num?)?.toDouble() ?? 0.0,
-      referenceFont: json['referenceFont'] as String? ?? 'General Sans',
+      refFontFamily: json['referenceFont'] as String? ?? 'General Sans',
       xPadding: (json['xPadding'] as num?)?.toDouble() ?? 0.01,
-      splitscreenGap: json['splitscreenGap'] as int? ?? 16,
+      splitscreenGap: json['splitscreenGap'] as double? ?? 16,
       quoteColor: json['quoteColor'] != null
           ? Color(ColorsUtil.parseHex(json['quoteColor'] as String))
           : const Color(0xFFE04A4A),
       addColor: json['addColor'] != null
           ? Color(ColorsUtil.parseHex(json['addColor'] as String))
           : const Color(0xFFD2D2D2),
-      underlineStrongWords: json['underlineStrongWords'] as bool? ?? false,
+      enableStrongWordsRender: json['underlineStrongWords'] as bool? ?? false,
       selectedRefFontWeight: json['selectedRefFontWeight'] != null
           ? AppFontWeightWire.fromWire(json['selectedRefFontWeight'] as String)
           : BibleViewFontWeight.extraBold,
       refFontWeight: json['refFontWeight'] != null
           ? AppFontWeightWire.fromWire(json['refFontWeight'] as String)
           : BibleViewFontWeight.semiBold,
-      underlineRef: json['underlineRef'] as bool? ?? false,
+      underlineRefs: json['underlineRef'] as bool? ?? false,
       showVerseDivider: json['showVerseDivider'] as bool? ?? true,
-      showFullRefAlways: json['showFullRefAlways'] as bool? ?? true,
+      showAlwaysFullRef: json['showFullRefAlways'] as bool? ?? true,
       highlightRenderMode: json['highlightRenderMode'] != null
           ? HighlightRenderModeWire.fromWire(
               json['highlightRenderMode'] as String)
           : HighlightRenderMode.fullRefWithColor,
-      parallelSpacing: json['parallelSpacing'] as int? ?? 32,
-      titleTextAlign: json['titleTextAlign'] != null
+      listParallelSpacing: json['parallelSpacing'] as double? ?? 32,
+      presentationTitleTextAlign: json['titleTextAlign'] != null
           ? BibleViewTextAlignWire.fromWire(json['titleTextAlign'] as String)
           : BibleViewTextAlign.center,
-      textAlign: json['textAlign'] != null
+      presentationSubtitleTextAlign: json['textAlign'] != null
           ? BibleViewTextAlignWire.fromWire(json['textAlign'] as String)
           : BibleViewTextAlign.center,
       subtitleFontWeight: json['subtitleFontWeight'] != null
           ? AppFontWeightWire.fromWire(json['subtitleFontWeight'] as String)
           : BibleViewFontWeight.semiBold,
-      verseNumberStyle: json['verseNumberStyle'] != null
+      inlineVerseNumberStyle: json['verseNumberStyle'] != null
           ? InlineVerseNumberStyleWire.fromWire(
               json['verseNumberStyle'] as String)
           : InlineVerseNumberStyle.simple,
-      parallelDistance: (json['parallelDistance'] as num?)?.toDouble() ?? 16,
+      presentationParallelSpacing:
+          (json['parallelDistance'] as num?)?.toDouble() ?? 16,
       emphasizeSelectedVerses: json['emphasizeSelectedVerses'] as bool? ?? true,
       unselectedOpacityLevel:
           (json['unselectedOpacityLevel'] as num?)?.toDouble() ?? 0.43,
@@ -282,33 +286,32 @@ class BibleViewSettings extends Equatable {
   @override
   List<Object?> get props => [
         enableAutoScrollToVerse,
-        textFont,
-        fontSize,
-        textColor,
+        verseFontFamily,
+        verseColor,
         backgroundColor,
         accentColor,
         refColor,
-        enableCustomTheme,
-        textFontWeight,
+        useAppTheme,
+        verseFontWeight,
         widthAdjustmentOffset,
-        referenceFont,
+        refFontFamily,
         xPadding,
         splitscreenGap,
         quoteColor,
         addColor,
-        underlineStrongWords,
+        enableStrongWordsRender,
         selectedRefFontWeight,
         refFontWeight,
-        underlineRef,
+        underlineRefs,
         showVerseDivider,
-        showFullRefAlways,
+        showAlwaysFullRef,
         highlightRenderMode,
-        parallelSpacing,
-        titleTextAlign,
-        textAlign,
+        listParallelSpacing,
+        presentationTitleTextAlign,
+        presentationSubtitleTextAlign,
         subtitleFontWeight,
-        verseNumberStyle,
-        parallelDistance,
+        inlineVerseNumberStyle,
+        presentationParallelSpacing,
         emphasizeSelectedVerses,
         unselectedOpacityLevel,
       ];

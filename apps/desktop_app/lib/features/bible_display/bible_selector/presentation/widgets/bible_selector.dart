@@ -130,7 +130,6 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewSettings = BibleViewSettingsScope.of(context);
-    final useCustom = viewSettings.enableCustomTheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,9 +140,9 @@ class _Header extends StatelessWidget {
           style: TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.w600,
-            color: useCustom
-                ? viewSettings.textColor
-                : Theme.of(context).colorScheme.onSurfaceVariant,
+            color: viewSettings.useAppTheme
+                ? Theme.of(context).colorScheme.onSurfaceVariant
+                : viewSettings.verseColor,
           ),
         ),
         Text(

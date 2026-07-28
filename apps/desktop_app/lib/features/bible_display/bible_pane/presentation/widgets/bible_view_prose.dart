@@ -178,7 +178,7 @@ class _BibleViewProseState extends State<BibleViewProse> {
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
-                  spacing: viewSettings.parallelSpacing.toDouble(),
+                  spacing: viewSettings.listParallelSpacing.toDouble(),
                   children: [
                     for (var col = 0; col < parallelOrder.length; col++)
                       Expanded(
@@ -206,8 +206,8 @@ class _BibleViewProseState extends State<BibleViewProse> {
 
     final baseStyle = TextStyle(
       height: 1.5,
-      fontFamily: viewSettings.textFont,
-      fontWeight: viewSettings.textFontWeight.toFlutter(),
+      fontFamily: viewSettings.verseFontFamily,
+      fontWeight: viewSettings.verseFontWeight.toFlutter(),
     );
     final highlight = theme.colorScheme.primaryContainer;
 

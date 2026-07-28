@@ -56,9 +56,10 @@ class _BibleViewPresentationSettingsTabState
                   child: AppInputOption<BibleViewTextAlign>(
                     value: context.select(
                         (SettingsCubit<BibleViewSettings> c) =>
-                            c.state.titleTextAlign),
+                            c.state.presentationTitleTextAlign),
                     onChanged: (ta) {
-                      cubit.update((s) => s.copyWith(titleTextAlign: ta));
+                      cubit.update(
+                          (s) => s.copyWith(presentationTitleTextAlign: ta));
                     },
                     items: BibleViewTextAlign.values
                         .map((ta) => AppDropdownItem<BibleViewTextAlign>(
@@ -71,9 +72,10 @@ class _BibleViewPresentationSettingsTabState
                   child: AppInputOption<BibleViewTextAlign>(
                     value: context.select(
                         (SettingsCubit<BibleViewSettings> c) =>
-                            c.state.textAlign),
+                            c.state.presentationSubtitleTextAlign),
                     onChanged: (ta) {
-                      cubit.update((s) => s.copyWith(textAlign: ta));
+                      cubit.update(
+                          (s) => s.copyWith(presentationSubtitleTextAlign: ta));
                     },
                     items: BibleViewTextAlign.values
                         .map((ta) => AppDropdownItem<BibleViewTextAlign>(
@@ -86,9 +88,10 @@ class _BibleViewPresentationSettingsTabState
                   child: AppInputOption<InlineVerseNumberStyle>(
                     value: context.select(
                         (SettingsCubit<BibleViewSettings> c) =>
-                            c.state.verseNumberStyle),
+                            c.state.inlineVerseNumberStyle),
                     onChanged: (vns) {
-                      cubit.update((s) => s.copyWith(verseNumberStyle: vns));
+                      cubit.update(
+                          (s) => s.copyWith(inlineVerseNumberStyle: vns));
                     },
                     items: InlineVerseNumberStyle.values
                         .map((vns) => AppDropdownItem<InlineVerseNumberStyle>(
@@ -108,12 +111,12 @@ class _BibleViewPresentationSettingsTabState
                     min: 0,
                     max: 100,
                     onSubmitted: (n) {
-                      cubit.update(
-                          (p) => p.copyWith(parallelDistance: n.toDouble()));
+                      cubit.update((p) => p.copyWith(
+                          presentationParallelSpacing: n.toDouble()));
                     },
                     value: context.select(
                       (SettingsCubit<BibleViewSettings> c) =>
-                          (c.state.parallelDistance),
+                          (c.state.presentationParallelSpacing),
                     ),
                   )),
             ],

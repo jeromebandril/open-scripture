@@ -63,7 +63,6 @@ class BiblePane extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewSettings = BibleViewSettingsScope.of(context);
     final appTheme = Theme.of(context);
-    final isCustom = viewSettings.enableCustomTheme;
 
     // A BiblePane is self dependent. The bloc components are injected
     // externally, for instance by a splitscreen manager
@@ -84,16 +83,16 @@ class BiblePane extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
-          color: isCustom
-              ? viewSettings.backgroundColor
-              : appTheme.colorScheme.surface,
+          color: viewSettings.useAppTheme
+              ? appTheme.colorScheme.surface
+              : viewSettings.backgroundColor,
         ),
         child: DefaultTextStyle(
           style: TextStyle(
-            color: isCustom
-                ? viewSettings.textColor
-                : appTheme.colorScheme.onSurfaceVariant,
-            fontFamily: viewSettings.textFont,
+            color: viewSettings.useAppTheme
+                ? appTheme.colorScheme.onSurfaceVariant
+                : viewSettings.verseColor,
+            fontFamily: viewSettings.verseFontFamily,
             height: kTextHeightNone,
           ),
           child: BlocBuilder<BiblePaneBloc, BiblePaneState>(

@@ -36,9 +36,10 @@ class VerseSpanBuilder {
       TextStyle style = _buildCombinedStyle(span, base, viewSettings);
       if (style.color == null) {
         style = style.copyWith(
-            color: viewSettings.enableCustomTheme
-                ? viewSettings.textColor
-                : appTheme.colorScheme.onSurfaceVariant);
+          color: viewSettings.useAppTheme
+              ? appTheme.colorScheme.onSurfaceVariant
+              : viewSettings.verseColor,
+        );
       }
       if (colorAlpha != null) {
         style = style.copyWith(color: style.color!.withAlpha(colorAlpha));
@@ -80,13 +81,13 @@ class VerseSpanBuilder {
         TextStyle(fontStyle: FontStyle.italic, color: viewSettings.addColor),
       SpanType.redLetter => TextStyle(color: viewSettings.quoteColor),
       SpanType.strongs => TextStyle(
-          decoration: viewSettings.underlineStrongWords
+          decoration: viewSettings.enableStrongWordsRender
               ? TextDecoration.underline
               : TextDecoration.none,
           decorationStyle: TextDecorationStyle.dotted,
           decorationColor: Colors.black26,
           fontWeight: span.payload == _strongWordBold
-              ? viewSettings.textFontWeight.toFlutter().stepUp()
+              ? viewSettings.verseFontWeight.toFlutter().stepUp()
               : null,
         ),
       SpanType.underline =>
