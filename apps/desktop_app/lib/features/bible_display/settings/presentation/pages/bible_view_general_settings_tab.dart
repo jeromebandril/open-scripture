@@ -306,6 +306,27 @@ class _BibleViewGeneralSettingsTabState
                   ],
                 ),
                 SettingSection(
+                  title: 'Behavior',
+                  children: [
+                    Setting(
+                        label:
+                            'Enable auto scroll to verse for bible list view',
+                        description:
+                            'Automatically scrolls to selected verse when it is out of view',
+                        child: AppInputBool(
+                          value: context.select(
+                              (SettingsCubit<BibleViewSettings> c) =>
+                                  c.state.enableAutoScrollToVerse),
+                          onChanged: (val) {
+                            context
+                                .read<SettingsCubit<BibleViewSettings>>()
+                                .update((s) =>
+                                    s.copyWith(enableAutoScrollToVerse: val));
+                          },
+                        )),
+                  ],
+                ),
+                SettingSection(
                   title: 'Splitscreenn prefs',
                   children: [
                     Setting(

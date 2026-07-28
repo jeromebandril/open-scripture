@@ -98,7 +98,7 @@ enum SettingsPage {
 }
 
 final Map<SettingsPage, WidgetBuilder> settingsBuilders = {
-  SettingsPage.globalAppearance: (_) => const GlobalCustomizerScreen(),
+  SettingsPage.globalAppearance: (_) => const GlobalSettingsPage(),
   SettingsPage.bibleViewer: (_) => const BibleViewSettingsPage(),
   SettingsPage.library: (_) => const LibrariesPage(),
   SettingsPage.importer: (_) => const ImporterPage(),

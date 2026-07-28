@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../app_settings.dart';
 import '../../../../core/settings/settings_cubit.dart';
-import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
-import '../../../../shared/widgets/ui/inputs/app_input_color.dart';
-import '../../../../shared/widgets/ui/inputs/app_input_option.dart';
+import '../../../../features/bible_display/settings/bible_view_settings.dart';
 import '../../../../features/bible_searchbar/settings/search_settings.dart';
 import '../../../../features/settings_window/presentation/widgets/setting.dart';
 import '../../../../features/settings_window/presentation/widgets/setting_section.dart';
-import '../../../../features/bible_display/settings/bible_view_settings.dart';
+import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
+import '../../../../shared/widgets/ui/inputs/app_input_color.dart';
+import '../../../../shared/widgets/ui/inputs/app_input_option.dart';
+import '../../app_settings.dart';
 
 extension _ThemeModeIcons on ThemeMode {
   IconData get icon {
@@ -24,14 +24,14 @@ extension _ThemeModeIcons on ThemeMode {
   }
 }
 
-class GlobalCustomizerScreen extends StatefulWidget {
-  const GlobalCustomizerScreen({super.key});
+class GlobalSettingsPage extends StatefulWidget {
+  const GlobalSettingsPage({super.key});
 
   @override
-  State<GlobalCustomizerScreen> createState() => _GlobalCustomizerScreenState();
+  State<GlobalSettingsPage> createState() => _GlobalSettingsPageState();
 }
 
-class _GlobalCustomizerScreenState extends State<GlobalCustomizerScreen> {
+class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<SettingsCubit<AppSettings>>();
@@ -50,7 +50,7 @@ class _GlobalCustomizerScreenState extends State<GlobalCustomizerScreen> {
             title: 'Global',
             children: [
               Setting(
-                  label: 'Theme',
+                  label: 'Theme mode',
                   description: 'Set app theme',
                   child: AppInputOption<ThemeMode>(
                     value: context
@@ -139,19 +139,6 @@ class _GlobalCustomizerScreenState extends State<GlobalCustomizerScreen> {
                       context
                           .read<SettingsCubit<SearchSettings>>()
                           .update((s) => s.copyWith(enableBookSuggestion: val));
-                    },
-                  )),
-              Setting(
-                  label: 'Enable auto scroll to verse for bible list view',
-                  description:
-                      'Automatically scrolls to selected verse when it is out of view',
-                  child: AppInputBool(
-                    value: context.select(
-                        (SettingsCubit<BibleViewSettings> c) =>
-                            c.state.enableAutoScrollToVerse),
-                    onChanged: (val) {
-                      context.read<SettingsCubit<BibleViewSettings>>().update(
-                          (s) => s.copyWith(enableAutoScrollToVerse: val));
                     },
                   )),
             ],
