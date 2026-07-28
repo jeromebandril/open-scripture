@@ -2,7 +2,9 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../shared/domain/entities/verse.dart';
-import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
+import '../../../../customizer/presentation/models/app_font_weight.dart';
+import '../../../settings/bible_view_settings.dart';
+import '../../../settings/bible_view_settings_provider.dart';
 
 const _strongWordBold = 'H0430';
 
@@ -17,8 +19,8 @@ class VerseSpanBuilder {
   }) {
     if (spans.isEmpty) return const [];
 
-    final theme = Theme.of(context);
-    final bTheme = theme.extension<BiblePaneGeneralTheme>()!;
+    final appTheme = Theme.of(context);
+    final viewSettings = BibleViewSettingsScope.of(context);
     final base = baseStyle ?? const TextStyle();
 
     return spans.map((span) {
@@ -31,12 +33,12 @@ class VerseSpanBuilder {
         recognizer = TapGestureRecognizer()..onTap = onVerseTap;
       }
 
-      TextStyle style = _buildCombinedStyle(span, base, bTheme);
+      TextStyle style = _buildCombinedStyle(span, base, viewSettings);
       if (style.color == null) {
         style = style.copyWith(
-            color: bTheme.enableCustomTheme
-                ? bTheme.textColor
-                : theme.colorScheme.onSurfaceVariant);
+            color: viewSettings.enableCustomTheme
+                ? viewSettings.textColor
+                : appTheme.colorScheme.onSurfaceVariant);
       }
       if (colorAlpha != null) {
         style = style.copyWith(color: style.color!.withAlpha(colorAlpha));
@@ -54,13 +56,13 @@ class VerseSpanBuilder {
   static TextStyle _buildCombinedStyle(
     VerseSpan span,
     TextStyle base,
-    BiblePaneGeneralTheme bTheme,
+    BibleViewSettings viewSettings,
   ) {
     TextStyle style = base;
 
     // Apply styles in order of priority or accumulation
     for (final type in span.activeStyles) {
-      style = style.merge(_getStyleForType(type, span, bTheme));
+      style = style.merge(_getStyleForType(type, span, viewSettings));
     }
 
     return style;
@@ -69,22 +71,22 @@ class VerseSpanBuilder {
   static TextStyle _getStyleForType(
     SpanType type,
     VerseSpan span,
-    BiblePaneGeneralTheme bTheme,
+    BibleViewSettings viewSettings,
   ) {
     return switch (type) {
       SpanType.italic => const TextStyle(fontStyle: FontStyle.italic),
       SpanType.bold => const TextStyle(fontWeight: FontWeight.w600),
       SpanType.added =>
-        TextStyle(fontStyle: FontStyle.italic, color: bTheme.addColor),
-      SpanType.redLetter => TextStyle(color: bTheme.quoteColor),
+        TextStyle(fontStyle: FontStyle.italic, color: viewSettings.addColor),
+      SpanType.redLetter => TextStyle(color: viewSettings.quoteColor),
       SpanType.strongs => TextStyle(
-          decoration: bTheme.underlineStrongWords
+          decoration: viewSettings.underlineStrongWords
               ? TextDecoration.underline
               : TextDecoration.none,
           decorationStyle: TextDecorationStyle.dotted,
           decorationColor: Colors.black26,
           fontWeight: span.payload == _strongWordBold
-              ? bTheme.textFontWeight.stepUp()
+              ? viewSettings.textFontWeight.toFlutter().stepUp()
               : null,
         ),
       SpanType.underline =>

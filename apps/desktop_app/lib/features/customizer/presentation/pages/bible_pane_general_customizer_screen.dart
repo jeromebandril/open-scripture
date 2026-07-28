@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../app/settings/app_settings.dart';
 import '../../../../app/widgets/font_picker.dart';
+import '../../../../core/settings/settings_cubit.dart';
 import '../../../../shared/fonts/app_font.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_color.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_option.dart';
+import '../../../bible_display/settings/bible_view_settings.dart';
 import '../../../settings_window/presentation/widgets/setting.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../domain/entities/app_font_weight.dart';
-import '../../domain/entities/bible_pane_general_theme_settings.dart';
-import '../state/customizer_cubit.dart';
 
 class BiblePaneGeneralCustomizerScreen extends StatefulWidget {
   const BiblePaneGeneralCustomizerScreen({super.key, this.showPreview = false});
@@ -32,12 +33,12 @@ class _BiblePaneGeneralCustomizerScreenState
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<CustomizerCubit>();
-    final defaultPaneTheme =
-        context.select((CustomizerCubit c) => c.state.app.mode) ==
+    final cubit = context.read<SettingsCubit<BibleViewSettings>>();
+    final defaultTheme =
+        context.select((SettingsCubit<AppSettings> c) => c.state.mode) ==
                 ThemeMode.dark
-            ? BiblePaneGeneralThemeSettings.dark()
-            : BiblePaneGeneralThemeSettings.light();
+            ? BibleViewSettings.defaultThemeDark()
+            : BibleViewSettings.defaultThemeLight();
 
     return Row(
       spacing: 16,
@@ -56,36 +57,35 @@ class _BiblePaneGeneralCustomizerScreenState
                         description:
                             'Enables custom color theming or use app\'s theme',
                         child: AppInputBool(
-                          value: context.select((CustomizerCubit c) =>
-                              c.state.pane.enableCustomTheme),
+                          value: context.select(
+                              (SettingsCubit<BibleViewSettings> c) =>
+                                  c.state.enableCustomTheme),
                           onChanged: (val) {
-                            cubit.updateTheme(
-                                paneTheme: (p) =>
-                                    p.copyWith(enableCustomTheme: val));
+                            cubit.update(
+                                (p) => p.copyWith(enableCustomTheme: val));
                           },
                         )),
                     Setting(
                         label: 'Background color',
                         description: 'Set color for the background',
                         child: AppInputColor(
-                          showReset: defaultPaneTheme.backgroundColor !=
-                              context.select((CustomizerCubit c) =>
-                                  c.state.pane.backgroundColor),
+                          showReset: defaultTheme.backgroundColor !=
+                              context.select(
+                                  (SettingsCubit<BibleViewSettings> c) =>
+                                      c.state.backgroundColor),
                           onReset: () {
-                            cubit.updateTheme(
-                                paneTheme: (a) => a.copyWith(
-                                    backgroundColor:
-                                        defaultPaneTheme.backgroundColor));
+                            cubit.update((a) => a.copyWith(
+                                backgroundColor: defaultTheme.backgroundColor));
                           },
-                          isDisabled: !context.select((CustomizerCubit c) =>
-                              c.state.pane.enableCustomTheme),
+                          isDisabled: !context.select(
+                              (SettingsCubit<BibleViewSettings> c) =>
+                                  c.state.enableCustomTheme),
                           onColorChanged: (c) {
-                            cubit.updateTheme(
-                                paneTheme: (p) =>
-                                    p.copyWith(backgroundColor: c));
+                            cubit.update((p) => p.copyWith(backgroundColor: c));
                           },
                           color: context.select(
-                            (CustomizerCubit c) => c.state.pane.backgroundColor,
+                            (SettingsCubit<BibleViewSettings> c) =>
+                                c.state.backgroundColor,
                           ),
                         )),
                     Setting(
@@ -93,44 +93,46 @@ class _BiblePaneGeneralCustomizerScreenState
                         description:
                             'Set color for the verse reference (unselected)',
                         child: AppInputColor(
-                          showReset: defaultPaneTheme.refColor !=
+                          showReset: defaultTheme.refColor !=
                               context.select(
-                                  (CustomizerCubit c) => c.state.pane.refColor),
+                                  (SettingsCubit<BibleViewSettings> c) =>
+                                      c.state.refColor),
                           onReset: () {
-                            cubit.updateTheme(
-                                paneTheme: (a) => a.copyWith(
-                                    refColor: defaultPaneTheme.refColor));
+                            cubit.update((a) =>
+                                a.copyWith(refColor: defaultTheme.refColor));
                           },
-                          isDisabled: !context.select((CustomizerCubit c) =>
-                              c.state.pane.enableCustomTheme),
+                          isDisabled: !context.select(
+                              (SettingsCubit<BibleViewSettings> c) =>
+                                  c.state.enableCustomTheme),
                           onColorChanged: (c) {
-                            cubit.updateTheme(
-                                paneTheme: (p) => p.copyWith(refColor: c));
+                            cubit.update((p) => p.copyWith(refColor: c));
                           },
                           color: context.select(
-                            (CustomizerCubit c) => c.state.pane.refColor,
+                            (SettingsCubit<BibleViewSettings> c) =>
+                                c.state.refColor,
                           ),
                         )),
                     Setting(
                         label: 'Text color',
                         description: 'Set color for the verse text',
                         child: AppInputColor(
-                          showReset: defaultPaneTheme.textColor !=
-                              context.select((CustomizerCubit c) =>
-                                  c.state.pane.textColor),
+                          showReset: defaultTheme.textColor !=
+                              context.select(
+                                  (SettingsCubit<BibleViewSettings> c) =>
+                                      c.state.textColor),
                           onReset: () {
-                            cubit.updateTheme(
-                                paneTheme: (a) => a.copyWith(
-                                    textColor: defaultPaneTheme.textColor));
+                            cubit.update((a) =>
+                                a.copyWith(textColor: defaultTheme.textColor));
                           },
-                          isDisabled: !context.select((CustomizerCubit c) =>
-                              c.state.pane.enableCustomTheme),
+                          isDisabled: !context.select(
+                              (SettingsCubit<BibleViewSettings> c) =>
+                                  c.state.enableCustomTheme),
                           onColorChanged: (c) {
-                            cubit.updateTheme(
-                                paneTheme: (p) => p.copyWith(textColor: c));
+                            cubit.update((p) => p.copyWith(textColor: c));
                           },
                           color: context.select(
-                            (CustomizerCubit c) => c.state.pane.textColor,
+                            (SettingsCubit<BibleViewSettings> c) =>
+                                c.state.textColor,
                           ),
                         )),
                     // Setting(
@@ -141,13 +143,13 @@ class _BiblePaneGeneralCustomizerScreenState
                     //       min: 0,
                     //       max: 100,
                     //       onSubmitted: (n) {
-                    //         cubit.updateTheme(
-                    //             paneTheme: (p) =>
-                    //                 p.copyWith(xPadding: n / 100));
+                    //         cubit.update(
+                    //              (p) =>
+                    //                 p.copyWith(generalViewSettings: cubit.state.copyWith(xPadding: n / 100));
                     //       },
                     //       value: context.select(
-                    //         (CustomizerCubit c) =>
-                    //             (c.state.pane.xPadding * 100),
+                    //         (SettingsCubit<BibleViewSettings> c) =>
+                    //             (c.state.xPadding * 100),
                     //       ),
                     //     )),
                   ],
@@ -159,40 +161,40 @@ class _BiblePaneGeneralCustomizerScreenState
                         label: 'Quote color',
                         description: 'Set color for the verse text',
                         child: AppInputColor(
-                          showReset: defaultPaneTheme.quoteColor !=
-                              context.select((CustomizerCubit c) =>
-                                  c.state.pane.quoteColor),
+                          showReset: defaultTheme.quoteColor !=
+                              context.select(
+                                  (SettingsCubit<BibleViewSettings> c) =>
+                                      c.state.quoteColor),
                           onReset: () {
-                            cubit.updateTheme(
-                                paneTheme: (a) => a.copyWith(
-                                    quoteColor: defaultPaneTheme.quoteColor));
+                            cubit.update((a) => a.copyWith(
+                                quoteColor: defaultTheme.quoteColor));
                           },
                           onColorChanged: (c) {
-                            cubit.updateTheme(
-                                paneTheme: (p) => p.copyWith(quoteColor: c));
+                            cubit.update((p) => p.copyWith(quoteColor: c));
                           },
                           color: context.select(
-                            (CustomizerCubit c) => c.state.pane.quoteColor,
+                            (SettingsCubit<BibleViewSettings> c) =>
+                                c.state.quoteColor,
                           ),
                         )),
                     Setting(
                         label: 'Add color',
                         description: 'Set color for added words',
                         child: AppInputColor(
-                          showReset: defaultPaneTheme.addColor !=
+                          showReset: defaultTheme.addColor !=
                               context.select(
-                                  (CustomizerCubit c) => c.state.pane.addColor),
+                                  (SettingsCubit<BibleViewSettings> c) =>
+                                      c.state.addColor),
                           onReset: () {
-                            cubit.updateTheme(
-                                paneTheme: (a) => a.copyWith(
-                                    addColor: defaultPaneTheme.addColor));
+                            cubit.update((a) =>
+                                a.copyWith(addColor: defaultTheme.addColor));
                           },
                           onColorChanged: (c) {
-                            cubit.updateTheme(
-                                paneTheme: (p) => p.copyWith(addColor: c));
+                            cubit.update((p) => p.copyWith(addColor: c));
                           },
                           color: context.select(
-                            (CustomizerCubit c) => c.state.pane.addColor,
+                            (SettingsCubit<BibleViewSettings> c) =>
+                                c.state.addColor,
                           ),
                         )),
                     Setting(
@@ -200,12 +202,12 @@ class _BiblePaneGeneralCustomizerScreenState
                         description:
                             'Shows a subtle dotted underline for strong words',
                         child: AppInputBool(
-                          value: context.select((CustomizerCubit c) =>
-                              c.state.pane.underlineStrongWords),
+                          value: context.select(
+                              (SettingsCubit<BibleViewSettings> c) =>
+                                  c.state.underlineStrongWords),
                           onChanged: (val) {
-                            cubit.updateTheme(
-                                paneTheme: (p) =>
-                                    p.copyWith(underlineStrongWords: val));
+                            cubit.update(
+                                (p) => p.copyWith(underlineStrongWords: val));
                           },
                         )),
                   ],
@@ -218,12 +220,12 @@ class _BiblePaneGeneralCustomizerScreenState
                           label: 'Text font weight',
                           description: 'Set font weight for verse text',
                           child: AppInputOption<AppFontWeight>(
-                            value: context.select((CustomizerCubit c) =>
-                                c.state.pane.textFontWeight),
+                            value: context.select(
+                                (SettingsCubit<BibleViewSettings> c) =>
+                                    c.state.textFontWeight),
                             onChanged: (fw) {
-                              cubit.updateTheme(
-                                  paneTheme: (p) =>
-                                      p.copyWith(textFontWeight: fw));
+                              cubit.update(
+                                  (p) => p.copyWith(textFontWeight: fw));
                             },
                             items: AppFontWeight.values
                                 .map((fw) => AppDropdownItem<AppFontWeight>(
@@ -235,12 +237,12 @@ class _BiblePaneGeneralCustomizerScreenState
                           description:
                               'Set font weight for unselected references',
                           child: AppInputOption<AppFontWeight>(
-                            value: context.select((CustomizerCubit c) =>
-                                c.state.pane.refFontWeight),
+                            value: context.select(
+                                (SettingsCubit<BibleViewSettings> c) =>
+                                    c.state.refFontWeight),
                             onChanged: (fw) {
-                              cubit.updateTheme(
-                                  paneTheme: (p) =>
-                                      p.copyWith(refFontWeight: fw));
+                              cubit
+                                  .update((p) => p.copyWith(refFontWeight: fw));
                             },
                             items: AppFontWeight.values
                                 .map((fw) => AppDropdownItem<AppFontWeight>(
@@ -252,12 +254,12 @@ class _BiblePaneGeneralCustomizerScreenState
                           description:
                               'Set font weight for selected references',
                           child: AppInputOption<AppFontWeight>(
-                            value: context.select((CustomizerCubit c) =>
-                                c.state.pane.selectedRefFontWeight),
+                            value: context.select(
+                                (SettingsCubit<BibleViewSettings> c) =>
+                                    c.state.selectedRefFontWeight),
                             onChanged: (fw) {
-                              cubit.updateTheme(
-                                  paneTheme: (p) =>
-                                      p.copyWith(selectedRefFontWeight: fw));
+                              cubit.update(
+                                  (p) => p.copyWith(selectedRefFontWeight: fw));
                             },
                             items: AppFontWeight.values
                                 .map((fw) => AppDropdownItem<AppFontWeight>(
@@ -265,37 +267,39 @@ class _BiblePaneGeneralCustomizerScreenState
                                 .toList(),
                           )),
                     ]),
-                    SettingSection(title: 'Font family', children: [
-                      Setting(
-                        label: 'Text font',
-                        description: 'Set font for the verse text',
-                        child: FontPicker(
-                          selected: kAppFonts.firstWhere((f) =>
-                              f.family ==
-                              context.select(
-                                (CustomizerCubit c) => c.state.pane.textFont,
-                              )),
-                          onChanged: (appFont) => cubit.updateTheme(
-                              paneTheme: (p) =>
-                                  p.copyWith(textFont: appFont.family)),
+                    SettingSection(
+                      title: 'Font family',
+                      children: [
+                        Setting(
+                          label: 'Text font',
+                          description: 'Set font for the verse text',
+                          child: FontPicker(
+                            selected: kAppFonts.firstWhere((f) =>
+                                f.family ==
+                                context.select(
+                                  (SettingsCubit<BibleViewSettings> c) =>
+                                      c.state.textFont,
+                                )),
+                            onChanged: (appFont) => cubit.update(
+                                (p) => p.copyWith(textFont: appFont.family)),
+                          ),
                         ),
-                      ),
-                      Setting(
-                        label: 'Reference font',
-                        description: 'Set font for the reference text',
-                        child: FontPicker(
-                          selected: kAppFonts.firstWhere((f) =>
-                              f.family ==
-                              context.select(
-                                (CustomizerCubit c) =>
-                                    c.state.pane.referenceFont,
-                              )),
-                          onChanged: (appFont) => cubit.updateTheme(
-                              paneTheme: (p) =>
-                                  p.copyWith(referenceFont: appFont.family)),
+                        Setting(
+                          label: 'Reference font',
+                          description: 'Set font for the reference text',
+                          child: FontPicker(
+                            selected: kAppFonts.firstWhere((f) =>
+                                f.family ==
+                                context.select(
+                                  (SettingsCubit<BibleViewSettings> c) =>
+                                      c.state.referenceFont,
+                                )),
+                            onChanged: (appFont) => cubit.update((p) =>
+                                p.copyWith(referenceFont: appFont.family)),
+                          ),
                         ),
-                      ),
-                    ]),
+                      ],
+                    ),
                   ],
                 ),
                 SettingSection(
@@ -309,16 +313,16 @@ class _BiblePaneGeneralCustomizerScreenState
                           min: 0,
                           max: 256,
                           onSubmitted: (n) {
-                            cubit.updateTheme(
-                                paneTheme: (p) =>
-                                    p.copyWith(splitscreenGap: n.toInt()));
+                            cubit.update(
+                                (p) => p.copyWith(splitscreenGap: n.toInt()));
                           },
                           value: context.select(
-                            (CustomizerCubit c) => c.state.pane.splitscreenGap,
+                            (SettingsCubit<BibleViewSettings> c) =>
+                                c.state.splitscreenGap,
                           ),
                         )),
                   ],
-                ),
+                )
               ],
             ),
           ),

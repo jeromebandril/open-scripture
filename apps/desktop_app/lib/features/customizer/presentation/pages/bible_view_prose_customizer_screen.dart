@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/settings/settings_cubit.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
+import '../../../bible_display/settings/bible_view_settings.dart';
 import '../../../settings_window/presentation/widgets/setting.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
-import '../state/customizer_cubit.dart';
 
 class BibleViewProseCustomizerScreen extends StatefulWidget {
   const BibleViewProseCustomizerScreen({super.key});
@@ -19,7 +20,7 @@ class _BibleViewProseCustomizerScreenState
     extends State<BibleViewProseCustomizerScreen> {
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<CustomizerCubit>();
+    final cubit = context.read<SettingsCubit<BibleViewSettings>>();
 
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(0, 0, 24, 0),
@@ -33,13 +34,12 @@ class _BibleViewProseCustomizerScreenState
                 description: 'It reduce opacity for unselected verses',
                 child: AppInputBool(
                   value: context.select(
-                    (CustomizerCubit c) =>
-                        c.state.proseTheme.emphasizeSelectedVerses,
+                    (SettingsCubit<BibleViewSettings> c) =>
+                        c.state.emphasizeSelectedVerses,
                   ),
                   onChanged: (val) {
-                    cubit.updateTheme(
-                        proseTheme: (p) =>
-                            p.copyWith(emphasizeSelectedVerses: val));
+                    cubit.update(
+                        (s) => s.copyWith(emphasizeSelectedVerses: val));
                   },
                 ),
               ),
@@ -50,13 +50,12 @@ class _BibleViewProseCustomizerScreenState
                 child: AppInputNumber(
                   max: 100,
                   min: 1,
-                  value: context.select((CustomizerCubit c) =>
-                          c.state.proseTheme.unselectedOpacityLevel) *
+                  value: context.select((SettingsCubit<BibleViewSettings> c) =>
+                          c.state.unselectedOpacityLevel) *
                       100,
-                  onSubmitted: (val) => cubit.updateTheme(
-                      proseTheme: (p) => p.copyWith(
-                            unselectedOpacityLevel: val / 100,
-                          )),
+                  onSubmitted: (val) => cubit.update((s) => s.copyWith(
+                        unselectedOpacityLevel: val / 100,
+                      )),
                 ),
               )
             ],

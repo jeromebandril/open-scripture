@@ -4,10 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../../shared/domain/entities/verse.dart';
-import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
-import '../../../../customizer/presentation/models/bible_view_list_theme.dart';
-import '../../../../customizer/presentation/state/customizer_cubit.dart';
+import '../../../../customizer/presentation/models/app_font_weight.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
+import '../../../settings/bible_view_settings_provider.dart';
 import '../../domain/entities/word_info.dart';
 import '../rendering/verse_ref_label.dart';
 import '../rendering/verse_richtext_builder.dart';
@@ -136,11 +135,10 @@ class _BibleViewProseState extends State<BibleViewProse> {
 
   @override
   Widget build(BuildContext context) {
+    final viewSettings = BibleViewSettingsScope.of(context);
     final screen = MediaQuery.sizeOf(context);
     final panes = context.read<MultiPaneManagerCubit>().state.panes;
     final thisPaneIndex = panes.indexWhere((e) => e.id == widget.uniqueId);
-    final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
-    final listTheme = Theme.of(context).extension<BibleViewListTheme>()!;
 
     return BlocConsumer<BiblePaneBloc, BiblePaneState>(
       listenWhen: (prev, curr) =>
@@ -163,7 +161,8 @@ class _BibleViewProseState extends State<BibleViewProse> {
               child: Text(
                 '${ref?.book.englishName} ${ref?.chapter}',
                 style: TextStyle(
-                    fontWeight: FontWeight.bold, color: paneTheme.accentColor),
+                    fontWeight: FontWeight.bold,
+                    color: viewSettings.accentColor),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -171,15 +170,15 @@ class _BibleViewProseState extends State<BibleViewProse> {
               child: Padding(
                 padding: EdgeInsets.only(
                   left: thisPaneIndex == 0
-                      ? screen.width * paneTheme.xPadding
+                      ? screen.width * viewSettings.xPadding
                       : 0,
                   right: thisPaneIndex == panes.length - 1
-                      ? screen.width * paneTheme.xPadding
+                      ? screen.width * viewSettings.xPadding
                       : 0,
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
-                  spacing: listTheme.parallelSpacing,
+                  spacing: viewSettings.parallelSpacing.toDouble(),
                   children: [
                     for (var col = 0; col < parallelOrder.length; col++)
                       Expanded(
@@ -203,14 +202,12 @@ class _BibleViewProseState extends State<BibleViewProse> {
     dynamic translationId,
   ) {
     final theme = Theme.of(context);
-    final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
-    final proseTheme =
-        context.select((CustomizerCubit c) => c.state.proseTheme);
+    final viewSettings = BibleViewSettingsScope.of(context);
 
     final baseStyle = TextStyle(
       height: 1.5,
-      fontFamily: paneTheme.textFont,
-      fontWeight: paneTheme.textFontWeight,
+      fontFamily: viewSettings.textFont,
+      fontWeight: viewSettings.textFontWeight.toFlutter(),
     );
     final highlight = theme.colorScheme.primaryContainer;
 
@@ -300,8 +297,8 @@ class _BibleViewProseState extends State<BibleViewProse> {
             spans: segment.spans,
             context: context,
             baseStyle: verseBaseStyle,
-            colorAlpha: proseTheme.emphasizeSelectedVerses && !isHighlighted
-                ? (proseTheme.unselectedOpacityLevel * 255).toInt()
+            colorAlpha: viewSettings.emphasizeSelectedVerses && !isHighlighted
+                ? (viewSettings.unselectedOpacityLevel * 255).toInt()
                 : null,
             onWordTap: (span) => _onStrongsWordTap(context, span),
             onVerseTap: widget.onVerseTap == null

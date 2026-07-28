@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import '../../../../customizer/presentation/models/bible_view_list_theme.dart';
+import '../../../settings/bible_view_settings_provider.dart';
 
 class VerseDivider extends StatelessWidget {
   const VerseDivider({super.key});
@@ -36,8 +36,7 @@ class VerseDivider extends StatelessWidget {
     final effectiveFontSize = MediaQuery.of(context).textScaler.scale(base);
     final spacerHeight = _spacingFromFont(effectiveFontSize);
 
-    final isEnabled =
-        Theme.of(context).extension<BibleViewListTheme>()!.showVerseDivider;
+    final isEnabled = BibleViewSettingsScope.of(context).showVerseDivider;
 
     return isEnabled
         ? Container(

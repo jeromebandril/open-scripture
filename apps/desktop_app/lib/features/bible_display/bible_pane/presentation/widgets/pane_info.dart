@@ -4,10 +4,10 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../../shared/design_system/design_system.dart';
 import '../../../../../shared/domain/entities/bible_translation.dart';
-import '../../../../customizer/presentation/state/customizer_cubit.dart';
 import '../../../../text_scaler/presentation/state/text_scaler_cubit.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../../../multi_pane_manager/presentation/widgets/active_pane_indicator.dart';
+import '../../../settings/bible_view_settings_provider.dart';
 import '../../domain/display_mode.dart';
 import '../../domain/entities/word_info.dart';
 import '../state/bible_pane_bloc.dart';
@@ -56,9 +56,8 @@ class _PaneInfoState extends State<PaneInfo> {
     final pl =
         context.select((MultiPaneManagerCubit b) => b.state.panes.length);
     final paneId = context.select((BiblePaneBloc b) => b.state.paneId);
-    final enableStrongWords = context.select(
-      (CustomizerCubit c) => c.state.pane.underlineStrongWords,
-    );
+    final enableStrongWords =
+        BibleViewSettingsScope.of(context).underlineStrongWords;
 
     return DefaultTextStyle(
       style: TextStyle(

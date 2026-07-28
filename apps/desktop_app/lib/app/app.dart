@@ -13,10 +13,6 @@ import '../features/bible_display/settings/bible_view_settings.dart';
 import '../features/bible_searchbar/history/presentation/state/history_cubit.dart';
 import '../features/bible_searchbar/search/presentation/state/search_bloc.dart';
 import '../features/bible_searchbar/settings/search_settings.dart';
-import '../features/customizer/presentation/models/bible_pane_general_theme.dart';
-import '../features/customizer/presentation/models/bible_view_list_theme.dart';
-import '../features/customizer/presentation/models/bible_view_presentation_theme.dart';
-import '../features/customizer/presentation/state/customizer_cubit.dart';
 import '../features/my_library/settings/my_library_settings.dart';
 import '../features/obs_live_overlay/presentation/state/obs_live_overlay_cubit.dart';
 import '../features/obs_live_overlay/settings/overlay_settings.dart';
@@ -27,6 +23,7 @@ import '../features/three_tap_navigator/presentation/state/three_tap_navigator_c
 import '../features/window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import '../shared/design_system/design_system.dart';
 import 'app_shell.dart';
+import 'settings/app_settings.dart';
 import 'state/fullscreen_cubit.dart';
 import 'state/interface_visibility_cubit.dart';
 
@@ -66,41 +63,18 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => di.sl<CustomizerCubit>(),
-      child: BlocBuilder<CustomizerCubit, CustomizerState>(
-        buildWhen: (prev, curr) {
-          // Only rebuild MaterialApp when app-wide theme changes.
-          return prev.app != curr.app ||
-              prev.pane != curr.pane ||
-              prev.presentTheme != curr.presentTheme ||
-              prev.listTheme != curr.listTheme;
-        },
+      create: (context) => di.sl<SettingsCubit<AppSettings>>(),
+      child: BlocBuilder<SettingsCubit<AppSettings>, AppSettings>(
         builder: (context, state) {
           // final enableTint = false; //state.app.enableAutoColorScheme;
           // final accentColor = state.app.accentColor;
 
-          final extensions = <ThemeExtension<dynamic>>[
-            state.pane
-                .toExtension()
-                .copyWith(accentColor: state.app.accentColor),
-            state.presentTheme.toExtension(),
-            state.listTheme.toExtension(),
-          ];
-
-          final light = AppTheme.light.copyWith(
-              // colorScheme: enableTint
-              //     ? ColorScheme.fromSeed(seedColor: accentColor)
-              //     : null,
-              extensions: extensions);
-          final dark = AppTheme.dark.copyWith(
-              // colorScheme: enableTint
-              //     ? ColorScheme.fromSeed(seedColor: accentColor)
-              //     : null,
-              extensions: extensions);
+          final light = AppTheme.light;
+          final dark = AppTheme.dark;
 
           return MaterialApp(
             title: 'Open Scripture',
-            themeMode: state.app.mode,
+            themeMode: state.mode,
             darkTheme: dark,
             theme: light,
             debugShowCheckedModeBanner: false,

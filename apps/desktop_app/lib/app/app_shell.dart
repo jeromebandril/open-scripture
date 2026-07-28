@@ -2,11 +2,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../core/settings/settings_cubit.dart';
 import '../features/bible_display/multi_pane_manager/presentation/widgets/multi_pane_container.dart';
 import '../features/bible_searchbar/history/presentation/widgets/history_list.dart';
 import '../features/bible_searchbar/history/presentation/widgets/show_history_button.dart';
 import '../features/bible_searchbar/search/presentation/widgets/bible_searchbar.dart';
-import '../features/customizer/presentation/state/customizer_cubit.dart';
 import '../features/obs_live_overlay/presentation/widgets/obs_live_overlay_indicator.dart';
 import '../features/remote_controller/presentation/widgets/remote_controller_indicator.dart';
 import '../features/shortcuts/presentation/widgets/shortcuts_host.dart';
@@ -14,6 +14,7 @@ import '../features/three_tap_navigator/presentation/widgets/three_tap_navigator
 import '../features/window_stack_manager/presentation/widgets/window_stack_manager_host.dart';
 import '../shared/design_system/design_system.dart';
 import '../shared/widgets/floating_panel.dart';
+import 'settings/app_settings.dart';
 import 'state/fullscreen_cubit.dart';
 import 'state/interface_visibility_cubit.dart';
 import 'widgets/dynamic_searchbar.dart';
@@ -107,9 +108,8 @@ class _AppHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final enable3TapNav = context.select(
-      (CustomizerCubit c) => c.state.app.enable3TapNavigator,
-    );
+    final enable3TapNav = context
+        .select((SettingsCubit<AppSettings> c) => c.state.enable3TapNavigator);
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Row(

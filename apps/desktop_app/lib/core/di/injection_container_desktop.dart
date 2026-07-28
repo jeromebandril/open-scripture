@@ -11,7 +11,6 @@ import '../../features/bible_display/multi_pane_manager/presentation/remote/pane
 import '../../features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../../features/bible_searchbar/search/presentation/remote/search_handler.dart';
 import '../../features/bible_searchbar/search/presentation/state/search_bloc.dart';
-import '../../features/customizer/presentation/state/customizer_cubit.dart';
 import '../../features/my_library/presentation/state/my_library_cubit.dart';
 import '../../features/obs_live_overlay/data/datasource/overlay_control_server.dart';
 import '../../features/obs_live_overlay/data/datasource/overlay_file_system.dart';
@@ -44,18 +43,17 @@ import '../../shared/domain/repositories/bible_pane_repository_factory.dart';
 import '../../shared/enums/bible_repository_type.dart';
 import '../engines/remote_controller/remote_command_router.dart';
 import '../infrastructure/event_bus/selected_verse_bus.dart';
+import '../lifecycle/app_lifecycle.dart';
+import '../lifecycle/app_lifecycle_desktop_impl.dart';
 import '../settings/datasource/settings_datasource_desktop.dart';
 import '../settings/settings_cubit.dart';
 import '../settings/settings_repository.dart';
-import '../lifecycle/app_lifecycle.dart';
-import '../lifecycle/app_lifecycle_desktop_impl.dart';
 
 // dart format off
 
 Future<void> init(GetIt sl) async {
   _registerSwordBible(sl);
   _registerBibleSupport(sl); // importer, resolver, install repo, factory
-  _registerCustomizer(sl);
   _registerRemoteController(sl);
   _registerObsOverlay(sl);
   _registerShortcuts(sl);
@@ -167,20 +165,6 @@ void _registerBibleSupport(GetIt sl) {
   );
 }
 
-
-void _registerCustomizer(GetIt sl) {
-  sl.registerLazySingleton<SettingsRepository<CustomizerState>>(
-    () => SettingsRepositoryImpl<CustomizerState>(
-      SettingsDatasourceDesktop<CustomizerState>(
-        fileName: 'settings.json',
-        fromJson: CustomizerState.fromJson,
-        toJson: (s) => s.toJson(),
-        defaultValue: const CustomizerState(),
-      ),
-    ),
-    dispose: (repo) => repo.dispose(),
-  );
-}
 
 void _registerRemoteController(GetIt sl) {
   sl.registerLazySingleton<SettingsRepository<RemoteControllerSettings>>(

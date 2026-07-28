@@ -8,9 +8,8 @@ import '../../../../../app/state/fullscreen_cubit.dart';
 import '../../../../../app/state/interface_visibility_cubit.dart';
 import '../../../../../shared/design_system/design_system.dart';
 import '../../../../../shared/widgets/draggable_divider.dart';
-import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
-import '../../../../customizer/presentation/state/customizer_cubit.dart';
 import '../../../bible_pane/presentation/widgets/bible_pane.dart';
+import '../../../settings/bible_view_settings_provider.dart';
 import '../models/multi_pane_data.dart';
 import '../pane_animation_constants.dart';
 import '../state/multi_pane_manager_cubit.dart';
@@ -20,8 +19,10 @@ class MultiPaneContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _PaneContainerDecoration(
-      child: _PaneList(),
+    return BibleViewSettingsProvider(
+      child: _PaneContainerDecoration(
+        child: _PaneList(),
+      ),
     );
   }
 }
@@ -33,12 +34,9 @@ class _PaneContainerDecoration extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final enableCustom = context.select(
-      (CustomizerCubit c) => c.state.pane.enableCustomTheme,
-    );
-    final offset = context.select(
-      (CustomizerCubit c) => c.state.pane.widthAdjustmentOffset,
-    );
+    final viewSettings = BibleViewSettingsScope.of(context);
+    final enableCustom = viewSettings.enableCustomTheme;
+    final offset = viewSettings.widthAdjustmentOffset;
     final isFullscreen = context.select((FullscreenCubit f) => f.state);
     final showMenuBar = context.select(
       (InterfaceVisibilityCubit i) => i.state.isToolbarVisible,
@@ -53,9 +51,7 @@ class _PaneContainerDecoration extends StatelessWidget {
                 topRight: Radius.circular(AppRadius.sm),
               ),
         color: enableCustom
-            ? Theme.of(context)
-                .extension<BiblePaneGeneralTheme>()!
-                .backgroundColor
+            ? viewSettings.backgroundColor
             : Theme.of(context).colorScheme.surface,
       ),
       child: Padding(
@@ -108,9 +104,7 @@ class _PaneListState extends State<_PaneList> with WindowListener {
 
   @override
   Widget build(BuildContext context) {
-    final gap = context.select(
-      (CustomizerCubit c) => c.state.pane.splitscreenGap,
-    );
+    final gap = BibleViewSettingsScope.of(context).splitscreenGap;
 
     return BlocSelector<MultiPaneManagerCubit, PaneManagerState,
         (List<PaneDescriptor>, int?)>(

@@ -1,17 +1,15 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import '../../../../shared/utils/colors_util.dart';
+import '../../shared/utils/colors_util.dart';
 
-/// App-wide theme settings that affect MaterialApp.
-
-class AppThemeSettings extends Equatable {
+class AppSettings extends Equatable {
   final ThemeMode mode;
   final String fontFamily;
   final Color accentColor;
   final bool enableAutoColorScheme;
   final bool enable3TapNavigator;
 
-  const AppThemeSettings({
+  const AppSettings({
     this.mode = ThemeMode.light,
     this.fontFamily = 'General Sans',
     this.accentColor = const Color(0xFF2558C0),
@@ -19,7 +17,7 @@ class AppThemeSettings extends Equatable {
     this.enable3TapNavigator = false,
   });
 
-  AppThemeSettings copyWith(
+  AppSettings copyWith(
       {ThemeMode? mode,
       String? fontFamily,
       Color? accentColor,
@@ -27,7 +25,7 @@ class AppThemeSettings extends Equatable {
       bool? enableCustomTheme,
       bool? enableDynamicInterface,
       bool? enable3TapNavigator}) {
-    return AppThemeSettings(
+    return AppSettings(
       mode: mode ?? this.mode,
       fontFamily: fontFamily ?? this.fontFamily,
       accentColor: accentColor ?? this.accentColor,
@@ -54,7 +52,7 @@ class AppThemeSettings extends Equatable {
         'enable3TapNavigator': enable3TapNavigator,
       };
 
-  static AppThemeSettings fromJson(Map<String, dynamic> json) {
+  static AppSettings fromJson(Map<String, dynamic> json) {
     ThemeMode parseMode(String? s) {
       switch (s) {
         case 'dark':
@@ -66,7 +64,7 @@ class AppThemeSettings extends Equatable {
       }
     }
 
-    return AppThemeSettings(
+    return AppSettings(
       mode: parseMode(json['mode'] as String),
       fontFamily: json['fontFamily'] as String,
       accentColor: Color(ColorsUtil.parseHex(json['accentColor'] as String)),
@@ -80,7 +78,7 @@ class AppThemeSettings extends Equatable {
 class AppThemeBuilder {
   const AppThemeBuilder();
 
-  ThemeData buildLight(AppThemeSettings s) {
+  ThemeData buildLight(AppSettings s) {
     final cs = _colorScheme(Brightness.light, s);
     return ThemeData(
       brightness: Brightness.light,
@@ -90,7 +88,7 @@ class AppThemeBuilder {
     );
   }
 
-  ThemeData buildDark(AppThemeSettings s) {
+  ThemeData buildDark(AppSettings s) {
     final cs = _colorScheme(Brightness.dark, s);
     return ThemeData(
       brightness: Brightness.dark,
@@ -100,7 +98,7 @@ class AppThemeBuilder {
     );
   }
 
-  ColorScheme _colorScheme(Brightness brightness, AppThemeSettings s) {
+  ColorScheme _colorScheme(Brightness brightness, AppSettings s) {
     final seed = s.accentColor;
 
     return s.enableAutoColorScheme

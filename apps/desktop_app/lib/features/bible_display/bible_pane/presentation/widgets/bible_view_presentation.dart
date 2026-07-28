@@ -3,9 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../customizer/domain/entities/presentation_verse_number_style.dart';
-import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
-import '../../../../customizer/presentation/models/bible_view_presentation_theme.dart';
+import '../../../../customizer/presentation/models/app_font_weight.dart';
+import '../../../../customizer/presentation/models/app_text_alignment.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
+import '../../../settings/bible_view_settings.dart';
+import '../../../settings/bible_view_settings_provider.dart';
 import '../rendering/verse_richtext_builder.dart';
 import '../state/bible_pane_bloc.dart';
 
@@ -18,15 +20,13 @@ class BibleViewPresentation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final viewSettings = BibleViewSettingsScope.of(context);
     final screen = MediaQuery.sizeOf(context);
     final panes = context.read<MultiPaneManagerCubit>().state.panes;
+
     final thisPaneIndex = panes.indexWhere((e) => e.id == uniqueId);
     final isFirst = thisPaneIndex == 0;
     final isLast = thisPaneIndex == panes.length - 1;
-
-    final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
-    final presentTheme =
-        Theme.of(context).extension<BibleViewPresentationTheme>()!;
 
     return BlocBuilder<BiblePaneBloc, BiblePaneState>(
       buildWhen: (prev, curr) =>
@@ -41,8 +41,7 @@ class BibleViewPresentation extends StatelessWidget {
           context: context,
           state: state,
           rangeToDisplay: rangeToDisplay,
-          paneTheme: paneTheme,
-          presentTheme: presentTheme,
+          viewSettings: viewSettings,
         );
 
         return Container(
@@ -51,19 +50,19 @@ class BibleViewPresentation extends StatelessWidget {
           child: SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.only(
-                left: isFirst ? screen.width * paneTheme.xPadding : 0,
-                right: isLast ? screen.width * paneTheme.xPadding : 0,
+                left: isFirst ? screen.width * viewSettings.xPadding : 0,
+                right: isLast ? screen.width * viewSettings.xPadding : 0,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 spacing: 32,
                 children: [
-                  _buildTitle(ref, paneTheme, presentTheme),
+                  _buildTitle(ref, viewSettings),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
-                    spacing: presentTheme.parallelDistance,
+                    spacing: viewSettings.parallelDistance,
                     children: [
                       for (final block in translations)
                         Column(
@@ -74,8 +73,7 @@ class BibleViewPresentation extends StatelessWidget {
                               _buildTranslationSubtitle(
                                 context,
                                 block.subtitle,
-                                paneTheme,
-                                presentTheme,
+                                viewSettings,
                               ),
                             block.content,
                           ],
@@ -93,19 +91,18 @@ class BibleViewPresentation extends StatelessWidget {
 
   static Widget _buildTitle(
     BibleRef ref,
-    BiblePaneGeneralTheme paneTheme,
-    BibleViewPresentationTheme presentTheme,
+    BibleViewSettings viewSettings,
   ) {
     // TODO: make english name be the fallback, prioritize the localized name
     final title = '${ref.book.englishName} ${ref.toStringChapterAndVerse()}';
 
     return Text(
       title,
-      textAlign: presentTheme.titleAlignment,
+      textAlign: viewSettings.titleTextAlign.toFlutter(),
       style: TextStyle(
-        fontWeight: paneTheme.selectedRefFontWeight,
-        fontFamily: paneTheme.referenceFont,
-        color: paneTheme.accentColor,
+        fontWeight: viewSettings.selectedRefFontWeight.toFlutter(),
+        fontFamily: viewSettings.referenceFont,
+        color: viewSettings.accentColor,
         fontSize: 16,
       ),
     );
@@ -114,17 +111,16 @@ class BibleViewPresentation extends StatelessWidget {
   static Widget _buildTranslationSubtitle(
     BuildContext context,
     String subtitle,
-    BiblePaneGeneralTheme paneTheme,
-    BibleViewPresentationTheme presentTheme,
+    BibleViewSettings viewSettings,
   ) {
     return Text(
       subtitle,
-      textAlign: presentTheme.titleAlignment,
+      textAlign: viewSettings.titleTextAlign.toFlutter(),
       style: TextStyle(
-        color: paneTheme.enableCustomTheme
-            ? paneTheme.refColor
+        color: viewSettings.enableCustomTheme
+            ? viewSettings.refColor
             : Theme.of(context).colorScheme.primary,
-        fontWeight: presentTheme.subtitleFontWeight,
+        fontWeight: viewSettings.subtitleFontWeight.toFlutter(),
         fontSize: 8,
       ),
     );
@@ -138,8 +134,7 @@ class BibleViewPresentation extends StatelessWidget {
     required BuildContext context,
     required BiblePaneState state,
     required List<BibleRef> rangeToDisplay,
-    required BiblePaneGeneralTheme paneTheme,
-    required BibleViewPresentationTheme presentTheme,
+    required BibleViewSettings viewSettings,
   }) {
     final blocks = <_TranslationBlock>[];
 
@@ -158,8 +153,7 @@ class BibleViewPresentation extends StatelessWidget {
       };
 
       final children = rangeToDisplay.length > 1
-          ? _interleaveVerseNumbers(
-              rangeToDisplay, spansByRef, paneTheme, presentTheme)
+          ? _interleaveVerseNumbers(rangeToDisplay, spansByRef, viewSettings)
           : spansByRef.values.isEmpty
               ? const <InlineSpan>[]
               : spansByRef.values.first;
@@ -172,10 +166,11 @@ class BibleViewPresentation extends StatelessWidget {
         subtitle: subtitle,
         content: Text.rich(
           TextSpan(
-            style: TextStyle(fontWeight: paneTheme.textFontWeight),
+            style:
+                TextStyle(fontWeight: viewSettings.textFontWeight.toFlutter()),
             children: children,
           ),
-          textAlign: presentTheme.textAlignment,
+          textAlign: viewSettings.textAlign.toFlutter(),
         ),
       ));
     }
@@ -190,8 +185,7 @@ class BibleViewPresentation extends StatelessWidget {
   static List<InlineSpan> _interleaveVerseNumbers(
     List<BibleRef> range,
     Map<BibleRef, List<InlineSpan>> spansByRef,
-    BiblePaneGeneralTheme paneTheme,
-    BibleViewPresentationTheme presentTheme,
+    BibleViewSettings viewSettings,
   ) {
     final result = <InlineSpan>[];
 
@@ -201,7 +195,7 @@ class BibleViewPresentation extends StatelessWidget {
 
       result.addAll([
         const TextSpan(text: '   '),
-        _buildVerseNumber(ref.verseStart!, paneTheme, presentTheme),
+        _buildVerseNumber(ref.verseStart!, viewSettings),
         const TextSpan(text: ' '),
         ...spans,
       ]);
@@ -212,18 +206,17 @@ class BibleViewPresentation extends StatelessWidget {
 
   static InlineSpan _buildVerseNumber(
     int number,
-    BiblePaneGeneralTheme paneTheme,
-    BibleViewPresentationTheme presentTheme,
+    BibleViewSettings viewSettings,
   ) {
     final label = number.toString();
 
-    if (presentTheme.verseNumberStyle == PresentationVerseNumberStyle.simple) {
+    if (viewSettings.verseNumberStyle == PresentationVerseNumberStyle.simple) {
       return TextSpan(
         text: label,
         style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
-          color: paneTheme.accentColor,
+          color: viewSettings.accentColor,
           decoration: TextDecoration.underline,
         ),
       );
@@ -234,7 +227,7 @@ class BibleViewPresentation extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 2.5, vertical: 2),
         decoration: BoxDecoration(
-          color: paneTheme.accentColor.withAlpha(35),
+          color: viewSettings.accentColor.withAlpha(35),
           borderRadius: BorderRadius.circular(4),
         ),
         child: Text(
@@ -242,7 +235,7 @@ class BibleViewPresentation extends StatelessWidget {
           style: TextStyle(
             fontSize: 3,
             fontWeight: FontWeight.bold,
-            color: paneTheme.accentColor,
+            color: viewSettings.accentColor,
           ),
         ),
       ),

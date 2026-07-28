@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../app/settings/app_settings.dart';
 import '../../../../core/settings/settings_cubit.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_color.dart';
@@ -10,8 +11,6 @@ import '../../../bible_display/settings/bible_view_settings.dart';
 import '../../../bible_searchbar/settings/search_settings.dart';
 import '../../../settings_window/presentation/widgets/setting.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
-import '../../domain/entities/bible_pane_general_theme_settings.dart';
-import '../state/customizer_cubit.dart';
 
 extension _ThemeModeIcons on ThemeMode {
   IconData get icon {
@@ -36,13 +35,13 @@ class GlobalCustomizerScreen extends StatefulWidget {
 class _GlobalCustomizerScreenState extends State<GlobalCustomizerScreen> {
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<CustomizerCubit>();
+    final cubit = context.read<SettingsCubit<AppSettings>>();
 
     final defaultPaneTheme =
-        context.select((CustomizerCubit c) => c.state.app.mode) ==
+        context.select((SettingsCubit<AppSettings> c) => c.state.mode) ==
                 ThemeMode.dark
-            ? BiblePaneGeneralThemeSettings.dark()
-            : BiblePaneGeneralThemeSettings.light();
+            ? BibleViewSettings.defaultThemeDark()
+            : BibleViewSettings.defaultThemeLight();
 
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(42, 0, 42, 42),
@@ -55,11 +54,10 @@ class _GlobalCustomizerScreenState extends State<GlobalCustomizerScreen> {
                   label: 'Theme',
                   description: 'Set app theme',
                   child: AppInputOption<ThemeMode>(
-                    value:
-                        context.select((CustomizerCubit c) => c.state.app.mode),
+                    value: context
+                        .select((SettingsCubit<AppSettings> c) => c.state.mode),
                     onChanged: (mode) {
-                      cubit.updateTheme(
-                          appTheme: (a) => a.copyWith(mode: mode));
+                      cubit.update((a) => a.copyWith(mode: mode));
                     },
                     items: ThemeMode.values
                         .map((m) => AppDropdownItem<ThemeMode>(
@@ -71,19 +69,17 @@ class _GlobalCustomizerScreenState extends State<GlobalCustomizerScreen> {
                   description: 'Set accent color for app',
                   child: AppInputColor(
                     showReset: defaultPaneTheme.accentColor !=
-                        context.select(
-                            (CustomizerCubit c) => c.state.app.accentColor),
+                        context.select((SettingsCubit<AppSettings> c) =>
+                            c.state.accentColor),
                     onReset: () {
-                      cubit.updateTheme(
-                          appTheme: (a) => a.copyWith(
-                              accentColor: defaultPaneTheme.accentColor));
+                      cubit.update((a) => a.copyWith(
+                          accentColor: defaultPaneTheme.accentColor));
                     },
                     onColorChanged: (c) {
-                      cubit.updateTheme(
-                          appTheme: (a) => a.copyWith(accentColor: c));
+                      cubit.update((a) => a.copyWith(accentColor: c));
                     },
-                    color: context
-                        .select((CustomizerCubit c) => c.state.app.accentColor),
+                    color: context.select(
+                        (SettingsCubit<AppSettings> c) => c.state.accentColor),
                   )),
               Setting(
                   label: 'Enable auto colorscheme',
@@ -92,11 +88,11 @@ class _GlobalCustomizerScreenState extends State<GlobalCustomizerScreen> {
                   child: AppInputBool(
                     enabled: false,
                     value: false,
-                    // value: context.select((CustomizerCubit c) =>
-                    //     c.state.app.enableAutoColorScheme),
+                    // value: context.select((SettingsCubit<AppSettings> c) =>
+                    //     c.state.enableAutoColorScheme),
                     // onChanged: (val) {
-                    //   cubit.updateTheme(
-                    //       appTheme: (a) =>
+                    //   cubit.update(
+                    //       (a) =>
                     //           a.copyWith(enableAutoColorScheme: val));
                     // },
                   )),
@@ -105,10 +101,10 @@ class _GlobalCustomizerScreenState extends State<GlobalCustomizerScreen> {
               //     description:
               //         'use bible viewer\'s background color as app color',
               //     child: SettingBoolInput(
-              //       value: context.select((CustomizerCubit c) =>
+              //       value: context.select((SettingsCubit<AppSettings> c) =>
               //           c.state.theme.useBackgroundColorAsAppColor),
               //       onChanged: (val) {
-              //         cubit.updateTheme((theme) =>
+              //         cubit.update((theme) =>
               //             theme.copyWith(useBackgroundColorAsAppColor: val));
               //       },
               //     )),
@@ -122,12 +118,10 @@ class _GlobalCustomizerScreenState extends State<GlobalCustomizerScreen> {
                   description:
                       'Select book, chapter and verse with consecutive clicks',
                   child: AppInputBool(
-                    value: context.select(
-                        (CustomizerCubit c) => c.state.app.enable3TapNavigator),
+                    value: context.select((SettingsCubit<AppSettings> c) =>
+                        c.state.enable3TapNavigator),
                     onChanged: (val) {
-                      cubit.updateTheme(
-                          appTheme: (a) =>
-                              a.copyWith(enable3TapNavigator: val));
+                      cubit.update((a) => a.copyWith(enable3TapNavigator: val));
                     },
                   )),
             ],
@@ -163,26 +157,26 @@ class _GlobalCustomizerScreenState extends State<GlobalCustomizerScreen> {
                   )),
             ],
           ),
-          SettingSection(
-            title: 'Advanced',
-            children: [
-              Setting(
-                  label: 'Width adjustment',
-                  description: 'Set horizontal padding to fit screen if needed',
-                  child: AppInputNumber(
-                    min: 0,
-                    max: 100,
-                    onSubmitted: (n) {
-                      cubit.updateTheme(
-                          paneTheme: (p) =>
-                              p.copyWith(widthAdjustmentOffset: n.toDouble()));
-                    },
-                    value: context.select(
-                      (CustomizerCubit c) => c.state.pane.widthAdjustmentOffset,
-                    ),
-                  )),
-            ],
-          )
+          // SettingSection(
+          //   title: 'Advanced',
+          //   children: [
+          //     Setting(
+          //         label: 'Width adjustment',
+          //         description: 'Set horizontal padding to fit screen if needed',
+          //         child: AppInputNumber(
+          //           min: 0,
+          //           max: 100,
+          //           onSubmitted: (n) {
+          //             cubit.update((p) =>
+          //                 p.copyWith(widthAdjustmentOffset: n.toDouble()));
+          //           },
+          //           value: context.select(
+          //             (SettingsCubit<AppSettings> c) =>
+          //                 c.state.widthAdjustmentOffset,
+          //           ),
+          //         )),
+          //   ],
+          // )
         ],
       ),
     );

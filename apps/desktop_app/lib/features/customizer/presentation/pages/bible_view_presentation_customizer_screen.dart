@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/settings/settings_cubit.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_option.dart';
+import '../../../bible_display/settings/bible_view_settings.dart';
 import '../../../settings_window/presentation/widgets/setting.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../domain/entities/app_font_weight.dart';
 import '../../domain/entities/app_text_align.dart';
 import '../../domain/entities/presentation_verse_number_style.dart';
-import '../state/customizer_cubit.dart';
 
 class BibleViewPresentationCustomizerScreen extends StatefulWidget {
   const BibleViewPresentationCustomizerScreen(
@@ -25,7 +26,7 @@ class _BibleViewPresentationCustomizerScreenState
     extends State<BibleViewPresentationCustomizerScreen> {
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<CustomizerCubit>();
+    final cubit = context.read<SettingsCubit<BibleViewSettings>>();
 
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(0, 0, 24, 0),
@@ -39,12 +40,11 @@ class _BibleViewPresentationCustomizerScreenState
                   description:
                       'Set font weight for the bible metadata indicator when in parallel view',
                   child: AppInputOption<AppFontWeight>(
-                    value: context.select((CustomizerCubit c) =>
-                        c.state.presentTheme.subtitleFontWeight),
+                    value: context.select(
+                        (SettingsCubit<BibleViewSettings> c) =>
+                            c.state.subtitleFontWeight),
                     onChanged: (fw) {
-                      cubit.updateTheme(
-                          presentTheme: (p) =>
-                              p.copyWith(subtitleFontWeight: fw));
+                      cubit.update((s) => s.copyWith(subtitleFontWeight: fw));
                     },
                     items: AppFontWeight.values
                         .map((fw) => AppDropdownItem<AppFontWeight>(
@@ -55,11 +55,11 @@ class _BibleViewPresentationCustomizerScreenState
                   label: 'Title alignment',
                   description: 'Select title alignment',
                   child: AppInputOption<AppTextAlign>(
-                    value: context.select((CustomizerCubit c) =>
-                        c.state.presentTheme.titleTextAlign),
+                    value: context.select(
+                        (SettingsCubit<BibleViewSettings> c) =>
+                            c.state.titleTextAlign),
                     onChanged: (ta) {
-                      cubit.updateTheme(
-                          presentTheme: (p) => p.copyWith(titleTextAlign: ta));
+                      cubit.update((s) => s.copyWith(titleTextAlign: ta));
                     },
                     items: AppTextAlign.values
                         .map((ta) => AppDropdownItem<AppTextAlign>(
@@ -71,10 +71,10 @@ class _BibleViewPresentationCustomizerScreenState
                   description: 'Select text alignment',
                   child: AppInputOption<AppTextAlign>(
                     value: context.select(
-                        (CustomizerCubit c) => c.state.presentTheme.textAlign),
+                        (SettingsCubit<BibleViewSettings> c) =>
+                            c.state.textAlign),
                     onChanged: (ta) {
-                      cubit.updateTheme(
-                          presentTheme: (p) => p.copyWith(textAlign: ta));
+                      cubit.update((s) => s.copyWith(textAlign: ta));
                     },
                     items: AppTextAlign.values
                         .map((ta) => AppDropdownItem<AppTextAlign>(
@@ -85,12 +85,11 @@ class _BibleViewPresentationCustomizerScreenState
                   label: 'Verse number style',
                   description: 'Select verse number style',
                   child: AppInputOption<PresentationVerseNumberStyle>(
-                    value: context.select((CustomizerCubit c) =>
-                        c.state.presentTheme.verseNumberStyle),
+                    value: context.select(
+                        (SettingsCubit<BibleViewSettings> c) =>
+                            c.state.verseNumberStyle),
                     onChanged: (vns) {
-                      cubit.updateTheme(
-                          presentTheme: (p) =>
-                              p.copyWith(verseNumberStyle: vns));
+                      cubit.update((s) => s.copyWith(verseNumberStyle: vns));
                     },
                     items: PresentationVerseNumberStyle.values
                         .map((vns) =>
@@ -111,13 +110,12 @@ class _BibleViewPresentationCustomizerScreenState
                     min: 0,
                     max: 100,
                     onSubmitted: (n) {
-                      cubit.updateTheme(
-                          presentTheme: (p) =>
-                              p.copyWith(parallelDistance: n.toDouble()));
+                      cubit.update(
+                          (p) => p.copyWith(parallelDistance: n.toDouble()));
                     },
                     value: context.select(
-                      (CustomizerCubit c) =>
-                          (c.state.presentTheme.parallelDistance),
+                      (SettingsCubit<BibleViewSettings> c) =>
+                          (c.state.parallelDistance),
                     ),
                   )),
             ],

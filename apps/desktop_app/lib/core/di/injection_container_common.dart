@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 
+import '../../app/settings/app_settings.dart';
 import '../../app/state/fullscreen_cubit.dart';
 import '../../app/state/interface_visibility_cubit.dart';
 import '../../features/bible_display/bible_pane/data/repositories/bible_pane_repository_impl.dart';
@@ -15,7 +16,6 @@ import '../../features/bible_searchbar/search/domain/repositories/search_reposit
 import '../../features/bible_searchbar/search/domain/search_intent_resolver.dart';
 import '../../features/bible_searchbar/search/presentation/state/search_bloc.dart';
 import '../../features/bible_searchbar/settings/search_settings.dart';
-import '../../features/customizer/presentation/state/customizer_cubit.dart';
 import '../../features/font_loader/presentation/state/font_loader_cubit.dart';
 import '../../features/my_library/presentation/state/my_library_cubit.dart';
 import '../../features/my_library/settings/my_library_settings.dart';
@@ -54,9 +54,6 @@ import '../../shared/utils/bible_ref_parser/bible_ref_parser.dart';
 import '../engines/bible_compiler/import/formats/osis_importer.dart';
 import '../engines/bible_compiler/import/formats/usfx_importer.dart';
 import '../engines/bible_compiler/import/importer_registry.dart';
-import '../settings/datasource/settings_datasource_desktop.dart';
-import '../settings/settings_cubit.dart';
-import '../settings/settings_repository.dart';
 import '../infrastructure/database/daos/bible_content_dao.dart';
 import '../infrastructure/database/daos/bible_installation_dao.dart';
 import '../infrastructure/database/daos/installed_bibles_dao.dart';
@@ -66,6 +63,9 @@ import '../infrastructure/event_bus/resolved_search_intent_bus.dart';
 import '../infrastructure/event_bus/search_result_bus.dart';
 import '../infrastructure/event_bus/selected_verse_bus.dart';
 import '../infrastructure/window/app_window_manager.dart';
+import '../settings/datasource/settings_datasource_desktop.dart';
+import '../settings/settings_cubit.dart';
+import '../settings/settings_repository.dart';
 
 Future<void> init(GetIt sl) async {
   _registerDatabase(sl);
@@ -76,6 +76,8 @@ Future<void> init(GetIt sl) async {
   _registerShortcuts(sl);
   _registerBibleImporter(sl);
   _registerThreeTapNavigator(sl);
+  _registerBibleViewSettings(sl);
+  _registerAppSettings(sl);
 
   // bloc factory
   sl.registerFactoryParam<BiblePaneBloc, int, void>(
@@ -105,9 +107,6 @@ Future<void> init(GetIt sl) async {
   sl.registerLazySingleton<MultiPaneManagerCubit>(() => MultiPaneManagerCubit(
       searchIntentBus: sl(), bookResolver: sl(), searchResultBus: sl()));
 
-  // init Customizer
-  sl.registerFactory(() => CustomizerCubit(repo: sl()));
-
   // init window stack manager
   sl.registerFactory(() => WindowStackManagerBloc());
   sl.registerFactoryParam<BibleSelectorCubit, List<BibleId>,
@@ -128,19 +127,37 @@ Future<void> init(GetIt sl) async {
     dispose: (repo) => repo.dispose(),
   );
   sl.registerSingleton(SettingsCubit<MyLibrarySettings>(sl()));
+}
 
+void _registerAppSettings(GetIt sl) {
+  sl.registerLazySingleton<SettingsRepository<AppSettings>>(
+    () => SettingsRepositoryImpl<AppSettings>(
+      SettingsDatasourceDesktop<AppSettings>(
+        fileName: 'remote_controller_settings.json',
+        fromJson: AppSettings.fromJson,
+        toJson: (s) => s.toJson(),
+        defaultValue: const AppSettings(),
+      ),
+    ),
+    dispose: (repo) => repo.dispose(),
+  );
+  sl.registerFactory(() => SettingsCubit<AppSettings>(sl()));
+}
+
+// ---------------------------------------------------------------------------
+void _registerBibleViewSettings(GetIt sl) {
   sl.registerLazySingleton<SettingsRepository<BibleViewSettings>>(
     () => SettingsRepositoryImpl<BibleViewSettings>(
       SettingsDatasourceDesktop<BibleViewSettings>(
-        fileName: 'my_library_settings.json',
+        fileName: 'bible_view_settings.json',
         fromJson: BibleViewSettings.fromJson,
-        toJson: (l) => l.toJson(),
+        toJson: (s) => s.toJson(),
         defaultValue: const BibleViewSettings(),
       ),
     ),
     dispose: (repo) => repo.dispose(),
   );
-  sl.registerSingleton(SettingsCubit<BibleViewSettings>(sl()));
+  sl.registerFactory(() => SettingsCubit<BibleViewSettings>(sl()));
 }
 
 // ---------------------------------------------------------------------------
