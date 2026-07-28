@@ -74,8 +74,18 @@ class SettingsDatasourceDesktop<T> implements SettingsDatasource<T> {
   }
 
   Future<void> _backupCorrupted(File file) async {
-    final backupPath =
-        '${file.path}.corrupt.${DateTime.now().millisecondsSinceEpoch}';
+    final corruptDir = Directory(
+      p.join(file.parent.path, 'corrupt'),
+    );
+    await corruptDir.create(recursive: true);
+
+    final timestamp = DateTime.now().toIso8601String().replaceAll(':', '-');
+
+    final backupPath = p.join(
+      corruptDir.path,
+      '${p.basename(file.path)}.corrupt.$timestamp',
+    );
+
     try {
       await file.rename(backupPath);
     } catch (_) {}
