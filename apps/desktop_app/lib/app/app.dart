@@ -1,3 +1,4 @@
+// @dart=3.12
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
@@ -66,9 +67,6 @@ class _MyAppState extends State<MyApp> {
       create: (context) => di.sl<SettingsCubit<AppSettings>>(),
       child: BlocBuilder<SettingsCubit<AppSettings>, AppSettings>(
         builder: (context, state) {
-          // final enableTint = false; //state.app.enableAutoColorScheme;
-          // final accentColor = state.app.accentColor;
-
           final light = AppTheme.light;
           final dark = AppTheme.dark;
 
@@ -80,34 +78,36 @@ class _MyAppState extends State<MyApp> {
             debugShowCheckedModeBanner: false,
             builder: (context, child) {
               return MultiBlocProvider(
+                // dart format off
+                //
+                // Bloc/Cubits provided with values means that they are immediatly instanciated
+                // with create it means that they are created lazily only when first used
+                //
                 providers: [
-                  if (!kIsWeb) ...[
-                    BlocProvider(create: (_) => di.sl<ObsLiveOverlayCubit>()),
-                    BlocProvider(
-                        create: (_) => di.sl<SettingsCubit<OverlaySettings>>()),
-                    BlocProvider(
-                        create: (_) =>
-                            di.sl<SettingsCubit<RemoteControllerSettings>>()),
-                    BlocProvider(create: (_) => di.sl<RemoteControllerCubit>()),
-                    // BlocProvider(create: (_) => di.sl<InstallerBloc>()),
-                  ],
-                  BlocProvider.value(
-                      value: di.sl<SettingsCubit<MyLibrarySettings>>()),
-                  BlocProvider.value(
-                      value: di.sl<SettingsCubit<SearchSettings>>()),
-                  BlocProvider.value(
-                      value: di.sl<SettingsCubit<BibleViewSettings>>()),
-                  BlocProvider(
-                      create: (context) => di.sl<ThreeTapNavigatorCubit>()),
-                  BlocProvider.value(value: di.sl<MultiPaneManagerCubit>()),
+                  // There is no reason to lazy load search feature
+                  // warm up this immediatly so there is no time wasted
+                  // on first search query
+                  BlocProvider.value(value: di.sl<SearchBloc>()),
+                  // Instanciated immediatly otherwise it doesn't start 
+                  // registering historty entries at startup
+                  BlocProvider.value(value: di.sl<HistoryCubit>()),
+                  BlocProvider(create: (_) => di.sl<SettingsCubit<MyLibrarySettings>>()),
+                  BlocProvider(create: (_) => di.sl<SettingsCubit<SearchSettings>>()),
+                  BlocProvider(create: (_) => di.sl<SettingsCubit<BibleViewSettings>>()),
+                  BlocProvider(create: (_) => di.sl<MultiPaneManagerCubit>()),
+                  BlocProvider(create: (_) => di.sl<ShortcutsCubit>()),
+                  BlocProvider(create: (_) => di.sl<ThreeTapNavigatorCubit>()),
                   BlocProvider(create: (_) => di.sl<FullscreenCubit>()..init()),
                   BlocProvider(create: (_) => di.sl<WindowStackManagerBloc>()),
-                  BlocProvider.value(value: di.sl<SearchBloc>()),
-                  BlocProvider.value(value: di.sl<HistoryCubit>()),
-                  BlocProvider.value(value: di.sl<ShortcutsCubit>()),
-                  BlocProvider(
-                      create: (context) => di.sl<InterfaceVisibilityCubit>()),
+                  BlocProvider(create: (_) => di.sl<InterfaceVisibilityCubit>()),
+                  if (!kIsWeb) ...[
+                    BlocProvider(create: (_) => di.sl<ObsLiveOverlayCubit>()),
+                    BlocProvider(create: (_) => di.sl<SettingsCubit<OverlaySettings>>()),
+                    BlocProvider(create: (_) => di.sl<SettingsCubit<RemoteControllerSettings>>()),
+                    BlocProvider(create: (_) => di.sl<RemoteControllerCubit>()),
+                  ],
                 ],
+                // dart format off
                 child: child!,
               );
             },

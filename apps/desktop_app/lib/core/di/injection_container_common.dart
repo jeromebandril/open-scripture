@@ -326,5 +326,9 @@ void _registerThreeTapNavigator(GetIt sl) {
 // ----------------------------------------------------------------------------
 Future<void> warmUp(GetIt sl) async {
   // warm up settings (only those necessary on first frame)
-  await sl<SettingsRepository<MyLibrarySettings>>().loadSettings();
+  // await Future.wait([
+  //   sl<SettingsRepository<MyLibrarySettings>>().loadSettings(),
+  //   sl<SettingsRepository<BibleViewSettings>>().loadSettings(),
+  //   sl<SettingsRepository<AppSettings>>().loadSettings(),
+  // ]);
 }

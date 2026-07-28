@@ -247,6 +247,5 @@ void _registerShortcuts(GetIt sl) {
 // "core" is actually decided, not in the registration style above.
 void warmUp(GetIt sl) {
   sl<AppLifecycleService>();
-  sl<MyLibraryCubit>(instanceName: BibleRepositoryType.localDatabase.name);
 }
 

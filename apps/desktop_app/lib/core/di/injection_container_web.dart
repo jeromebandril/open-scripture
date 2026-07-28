@@ -5,7 +5,6 @@ import '../../app/state/interface_visibility_cubit.dart';
 import '../../features/bible_display/bible_pane/domain/repositories/bible_pane_repository.dart';
 import '../../features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../../features/bible_searchbar/search/presentation/state/search_bloc.dart';
-import '../../features/my_library/presentation/state/my_library_cubit.dart';
 import '../../features/shortcuts/presentation/models/app_command_dispatcher.dart';
 import '../../shared/data/repositories/bible_pane_repository_factory_impl.dart';
 import '../../shared/domain/repositories/bible_pane_repository_factory.dart';
@@ -38,5 +37,4 @@ Future<void> init(GetIt sl) async {
 
 void warmUp(GetIt sl) {
   sl<AppLifecycleService>();
-  sl<MyLibraryCubit>(instanceName: BibleRepositoryType.cloudAPI.name);
 }
