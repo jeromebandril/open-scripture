@@ -102,7 +102,7 @@ class BibleViewPresentation extends StatelessWidget {
       style: TextStyle(
         fontWeight: viewSettings.selectedRefFontWeight.toFlutter(),
         fontFamily: viewSettings.refFontFamily,
-        color: viewSettings.accentColor,
+        color: viewSettings.selectedRefColor,
         fontSize: 16,
       ),
     );
@@ -216,7 +216,7 @@ class BibleViewPresentation extends StatelessWidget {
         style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
-          color: viewSettings.accentColor,
+          color: viewSettings.selectedRefColor,
           decoration: TextDecoration.underline,
         ),
       );
@@ -227,7 +227,7 @@ class BibleViewPresentation extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 2.5, vertical: 2),
         decoration: BoxDecoration(
-          color: viewSettings.accentColor.withAlpha(35),
+          color: viewSettings.selectedRefColor.withAlpha(35),
           borderRadius: BorderRadius.circular(4),
         ),
         child: Text(
@@ -235,7 +235,7 @@ class BibleViewPresentation extends StatelessWidget {
           style: TextStyle(
             fontSize: 3,
             fontWeight: FontWeight.bold,
-            color: viewSettings.accentColor,
+            color: viewSettings.selectedRefColor,
           ),
         ),
       ),

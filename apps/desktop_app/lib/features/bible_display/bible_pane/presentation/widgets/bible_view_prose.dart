@@ -162,7 +162,7 @@ class _BibleViewProseState extends State<BibleViewProse> {
                 '${ref?.book.englishName} ${ref?.chapter}',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: viewSettings.accentColor),
+                    color: viewSettings.selectedRefColor),
                 textAlign: TextAlign.center,
               ),
             ),

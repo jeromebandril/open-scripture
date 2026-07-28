@@ -23,7 +23,7 @@ abstract final class VerseRefLabel {
     return TextStyle(
       decoration: viewSettings.underlineRefs ? TextDecoration.underline : null,
       decorationColor: isHighlighted
-          ? viewSettings.accentColor
+          ? viewSettings.selectedRefColor
           : viewSettings.useAppTheme
               ? Theme.of(context).colorScheme.secondary
               : viewSettings.refColor,
@@ -34,7 +34,7 @@ abstract final class VerseRefLabel {
               : viewSettings.refFontWeight)
           .toFlutter(),
       color: isHighlighted
-          ? viewSettings.accentColor
+          ? viewSettings.selectedRefColor
           : viewSettings.useAppTheme
               ? Theme.of(context).colorScheme.tertiary
               : viewSettings.refColor,

@@ -11,7 +11,7 @@ abstract class _Keys {
   static const verseFontFamily = 'verseFontFamily';
   static const verseColor = 'verseColor';
   static const backgroundColor = 'backgroundColor';
-  static const accentColor = 'accentColor';
+  static const selectedRefColor = 'selectedRefColor';
   static const refColor = 'refColor';
   static const useAppTheme = 'useAppTheme';
   static const verseFontWeight = 'verseFontWeight';
@@ -49,7 +49,7 @@ class BibleViewSettings extends Equatable {
   final BibleViewFontWeight refFontWeight;
   final BibleViewFontWeight selectedRefFontWeight;
   final Color backgroundColor;
-  final Color accentColor;
+  final Color selectedRefColor;
   final Color verseColor;
   final Color refColor;
   // other
@@ -86,7 +86,7 @@ class BibleViewSettings extends Equatable {
     this.verseFontFamily = 'General Sans',
     this.verseColor = const Color(0xFFB9B9B9),
     this.backgroundColor = const Color(0xFF0C0C0C),
-    this.accentColor = const Color(0xFFA390FF),
+    this.selectedRefColor = const Color(0xFFA390FF),
     this.refColor = const Color(0xFF81811E),
     this.useAppTheme = false,
     this.verseFontWeight = BibleViewFontWeight.regular,
@@ -116,7 +116,7 @@ class BibleViewSettings extends Equatable {
   factory BibleViewSettings.defaultThemeDark() => const BibleViewSettings(
         verseColor: Color(0xFFB9B9B9),
         backgroundColor: Color(0xFF0C0C0C),
-        accentColor: Color(0xFFA390FF),
+        selectedRefColor: Color(0xFFA390FF),
         addColor: Color(0xFFD2D2D2),
         verseFontWeight: BibleViewFontWeight.regular,
         refFontWeight: BibleViewFontWeight.regular,
@@ -126,7 +126,7 @@ class BibleViewSettings extends Equatable {
   factory BibleViewSettings.defaultThemeLight() => const BibleViewSettings(
         verseColor: Color(0xFF0C0C0C),
         backgroundColor: Color.fromARGB(255, 240, 240, 240),
-        accentColor: Color.fromARGB(255, 114, 34, 218),
+        selectedRefColor: Color.fromARGB(255, 114, 34, 218),
         addColor: Color(0xFF858585),
         verseFontWeight: BibleViewFontWeight.semiBold,
         refFontWeight: BibleViewFontWeight.semiBold,
@@ -138,7 +138,7 @@ class BibleViewSettings extends Equatable {
     String? verseFontFamily,
     Color? verseColor,
     Color? backgroundColor,
-    Color? accentColor,
+    Color? selectedRefColor,
     Color? refColor,
     bool? useAppTheme,
     BibleViewFontWeight? verseFontWeight,
@@ -170,7 +170,7 @@ class BibleViewSettings extends Equatable {
       verseFontFamily: verseFontFamily ?? this.verseFontFamily,
       verseColor: verseColor ?? this.verseColor,
       backgroundColor: backgroundColor ?? this.backgroundColor,
-      accentColor: accentColor ?? this.accentColor,
+      selectedRefColor: selectedRefColor ?? this.selectedRefColor,
       refColor: refColor ?? this.refColor,
       useAppTheme: useAppTheme ?? this.useAppTheme,
       verseFontWeight: verseFontWeight ?? this.verseFontWeight,
@@ -212,7 +212,7 @@ class BibleViewSettings extends Equatable {
         _Keys.verseFontFamily: verseFontFamily,
         _Keys.verseColor: ColorsUtil.colorToHex(verseColor),
         _Keys.backgroundColor: ColorsUtil.colorToHex(backgroundColor),
-        _Keys.accentColor: ColorsUtil.colorToHex(accentColor),
+        _Keys.selectedRefColor: ColorsUtil.colorToHex(selectedRefColor),
         _Keys.refColor: ColorsUtil.colorToHex(refColor),
         _Keys.useAppTheme: useAppTheme,
         _Keys.verseFontWeight: verseFontWeight.wire,
@@ -253,9 +253,9 @@ class BibleViewSettings extends Equatable {
       backgroundColor: json[_Keys.backgroundColor] != null
           ? Color(ColorsUtil.parseHex(json[_Keys.backgroundColor] as String))
           : defaults.backgroundColor,
-      accentColor: json[_Keys.accentColor] != null
-          ? Color(ColorsUtil.parseHex(json[_Keys.accentColor] as String))
-          : defaults.accentColor,
+      selectedRefColor: json[_Keys.selectedRefColor] != null
+          ? Color(ColorsUtil.parseHex(json[_Keys.selectedRefColor] as String))
+          : defaults.selectedRefColor,
       refColor: json[_Keys.refColor] != null
           ? Color(ColorsUtil.parseHex(json[_Keys.refColor] as String))
           : defaults.refColor,
@@ -332,7 +332,7 @@ class BibleViewSettings extends Equatable {
         verseFontFamily,
         verseColor,
         backgroundColor,
-        accentColor,
+        selectedRefColor,
         refColor,
         useAppTheme,
         verseFontWeight,

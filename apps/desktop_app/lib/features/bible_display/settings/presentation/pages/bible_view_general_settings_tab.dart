@@ -77,7 +77,7 @@ class _BibleViewGeneralSettingsTabState
                             cubit.update((a) => a.copyWith(
                                 backgroundColor: defaultTheme.backgroundColor));
                           },
-                          isDisabled: !context.select(
+                          isDisabled: context.select(
                               (SettingsCubit<BibleViewSettings> c) =>
                                   c.state.useAppTheme),
                           onColorChanged: (c) {
@@ -86,6 +86,29 @@ class _BibleViewGeneralSettingsTabState
                           color: context.select(
                             (SettingsCubit<BibleViewSettings> c) =>
                                 c.state.backgroundColor,
+                          ),
+                        )),
+                    Setting(
+                        label: 'Verse color',
+                        description: 'Set color for the verse text',
+                        child: AppInputColor(
+                          showReset: defaultTheme.verseColor !=
+                              context.select(
+                                  (SettingsCubit<BibleViewSettings> c) =>
+                                      c.state.verseColor),
+                          onReset: () {
+                            cubit.update((a) => a.copyWith(
+                                verseColor: defaultTheme.verseColor));
+                          },
+                          isDisabled: context.select(
+                              (SettingsCubit<BibleViewSettings> c) =>
+                                  c.state.useAppTheme),
+                          onColorChanged: (c) {
+                            cubit.update((p) => p.copyWith(verseColor: c));
+                          },
+                          color: context.select(
+                            (SettingsCubit<BibleViewSettings> c) =>
+                                c.state.verseColor,
                           ),
                         )),
                     Setting(
@@ -101,7 +124,7 @@ class _BibleViewGeneralSettingsTabState
                             cubit.update((a) =>
                                 a.copyWith(refColor: defaultTheme.refColor));
                           },
-                          isDisabled: !context.select(
+                          isDisabled: context.select(
                               (SettingsCubit<BibleViewSettings> c) =>
                                   c.state.useAppTheme),
                           onColorChanged: (c) {
@@ -113,26 +136,30 @@ class _BibleViewGeneralSettingsTabState
                           ),
                         )),
                     Setting(
-                        label: 'Text color',
-                        description: 'Set color for the verse text',
+                        label: 'Selected reference color',
+                        description:
+                            'Set color for the verse reference (selected)',
+                        settingWidth: 250,
                         child: AppInputColor(
-                          showReset: defaultTheme.verseColor !=
+                          showReset: defaultTheme.selectedRefColor !=
                               context.select(
                                   (SettingsCubit<BibleViewSettings> c) =>
-                                      c.state.verseColor),
+                                      c.state.selectedRefColor),
                           onReset: () {
                             cubit.update((a) => a.copyWith(
-                                verseColor: defaultTheme.verseColor));
+                                selectedRefColor:
+                                    defaultTheme.selectedRefColor));
                           },
-                          isDisabled: !context.select(
+                          isDisabled: context.select(
                               (SettingsCubit<BibleViewSettings> c) =>
                                   c.state.useAppTheme),
                           onColorChanged: (c) {
-                            cubit.update((p) => p.copyWith(verseColor: c));
+                            cubit
+                                .update((p) => p.copyWith(selectedRefColor: c));
                           },
                           color: context.select(
                             (SettingsCubit<BibleViewSettings> c) =>
-                                c.state.verseColor,
+                                c.state.selectedRefColor,
                           ),
                         )),
                     // Setting(
@@ -159,7 +186,8 @@ class _BibleViewGeneralSettingsTabState
                   children: [
                     Setting(
                         label: 'Quote color',
-                        description: 'Set color for the verse text',
+                        description:
+                            'Set color for the verse quotes (usually "word of jesus")',
                         child: AppInputColor(
                           showReset: defaultTheme.quoteColor !=
                               context.select(
@@ -204,7 +232,7 @@ class _BibleViewGeneralSettingsTabState
                   children: [
                     SettingSection(title: 'Font weight', children: [
                       Setting(
-                          label: 'Text font weight',
+                          label: 'Verse font weight',
                           description: 'Set font weight for verse text',
                           child: AppInputOption<BibleViewFontWeight>(
                             value: context.select(
@@ -261,7 +289,7 @@ class _BibleViewGeneralSettingsTabState
                       title: 'Font family',
                       children: [
                         Setting(
-                          label: 'Text font',
+                          label: 'Verse font family',
                           description: 'Set font for the verse text',
                           child: FontPicker(
                             selected: kAppFonts.firstWhere((f) =>
@@ -275,7 +303,7 @@ class _BibleViewGeneralSettingsTabState
                           ),
                         ),
                         Setting(
-                          label: 'Reference font',
+                          label: 'Reference font family',
                           description: 'Set font for the reference text',
                           child: FontPicker(
                             selected: kAppFonts.firstWhere((f) =>
