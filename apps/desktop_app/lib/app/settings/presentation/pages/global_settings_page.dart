@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/settings/settings_cubit.dart';
-import '../../../../features/bible_display/settings/bible_view_settings.dart';
 import '../../../../features/bible_searchbar/settings/search_settings.dart';
 import '../../../../features/settings_window/presentation/widgets/setting.dart';
 import '../../../../features/settings_window/presentation/widgets/setting_section.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
-import '../../../../shared/widgets/ui/inputs/app_input_color.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_option.dart';
 import '../../app_settings.dart';
 
@@ -36,12 +34,6 @@ class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
   Widget build(BuildContext context) {
     final cubit = context.read<SettingsCubit<AppSettings>>();
 
-    final defaultPaneTheme =
-        context.select((SettingsCubit<AppSettings> c) => c.state.mode) ==
-                ThemeMode.dark
-            ? BibleViewSettings.defaultThemeDark()
-            : BibleViewSettings.defaultThemeLight();
-
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(42, 0, 42, 42),
       child: Column(
@@ -62,38 +54,6 @@ class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
                         .map((m) => AppDropdownItem<ThemeMode>(
                             value: m, label: m.name, leading: Icon(m.icon)))
                         .toList(),
-                  )),
-              Setting(
-                  label: 'Accent color',
-                  description: 'Set accent color for app',
-                  child: AppInputColor(
-                    showReset: defaultPaneTheme.accentColor !=
-                        context.select((SettingsCubit<AppSettings> c) =>
-                            c.state.accentColor),
-                    onReset: () {
-                      cubit.update((a) => a.copyWith(
-                          accentColor: defaultPaneTheme.accentColor));
-                    },
-                    onColorChanged: (c) {
-                      cubit.update((a) => a.copyWith(accentColor: c));
-                    },
-                    color: context.select(
-                        (SettingsCubit<AppSettings> c) => c.state.accentColor),
-                  )),
-              Setting(
-                  label: 'Enable auto colorscheme',
-                  description:
-                      'Use generated colorscheme based on accent color',
-                  child: AppInputBool(
-                    enabled: false,
-                    value: false,
-                    // value: context.select((SettingsCubit<AppSettings> c) =>
-                    //     c.state.enableAutoColorScheme),
-                    // onChanged: (val) {
-                    //   cubit.update(
-                    //       (a) =>
-                    //           a.copyWith(enableAutoColorScheme: val));
-                    // },
                   )),
               // Setting(
               //     label: 'Enable uniform background color',
