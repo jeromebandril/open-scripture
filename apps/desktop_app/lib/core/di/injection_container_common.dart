@@ -152,7 +152,7 @@ void _registerBibleViewSettings(GetIt sl) {
         fileName: 'bible_view_settings.json',
         fromJson: BibleViewSettings.fromJson,
         toJson: (s) => s.toJson(),
-        defaultValue: const BibleViewSettings(),
+        defaultValue: BibleViewSettings.defaultThemeLight(),
       ),
     ),
     dispose: (repo) => repo.dispose(),
