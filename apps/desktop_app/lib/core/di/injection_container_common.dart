@@ -133,7 +133,7 @@ void _registerAppSettings(GetIt sl) {
   sl.registerLazySingleton<SettingsRepository<AppSettings>>(
     () => SettingsRepositoryImpl<AppSettings>(
       SettingsDatasourceDesktop<AppSettings>(
-        fileName: 'remote_controller_settings.json',
+        fileName: 'app_settings.json',
         fromJson: AppSettings.fromJson,
         toJson: (s) => s.toJson(),
         defaultValue: const AppSettings(),
