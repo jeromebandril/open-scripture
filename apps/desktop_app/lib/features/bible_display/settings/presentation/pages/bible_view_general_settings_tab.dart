@@ -197,19 +197,6 @@ class _BibleViewGeneralSettingsTabState
                                 c.state.addColor,
                           ),
                         )),
-                    Setting(
-                        label: 'Show underline for strong words',
-                        description:
-                            'Shows a subtle dotted underline for strong words',
-                        child: AppInputBool(
-                          value: context.select(
-                              (SettingsCubit<BibleViewSettings> c) =>
-                                  c.state.underlineStrongWords),
-                          onChanged: (val) {
-                            cubit.update(
-                                (p) => p.copyWith(underlineStrongWords: val));
-                          },
-                        )),
                   ],
                 ),
                 SettingSection(
@@ -322,6 +309,20 @@ class _BibleViewGeneralSettingsTabState
                                 .read<SettingsCubit<BibleViewSettings>>()
                                 .update((s) =>
                                     s.copyWith(enableAutoScrollToVerse: val));
+                          },
+                        )),
+                    Setting(
+                        label: 'Enable strong words selection',
+                        description:
+                            'Shows a subtle dotted underline for strong words. If clicked, it shows more information',
+                        settingWidth: 100,
+                        child: AppInputBool(
+                          value: context.select(
+                              (SettingsCubit<BibleViewSettings> c) =>
+                                  c.state.underlineStrongWords),
+                          onChanged: (val) {
+                            cubit.update(
+                                (p) => p.copyWith(underlineStrongWords: val));
                           },
                         )),
                   ],
