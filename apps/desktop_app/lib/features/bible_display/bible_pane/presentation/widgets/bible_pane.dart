@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../shared/domain/entities/bible_ref.dart';
-import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
-import '../../../../customizer/presentation/state/customizer_cubit.dart';
 import '../../../../text_scaler/presentation/widgets/text_scaler_host.dart';
 import '../../../bible_selector/presentation/widgets/bible_selector.dart';
 import '../../../multi_pane_manager/presentation/models/multi_pane_data.dart';
+import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
 import '../../domain/display_mode.dart';
 import '../state/bible_pane_bloc.dart';
 import 'bible_view_list.dart';
@@ -62,10 +61,9 @@ class BiblePane extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isCustom =
-        context.select((CustomizerCubit c) => c.state.pane.enableCustomTheme);
-    final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
-    //
+    final viewSettings = BibleViewSettingsScope.of(context);
+    final appTheme = Theme.of(context);
+
     // A BiblePane is self dependent. The bloc components are injected
     // externally, for instance by a splitscreen manager
     //
@@ -85,18 +83,20 @@ class BiblePane extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
-          color: isCustom
-              ? Theme.of(context)
-                  .extension<BiblePaneGeneralTheme>()!
-                  .backgroundColor
-              : Theme.of(context).colorScheme.surface,
+          color: viewSettings.useAppTheme
+              ? appTheme.colorScheme.surface
+              : viewSettings.backgroundColor,
         ),
-        child: DefaultTextStyle(
+        child: DefaultTextStyle.merge(
           style: TextStyle(
-            color: isCustom
-                ? paneTheme.textColor
-                : Theme.of(context).colorScheme.onSurfaceVariant,
-            fontFamily: paneTheme.textFont,
+            // do not change color here
+            // instead I do it in the verse renderer
+            // so other text widgets are not not affected
+            //
+            // color: viewSettings.useAppTheme
+            //     ? appTheme.colorScheme.onSurfaceVariant
+            //     : viewSettings.verseColor,
+            fontFamily: viewSettings.verseFontFamily,
             height: kTextHeightNone,
           ),
           child: BlocBuilder<BiblePaneBloc, BiblePaneState>(

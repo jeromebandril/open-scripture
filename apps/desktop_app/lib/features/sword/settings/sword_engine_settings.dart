@@ -1,3 +1,4 @@
+// TODO: fix DI injection because this is called twice
 class SwordEngineSettings {
   final String modulesPath;
 

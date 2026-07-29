@@ -31,7 +31,7 @@ class BiblePaneState extends Equatable {
     BibleRef? reference,
     bool isMixed = false,
     String? errorMessage,
-    DisplayMode dMode = DisplayMode.list,
+    required DisplayMode dMode,
     int? verseCount,
     BibleRepositoryType repoType = BibleRepositoryType.localDatabase,
     WordInfo? selectedWord,

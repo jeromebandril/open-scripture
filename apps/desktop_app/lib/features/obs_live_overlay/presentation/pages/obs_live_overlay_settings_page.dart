@@ -17,8 +17,8 @@ import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../settings/overlay_settings.dart';
 import '../state/obs_live_overlay_cubit.dart';
 
-class ObsLiveOverlayPage extends StatelessWidget {
-  const ObsLiveOverlayPage({super.key});
+class ObsLiveOverlaySettingsPage extends StatelessWidget {
+  const ObsLiveOverlaySettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +72,33 @@ class ObsLiveOverlayPage extends StatelessWidget {
                           ),
                         ],
                       ),
+                      SettingSection(title: 'Setup', children: [
+                        Setting(
+                            label: 'URL',
+                            description:
+                                'Copy this URL and paste it into an OBS Browser Source. You can also open it in your web browser to preview the overlay',
+                            settingWidth: 300,
+                            child: Builder(builder: (context) {
+                              final url = context.select(
+                                  (SettingsCubit<OverlaySettings> c) =>
+                                      c.state.url);
+
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  IconButton(
+                                    tooltip: 'Copy',
+                                    onPressed: () {
+                                      Clipboard.setData(
+                                          ClipboardData(text: url));
+                                    },
+                                    icon: Icon(Icons.copy_rounded),
+                                  ),
+                                  Text(url)
+                                ],
+                              );
+                            }))
+                      ]),
                       SettingSection(
                         title: 'Preferences',
                         children: [
@@ -93,7 +120,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                               // Not implemented yet, just a placeholder for now
                               label: 'Enable auto start',
                               description:
-                                  'Automatically start this feature at app startup (not available yet)',
+                                  'Automatically start this feature when the app launches (Not yet available)',
                               child: AppInputBool(
                                 enabled: false, //state.isRunning || state.busy,
                                 value: false,
@@ -109,7 +136,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                           Setting(
                               label: 'Enable manual control',
                               description:
-                                  'Decide if to pass the selected verse to the overlay manually',
+                                  'When enabled, selecting a reference will no longer automatically signal the overlay. Press Ctrl+U whenever you want to trigger it',
                               child: AppInputBool(
                                 enabled: !(state.isRunning || state.busy),
                                 value: ctx.select(
@@ -125,7 +152,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                           Setting(
                               label: 'Port',
                               description:
-                                  'Preffered port for the web page host',
+                                  'Preferred port for the web page host',
                               child: AppInputNumber(
                                 enabled: !(state.isRunning || state.busy),
                                 min: 49152,
@@ -143,7 +170,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                           Setting(
                               label: 'Visibility time',
                               description:
-                                  'How many seconds the overaly is visible before disappearing',
+                                  'The number of seconds before the overlay automatically hides',
                               child: AppInputNumber(
                                 enabled: !(state.isRunning || state.busy),
                                 min: 5,
@@ -158,31 +185,6 @@ class ObsLiveOverlayPage extends StatelessWidget {
                                           hideDebounceSeconds: p.toInt()));
                                 },
                               )),
-                          Setting(
-                              label: 'URL',
-                              description:
-                                  'Copy this link and paste it into OBS Web source scene. You can also preview it by pasting it in a browser searchbar',
-                              settingWidth: 300,
-                              child: Builder(builder: (context) {
-                                final url = context.select(
-                                    (SettingsCubit<OverlaySettings> c) =>
-                                        c.state.url);
-
-                                return Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    IconButton(
-                                      tooltip: 'Copy',
-                                      onPressed: () {
-                                        Clipboard.setData(
-                                            ClipboardData(text: url));
-                                      },
-                                      icon: Icon(Icons.copy_rounded),
-                                    ),
-                                    Text(url)
-                                  ],
-                                );
-                              }))
                         ],
                       ),
                       SettingSection(
@@ -200,7 +202,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                                 icon: const Icon(LucideIcons.folderOpen),
                                 label: const Text('Open assets folder')),
                           ),
-                          const ResetAssetsAction(),
+                          const _ResetAssetsAction(),
                         ],
                       ),
                     ],
@@ -212,14 +214,14 @@ class ObsLiveOverlayPage extends StatelessWidget {
   }
 }
 
-class ResetAssetsAction extends StatefulWidget {
-  const ResetAssetsAction({super.key});
+class _ResetAssetsAction extends StatefulWidget {
+  const _ResetAssetsAction();
 
   @override
-  State<ResetAssetsAction> createState() => _ResetAssetsActionState();
+  State<_ResetAssetsAction> createState() => _ResetAssetsActionState();
 }
 
-class _ResetAssetsActionState extends State<ResetAssetsAction> {
+class _ResetAssetsActionState extends State<_ResetAssetsAction> {
   // removed this because if nothing wrong happens,
   // it is pratically instantenous
   // bool _isExec = false;
@@ -258,14 +260,14 @@ class _ResetAssetsActionState extends State<ResetAssetsAction> {
     return Setting(
       label: 'Reset assets to defaults',
       description:
-          'Copy/Paste defaults assets file, overwriting all customizations',
+          'Restore the default asset files, replacing any customizations',
       child: TextButton.icon(
           onPressed: _showFeedback ? null : () async => await _resetAssets(),
           icon: _showFeedback
               ? Icon(LucideIcons.circleCheckBig, color: successColor)
               : const Icon(LucideIcons.rotateCcw),
           label: _showFeedback
-              ? Text('Assets reseted', style: TextStyle(color: successColor))
+              ? Text('Assets restored', style: TextStyle(color: successColor))
               : const Text('Execute asset reset')),
     );
   }

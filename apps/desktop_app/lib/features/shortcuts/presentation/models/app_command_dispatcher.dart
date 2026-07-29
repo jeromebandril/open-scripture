@@ -1,9 +1,11 @@
 import '../../../../app/state/fullscreen_cubit.dart';
 import '../../../../app/state/interface_visibility_cubit.dart';
+import '../../../../core/di/injection_container.dart' as di;
+import '../../../../core/settings/settings_repository.dart';
 import '../../../../shared/domain/entities/bible_ref.dart';
-import '../../../bible_display/bible_pane/domain/display_mode.dart';
 import '../../../bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../../../bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
+import '../../../bible_display/settings/bible_view_settings.dart';
 import '../../../bible_searchbar/search/presentation/state/search_bloc.dart';
 import '../../../obs_live_overlay/presentation/state/obs_live_overlay_cubit.dart';
 import '../../domain/models/app_command.dart';
@@ -138,10 +140,15 @@ class AppCommandDispatcher {
 
   void _cycleDisplayMode() {
     final bloc = paneManagerCubit().activePane().bloc;
-    final modes = DisplayMode.values;
-    final i = modes.indexOf(bloc.state.dMode);
-    final next = (i < modes.length - 1) ? i + 1 : 0;
-    bloc.add(BiblePaneSetDisplayMode(modes[next]));
+    final enabledModes = di
+        .sl<SettingsRepository<BibleViewSettings>>()
+        .current
+        .enabledDisplayModes;
+    // should never happen, but check just in case
+    if (enabledModes.isEmpty) return;
+    final i = enabledModes.indexOf(bloc.state.dMode);
+    final next = (i < enabledModes.length - 1) ? i + 1 : 0;
+    bloc.add(BiblePaneSetDisplayMode(enabledModes[next]));
   }
 
   void _displayChapterOfSelected() {

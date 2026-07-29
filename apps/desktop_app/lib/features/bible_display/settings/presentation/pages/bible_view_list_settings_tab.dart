@@ -1,29 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
-import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
-import '../../../../shared/widgets/ui/inputs/app_input_option.dart';
-import '../../../settings_window/presentation/widgets/setting.dart';
-import '../../../settings_window/presentation/widgets/setting_section.dart';
+import '../../../../../core/settings/settings_cubit.dart';
+import '../../../../../shared/widgets/ui/inputs/app_input_bool.dart';
+import '../../../../../shared/widgets/ui/inputs/app_input_number.dart';
+import '../../../../../shared/widgets/ui/inputs/app_input_option.dart';
+import '../../../../settings_window/presentation/widgets/setting.dart';
+import '../../../../settings_window/presentation/widgets/setting_section.dart';
+import '../../bible_view_settings.dart';
 import '../../domain/entities/highlight_render_mode.dart';
-import '../state/customizer_cubit.dart';
 
-class BibleViewListCustomizerScreen extends StatefulWidget {
-  const BibleViewListCustomizerScreen({super.key, this.showPreview = false});
+class BibleViewListSettingsTab extends StatefulWidget {
+  const BibleViewListSettingsTab({super.key, this.showPreview = false});
 
   final bool showPreview;
 
   @override
-  State<BibleViewListCustomizerScreen> createState() =>
-      _BibleViewListCustomizerScreenState();
+  State<BibleViewListSettingsTab> createState() =>
+      _BibleViewListSettingsTabState();
 }
 
-class _BibleViewListCustomizerScreenState
-    extends State<BibleViewListCustomizerScreen> {
+class _BibleViewListSettingsTabState extends State<BibleViewListSettingsTab> {
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<CustomizerCubit>();
+    final cubit = context.read<SettingsCubit<BibleViewSettings>>();
 
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(0, 0, 24, 0),
@@ -38,11 +38,11 @@ class _BibleViewListCustomizerScreenState
                   description: 'Show divider between verses',
                   child: AppInputBool(
                     value: context.select(
-                      (CustomizerCubit c) => c.state.listTheme.showVerseDivider,
+                      (SettingsCubit<BibleViewSettings> c) =>
+                          c.state.showVerseDivider,
                     ),
                     onChanged: (val) {
-                      cubit.updateTheme(
-                          listTheme: (l) => l.copyWith(showVerseDivider: val));
+                      cubit.update((l) => l.copyWith(showVerseDivider: val));
                     },
                   )),
               Setting(
@@ -50,12 +50,11 @@ class _BibleViewListCustomizerScreenState
                   description: 'Show full verse reference or only verse number',
                   child: AppInputBool(
                     value: context.select(
-                      (CustomizerCubit c) =>
-                          c.state.listTheme.showFullRefAlways,
+                      (SettingsCubit<BibleViewSettings> c) =>
+                          c.state.showAlwaysFullRef,
                     ),
                     onChanged: (val) {
-                      cubit.updateTheme(
-                          listTheme: (l) => l.copyWith(showFullRefAlways: val));
+                      cubit.update((s) => s.copyWith(showAlwaysFullRef: val));
                     },
                   )),
               Setting(
@@ -63,22 +62,22 @@ class _BibleViewListCustomizerScreenState
                   description: 'Put underline decoration on all references',
                   child: AppInputBool(
                     value: context.select(
-                        (CustomizerCubit c) => c.state.listTheme.underlineRef),
+                        (SettingsCubit<BibleViewSettings> c) =>
+                            c.state.underlineRefs),
                     onChanged: (val) {
-                      cubit.updateTheme(
-                          listTheme: (p) => p.copyWith(underlineRef: val));
+                      cubit.update((s) => s.copyWith(underlineRefs: val));
                     },
                   )),
               Setting(
                   label: 'Selected verses render mode',
                   description: 'How selected verses are rendered',
                   child: AppInputOption<HighlightRenderMode>(
-                    value: context.select((CustomizerCubit c) =>
-                        c.state.listTheme.highlightRenderMode),
+                    value: context.select(
+                        (SettingsCubit<BibleViewSettings> c) =>
+                            c.state.highlightRenderMode),
                     onChanged: (mode) {
-                      cubit.updateTheme(
-                          listTheme: (l) =>
-                              l.copyWith(highlightRenderMode: mode));
+                      cubit
+                          .update((s) => s.copyWith(highlightRenderMode: mode));
                     },
                     items: HighlightRenderMode.values
                         .map((m) => AppDropdownItem<HighlightRenderMode>(
@@ -97,12 +96,11 @@ class _BibleViewListCustomizerScreenState
                 child: AppInputNumber(
                   max: 300,
                   min: 0,
-                  value: context.select(
-                      (CustomizerCubit c) => c.state.listTheme.parallelSpacing),
-                  onSubmitted: (val) => cubit.updateTheme(
-                      listTheme: (l) => l.copyWith(
-                            parallelSpacing: val.toInt(),
-                          )),
+                  value: context.select((SettingsCubit<BibleViewSettings> c) =>
+                      c.state.listParallelSpacing),
+                  onSubmitted: (val) => cubit.update((l) => l.copyWith(
+                        listParallelSpacing: val.toDouble(),
+                      )),
                 ),
               )
             ],

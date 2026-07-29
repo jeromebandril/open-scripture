@@ -134,6 +134,7 @@ class _HistoryItem extends StatefulWidget {
 class _HistoryItemState extends State<_HistoryItem> {
   final _focusNode = FocusNode(debugLabel: 'HistoryItem');
   bool _hasFocus = false;
+  bool _isHovered = false;
 
   @override
   void dispose() {
@@ -159,6 +160,7 @@ class _HistoryItemState extends State<_HistoryItem> {
       child: InkWell(
         focusNode: _focusNode,
         autofocus: widget.autofocus,
+        onHover: (v) => setState(() => _isHovered = v),
         onFocusChange: (v) => setState(() => _hasFocus = v),
         focusColor: theme.colorScheme.primary.withValues(alpha: 0.08),
         hoverColor: theme.colorScheme.primary.withValues(alpha: 0.04),
@@ -202,7 +204,7 @@ class _HistoryItemState extends State<_HistoryItem> {
                         ),
                       ),
                     ),
-                    if (_hasFocus)
+                    if (_isHovered)
                       IconButton(
                         // Skip focus, so user can navigate smoothly
                         focusNode: FocusNode(

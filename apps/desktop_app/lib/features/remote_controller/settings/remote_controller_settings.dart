@@ -24,11 +24,14 @@ class RemoteControllerSettings extends Equatable {
         'enableFeature': enableFeature,
       };
 
-  static RemoteControllerSettings fromJson(Map<String, dynamic> json) =>
-      RemoteControllerSettings(
-        port: json['port'] as int,
-        enableFeature: json['enableFeature'] as bool,
-      );
+  static RemoteControllerSettings fromJson(Map<String, dynamic> json) {
+    final defaults = RemoteControllerSettings();
+
+    return RemoteControllerSettings(
+      port: json['port'] as int? ?? defaults.port,
+      enableFeature: json['enableFeature'] as bool? ?? defaults.enableFeature,
+    );
+  }
 
   @override
   List<Object?> get props => [port, enableFeature];

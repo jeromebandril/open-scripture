@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../shared/domain/entities/bible_ref.dart';
-import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
-import '../../../../customizer/presentation/models/bible_view_list_theme.dart';
-import '../../../../customizer/presentation/state/customizer_cubit.dart';
+import '../../../settings/presentation/models/bible_view_font_weight_flutter.dart';
+import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
 
 /// How a verse's leading reference/number should look
 abstract final class VerseRefLabel {
@@ -20,27 +18,28 @@ abstract final class VerseRefLabel {
   }
 
   static TextStyle style(BuildContext context, {required bool isHighlighted}) {
-    final useCustom =
-        context.select((CustomizerCubit c) => c.state.pane.enableCustomTheme);
-    final bTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
-    final listTheme = Theme.of(context).extension<BibleViewListTheme>()!;
+    final viewSettings = BibleViewSettingsScope.of(context);
 
     return TextStyle(
-      decoration: listTheme.underlineRef,
+      decoration: viewSettings.underlineRefs ? TextDecoration.underline : null,
       decorationColor: isHighlighted
-          ? bTheme.accentColor
-          : useCustom
-              ? bTheme.refColor
-              : Theme.of(context).colorScheme.secondary,
+          ? viewSettings.selectedRefColor
+          : viewSettings.useAppTheme
+              ? Theme.of(context).colorScheme.secondary
+              : viewSettings.refColor,
       height: 1.25,
-      fontFamily: bTheme.referenceFont,
-      fontWeight:
-          isHighlighted ? bTheme.selectedRefFontWeight : bTheme.refFontWeight,
+      fontFamily: viewSettings.refFontFamily,
+      fontWeight: (isHighlighted
+              ? viewSettings.selectedRefFontWeight
+              : viewSettings.refFontWeight)
+          .toFlutter(),
       color: isHighlighted
-          ? bTheme.accentColor
-          : useCustom
-              ? bTheme.refColor
-              : Theme.of(context).colorScheme.tertiary,
+          ? viewSettings.useAppTheme
+              ? Theme.of(context).colorScheme.primary
+              : viewSettings.selectedRefColor
+          : viewSettings.useAppTheme
+              ? Theme.of(context).colorScheme.tertiary
+              : viewSettings.refColor,
     );
   }
 }

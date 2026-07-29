@@ -5,12 +5,11 @@ import '../../../../../core/di/injection_container.dart' as di;
 import '../../../../../shared/design_system/design_system.dart';
 import '../../../../../shared/enums/bible_repository_type.dart';
 import '../../../../../shared/widgets/ui/b_container_tab_bar.dart';
-import '../../../../customizer/presentation/models/bible_pane_general_theme.dart';
-import '../../../../customizer/presentation/state/customizer_cubit.dart';
 import '../../../../my_library/presentation/state/my_library_cubit.dart';
 import '../../../bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../../../bible_pane/presentation/widgets/pane_info.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
+import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
 import '../cubit/bible_selector_cubit.dart';
 import 'shared_catalog_selector.dart';
 
@@ -130,9 +129,7 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final useCustom =
-        context.select((CustomizerCubit b) => b.state.pane.enableCustomTheme);
-    final paneTheme = Theme.of(context).extension<BiblePaneGeneralTheme>()!;
+    final viewSettings = BibleViewSettingsScope.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -143,9 +140,9 @@ class _Header extends StatelessWidget {
           style: TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.w600,
-            color: useCustom
-                ? paneTheme.textColor
-                : Theme.of(context).colorScheme.onSurfaceVariant,
+            color: viewSettings.useAppTheme
+                ? Theme.of(context).colorScheme.onSurfaceVariant
+                : viewSettings.verseColor,
           ),
         ),
         Text(
