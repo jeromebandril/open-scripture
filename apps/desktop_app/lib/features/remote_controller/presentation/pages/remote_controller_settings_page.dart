@@ -76,7 +76,7 @@ class _RemoteControllerSettingsPageState
                                           overrideColor: Theme.of(context)
                                               .colorScheme
                                               .onSurfaceVariant,
-                                          overrideGlowingColor: Colors.red,
+                                          overrideGlowingColor: Colors.green,
                                         ),
                                         TextButton(
                                           onPressed: state.isBusy ||
@@ -190,47 +190,51 @@ class __ConnectionDetailsState extends State<_ConnectionDetails> {
 
   @override
   Widget build(BuildContext context) {
-    return SettingSection(
+    return SettingSection.single(
       title: 'Connection Details',
-      children: [
-        FutureBuilder(
-          future: NetworkUtils.getLocalIp().catchError((_) => 'Unknown'),
-          builder: (context, asyncSnapshot) {
-            return BlocSelector<SettingsCubit<RemoteControllerSettings>,
-                    RemoteControllerSettings, int>(
-                selector: (state) => state.port,
-                builder: (context, port) {
-                  final serverUrl = 'http://${asyncSnapshot.data}:$port';
+      child: FutureBuilder(
+        future: NetworkUtils.getLocalIp().catchError((_) => 'Unknown'),
+        builder: (context, asyncSnapshot) {
+          return BlocSelector<SettingsCubit<RemoteControllerSettings>,
+                  RemoteControllerSettings, int>(
+              selector: (state) => state.port,
+              builder: (context, port) {
+                final serverUrl = 'http://${asyncSnapshot.data}:$port';
 
-                  return Column(
-                    children: [
-                      const Text('Scan this QR Code'),
-                      const Text('or copy this URL using the mobile app:'),
-                      const SizedBox(height: AppSpacing.sm),
-                      SelectableText(serverUrl),
-                      const SizedBox(height: AppSpacing.md),
-                      if (_showQrCode)
-                        QrImageView(
-                          data: serverUrl,
-                          size: 200,
-                          backgroundColor: Colors.white,
-                        ),
-                      const SizedBox(height: AppSpacing.sm),
-                      TextButton.icon(
-                          onPressed: () =>
-                              setState(() => _showQrCode = !_showQrCode),
-                          icon: _showQrCode
-                              ? const Icon(Icons.visibility_off_outlined)
-                              : const Icon(Icons.qr_code_rounded),
-                          label: _showQrCode
-                              ? const Text('Hide QR Code')
-                              : const Text('Show QR Code'))
-                    ],
-                  );
-                });
-          },
-        )
-      ],
+                // TODO: bruh idk how to fix this layot. Wrapping with columns 2 times is a strange workaround
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Column(
+                      children: [
+                        const Text('Scan this QR Code'),
+                        const Text('or copy this URL using the mobile app:'),
+                        const SizedBox(height: AppSpacing.sm),
+                        SelectableText(serverUrl),
+                        const SizedBox(height: AppSpacing.md),
+                        if (_showQrCode)
+                          QrImageView(
+                            data: serverUrl,
+                            size: 200,
+                            backgroundColor: Colors.white,
+                          ),
+                        const SizedBox(height: AppSpacing.sm),
+                        TextButton.icon(
+                            onPressed: () =>
+                                setState(() => _showQrCode = !_showQrCode),
+                            icon: _showQrCode
+                                ? const Icon(Icons.visibility_off_outlined)
+                                : const Icon(Icons.qr_code_rounded),
+                            label: _showQrCode
+                                ? const Text('Hide QR Code')
+                                : const Text('Show QR Code'))
+                      ],
+                    ),
+                  ],
+                );
+              });
+        },
+      ),
     );
   }
 }
