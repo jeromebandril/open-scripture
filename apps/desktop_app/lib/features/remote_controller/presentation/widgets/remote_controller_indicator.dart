@@ -22,7 +22,7 @@ class RemoteControllerIndicator extends StatelessWidget {
             state.connectedClients.length.toString(),
             style: Theme.of(context).textTheme.bodySmall,
           ),
-          icon: Icons.stay_current_portrait_rounded,
+          icon: SettingsPage.remoteController.icon,
           onIconPressed: () {
             context.read<WindowStackManagerBloc>().add(
                   WindowStackManagerOpen.selfManaged(

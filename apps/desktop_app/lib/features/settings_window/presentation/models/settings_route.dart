@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../app/settings/presentation/pages/global_settings_page.dart';
 import '../../../bible_display/settings/presentation/pages/bible_view_settings_page.dart';
@@ -23,49 +24,49 @@ enum SettingsPage {
   globalAppearance(
     route: '/appearance/global',
     name: 'Global',
-    icon: Icons.settings_rounded,
+    icon: LucideIcons.settings,
     group: SettingsGroup.appearance,
   ),
   bibleViewer(
     route: '/appearance/bibleview',
     name: 'Bible viewer',
-    icon: Icons.palette_rounded,
+    icon: LucideIcons.palette,
     group: SettingsGroup.appearance,
   ),
   library(
     route: '/biblemanager/library',
     name: 'My Library',
-    icon: Icons.local_library_rounded,
+    icon: LucideIcons.libraryBig,
     group: SettingsGroup.bibleManager,
   ),
   importer(
     route: '/biblemanager/importer',
     name: 'Import',
-    icon: Icons.file_upload_outlined,
+    icon: LucideIcons.download,
     group: SettingsGroup.bibleManager,
   ),
   obsLiveOverlay(
     route: '/obsliveoverlay',
     name: 'OBS Live Overlay',
-    icon: Icons.live_tv_rounded,
+    icon: LucideIcons.radio,
     group: SettingsGroup.tools,
   ),
   remoteController(
     route: '/remotecontroller',
-    name: 'Remote Controller (beta)',
-    icon: Icons.stay_current_portrait_rounded,
+    name: 'Remote Controller',
+    icon: LucideIcons.monitorSmartphone,
     group: SettingsGroup.tools,
   ),
   shortcuts(
     route: '/shortcuts',
     name: 'Shortcuts',
-    icon: Icons.keyboard,
+    icon: LucideIcons.command,
     group: SettingsGroup.others,
   ),
   about(
     route: '/about',
     name: 'About',
-    icon: Icons.info_outline,
+    icon: LucideIcons.info,
     group: SettingsGroup.others,
   );
 
