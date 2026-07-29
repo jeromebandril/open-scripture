@@ -123,9 +123,9 @@ const List<AppCommandGroup> appCommandGroups = [
   ),
   AppCommandGroup(scope: AppCommandScope.other, commands: {
     AppCommand.flushOverlayBuffer: AppCommandInfo(
-      label: 'Flush overlay buffer',
+      label: 'Update overlay',
       description:
-          'Flush obs live overlay flutter when manual control is enabled',
+          'Send the queued reference to the overlay. Available only when manual control is enabled.',
     ),
   })
 ];

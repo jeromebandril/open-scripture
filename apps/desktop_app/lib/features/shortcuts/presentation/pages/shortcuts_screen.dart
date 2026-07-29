@@ -14,7 +14,7 @@ class ShortcutsScreen extends StatelessWidget {
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(42, 0, 42, 42),
       child: ListView.builder(
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         itemCount: appCommandGroups.length,
         itemBuilder: (_, i) {
@@ -30,7 +30,7 @@ class ShortcutsScreen extends StatelessWidget {
               return Setting(
                   label: info.value.label,
                   description: info.value.description,
-                  settingWidth: 250,
+                  settingWidth: 200,
                   child: Container(
                     alignment: Alignment.centerLeft,
                     height: 24,

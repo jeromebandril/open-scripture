@@ -76,7 +76,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                         Setting(
                             label: 'URL',
                             description:
-                                'Copy this link and paste it into OBS Web source scene. You can also preview it by pasting it in a browser searchbar',
+                                'Copy this URL and paste it into an OBS Browser Source. You can also open it in your web browser to preview the overlay',
                             settingWidth: 300,
                             child: Builder(builder: (context) {
                               final url = context.select(
@@ -120,7 +120,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                               // Not implemented yet, just a placeholder for now
                               label: 'Enable auto start',
                               description:
-                                  'Automatically start this feature at app startup (not available yet)',
+                                  'Automatically start this feature when the app launches (Not yet available)',
                               child: AppInputBool(
                                 enabled: false, //state.isRunning || state.busy,
                                 value: false,
@@ -136,7 +136,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                           Setting(
                               label: 'Enable manual control',
                               description:
-                                  'Decide if to pass the selected verse to the overlay manually',
+                                  'When enabled, selecting a reference will no longer automatically signal the overlay. Press Ctrl+U whenever you want to trigger it',
                               child: AppInputBool(
                                 enabled: !(state.isRunning || state.busy),
                                 value: ctx.select(
@@ -152,7 +152,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                           Setting(
                               label: 'Port',
                               description:
-                                  'Preffered port for the web page host',
+                                  'Preferred port for the web page host',
                               child: AppInputNumber(
                                 enabled: !(state.isRunning || state.busy),
                                 min: 49152,
@@ -170,7 +170,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                           Setting(
                               label: 'Visibility time',
                               description:
-                                  'How many seconds the overaly is visible before disappearing',
+                                  'The number of seconds before the overlay automatically hides',
                               child: AppInputNumber(
                                 enabled: !(state.isRunning || state.busy),
                                 min: 5,
@@ -260,7 +260,7 @@ class _ResetAssetsActionState extends State<ResetAssetsAction> {
     return Setting(
       label: 'Reset assets to defaults',
       description:
-          'Copy/Paste defaults assets file, overwriting all customizations',
+          'Restore the default asset files, replacing any customizations',
       child: TextButton.icon(
           onPressed: _showFeedback ? null : () async => await _resetAssets(),
           icon: _showFeedback
