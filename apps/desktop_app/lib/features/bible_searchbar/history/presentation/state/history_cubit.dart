@@ -21,6 +21,9 @@ class HistoryCubit extends Cubit<HistoryState> {
   void _add(SearchResultEvent event) {
     if (event.source != IntentSource.searchbar) return;
     if (event is! SearchResultSuccess) return;
+    if (state.history.isNotEmpty && state.history.first.ref == event.ref) {
+      return;
+    }
 
     final entry = HistoryEntry(ref: event.ref, time: DateTime.now());
     final updatedHistory = [entry, ...state.history];
