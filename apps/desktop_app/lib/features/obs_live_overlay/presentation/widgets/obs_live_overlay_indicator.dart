@@ -43,8 +43,9 @@ class ObsLiveOverlayIndicator extends StatelessWidget {
             ],
           ),
           labelTooltipMessage: showPendingStr ? 'Update overlay' : null,
-          onLabelPressed: () =>
-              context.read<ObsLiveOverlayCubit>().flushBuffer(),
+          onLabelPressed: showPendingStr
+              ? () => context.read<ObsLiveOverlayCubit>().flushBuffer()
+              : null,
           icon: Icons.live_tv_rounded,
           iconTooltipMessage: 'Open overlay settings',
           onIconPressed: () => context
