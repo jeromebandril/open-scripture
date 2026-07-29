@@ -99,7 +99,10 @@ class BibleViewSettings extends Equatable {
     this.refFontFamily = 'General Sans',
     this.xPadding = 0.01,
     this.splitscreenGap = 64,
-    this.enabledDisplayModes = const [DisplayMode.presentation],
+    this.enabledDisplayModes = const [
+      DisplayMode.list,
+      DisplayMode.presentation
+    ],
     this.defaultDisplayMode = DisplayMode.list,
     this.quoteColor = const Color(0xFFE04A4A),
     this.addColor = const Color(0xFFD2D2D2),
