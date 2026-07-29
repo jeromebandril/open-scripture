@@ -267,7 +267,7 @@ class _ResetAssetsActionState extends State<ResetAssetsAction> {
               ? Icon(LucideIcons.circleCheckBig, color: successColor)
               : const Icon(LucideIcons.rotateCcw),
           label: _showFeedback
-              ? Text('Assets reseted', style: TextStyle(color: successColor))
+              ? Text('Assets restored', style: TextStyle(color: successColor))
               : const Text('Execute asset reset')),
     );
   }
