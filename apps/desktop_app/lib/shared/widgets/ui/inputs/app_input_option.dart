@@ -37,10 +37,14 @@ class AppInputOption<T> extends StatefulWidget {
     this.enabled = true,
     this.maxMenuHeight = 240,
     this.leading,
+    this.validator,
+    this.invalidSelectionMessage = "That selection isn't allowed.",
   })  : multiple = false,
         values = const [],
         onValuesChanged = null,
+        valuesValidator = null,
         selectedLabelBuilder = null,
+        numOfItemsInLabel = null,
         closeOnSelect = true;
 
   /// Multi-selection dropdown. The menu stays open after each tap by
@@ -56,10 +60,14 @@ class AppInputOption<T> extends StatefulWidget {
     this.maxMenuHeight = 240,
     this.leading,
     this.selectedLabelBuilder,
+    this.numOfItemsInLabel = 2,
     this.closeOnSelect = false,
+    this.valuesValidator,
+    this.invalidSelectionMessage = "That selection isn't allowed.",
   })  : multiple = true,
         value = null,
-        onChanged = null;
+        onChanged = null,
+        validator = null;
 
   final List<AppDropdownItem<T>> items;
   final String? hint;
@@ -79,9 +87,29 @@ class AppInputOption<T> extends StatefulWidget {
 
   /// override for how the trigger summarizes the current
   /// selection when [multiple] is true. Defaults to a comma-separated
-  /// list of labels, or "N selected" once more than two are picked.
+  /// list of labels, or "N selected" once more than [numOfItemsInLabel] are picked.
   final String Function(List<AppDropdownItem<T>> selectedItems)?
       selectedLabelBuilder;
+
+  final int? numOfItemsInLabel;
+
+  /// Gate for single-select. Called with the value the user just tapped,
+  /// *before* it is committed. Return `true` to accept it and fire
+  /// [onChanged], or `false` to reject the tap (nothing changes and
+  /// [onChanged] never fires).
+  final bool Function(T? candidate)? validator;
+
+  /// Gate for multi-select. Called with what the full selection *would
+  /// become* after the tapped item is added/removed, before it is
+  /// committed. Return `true` to accept it and fire [onValuesChanged],
+  /// or `false` to reject the tap and leave the selection as it was.
+  final bool Function(List<T> candidate)? valuesValidator;
+
+  /// Shown under the field, using the same error styling your theme
+  /// already gives `InputDecoration.errorText`, whenever [validator] or
+  /// [valuesValidator] rejects a tap. Pass `null` to reject silently
+  /// with no visible message.
+  final String? invalidSelectionMessage;
 
   @override
   State<AppInputOption<T>> createState() => _AppInputOptionState<T>();
@@ -90,11 +118,32 @@ class AppInputOption<T> extends StatefulWidget {
 class _AppInputOptionState<T> extends State<AppInputOption<T>> {
   final _menuVisible = ValueNotifier<bool>(false);
   final _triggerKey = GlobalKey();
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _menuVisible.addListener(_clearErrorOnClose);
+  }
 
   @override
   void dispose() {
+    _menuVisible.removeListener(_clearErrorOnClose);
     _menuVisible.dispose();
     super.dispose();
+  }
+
+  void _clearErrorOnClose() {
+    if (!_menuVisible.value) _clearError();
+  }
+
+  void _rejectSelection() {
+    if (widget.invalidSelectionMessage == _error) return;
+    setState(() => _error = widget.invalidSelectionMessage);
+  }
+
+  void _clearError() {
+    if (_error != null) setState(() => _error = null);
   }
 
   AppDropdownItem<T>? get _selectedItem =>
@@ -111,7 +160,13 @@ class _AppInputOptionState<T> extends State<AppInputOption<T>> {
 
   void _handleSelect(AppDropdownItem<T> item) {
     if (!widget.multiple) {
-      widget.onChanged?.call(item.value);
+      final candidate = item.value;
+      if (widget.validator != null && !widget.validator!(candidate)) {
+        _rejectSelection();
+        return;
+      }
+      _clearError();
+      widget.onChanged?.call(candidate);
       _menuVisible.value = false;
       return;
     }
@@ -125,6 +180,13 @@ class _AppInputOptionState<T> extends State<AppInputOption<T>> {
     } else {
       updated.add(value);
     }
+
+    if (widget.valuesValidator != null && !widget.valuesValidator!(updated)) {
+      _rejectSelection();
+      return;
+    }
+    _clearError();
+
     widget.onValuesChanged?.call(updated);
 
     if (widget.closeOnSelect) {
@@ -139,7 +201,7 @@ class _AppInputOptionState<T> extends State<AppInputOption<T>> {
     if (widget.selectedLabelBuilder != null) {
       return widget.selectedLabelBuilder!(selected);
     }
-    if (selected.length <= 2) {
+    if (selected.length <= widget.numOfItemsInLabel!) {
       return selected.map((e) => e.label).join(', ');
     }
     return '${selected.length} selected';
@@ -169,6 +231,7 @@ class _AppInputOptionState<T> extends State<AppInputOption<T>> {
             hint: widget.hint,
             enabled: widget.enabled,
             isOpen: isOpen,
+            errorText: _error,
             onTap: widget.enabled
                 ? () => _menuVisible.value = !_menuVisible.value
                 : null,
@@ -195,6 +258,7 @@ class _DropdownTrigger extends StatelessWidget {
     required this.enabled,
     this.onTap,
     this.leading,
+    this.errorText,
   });
 
   final String? label;
@@ -203,6 +267,7 @@ class _DropdownTrigger extends StatelessWidget {
   final bool enabled;
   final VoidCallback? onTap;
   final Widget? leading;
+  final String? errorText;
 
   @override
   Widget build(BuildContext context) {
@@ -217,6 +282,8 @@ class _DropdownTrigger extends StatelessWidget {
           isEmpty: false,
           decoration: InputDecoration(
             enabled: enabled,
+            errorText: errorText,
+            errorMaxLines: 2,
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
