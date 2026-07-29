@@ -4,13 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../app/state/fullscreen_cubit.dart';
 import '../../../../app/widgets/titlebar.dart';
-import '../../../../core/settings/settings_cubit.dart';
 import '../../../../shared/constants.dart';
 import '../../../../shared/design_system/design_system.dart';
-import '../../../obs_live_overlay/presentation/state/obs_live_overlay_cubit.dart';
-import '../../../obs_live_overlay/settings/overlay_settings.dart';
-import '../../../remote_controller/presentation/state/remote_controller_cubit.dart';
-import '../../../remote_controller/settings/remote_controller_settings.dart';
 import '../../../shortcuts/presentation/widgets/shortcuts_scope_suppressed.dart';
 import '../state/window_stack_manager_bloc.dart';
 
@@ -69,40 +64,18 @@ class _WindowStackManagerHostState extends State<WindowStackManagerHost> {
             bottom: 0,
             right: 0,
             left: 0,
-
-            ///
-            /// Damn I really need to re-pass the cubits here
-            ///
-            child: MultiBlocProvider(
-              providers: [
-                if (!kIsWeb) ...[
-                  BlocProvider.value(
-                      value: context.read<SettingsCubit<OverlaySettings>>()),
-                  BlocProvider.value(
-                      value: context.read<ObsLiveOverlayCubit>()),
-                  // BlocProvider.value(value: context.read<InstallerBloc>()),
-                  BlocProvider.value(
-                      value: context.read<RemoteControllerCubit>()),
-                  BlocProvider.value(
-                      value: context
-                          .read<SettingsCubit<RemoteControllerSettings>>()),
-                ],
-                BlocProvider.value(
-                    value: context.read<WindowStackManagerBloc>()),
-              ],
-              child: BlockSemantics(
-                blocking: true,
-                child: FocusScope(
-                  node: focusNode,
-                  child: Center(
-                    child: Material(
-                      type: MaterialType.transparency,
-                      elevation: 24,
-                      borderRadius: BorderRadius.circular(AppRadius.lg),
-                      child: Container(
-                        margin: const EdgeInsets.all(24),
-                        child: builder(overlayContext),
-                      ),
+            child: BlockSemantics(
+              blocking: true,
+              child: FocusScope(
+                node: focusNode,
+                child: Center(
+                  child: Material(
+                    type: MaterialType.transparency,
+                    elevation: 24,
+                    borderRadius: BorderRadius.circular(AppRadius.lg),
+                    child: Container(
+                      margin: const EdgeInsets.all(24),
+                      child: builder(overlayContext),
                     ),
                   ),
                 ),

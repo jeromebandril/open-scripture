@@ -32,8 +32,13 @@ class _RemoteControllerPageState extends State<RemoteControllerPage> {
 
     return kIsWeb
         ? const FeatureNotAvailablePage(featureDescription: featureDescription)
-        : BlocProvider.value(
-            value: context.read<RemoteControllerCubit>(),
+        : MultiBlocProvider(
+            providers: [
+              BlocProvider.value(value: context.read<RemoteControllerCubit>()),
+              BlocProvider.value(
+                  value:
+                      context.read<SettingsCubit<RemoteControllerSettings>>())
+            ],
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(42, 0, 42, 42),
               child: BlocBuilder<RemoteControllerCubit, RemoteControllerState>(
