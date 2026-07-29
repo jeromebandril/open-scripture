@@ -4,8 +4,8 @@ import '../../../../app/settings/presentation/pages/global_settings_page.dart';
 import '../../../bible_display/settings/presentation/pages/bible_view_settings_page.dart';
 import '../../../bible_importer/presentation/pages/importer_page.dart';
 import '../../../my_library/presentation/pages/library_manager_page.dart';
-import '../../../obs_live_overlay/presentation/pages/obs_live_overlay_page.dart';
-import '../../../remote_controller/presentation/pages/remote_controller_page.dart';
+import '../../../obs_live_overlay/presentation/pages/obs_live_overlay_settings_page.dart';
+import '../../../remote_controller/presentation/pages/remote_controller_settings_page.dart';
 import '../../../shortcuts/presentation/pages/shortcuts_screen.dart';
 import '../pages/about_setting_page.dart';
 
