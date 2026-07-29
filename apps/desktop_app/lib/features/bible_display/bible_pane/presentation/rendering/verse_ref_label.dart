@@ -34,7 +34,9 @@ abstract final class VerseRefLabel {
               : viewSettings.refFontWeight)
           .toFlutter(),
       color: isHighlighted
-          ? viewSettings.selectedRefColor
+          ? viewSettings.useAppTheme
+              ? Theme.of(context).colorScheme.primary
+              : viewSettings.selectedRefColor
           : viewSettings.useAppTheme
               ? Theme.of(context).colorScheme.tertiary
               : viewSettings.refColor,
