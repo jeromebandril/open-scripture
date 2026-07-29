@@ -27,32 +27,32 @@ class ObsLiveOverlayIndicator extends StatelessWidget {
 
         final currentRefStr = ref != null && ref.visible ? ref.text : '<empty>';
         final pendingRefStr = state.pendingVerse?.toDisplayString();
+        final showPendingStr = enableManualCtrl &&
+            pendingRefStr != null &&
+            pendingRefStr != currentRefStr;
 
         return ServiceStatusIndicatorShell(
-          tooltipMessage:
-              'OBS Live Overlay is ${state.isRunning ? 'running' : 'off'}',
           label: Row(
             spacing: AppSpacing.xs,
             children: [
-              if (enableManualCtrl &&
-                  pendingRefStr != null &&
-                  pendingRefStr != currentRefStr) ...[
+              if (showPendingStr) ...[
                 Text(pendingRefStr, style: textTheme.bodySmall),
                 const Icon(LucideIcons.arrowRight, size: 12),
               ],
               Text(currentRefStr, style: textTheme.bodySmall),
             ],
           ),
+          labelTooltipMessage: showPendingStr ? 'Update overlay' : null,
+          onLabelPressed: () =>
+              context.read<ObsLiveOverlayCubit>().flushBuffer(),
           icon: Icons.live_tv_rounded,
-          onTap: () {
-            context.read<WindowStackManagerBloc>().add(
-                  WindowStackManagerOpen.selfManaged(
-                    widget: SettingsWindow(
-                      initialPage: SettingsPage.obsLiveOverlay,
-                    ),
-                  ),
-                );
-          },
+          iconTooltipMessage: 'Open overlay settings',
+          onIconPressed: () => context
+              .read<WindowStackManagerBloc>()
+              .add(WindowStackManagerOpen.selfManaged(
+                  widget: SettingsWindow(
+                initialPage: SettingsPage.obsLiveOverlay,
+              ))),
         );
       },
     );

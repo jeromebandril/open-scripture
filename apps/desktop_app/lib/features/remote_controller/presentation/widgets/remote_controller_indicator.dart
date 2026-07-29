@@ -17,10 +17,13 @@ class RemoteControllerIndicator extends StatelessWidget {
         if (!state.isRunning) return SizedBox.shrink();
 
         return ServiceStatusIndicatorShell(
-          tooltipMessage: 'Remote Controller Enabled',
-          text: state.connectedClients.length.toString(),
+          iconTooltipMessage: 'Open remote controller settings',
+          label: Text(
+            state.connectedClients.length.toString(),
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
           icon: Icons.stay_current_portrait_rounded,
-          onTap: () {
+          onIconPressed: () {
             context.read<WindowStackManagerBloc>().add(
                   WindowStackManagerOpen.selfManaged(
                     widget: SettingsWindow(
