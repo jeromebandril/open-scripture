@@ -102,8 +102,8 @@ final Map<SettingsPage, WidgetBuilder> settingsBuilders = {
   SettingsPage.bibleViewer: (_) => const BibleViewSettingsPage(),
   SettingsPage.library: (_) => const LibrariesPage(),
   SettingsPage.importer: (_) => const ImporterPage(),
-  SettingsPage.obsLiveOverlay: (_) => const ObsLiveOverlayPage(),
-  SettingsPage.remoteController: (_) => const RemoteControllerPage(),
+  SettingsPage.obsLiveOverlay: (_) => const ObsLiveOverlaySettingsPage(),
+  SettingsPage.remoteController: (_) => const RemoteControllerSettingsPage(),
   SettingsPage.shortcuts: (_) => const ShortcutsScreen(),
   SettingsPage.about: (_) => const AboutSettingsPage(),
 };

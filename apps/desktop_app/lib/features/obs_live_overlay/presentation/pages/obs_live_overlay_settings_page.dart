@@ -17,8 +17,8 @@ import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../settings/overlay_settings.dart';
 import '../state/obs_live_overlay_cubit.dart';
 
-class ObsLiveOverlayPage extends StatelessWidget {
-  const ObsLiveOverlayPage({super.key});
+class ObsLiveOverlaySettingsPage extends StatelessWidget {
+  const ObsLiveOverlaySettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -202,7 +202,7 @@ class ObsLiveOverlayPage extends StatelessWidget {
                                 icon: const Icon(LucideIcons.folderOpen),
                                 label: const Text('Open assets folder')),
                           ),
-                          const ResetAssetsAction(),
+                          const _ResetAssetsAction(),
                         ],
                       ),
                     ],
@@ -214,14 +214,14 @@ class ObsLiveOverlayPage extends StatelessWidget {
   }
 }
 
-class ResetAssetsAction extends StatefulWidget {
-  const ResetAssetsAction({super.key});
+class _ResetAssetsAction extends StatefulWidget {
+  const _ResetAssetsAction();
 
   @override
-  State<ResetAssetsAction> createState() => _ResetAssetsActionState();
+  State<_ResetAssetsAction> createState() => _ResetAssetsActionState();
 }
 
-class _ResetAssetsActionState extends State<ResetAssetsAction> {
+class _ResetAssetsActionState extends State<_ResetAssetsAction> {
   // removed this because if nothing wrong happens,
   // it is pratically instantenous
   // bool _isExec = false;

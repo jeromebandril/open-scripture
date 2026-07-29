@@ -17,14 +17,16 @@ import '../../domain/entities/client_info.dart';
 import '../../settings/remote_controller_settings.dart';
 import '../state/remote_controller_cubit.dart';
 
-class RemoteControllerPage extends StatefulWidget {
-  const RemoteControllerPage({super.key});
+class RemoteControllerSettingsPage extends StatefulWidget {
+  const RemoteControllerSettingsPage({super.key});
 
   @override
-  State<RemoteControllerPage> createState() => _RemoteControllerPageState();
+  State<RemoteControllerSettingsPage> createState() =>
+      _RemoteControllerSettingsPageState();
 }
 
-class _RemoteControllerPageState extends State<RemoteControllerPage> {
+class _RemoteControllerSettingsPageState
+    extends State<RemoteControllerSettingsPage> {
   @override
   Widget build(BuildContext context) {
     const featureDescription =
