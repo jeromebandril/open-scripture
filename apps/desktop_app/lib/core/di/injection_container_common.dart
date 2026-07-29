@@ -88,6 +88,7 @@ Future<void> init(GetIt sl) async {
       navBus: sl.isRegistered<SearchResultBus>() ? sl<SearchResultBus>() : null,
       notifier:
           sl.isRegistered<SelectedVerseBus>() ? sl<SelectedVerseBus>() : null,
+      viewSettings: sl<SettingsRepository<BibleViewSettings>>(),
     ),
   );
   // init bible ref parser

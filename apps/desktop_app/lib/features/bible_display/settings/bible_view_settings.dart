@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import '../../../shared/utils/colors_util.dart';
+import '../bible_pane/domain/display_mode.dart';
 import 'domain/entities/bible_view_font_weight.dart';
 import 'domain/entities/bible_view_text_align.dart';
 import 'domain/entities/highlight_render_mode.dart';
@@ -36,6 +37,8 @@ abstract class _Keys {
   static const presentationParallelSpacing = 'presentationParallelSpacing';
   static const emphasizeSelectedVerses = 'emphasizeSelectedVerses';
   static const unselectedOpacityLevel = 'unselectedOpacityLevel';
+  static const enabledDisplayModes = 'enabledDisplayModes';
+  static const defaultDisplayMode = 'defaultDisplayMode';
 }
 
 class BibleViewSettings extends Equatable {
@@ -56,6 +59,8 @@ class BibleViewSettings extends Equatable {
   final double widthAdjustmentOffset;
   final double xPadding;
   final double splitscreenGap;
+  final List<DisplayMode> enabledDisplayModes;
+  final DisplayMode defaultDisplayMode;
   // behavior
   final bool useAppTheme;
   final bool enableStrongWordsRender;
@@ -94,6 +99,8 @@ class BibleViewSettings extends Equatable {
     this.refFontFamily = 'General Sans',
     this.xPadding = 0.01,
     this.splitscreenGap = 64,
+    this.enabledDisplayModes = const [DisplayMode.presentation],
+    this.defaultDisplayMode = DisplayMode.list,
     this.quoteColor = const Color(0xFFE04A4A),
     this.addColor = const Color(0xFFD2D2D2),
     this.enableStrongWordsRender = false,
@@ -146,6 +153,8 @@ class BibleViewSettings extends Equatable {
     String? refFontFamily,
     double? xPadding,
     double? splitscreenGap,
+    List<DisplayMode>? enabledDisplayModes,
+    DisplayMode? defaultDisplayMode,
     Color? quoteColor,
     Color? addColor,
     bool? enableStrongWordsRender,
@@ -179,6 +188,8 @@ class BibleViewSettings extends Equatable {
       refFontFamily: refFontFamily ?? this.refFontFamily,
       xPadding: xPadding ?? this.xPadding,
       splitscreenGap: splitscreenGap ?? this.splitscreenGap,
+      enabledDisplayModes: enabledDisplayModes ?? this.enabledDisplayModes,
+      defaultDisplayMode: defaultDisplayMode ?? this.defaultDisplayMode,
       quoteColor: quoteColor ?? this.quoteColor,
       addColor: addColor ?? this.addColor,
       enableStrongWordsRender:
@@ -220,6 +231,9 @@ class BibleViewSettings extends Equatable {
         _Keys.refFontFamily: refFontFamily,
         _Keys.xPadding: xPadding,
         _Keys.splitscreenGap: splitscreenGap,
+        _Keys.enabledDisplayModes:
+            enabledDisplayModes.map((e) => e.name).toList(),
+        _Keys.defaultDisplayMode: defaultDisplayMode.name,
         _Keys.quoteColor: ColorsUtil.colorToHex(quoteColor),
         _Keys.addColor: ColorsUtil.colorToHex(addColor),
         _Keys.enableStrongWordsRender: enableStrongWordsRender,
@@ -271,6 +285,13 @@ class BibleViewSettings extends Equatable {
       xPadding: (json[_Keys.xPadding] as num?)?.toDouble() ?? defaults.xPadding,
       splitscreenGap: (json[_Keys.splitscreenGap] as num?)?.toDouble() ??
           defaults.splitscreenGap,
+      enabledDisplayModes: (json[_Keys.enabledDisplayModes] as List<dynamic>?)
+              ?.map((e) => DisplayMode.values.byName(e))
+              .toList() ??
+          defaults.enabledDisplayModes,
+      defaultDisplayMode: (json[_Keys.defaultDisplayMode] as String?) != null
+          ? DisplayMode.values.byName(json[_Keys.defaultDisplayMode] as String)
+          : defaults.defaultDisplayMode,
       quoteColor: json[_Keys.quoteColor] != null
           ? Color(ColorsUtil.parseHex(json[_Keys.quoteColor] as String))
           : defaults.quoteColor,
@@ -340,6 +361,8 @@ class BibleViewSettings extends Equatable {
         refFontFamily,
         xPadding,
         splitscreenGap,
+        enabledDisplayModes,
+        defaultDisplayMode,
         quoteColor,
         addColor,
         enableStrongWordsRender,

@@ -4,15 +4,16 @@ import 'dart:collection';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../../../../core/settings/settings_repository.dart';
 import '../../../../../core/infrastructure/event_bus/search_result_bus.dart';
 import '../../../../../core/infrastructure/event_bus/selected_verse_bus.dart';
+import '../../../../../core/settings/settings_repository.dart';
 import '../../../../../shared/domain/entities/bible_id.dart';
 import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../../shared/domain/repositories/bible_pane_repository_factory.dart';
 import '../../../../../shared/enums/bible_repository_type.dart';
 import '../../../../../shared/error/failure.dart';
 import '../../../../my_library/settings/my_library_settings.dart';
+import '../../../settings/bible_view_settings.dart';
 import '../../domain/display_mode.dart';
 import '../../domain/entities/word_info.dart';
 import '../../domain/repositories/bible_pane_repository.dart';
@@ -29,15 +30,19 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
   BiblePaneBloc({
     required int paneId,
     required BibleRepositoryFactory repositoryFactory,
+    required SettingsRepository<BibleViewSettings> viewSettings,
+    SettingsRepository<MyLibrarySettings>? libSettings,
     SelectedVerseBus? notifier,
     SearchResultBus? navBus,
-    SettingsRepository<MyLibrarySettings>? libSettings,
   })  : _libSettings = libSettings,
         _repositoryFactory = repositoryFactory,
         _navBus = navBus,
         _overlayNotifier = notifier,
         super(BiblePaneState(
-            paneId: paneId, status: BiblePaneStatus.selectBibles)) {
+          paneId: paneId,
+          status: BiblePaneStatus.selectBibles,
+          dMode: viewSettings.current.defaultDisplayMode,
+        )) {
     on<BiblePaneOpen>(_onBiblePaneOpen);
     on<BiblePaneDisplayChapter>(_onBiblePaneDisplayChapter);
     on<BiblePaneJustChangeRef>(_onChangeRef);

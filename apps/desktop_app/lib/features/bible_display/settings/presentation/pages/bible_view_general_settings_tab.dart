@@ -11,6 +11,7 @@ import '../../../../../shared/widgets/ui/inputs/app_input_number.dart';
 import '../../../../../shared/widgets/ui/inputs/app_input_option.dart';
 import '../../../../settings_window/presentation/widgets/setting.dart';
 import '../../../../settings_window/presentation/widgets/setting_section.dart';
+import '../../../bible_pane/domain/display_mode.dart';
 import '../../bible_view_settings.dart';
 import '../../domain/entities/bible_view_font_weight.dart';
 
@@ -374,6 +375,58 @@ class _BibleViewGeneralSettingsTabState
                                 c.state.splitscreenGap,
                           ),
                         )),
+                  ],
+                ),
+                SettingSection(
+                  title: 'Other options',
+                  children: [
+                    Setting(
+                      label: 'Enabled view modes',
+                      description: 'Enabled view modes',
+                      settingWidth: 230,
+                      child: AppInputOption.multiple(
+                        items: DisplayMode.values
+                            .map(
+                                (d) => AppDropdownItem(value: d, label: d.name))
+                            .toList(),
+                        values: context.select(
+                            (SettingsCubit<BibleViewSettings> c) =>
+                                c.state.enabledDisplayModes),
+                        numOfItemsInLabel: 3,
+                        valuesValidator: (candidate) => candidate.isNotEmpty,
+                        invalidSelectionMessage: 'Can\'t be empty',
+                        onValuesChanged: (v) {
+                          cubit.update(
+                              (p) => p.copyWith(enabledDisplayModes: v));
+                          // this affects also default view mode
+                          if (!v.contains(cubit.state.defaultDisplayMode)) {
+                            cubit.update(
+                                (p) => p.copyWith(defaultDisplayMode: v.first));
+                          }
+                        },
+                      ),
+                    ),
+                    Setting(
+                      label: 'Default view mode',
+                      description:
+                          'Default view mode when new bible pane is created',
+                      settingWidth: 230,
+                      child: AppInputOption(
+                        items: DisplayMode.values
+                            .map(
+                                (d) => AppDropdownItem(value: d, label: d.name))
+                            .toList(),
+                        value: context.select(
+                            (SettingsCubit<BibleViewSettings> c) =>
+                                c.state.defaultDisplayMode),
+                        validator: (candidate) =>
+                            cubit.state.enabledDisplayModes.contains(candidate),
+                        invalidSelectionMessage:
+                            'Select a mode that is enabled',
+                        onChanged: (v) => cubit
+                            .update((p) => p.copyWith(defaultDisplayMode: v)),
+                      ),
+                    ),
                   ],
                 )
               ],
