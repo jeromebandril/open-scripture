@@ -4,7 +4,7 @@ import '../constants.dart';
 import '../design_system/design_system.dart';
 
 /// A reusable widget that wraps any [trigger] and pops an overlay menu
-/// below it, animated with [AppRevealAnimation] (for consistent animation
+/// near it, animated with [AppRevealAnimation] (for consistent animation
 /// in different widgets).
 ///
 /// ## Trigger control
@@ -33,6 +33,15 @@ import '../design_system/design_system.dart';
 /// Supply absolute pixel sizes with [menuWidth] / [menuHeight].
 /// If you omit them the widget falls back to responsive fractions of the
 /// screen via [menuWidthFraction] / [menuHeightFraction].
+///
+/// ## Positioning
+///
+/// The menu measures the real space above and below [trigger] inside the
+/// nearest [Overlay] and opens on whichever side fits, shrinking itself to
+/// the available space if neither side fully fits. This works whether the
+/// trigger sits inside the app window directly or inside a constrained
+/// container such as a dialog, since the space is measured from the
+/// trigger's actual position, not from the screen size alone.
 ///
 /// ## Dismiss on outside tap
 ///
@@ -79,7 +88,7 @@ class DropdownMenuAnchor extends StatefulWidget {
   /// Fraction of screen height used when [menuHeight] is null.
   // final double menuHeightFraction;
 
-  /// Vertical gap between the trigger bottom and the menu top.
+  /// Vertical gap between the trigger and the menu.
   final double menuGap;
 
   /// Which corner of the menu aligns with [link].
@@ -135,19 +144,49 @@ class _DropdownMenuAnchorState extends State<DropdownMenuAnchor> {
   }
 
   Widget _buildOverlayChild(BuildContext context, OverlayChildLayoutInfo info) {
-    final screen = MediaQuery.sizeOf(context);
     final popupTheme = Theme.of(context).popupMenuTheme;
 
-    final resolvedWidth =
-        widget.menuWidth ?? screen.width * widget.menuWidthFraction;
+    final overlayWidth = info.overlaySize.width;
+    final overlayHeight = info.overlaySize.height;
+
+    final childOffset =
+        MatrixUtils.transformPoint(info.childPaintTransform, Offset.zero);
+    final childLeft = childOffset.dx;
+    final childTop = childOffset.dy;
+    final childBottom = childTop + info.childSize.height;
+
+    final edgeMargin = AppSpacing.xl3;
+
+    final spaceBelow =
+        overlayHeight - childBottom - widget.menuGap - edgeMargin;
+    final spaceAbove =
+        childTop - kWindowsTitleBarHeight - widget.menuGap - edgeMargin;
+
+    final fitsBelow = spaceBelow >= widget.menuHeight;
+    final fitsAbove = spaceAbove >= widget.menuHeight;
+    final openBelow = fitsBelow || (!fitsAbove && spaceBelow >= spaceAbove);
+
+    final availableHeight = openBelow ? spaceBelow : spaceAbove;
     final resolvedHeight = widget.menuHeight
-        .clamp(0, screen.height - kWindowsTitleBarHeight - AppSpacing.xl3)
+        .clamp(0.0, availableHeight > 0 ? availableHeight : 0.0)
         .toDouble();
 
-    final dx = widget.menuAlignment == Alignment.topRight
+    final resolvedWidth =
+        widget.menuWidth ?? overlayWidth * widget.menuWidthFraction;
+
+    var dx = widget.menuAlignment == Alignment.topRight
         ? info.childSize.width - resolvedWidth
         : 0.0;
-    final dy = info.childSize.height + widget.menuGap;
+    final absoluteLeft = childLeft + dx;
+    if (absoluteLeft < edgeMargin) {
+      dx += edgeMargin - absoluteLeft;
+    } else if (absoluteLeft + resolvedWidth > overlayWidth - edgeMargin) {
+      dx -= (absoluteLeft + resolvedWidth) - (overlayWidth - edgeMargin);
+    }
+
+    final dy = openBelow ? widget.menuGap : -widget.menuGap;
+    final targetAnchor = openBelow ? Alignment.bottomLeft : Alignment.topLeft;
+    final followerAnchor = openBelow ? Alignment.topLeft : Alignment.bottomLeft;
 
     final child = ConstrainedBox(
       constraints:
@@ -176,6 +215,8 @@ class _DropdownMenuAnchorState extends State<DropdownMenuAnchor> {
           ),
         CompositedTransformFollower(
           link: _layerLink,
+          targetAnchor: targetAnchor,
+          followerAnchor: followerAnchor,
           offset: Offset(dx, dy),
           child: BlockSemantics(
             blocking: true,
