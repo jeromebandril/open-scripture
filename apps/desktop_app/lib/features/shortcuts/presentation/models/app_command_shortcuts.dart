@@ -123,5 +123,5 @@ final Map<AppCommand, ShortcutActivator> appCommandShortcuts = {
       : SingleActivator(LogicalKeyboardKey.minus,
           control: !_isMacDesktop, meta: _isMacDesktop),
   AppCommand.flushOverlayBuffer: SingleActivator(LogicalKeyboardKey.keyU,
-      control: !_isMacDesktop, meta: _isMacDesktop)
+      control: !_isMacDesktop, meta: _isMacDesktop, includeRepeats: false)
 };
