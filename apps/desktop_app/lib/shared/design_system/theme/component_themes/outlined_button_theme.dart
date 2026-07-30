@@ -56,7 +56,7 @@ abstract final class AppOutlinedButtonTheme {
           ),
         ),
         textStyle: WidgetStateProperty.all(AppTypography.labelMd),
-        minimumSize: WidgetStateProperty.all(const Size(64, 40)),
+        minimumSize: WidgetStateProperty.all(const Size(40, 36)),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         mouseCursor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.disabled)) {
