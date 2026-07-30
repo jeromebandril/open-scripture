@@ -94,4 +94,22 @@ class BibleRef extends Equatable implements Comparable<BibleRef> {
     }
     return (verseEnd ?? 0).compareTo(other.verseEnd ?? 0);
   }
+
+  /// If this ref has a range of verses
+  /// unfold it and return the list of refs
+  /// of that range
+  List<BibleRef> unfold() {
+    if (verseStart == null || verseEnd == null) {
+      return [this];
+    }
+
+    return List.generate(
+      verseEnd! - verseStart!,
+      (i) => BibleRef(
+        book: book,
+        chapter: chapter,
+        verseStart: verseStart! + i,
+      ),
+    );
+  }
 }

@@ -257,7 +257,8 @@ class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
           }
           resolvedRefs.add(r.key.toFullRef(r.value!));
         }
-        event = BiblePaneDisplayVerses(resolvedRefs);
+        final data = resolvedRefs.expand((r) => r.unfold()).toList();
+        event = BiblePaneDisplayVerses(data);
 
         break;
     }
