@@ -104,7 +104,7 @@ class BibleRef extends Equatable implements Comparable<BibleRef> {
     }
 
     return List.generate(
-      verseEnd! - verseStart!,
+      verseEnd! - verseStart! + 1,
       (i) => BibleRef(
         book: book,
         chapter: chapter,
