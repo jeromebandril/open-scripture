@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class InlineLinkButton extends StatelessWidget {
+class InlineLinkButton extends StatefulWidget {
   final IconData icon;
   final String label;
   final VoidCallback onPressed;
@@ -13,22 +13,30 @@ class InlineLinkButton extends StatelessWidget {
   });
 
   @override
+  State<InlineLinkButton> createState() => _InlineLinkButtonState();
+}
+
+class _InlineLinkButtonState extends State<InlineLinkButton> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onPressed,
+      onTap: widget.onPressed,
       borderRadius: BorderRadius.circular(4),
+      onHover: (v) => setState(() => _isHovered = v),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 2.0),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 12),
+            Icon(widget.icon, size: 12),
             const SizedBox(width: 6),
             Text(
-              label,
-              style: const TextStyle(
+              widget.label,
+              style: TextStyle(
                 fontSize: 12,
-                decoration: TextDecoration.underline,
+                decoration: _isHovered ? TextDecoration.underline : null,
                 decorationStyle: TextDecorationStyle.solid,
               ),
             ),
