@@ -24,6 +24,11 @@ class ResolvedPartialRefIntent extends ResolvedSearchIntent {
   ResolvedPartialRefIntent({required this.ref});
 }
 
+class ResolvedPartialMultipleRefIntent extends ResolvedSearchIntent {
+  final List<BibleRefPartial> refs;
+  ResolvedPartialMultipleRefIntent({required this.refs});
+}
+
 class ResolvedStringSearchIntent extends ResolvedSearchIntent {
   final List<BibleRef> results;
   ResolvedStringSearchIntent({required this.results});

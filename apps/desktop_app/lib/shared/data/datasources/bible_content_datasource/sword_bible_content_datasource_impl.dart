@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import '../../../domain/entities/bible_book.dart';
+import '../../../domain/entities/bible_ref.dart';
 import '../../../error/exception.dart';
 import '../../models/verse_segment_dto.dart';
 import '../../services/sword_service.dart';
@@ -54,6 +55,13 @@ class SwordBibleContentDatasourceImpl implements BibleContentDatasource {
     } catch (e) {
       throw SwordException('Malformed chapter JSON from SWORD bridge: $e');
     }
+  }
+
+  @override
+  Future<Map<BibleRef, List<VerseSegmentDto>>> getVerses(
+      String bibleExtId, List<BibleRef> refs) {
+    // TODO: implement getVerses
+    throw UnimplementedError();
   }
 
   @override

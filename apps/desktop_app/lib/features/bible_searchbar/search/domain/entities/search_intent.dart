@@ -5,6 +5,11 @@ class ReferenceIntent extends SearchIntent {
   ReferenceIntent({required this.rawQuery});
 }
 
+class MultipleReferenceIntent extends SearchIntent {
+  final List<String> rawQueries;
+  MultipleReferenceIntent({required this.rawQueries});
+}
+
 class VerseNumberIntent extends SearchIntent {
   final int verseNumber;
   VerseNumberIntent({required this.verseNumber});

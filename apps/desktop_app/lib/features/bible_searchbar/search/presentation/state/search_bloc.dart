@@ -6,6 +6,8 @@ import 'package:equatable/equatable.dart';
 import '../../../../../core/infrastructure/event_bus/resolved_search_intent_bus.dart';
 import '../../../../../core/infrastructure/event_bus/search_result_bus.dart';
 import '../../../../../shared/domain/entities/bible_ref.dart';
+import '../../../../../shared/domain/entities/bible_ref_partial.dart';
+import '../../../../../shared/error/failure.dart';
 import '../../domain/entities/search_intent.dart';
 import '../../domain/repositories/search_repository.dart';
 import '../../domain/search_intent_resolver.dart';
@@ -65,6 +67,38 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         emit(SearchReferenceResult(ref: refinedRef));
         _searchIntentBus
             .emit(ResolvedRefIntent(ref: refinedRef, isVerseLevel: true));
+        break;
+      case MultipleReferenceIntent():
+        bool errorEncountered = false;
+        Failure? causeOfError;
+        final refs = <BibleRefPartial>[];
+        final futures = intent.rawQueries.map(
+          (q) async => await _repo.parse(q).run(),
+        );
+
+        final results = await Future.wait(futures);
+        for (final r in results) {
+          r.fold(
+            (f) {
+              errorEncountered = true;
+              causeOfError = f;
+              return;
+            },
+            (ref) {
+              refs.add(ref);
+            },
+          );
+        }
+
+        if (errorEncountered) {
+          SearchError(
+            message: '${causeOfError!.message}',
+            errorCount: state.errorCount + 1,
+          );
+          return;
+        }
+        _searchIntentBus.emit(ResolvedPartialMultipleRefIntent(refs: refs));
+
         break;
 
       case StringSearchIntent():

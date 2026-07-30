@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import '../../../../../core/di/injection_container.dart';
 import '../../../../../core/infrastructure/event_bus/resolved_search_intent_bus.dart';
 import '../../../../../core/infrastructure/event_bus/search_result_bus.dart';
+import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../../shared/domain/services/book_resolver.dart';
 import '../../../../text_scaler/presentation/state/text_scaler_cubit.dart';
 import '../../../bible_pane/presentation/state/bible_pane_bloc.dart';
@@ -206,14 +207,17 @@ class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
           ref: ref,
           source: IntentSource.searchbar,
         );
+        break;
       case ResolvedRefIntent(:final ref, isVerseLevel: true):
         event = BiblePaneJustChangeRef(
           ref: ref,
           source: IntentSource.searchbar,
           saveHistory: false,
         );
+        break;
       case ResolvedStringSearchIntent(:final results):
         event = BiblePaneDisplayVerses(results);
+        break;
       case ResolvedPartialRefIntent():
         // resolve book
         final bibleLocalId =
@@ -232,6 +236,30 @@ class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
           ref: ref,
           source: IntentSource.searchbar,
         );
+        break;
+      case ResolvedPartialMultipleRefIntent(:final refs):
+        final resolvedRefs = <BibleRef>[];
+        final bibleLocalId =
+            bloc.state.content.asMap.values.firstOrNull?.meta.localId;
+        final futures = refs.map((r) async {
+          final book = await _bookResolver.resolve(r.bookToken, bibleLocalId);
+          return MapEntry(r, book);
+        });
+        final results = await Future.wait(futures);
+
+        for (final r in results) {
+          if (r.value == null) {
+            _searchResultBus.emit(SearchResultError(
+              source: IntentSource.searchbar,
+              message: 'Could not resolve book from "${r.key.bookToken}"',
+            ));
+            return;
+          }
+          resolvedRefs.add(r.key.toFullRef(r.value!));
+        }
+        event = BiblePaneDisplayVerses(resolvedRefs);
+
+        break;
     }
 
     bloc.add(event);

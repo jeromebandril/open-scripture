@@ -10,8 +10,8 @@ import '../../../../../shared/domain/entities/bible_translation.dart';
 import '../../../../../shared/domain/entities/verse.dart';
 import '../../../../../shared/error/exception.dart';
 import '../../../../../shared/error/failure.dart';
-import '../../error/bible_failures.dart';
 import '../../domain/repositories/bible_pane_repository.dart';
+import '../../error/bible_failures.dart';
 
 class BiblePaneRepositoryImpl implements BiblePaneRepository {
   final BibleContentDatasource _contentDatasource;
@@ -42,8 +42,33 @@ class BiblePaneRepositoryImpl implements BiblePaneRepository {
     required BibleId bibleId,
     required List<BibleRef> refs,
   }) {
-    // TODO: implement this
-    throw UnimplementedError();
+    return TaskEither.tryCatch(
+      () async {
+        final versesByRef = await _contentDatasource.getVerses(
+          bibleId.externalId,
+          refs,
+        );
+
+        return versesByRef.entries.map((entry) {
+          final segmentsDtos = entry.value;
+
+          return Verse(
+            translationId: bibleId.externalId,
+            ref: entry.key,
+            segments: segmentsDtos.map((dto) => dto.toDomain()).toList(),
+          );
+        }).toList();
+      },
+      (error, st) => switch (error) {
+        NotFoundException e =>
+          ChapterUnavailableFailure(cause: e, stackTrace: st),
+        ServerException e =>
+          ChapterUnavailableFailure(cause: e, stackTrace: st),
+        NetworkException e => NetworkFailure(cause: e, stackTrace: st),
+        SwordException e => SwordUnavailableFailure(cause: e, stackTrace: st),
+        _ => UnexpectedFailure(cause: error, stackTrace: st),
+      },
+    );
   }
 
   @override

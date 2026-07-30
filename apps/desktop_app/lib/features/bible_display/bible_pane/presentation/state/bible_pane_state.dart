@@ -15,7 +15,7 @@ class BiblePaneState extends Equatable {
     required this.content,
     required this.parallelOrder,
     required SplayTreeSet<BibleRef> unionRefs,
-    required this.isMixed,
+    required this.isNotSameBookChapter,
     required this.errorMessage,
     required this.dMode,
     required this.verseCount,
@@ -43,7 +43,7 @@ class BiblePaneState extends Equatable {
       content: content,
       parallelOrder: parallelOrder,
       unionRefs: content.computeUnion(),
-      isMixed: isMixed,
+      isNotSameBookChapter: isMixed,
       errorMessage: errorMessage,
       dMode: dMode,
       verseCount: verseCount,
@@ -57,7 +57,7 @@ class BiblePaneState extends Equatable {
   final BibleRef? reference;
   final ParallelBibleConfig content;
   final List<BibleId> parallelOrder;
-  final bool isMixed;
+  final bool isNotSameBookChapter;
   final String? errorMessage;
   final DisplayMode dMode;
   final int? verseCount;
@@ -75,7 +75,7 @@ class BiblePaneState extends Equatable {
     BibleRef Function()? reference,
     ParallelBibleConfig Function()? content,
     List<BibleId> Function()? parallelOrder,
-    bool Function()? isMixed,
+    bool Function()? isNotSameBookChapter,
     String? Function()? errorMessage,
     DisplayMode Function()? dMode,
     int? Function()? verseCount,
@@ -89,7 +89,9 @@ class BiblePaneState extends Equatable {
       content: content != null ? content() : this.content,
       parallelOrder:
           parallelOrder != null ? parallelOrder() : this.parallelOrder,
-      isMixed: isMixed != null ? isMixed() : this.isMixed,
+      isMixed: isNotSameBookChapter != null
+          ? isNotSameBookChapter()
+          : this.isNotSameBookChapter,
       errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
       dMode: dMode != null ? dMode() : this.dMode,
       verseCount: verseCount != null ? verseCount() : this.verseCount,
@@ -105,7 +107,7 @@ class BiblePaneState extends Equatable {
         reference,
         content,
         parallelOrder,
-        isMixed,
+        isNotSameBookChapter,
         errorMessage,
         dMode,
         verseCount,

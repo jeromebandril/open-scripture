@@ -10,6 +10,49 @@ class BibleContentDao extends DatabaseAccessor<AppDb>
     with _$BibleContentDaoMixin {
   BibleContentDao(super.db);
 
+  Future<VerseSegmentDto?> getVerse(
+    String bibleExtId,
+    String bookToken,
+    int chapter,
+    int verseNumber,
+  ) async {
+    final bibleId = await _getBibleIdFrom(bibleExtId);
+    if (bibleId == null) return null;
+
+    final query = select(db.verseSegments).join([
+      innerJoin(
+        db.canonicalBooks,
+        db.canonicalBooks.id.equalsExp(db.verseSegments.bookId),
+      ),
+    ])
+      ..where(db.verseSegments.bibleId.equals(bibleId) &
+          db.canonicalBooks.bookToken.equals(bookToken) &
+          db.verseSegments.chapterNumber.equals(chapter) &
+          db.verseSegments.verseNumber.equals(verseNumber))
+      ..orderBy([
+        OrderingTerm.asc(db.verseSegments.verseNumber),
+        OrderingTerm.asc(db.verseSegments.segmentIndex),
+      ]);
+
+    final results = await query.get();
+    if (results.isEmpty) return null;
+
+    final firstRow = results.first;
+    final segment = firstRow.readTable(db.verseSegments);
+    final book = firstRow.readTable(db.canonicalBooks);
+
+    return VerseSegmentDto(
+      bibleId: segment.bibleId,
+      bookToken: book.bookToken,
+      chapterNumber: segment.chapterNumber,
+      verseNumber: segment.verseNumber,
+      segmentIndex: segment.segmentIndex,
+      paragraphStart: segment.paragraphStart == 1,
+      heading: segment.heading,
+      spansJson: segment.spansJson,
+    );
+  }
+
   /// Retrieves an entire chapter, ordered correctly for the UI.
   Future<List<VerseSegmentDto>> getChapter(
     String bibleExtId,
@@ -17,12 +60,7 @@ class BibleContentDao extends DatabaseAccessor<AppDb>
     int chapter,
   ) async {
     // get bible id
-    final bibleId = await (select(db.bibles)
-          ..addColumns([db.bibles.id])
-          ..where((tbl) => tbl.extId.equals(bibleExtId)))
-        .map((row) => row.id)
-        .getSingleOrNull();
-
+    final bibleId = await _getBibleIdFrom(bibleExtId);
     if (bibleId == null) return const [];
 
     final query = select(db.verseSegments).join([
@@ -98,4 +136,11 @@ class BibleContentDao extends DatabaseAccessor<AppDb>
     final result = await query.getSingle();
     return result.read(maxChapter) ?? 0;
   }
+
+  Future<int?> _getBibleIdFrom(String bibleExtId) async =>
+      await (select(db.bibles)
+            ..addColumns([db.bibles.id])
+            ..where((tbl) => tbl.extId.equals(bibleExtId)))
+          .map((row) => row.id)
+          .getSingleOrNull();
 }

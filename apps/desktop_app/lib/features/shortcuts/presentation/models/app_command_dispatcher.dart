@@ -118,6 +118,11 @@ class AppCommandDispatcher {
   void _extendSelection(int delta) {
     _withActiveRef<void>((bloc, ref) {
       if (searchbarBloc().state is SearchStringResult) return;
+      if (searchbarBloc().state is SearchMultipleReferenceResult) return;
+      // this is the same thing, because if search state is [SearchStringResult]
+      // or [SearchMultipleReferenceResult], I emit with [BiblePaneBloc]
+      // `isNotSameBookChapter = true`
+      if (bloc.state.isNotSameBookChapter) return;
 
       final last =
           bloc.state.verseCount ?? bloc.state.unionRefs.last.verseStart ?? 0;
@@ -153,7 +158,7 @@ class AppCommandDispatcher {
 
   void _displayChapterOfSelected() {
     final bloc = paneManagerCubit().activePane().bloc;
-    if (!bloc.state.isMixed) return;
+    if (!bloc.state.isNotSameBookChapter) return;
 
     final ref = bloc.state.reference;
     if (ref == null) return;

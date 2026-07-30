@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 
 import '../../../constants.dart';
 import '../../../domain/entities/bible_book.dart';
+import '../../../domain/entities/bible_ref.dart';
 import '../../../error/exception.dart';
 import '../../models/verse_segment_dto.dart';
 import 'bible_content_datasourcee.dart';
@@ -71,6 +72,13 @@ class RemoteBibleContentDatasourceImpl implements BibleContentDatasource {
     }
 
     return segments;
+  }
+
+  @override
+  Future<Map<BibleRef, List<VerseSegmentDto>>> getVerses(
+      String bibleExtId, List<BibleRef> refs) {
+    // TODO: implement getVerses
+    throw UnimplementedError();
   }
 
   @override

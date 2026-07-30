@@ -47,7 +47,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     on<BiblePaneDisplayChapter>(_onBiblePaneDisplayChapter);
     on<BiblePaneJustChangeRef>(_onChangeRef);
     on<BiblePaneChooseBibles>(_onOpenBibleSelection);
-    // on<BiblePaneDisplayVerses>(_onDisplayVerses);
+    on<BiblePaneDisplayVerses>(_onDisplayVerses);
     on<BiblePaneSetDisplayMode>(_onChangeDisplayMode);
     on<BiblePaneSelectWord>(_onSelectWord);
 
@@ -111,7 +111,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
         status: () => BiblePaneStatus.ready,
         content: () => ParallelBibleConfig.from(newMap),
         parallelOrder: () => event.bibleIds,
-        isMixed: () => false,
+        isNotSameBookChapter: () => false,
         repoType: () => repoType,
       ));
       // fetch and update content if reference is not null
@@ -125,37 +125,96 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     }
   }
 
-  /// Display passed bible refs directly
-  // Future<void> _onDisplayVerses(
-  //   BiblePaneDisplayVerses event,
-  //   Emitter<BiblePaneState> emit,
-  // ) async {
-  //   if (state.openedBiblesIds.isEmpty) return;
+  Future<void> _onDisplayVerses(
+    BiblePaneDisplayVerses event,
+    Emitter<BiblePaneState> emit,
+  ) async {
+    if (state.openedBiblesIds.isEmpty) return;
 
-  //   final newMap = Map<BibleId, ParallelBibleData>.from(state.content.asMap);
+    final loadingTimer = Timer(_loadingIndicatorThreshold, () {
+      if (emit.isDone) return;
+      emit(state.copyWith(status: () => BiblePaneStatus.loading));
+    });
 
-  //   for (var id in state.openedBiblesIds) {
-  //     final result = await repo.getVersesWithSpans(
-  //       bibleId: id,
-  //       refs: event.refs,
-  //     );
+    try {
+      final newMap = ParallelBibleMap.from(state.content.asMap);
+      bool hasAtLeastOneSuccess = false;
+      List<Failure> errors = [];
+      int maxVerseCount = 0;
 
-  //     result.fold(
-  //       (_) => newMap[id] = newMap[id]!.copyWith(
-  //         verses: () => null,
-  //       ),
-  //       (s) => newMap[id] = newMap[id]!.copyWith(
-  //         verses: () => Verse.groupMixedSegmentsIntoVerses(s),
-  //       ),
-  //     );
-  //   }
+      final fetchFutures = state.openedBiblesIds.map((id) async {
+        final failureOrChapter = await (await _repo)
+            .getVerses(
+              bibleId: id,
+              refs: event.refs,
+            )
+            .run();
+        return MapEntry(id, failureOrChapter);
+      });
 
-  //   emit(state.copyWith(
-  //     status: () => BiblePaneStatus.ready,
-  //     content: () => ParallelBibleConfig.from(newMap),
-  //     isMixed: () => true,
-  //   ));
-  // }
+      final results = await Future.wait(fetchFutures);
+
+      for (var entry in results) {
+        final id = entry.key;
+        final failureOrChapter = entry.value;
+
+        await failureOrChapter.fold<Future<void>>(
+          (failure) async {
+            errors.add(failure);
+            newMap[id] = newMap[id]!.copyWith(
+              verses: () => null,
+            );
+          },
+          (verses) async {
+            hasAtLeastOneSuccess = true;
+
+            // update bible info with verse counter
+            // get the greatest count
+            final verseCount = verses.length;
+            if (verseCount > maxVerseCount) maxVerseCount = verseCount;
+
+            // set content of the pane
+            newMap[id] = newMap[id]!.copyWith(
+              verses: () => BibleData.versesToMap(verses),
+            );
+          },
+        );
+      }
+
+      final content = ParallelBibleConfig.from(newMap);
+
+      if (emit.isDone) return;
+
+      if (hasAtLeastOneSuccess) {
+        emit(state.copyWith(
+          status: () => BiblePaneStatus.ready,
+          reference: () => event.refs.first,
+          content: () => content,
+          isNotSameBookChapter: () => true,
+          verseCount: () => maxVerseCount,
+        ));
+        // return feedback to searchbar
+        if (!content.isContentEmpty) {
+          _navBus?.emit(SearchResultSuccess(
+            ref: event.refs.first,
+            // source: event.,
+          ));
+        }
+        // _sendTextToObsLiveOverlay(event.ref);
+      } else {
+        emit(state.copyWith(
+          status: () => BiblePaneStatus.error,
+          reference: () => event.refs.first,
+          content: () => content,
+          isNotSameBookChapter: () => true,
+          errorMessage: () => errors.first.message,
+          verseCount: () => maxVerseCount,
+        ));
+      }
+    } finally {
+      loadingTimer.cancel();
+    }
+  }
 
   /// Display the verses of the whole selected chapter
   Future<void> _onBiblePaneDisplayChapter(
@@ -223,7 +282,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
           status: () => BiblePaneStatus.ready,
           reference: () => event.ref,
           content: () => content,
-          isMixed: () => false,
+          isNotSameBookChapter: () => false,
           verseCount: () => maxVerseCount,
         ));
 
@@ -240,7 +299,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
           status: () => BiblePaneStatus.error,
           reference: () => event.ref,
           content: () => content,
-          isMixed: () => false,
+          isNotSameBookChapter: () => false,
           errorMessage: () => errors.first.message,
           verseCount: () => maxVerseCount,
         ));

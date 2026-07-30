@@ -1,5 +1,6 @@
 import '../../../../core/infrastructure/database/daos/bible_content_dao.dart';
 import '../../../domain/entities/bible_book.dart';
+import '../../../domain/entities/bible_ref.dart';
 import '../../../error/exception.dart';
 import '../../models/verse_segment_dto.dart';
 import 'bible_content_datasourcee.dart';
@@ -26,6 +27,40 @@ class DriftBibleContentDataSourceImpl implements BibleContentDatasource {
       throw NotFoundException('No verses found for ${book.usfm} $chapter');
     }
     return result;
+  }
+
+  @override
+  Future<Map<BibleRef, List<VerseSegmentDto>>> getVerses(
+    String bibleExtId,
+    List<BibleRef> refs,
+  ) async {
+    final Map<BibleRef, List<VerseSegmentDto>> results;
+
+    try {
+      final fetchFutures = refs.map((ref) async {
+        final dto = await _dao.getVerse(
+          bibleExtId,
+          ref.book.canonical,
+          ref.chapter,
+          ref.verseStart!,
+        );
+        return MapEntry(ref, dto);
+      });
+
+      final entries = await Future.wait(fetchFutures);
+
+      results = {
+        for (final entry in entries)
+          if (entry.value != null) entry.key: [entry.value!],
+      };
+    } catch (e) {
+      throw Exception('Failed to query chapter: $e');
+    }
+
+    if (results.isEmpty) {
+      throw NotFoundException('No verses found');
+    }
+    return results;
   }
 
   @override
