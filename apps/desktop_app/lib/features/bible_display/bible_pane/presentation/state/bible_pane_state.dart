@@ -14,14 +14,13 @@ class BiblePaneState extends Equatable {
     required this.reference,
     required this.content,
     required this.parallelOrder,
-    required SplayTreeSet<BibleRef> unionRefs,
     required this.isNotSameBookChapter,
     required this.errorMessage,
     required this.dMode,
     required this.verseCount,
     required this.repoType,
     this.selectedWord,
-  }) : _unionRefs = unionRefs;
+  });
 
   factory BiblePaneState({
     required int paneId,
@@ -42,7 +41,6 @@ class BiblePaneState extends Equatable {
       reference: reference,
       content: content,
       parallelOrder: parallelOrder,
-      unionRefs: content.computeUnion(),
       isNotSameBookChapter: isMixed,
       errorMessage: errorMessage,
       dMode: dMode,
@@ -64,8 +62,8 @@ class BiblePaneState extends Equatable {
   final BibleRepositoryType repoType;
   final WordInfo? selectedWord;
 
-  final SplayTreeSet<BibleRef> _unionRefs;
-  SplayTreeSet<BibleRef> get unionRefs => SplayTreeSet.of(_unionRefs);
+  SplayTreeSet<BibleRef> get unionRefs =>
+      content.computeUnion(preserveOrder: isNotSameBookChapter);
 
   List<BibleId> get openedBiblesIds => content.keys.toList();
 

@@ -41,16 +41,32 @@ class ParallelBibleConfig extends Equatable {
 
   /// "union" understood as union of all [BibleRef] between each bible/translation.
   /// Useful because two bibles/translations can have different chapter lengths
-  SplayTreeSet<BibleRef> computeUnion() {
-    final union = SplayTreeSet<BibleRef>();
+  SplayTreeSet<BibleRef> computeUnion({bool preserveOrder = false}) {
+    if (!preserveOrder) {
+      final union = SplayTreeSet<BibleRef>();
+      for (final data in _config.values) {
+        final verses = data.verses;
+        if (verses == null) continue;
+        union.addAll(verses.keys);
+      }
+      return union;
+    }
 
+    // first-seen order, walking translations in _config order and
+    // each translation's verses in its own (already-preserved) order
+    final order = <BibleRef, int>{};
     for (final data in _config.values) {
       final verses = data.verses;
       if (verses == null) continue;
-
-      union.addAll(verses.keys);
+      for (final ref in verses.keys) {
+        order.putIfAbsent(ref, () => order.length);
+      }
     }
 
+    final union = SplayTreeSet<BibleRef>(
+      (a, b) => order[a]!.compareTo(order[b]!),
+    );
+    union.addAll(order.keys);
     return union;
   }
 
@@ -105,11 +121,32 @@ class BibleData extends Equatable {
     );
   }
 
-  static SplayTreeMap<BibleRef, Verse> versesToMap(List<Verse> verses) {
+  static SplayTreeMap<BibleRef, Verse> versesToMap(
+    List<Verse> verses, {
+    bool preserveOrder = false,
+  }) {
+    // preserve order of the given list
+    if (preserveOrder) {
+      final order = <BibleRef, int>{
+        for (var i = 0; i < verses.length; i++) verses[i].ref: i,
+      };
+      final map = SplayTreeMap<BibleRef, Verse>(
+        (a, b) => order[a]!.compareTo(order[b]!),
+      );
+      for (final verse in verses) {
+        map[verse.ref] = verse;
+      }
+      // test with
+      // rev 1.2-5; mark 5.1; john 3
+      // print(verses.map((v) => v.ref));
+      // print(map.keys);
+      return map;
+    }
+
     return SplayTreeMap.fromIterable(
       verses,
-      key: (v) => (v as Verse).ref,
-      value: (v) => v as Verse,
+      key: (v) => v.ref,
+      value: (v) => v,
     );
   }
 

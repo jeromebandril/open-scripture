@@ -175,7 +175,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
 
             // set content of the pane
             newMap[id] = newMap[id]!.copyWith(
-              verses: () => BibleData.versesToMap(verses),
+              verses: () => BibleData.versesToMap(verses, preserveOrder: true),
             );
           },
         );

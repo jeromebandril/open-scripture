@@ -140,7 +140,7 @@ class _BibleViewListState extends State<BibleViewList> {
           prev.reference != curr.reference || prev.content != curr.content,
       builder: (context, state) {
         final content = state.content;
-        final unionRefs = content.computeUnion();
+        final unionRefs = state.unionRefs;
 
         return ScrollablePositionedList.separated(
           itemScrollController: _itemScrollController,
