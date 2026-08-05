@@ -93,8 +93,10 @@ class ObsLiveOverlayCubit extends Cubit<ObsLiveOverlayState> {
   void _onVerseSelected(SelectedVerseBusItem data) {
     if (!_repo.isRunning) return;
 
+    // save pending verse even if manual control is disabled
+    // so the same selected verse can be flushed again
+    _pendingVerse = data;
     if (_settings.current.enableManualControl) {
-      _pendingVerse = data;
       emit(state.copyWith(pendingVerse: () => data.ref));
       return;
     }

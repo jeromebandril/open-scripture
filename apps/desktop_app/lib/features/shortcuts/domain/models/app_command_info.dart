@@ -124,8 +124,7 @@ const List<AppCommandGroup> appCommandGroups = [
   AppCommandGroup(scope: AppCommandScope.other, commands: {
     AppCommand.flushOverlayBuffer: AppCommandInfo(
       label: 'Update overlay',
-      description:
-          'Send the queued reference to the overlay. Available only when manual control is enabled.',
+      description: 'Send the current selected verse reference to the overlay',
     ),
   })
 ];
