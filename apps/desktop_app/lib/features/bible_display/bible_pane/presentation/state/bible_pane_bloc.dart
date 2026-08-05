@@ -107,16 +107,22 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     }
 
     if (hasAtLeastOneSuccess) {
+      // before updating the state, save the current displayed refs
+      final contentRefs = state.unionRefs.toList();
+      // update the state with new translations and reset the content
       emit(state.copyWith(
         status: () => BiblePaneStatus.ready,
         content: () => ParallelBibleConfig.from(newMap),
         parallelOrder: () => event.bibleIds,
-        isNotSameBookChapter: () => false,
         repoType: () => repoType,
       ));
-      // fetch and update content if reference is not null
-      if (state.reference == null) return;
-      add(BiblePaneDisplayChapter(ref: state.reference!));
+      // fetch and restore content with updated translations
+      if (state.isNotSameBookChapter) {
+        print('Restoring content with updated translations');
+        add(BiblePaneDisplayVerses(contentRefs));
+      } else if (state.reference != null) {
+        add(BiblePaneDisplayChapter(ref: state.reference!));
+      }
     } else {
       emit(state.copyWith(
         status: () => BiblePaneStatus.error,
