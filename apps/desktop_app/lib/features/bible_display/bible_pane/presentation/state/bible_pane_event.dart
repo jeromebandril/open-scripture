@@ -18,11 +18,12 @@ class BiblePaneOpen extends BiblePaneEvent {
 
 class BiblePaneDisplayVerses extends BiblePaneEvent {
   final List<BibleRef> refs;
+  final IntentSource? source;
 
-  const BiblePaneDisplayVerses(this.refs);
+  const BiblePaneDisplayVerses(this.refs, {this.source});
 
   @override
-  List<Object> get props => [refs];
+  List<Object?> get props => [refs, source];
 }
 
 class BiblePaneDisplayChapter extends BiblePaneEvent {
