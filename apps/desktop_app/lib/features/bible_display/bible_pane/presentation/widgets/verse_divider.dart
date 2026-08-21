@@ -32,9 +32,10 @@ class VerseDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+	  final baseSpacing = BibleViewSettingsScope.of(context).verseSpacing;
     final base = DefaultTextStyle.of(context).style.fontSize ?? 14;
     final effectiveFontSize = MediaQuery.of(context).textScaler.scale(base);
-    final spacerHeight = _spacingFromFont(effectiveFontSize);
+    final spacerHeight = _spacingFromFont(effectiveFontSize, s0: baseSpacing);
 
     final isEnabled = BibleViewSettingsScope.of(context).showVerseDivider;
 

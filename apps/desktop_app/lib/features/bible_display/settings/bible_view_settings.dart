@@ -39,6 +39,7 @@ abstract class _Keys {
   static const unselectedOpacityLevel = 'unselectedOpacityLevel';
   static const enabledDisplayModes = 'enabledDisplayModes';
   static const defaultDisplayMode = 'defaultDisplayMode';
+  static const verseSpacing = 'verseSpacing';
 }
 
 class BibleViewSettings extends Equatable {
@@ -74,6 +75,7 @@ class BibleViewSettings extends Equatable {
   final bool showAlwaysFullRef;
   final HighlightRenderMode highlightRenderMode;
   final double listParallelSpacing;
+  final double verseSpacing;
 
   // --- PRESENTATION view ---
   final BibleViewTextAlign presentationTitleTextAlign;
@@ -114,6 +116,7 @@ class BibleViewSettings extends Equatable {
     this.showAlwaysFullRef = true,
     this.highlightRenderMode = HighlightRenderMode.fullRefWithColor,
     this.listParallelSpacing = 32,
+    this.verseSpacing = 32,
     this.presentationTitleTextAlign = BibleViewTextAlign.center,
     this.presentationSubtitleTextAlign = BibleViewTextAlign.center,
     this.subtitleFontWeight = BibleViewFontWeight.semiBold,
@@ -168,6 +171,7 @@ class BibleViewSettings extends Equatable {
     bool? showAlwaysFullRef,
     HighlightRenderMode? highlightRenderMode,
     double? listParallelSpacing,
+    double? verseSpacing,
     BibleViewTextAlign? presentationTitleTextAlign,
     BibleViewTextAlign? presentationSubtitleTextAlign,
     BibleViewFontWeight? subtitleFontWeight,
@@ -205,6 +209,7 @@ class BibleViewSettings extends Equatable {
       showAlwaysFullRef: showAlwaysFullRef ?? this.showAlwaysFullRef,
       highlightRenderMode: highlightRenderMode ?? this.highlightRenderMode,
       listParallelSpacing: listParallelSpacing ?? this.listParallelSpacing,
+      verseSpacing: verseSpacing ?? this.verseSpacing,
       presentationTitleTextAlign:
           presentationTitleTextAlign ?? this.presentationTitleTextAlign,
       presentationSubtitleTextAlign:
@@ -247,6 +252,7 @@ class BibleViewSettings extends Equatable {
         _Keys.showAlwaysFullRef: showAlwaysFullRef,
         _Keys.highlightRenderMode: highlightRenderMode.wire,
         _Keys.listParallelSpacing: listParallelSpacing,
+        _Keys.verseSpacing: verseSpacing,
         _Keys.presentationTitleTextAlign: presentationTitleTextAlign.wire,
         _Keys.presentationSubtitleTextAlign: presentationSubtitleTextAlign.wire,
         _Keys.subtitleFontWeight: subtitleFontWeight.wire,
@@ -323,6 +329,8 @@ class BibleViewSettings extends Equatable {
       listParallelSpacing:
           (json[_Keys.listParallelSpacing] as num?)?.toDouble() ??
               defaults.listParallelSpacing,
+      verseSpacing: (json[_Keys.verseSpacing] as num?)?.toDouble() ??
+          defaults.verseSpacing,
       presentationTitleTextAlign: json[_Keys.presentationTitleTextAlign] != null
           ? BibleViewTextAlignWire.fromWire(
               json[_Keys.presentationTitleTextAlign] as String)
@@ -376,6 +384,7 @@ class BibleViewSettings extends Equatable {
         showAlwaysFullRef,
         highlightRenderMode,
         listParallelSpacing,
+        verseSpacing,
         presentationTitleTextAlign,
         presentationSubtitleTextAlign,
         subtitleFontWeight,

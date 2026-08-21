@@ -84,6 +84,20 @@ class _BibleViewListSettingsTabState extends State<BibleViewListSettingsTab> {
                             value: m, label: m.wire))
                         .toList(),
                   )),
+              Setting(
+                  label: 'Verse spacing (base)',
+                  description: 'Base gap between a verse and the next verse',
+                  child: AppInputNumber(
+                    max: 64,
+                    min: 0,
+                    value: context.select(
+                        (SettingsCubit<BibleViewSettings> c) =>
+                            c.state.verseSpacing),
+                    onChanged: (v) {
+                      cubit.update(
+                          (s) => s.copyWith(verseSpacing: v.toDouble()));
+                    },
+                  )),
             ],
           ),
           SettingSection(
