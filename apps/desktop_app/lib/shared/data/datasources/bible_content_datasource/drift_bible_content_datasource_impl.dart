@@ -18,13 +18,13 @@ class DriftBibleContentDataSourceImpl implements BibleContentDatasource {
   ) async {
     final List<VerseSegmentDto> result;
     try {
-      result = await _dao.getChapter(bibleExtId, book.usfm, chapter);
+      result = await _dao.getChapter(bibleExtId, book.canonical, chapter);
     } catch (e) {
       throw Exception('Failed to query chapter: $e');
     }
 
     if (result.isEmpty) {
-      throw NotFoundException('No verses found for ${book.usfm} $chapter');
+      throw NotFoundException('No verses found for ${book.canonical} $chapter');
     }
     return result;
   }

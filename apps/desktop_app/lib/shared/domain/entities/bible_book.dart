@@ -40,7 +40,7 @@ enum BibleBook {
   isaiah(osis: 'Isa', usfm: 'ISA', canonical: 'ISA', osisIndex: 23, testament: Testament.oldTestament, englishName: 'Isaiah', englishAliases: []),
   jeremiah(osis: 'Jer', usfm: 'JER', canonical: 'JER', osisIndex: 24, testament: Testament.oldTestament, englishName: 'Jeremiah', englishAliases: []),
   lamentations(osis: 'Lam', usfm: 'LAM', canonical: 'LAM', osisIndex: 25, testament: Testament.oldTestament, englishName: 'Lamentations', englishAliases: []),
-  ezekiel(osis: 'Ezek', usfm: 'EZE', canonical: 'EZE', osisIndex: 26, testament: Testament.oldTestament, englishName: 'Ezekiel', englishAliases: []),
+  ezekiel(osis: 'Ezek', usfm: 'EZK', canonical: 'EZE', osisIndex: 26, testament: Testament.oldTestament, englishName: 'Ezekiel', englishAliases: []),
   daniel(osis: 'Dan', usfm: 'DAN', canonical: 'DAN', osisIndex: 27, testament: Testament.oldTestament, englishName: 'Daniel', englishAliases: []),
   hosea(osis: 'Hos', usfm: 'HOS', canonical: 'HOS', osisIndex: 28, testament: Testament.oldTestament, englishName: 'Hosea', englishAliases: []),
   joel(osis: 'Joel', usfm: 'JOL', canonical: 'JOL', osisIndex: 29, testament: Testament.oldTestament, englishName: 'Joel', englishAliases: []),
