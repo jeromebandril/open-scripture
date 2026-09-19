@@ -3,16 +3,21 @@
   "id": "kjv-en",
   "name": "KJV Pericopes",
   "language": "eng",
-  "version": 1,
+  "version": 2,
   "attribution": "Public domain (King James Version)",
   "pericopes": [
     {
       "title": "The Creation of the Heavens and the Earth",
       "start": "GEN.1.1",
+      "end": "GEN.1.31"
+    },
+    {
+      "title": "The Seventh Day, God Rests",
+      "start": "GEN.2.1",
       "end": "GEN.2.3"
     },
     {
-      "title": "Adam and Eve in the Garden of Eden",
+      "title": "The Creation of Man and Woman",
       "start": "GEN.2.4",
       "end": "GEN.2.25"
     },
@@ -22,12 +27,17 @@
       "end": "GEN.3.24"
     },
     {
-      "title": "The Descendants of Adam",
+      "title": "The Descendants of Adam: Cain and Abel",
       "start": "GEN.4.1",
+      "end": "GEN.4.26"
+    },
+    {
+      "title": "Adam's Descendants to Noah",
+      "start": "GEN.5.1",
       "end": "GEN.5.32"
     },
     {
-      "title": "Corruption on the Earth",
+      "title": "Increasing Corruption on the Earth",
       "start": "GEN.6.1",
       "end": "GEN.6.7"
     },
@@ -12787,163 +12797,38 @@
       "end": "REV.1.20"
     },
     {
-      "title": "The Authority",
+      "title": "To the Church in Ephesus",
       "start": "REV.2.1",
-      "end": "REV.2.1"
-    },
-    {
-      "title": "The Praise",
-      "start": "REV.2.2",
-      "end": "REV.2.3"
-    },
-    {
-      "title": "The Grievance",
-      "start": "REV.2.4",
-      "end": "REV.2.4"
-    },
-    {
-      "title": "The Warning",
-      "start": "REV.2.5",
-      "end": "REV.2.5"
-    },
-    {
-      "title": "The Second Praise",
-      "start": "REV.2.6",
-      "end": "REV.2.6"
-    },
-    {
-      "title": "The Promise",
-      "start": "REV.2.7",
       "end": "REV.2.7"
     },
     {
-      "title": "The Authority",
+      "title": "To the Church in Smyrna",
       "start": "REV.2.8",
-      "end": "REV.2.8"
-    },
-    {
-      "title": "The Grievance",
-      "start": "REV.2.9",
-      "end": "REV.2.9"
-    },
-    {
-      "title": "The Warning",
-      "start": "REV.2.10",
-      "end": "REV.2.10"
-    },
-    {
-      "title": "The Promise",
-      "start": "REV.2.11",
       "end": "REV.2.11"
     },
     {
-      "title": "The Authority",
+      "title": "To the Church in Pergamum",
       "start": "REV.2.12",
-      "end": "REV.2.12"
-    },
-    {
-      "title": "The Praise",
-      "start": "REV.2.13",
-      "end": "REV.2.13"
-    },
-    {
-      "title": "The Grievance",
-      "start": "REV.2.14",
-      "end": "REV.2.15"
-    },
-    {
-      "title": "The Warning",
-      "start": "REV.2.16",
-      "end": "REV.2.16"
-    },
-    {
-      "title": "The Promise",
-      "start": "REV.2.17",
       "end": "REV.2.17"
     },
     {
-      "title": "The Authority",
+      "title": "To the Church in Thyatira",
       "start": "REV.2.18",
-      "end": "REV.2.18"
-    },
-    {
-      "title": "The Praise",
-      "start": "REV.2.19",
-      "end": "REV.2.19"
-    },
-    {
-      "title": "The Grievance",
-      "start": "REV.2.20",
-      "end": "REV.2.21"
-    },
-    {
-      "title": "The Warning",
-      "start": "REV.2.22",
-      "end": "REV.2.23"
-    },
-    {
-      "title": "The Promise",
-      "start": "REV.2.24",
       "end": "REV.2.29"
     },
     {
-      "title": "The Grievance",
+      "title": "To the Church in Sardis",
       "start": "REV.3.1",
-      "end": "REV.3.1"
-    },
-    {
-      "title": "The Warning",
-      "start": "REV.3.2",
-      "end": "REV.3.3"
-    },
-    {
-      "title": "Few Praised",
-      "start": "REV.3.4",
-      "end": "REV.3.4"
-    },
-    {
-      "title": "The Promise",
-      "start": "REV.3.5",
       "end": "REV.3.6"
     },
     {
-      "title": "The Authority",
+      "title": "To the Church in Philadelphia",
       "start": "REV.3.7",
-      "end": "REV.3.7"
-    },
-    {
-      "title": "The Praise",
-      "start": "REV.3.8",
-      "end": "REV.3.8"
-    },
-    {
-      "title": "The Promise",
-      "start": "REV.3.9",
       "end": "REV.3.13"
     },
     {
-      "title": "The Authority",
+      "title": "To the Church in Laodicea",
       "start": "REV.3.14",
-      "end": "REV.3.14"
-    },
-    {
-      "title": "The Grievance",
-      "start": "REV.3.15",
-      "end": "REV.3.15"
-    },
-    {
-      "title": "The Warning",
-      "start": "REV.3.16",
-      "end": "REV.3.17"
-    },
-    {
-      "title": "The Counsel",
-      "start": "REV.3.18",
-      "end": "REV.3.18"
-    },
-    {
-      "title": "The Promise",
-      "start": "REV.3.19",
       "end": "REV.3.22"
     },
     {
