@@ -96,13 +96,22 @@ class _AppInputNumberState extends State<AppInputNumber> {
       controller: _controller,
       style: Theme.of(context).textTheme.bodyMedium,
       keyboardType: TextInputType.numberWithOptions(
-        signed: false,
+        signed: true,
         decimal: widget.decimal,
       ),
       inputFormatters: [
-        widget.decimal
-            ? FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
-            : FilteringTextInputFormatter.digitsOnly,
+        if (widget.decimal) ...[
+          // Allow digits, dots, and commas, keeping only one decimal separator
+          FilteringTextInputFormatter.allow(RegExp(r'^-?\d*[\.,]?\d*')),
+          // Automatically replace comma with dot for consistency
+          TextInputFormatter.withFunction((oldValue, newValue) {
+            return newValue.copyWith(
+              text: newValue.text.replaceAll(',', '.'),
+            );
+          }),
+        ] else ...[
+          FilteringTextInputFormatter.allow(RegExp(r'^-?\d*')),
+        ],
       ],
       onChanged: (text) {
         final num? n = _parsed;
