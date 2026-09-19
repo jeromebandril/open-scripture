@@ -18,6 +18,7 @@ enum AppCommand {
   zoomIn,
   zoomOut,
   flushOverlayBuffer,
+  openSettings,
   // private shortcuts
   // do not show as shortcut in the app
   closeWhatever,

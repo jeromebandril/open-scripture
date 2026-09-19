@@ -6,6 +6,7 @@ import '../../features/bible_display/bible_pane/domain/repositories/bible_pane_r
 import '../../features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../../features/bible_searchbar/search/presentation/state/search_bloc.dart';
 import '../../features/shortcuts/presentation/models/app_command_dispatcher.dart';
+import '../../features/window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import '../../shared/data/repositories/bible_pane_repository_factory_impl.dart';
 import '../../shared/domain/repositories/bible_pane_repository_factory.dart';
 import '../../shared/enums/bible_repository_type.dart';
@@ -27,11 +28,11 @@ Future<void> init(GetIt sl) async {
 
   sl.registerLazySingleton(
     () => AppCommandDispatcher(
-      paneManagerCubit: () => sl<MultiPaneManagerCubit>(),
-      searchbarBloc: () => sl<SearchBloc>(),
-      fullscreenCubit: () => sl<FullscreenCubit>(),
-      interfaceVisibilityCubit: () => sl<InterfaceVisibilityCubit>(),
-    ),
+        paneManagerCubit: () => sl<MultiPaneManagerCubit>(),
+        searchbarBloc: () => sl<SearchBloc>(),
+        fullscreenCubit: () => sl<FullscreenCubit>(),
+        interfaceVisibilityCubit: () => sl<InterfaceVisibilityCubit>(),
+        windowStackManagerBloc: () => sl<WindowStackManagerBloc>()),
   );
 }
 

@@ -109,7 +109,7 @@ Future<void> init(GetIt sl) async {
       searchIntentBus: sl(), bookResolver: sl(), searchResultBus: sl()));
 
   // init window stack manager
-  sl.registerFactory(() => WindowStackManagerBloc());
+  sl.registerLazySingleton(() => WindowStackManagerBloc());
   sl.registerFactoryParam<BibleSelectorCubit, List<BibleId>,
       BibleRepositoryType>((selectedIds,
           repoType) =>

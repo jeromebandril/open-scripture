@@ -126,5 +126,9 @@ const List<AppCommandGroup> appCommandGroups = [
       label: 'Update overlay',
       description: 'Send the current selected verse reference to the overlay',
     ),
-  })
+    AppCommand.openSettings: AppCommandInfo(
+      label: 'Open Settings quickly',
+      description: 'Open the application settings dialog',
+    ),
+  }),
 ];
