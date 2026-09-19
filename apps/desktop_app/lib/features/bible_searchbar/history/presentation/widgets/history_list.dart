@@ -63,7 +63,7 @@ class HistoryList extends StatelessWidget {
                 ),
               },
               child: Column(
-                spacing: 8,
+                spacing: AppSpacing.sm,
                 children: [
                   Expanded(
                     child: state.history.isEmpty
@@ -84,7 +84,7 @@ class HistoryList extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
-                      spacing: 8,
+                      spacing: AppSpacing.sm,
                       children: [
                         Text('Press'),
                         ShortcutView(

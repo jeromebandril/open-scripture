@@ -89,6 +89,11 @@ class AppShell extends StatelessWidget {
                         right: 0,
                         width: 350,
                         height: 250,
+                        padding: const EdgeInsets.only(
+                            right: 0,
+                            left: 0,
+                            top: AppSpacing.lg,
+                            bottom: AppSpacing.md),
                         child: const HistoryList(size: HistoryListSize.big),
                       )
                     ],
