@@ -5,7 +5,6 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import '../../../../../core/settings/settings_cubit.dart';
 import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../../shared/domain/entities/verse.dart';
-import '../../../settings/presentation/models/bible_view_font_weight_flutter.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../../../settings/bible_view_settings.dart';
 import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
@@ -257,10 +256,6 @@ class _VerseWidget extends StatelessWidget {
           Expanded(
             child: SelectableText.rich(
               TextSpan(
-                style: TextStyle(
-                  height: 1.25,
-                  fontWeight: viewSettings.verseFontWeight.toFlutter(),
-                ),
                 children: [
                   TextSpan(text: refLabel, style: refStyle),
                   const TextSpan(text: '  '),

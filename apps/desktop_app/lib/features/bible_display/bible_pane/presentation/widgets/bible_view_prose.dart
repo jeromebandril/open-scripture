@@ -296,7 +296,7 @@ class _BibleViewProseState extends State<BibleViewProse> {
           VerseSpanBuilder.build(
             spans: segment.spans,
             context: context,
-            baseStyle: verseBaseStyle,
+            addStyle: verseBaseStyle,
             colorAlpha: viewSettings.emphasizeSelectedVerses && !isHighlighted
                 ? (viewSettings.unselectedOpacityLevel * 255).toInt()
                 : null,

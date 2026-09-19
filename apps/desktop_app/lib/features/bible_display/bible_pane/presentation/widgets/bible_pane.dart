@@ -63,7 +63,6 @@ class BiblePane extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewSettings = BibleViewSettingsScope.of(context);
     final appTheme = Theme.of(context);
-
     // A BiblePane is self dependent. The bloc components are injected
     // externally, for instance by a splitscreen manager
     //

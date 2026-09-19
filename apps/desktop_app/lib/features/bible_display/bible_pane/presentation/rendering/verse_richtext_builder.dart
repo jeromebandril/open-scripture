@@ -2,8 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../shared/domain/entities/verse.dart';
-import '../../../settings/presentation/models/bible_view_font_weight_flutter.dart';
 import '../../../settings/bible_view_settings.dart';
+import '../../../settings/presentation/models/bible_view_font_weight_flutter.dart';
 import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
 
 const _strongWordBold = 'H0430';
@@ -12,7 +12,8 @@ class VerseSpanBuilder {
   static List<InlineSpan> build({
     required List<VerseSpan> spans,
     required BuildContext context,
-    TextStyle? baseStyle,
+    // Additional style on top of base style
+    TextStyle? addStyle,
     void Function(VerseSpan span)? onWordTap,
     VoidCallback? onVerseTap,
     int? colorAlpha,
@@ -21,7 +22,14 @@ class VerseSpanBuilder {
 
     final appTheme = Theme.of(context);
     final viewSettings = BibleViewSettingsScope.of(context);
-    final base = baseStyle ?? const TextStyle();
+    // apply here base style from Bible View Settings
+    final base = TextStyle(
+      letterSpacing: viewSettings.verseLetterSpacing,
+      fontWeight: viewSettings.verseFontWeight.toFlutter(),
+      color: viewSettings.useAppTheme
+          ? appTheme.colorScheme.onSurfaceVariant
+          : viewSettings.verseColor,
+    ).merge(addStyle);
 
     return spans.map((span) {
       final isStrongsWord = span.activeStyles.contains(SpanType.strongs);
@@ -34,17 +42,9 @@ class VerseSpanBuilder {
       }
 
       TextStyle style = _buildCombinedStyle(span, base, viewSettings);
-      if (style.color == null) {
-        style = style.copyWith(
-          color: viewSettings.useAppTheme
-              ? appTheme.colorScheme.onSurfaceVariant
-              : viewSettings.verseColor,
-        );
-      }
       if (colorAlpha != null) {
         style = style.copyWith(color: style.color!.withAlpha(colorAlpha));
       }
-
       return TextSpan(
         text: span.text,
         // Apply all styles cumulatively

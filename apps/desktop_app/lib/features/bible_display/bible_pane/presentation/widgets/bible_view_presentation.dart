@@ -165,11 +165,7 @@ class BibleViewPresentation extends StatelessWidget {
       blocks.add((
         subtitle: subtitle,
         content: Text.rich(
-          TextSpan(
-            style:
-                TextStyle(fontWeight: viewSettings.verseFontWeight.toFlutter()),
-            children: children,
-          ),
+          TextSpan(children: children),
           textAlign: viewSettings.presentationSubtitleTextAlign.toFlutter(),
         ),
       ));
