@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/settings/settings_cubit.dart';
+import '../../../../features/bible_display/settings/bible_view_settings.dart';
 import '../../../../features/bible_searchbar/settings/search_settings.dart';
 import '../../../../features/settings_window/presentation/widgets/setting.dart';
 import '../../../../features/settings_window/presentation/widgets/setting_section.dart';
@@ -99,6 +100,19 @@ class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
                       context
                           .read<SettingsCubit<SearchSettings>>()
                           .update((s) => s.copyWith(enableBookSuggestion: val));
+                    },
+                  )),
+              Setting(
+                  label: 'Enable auto-scroll to verse',
+                  description:
+                      'Automatically scroll to the verse when navigating to a reference',
+                  child: AppInputBool(
+                    value: context.select(
+                        (SettingsCubit<BibleViewSettings> c) =>
+                            c.state.enableAutoScrollToVerse),
+                    onChanged: (val) {
+                      context.read<SettingsCubit<BibleViewSettings>>().update(
+                          (s) => s.copyWith(enableAutoScrollToVerse: val));
                     },
                   )),
             ],
