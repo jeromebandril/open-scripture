@@ -41,6 +41,7 @@ abstract class _Keys {
   static const defaultDisplayMode = 'defaultDisplayMode';
   static const verseSpacing = 'verseSpacing';
   static const verseLetterSpacing = 'verseLetterSpacing';
+  static const enablePericope = 'enablePericope';
 }
 
 class BibleViewSettings extends Equatable {
@@ -68,6 +69,7 @@ class BibleViewSettings extends Equatable {
   final bool useAppTheme;
   final bool enableStrongWordsRender;
   // special render
+  final bool enablePericope;
   final Color quoteColor;
   final Color addColor;
 
@@ -110,6 +112,7 @@ class BibleViewSettings extends Equatable {
       DisplayMode.presentation
     ],
     this.defaultDisplayMode = DisplayMode.list,
+    this.enablePericope = true,
     this.quoteColor = const Color(0xFFE04A4A),
     this.addColor = const Color(0xFFD2D2D2),
     this.enableStrongWordsRender = false,
@@ -167,6 +170,7 @@ class BibleViewSettings extends Equatable {
     double? splitscreenGap,
     List<DisplayMode>? enabledDisplayModes,
     DisplayMode? defaultDisplayMode,
+    bool? enablePericope,
     Color? quoteColor,
     Color? addColor,
     bool? enableStrongWordsRender,
@@ -206,6 +210,7 @@ class BibleViewSettings extends Equatable {
       splitscreenGap: splitscreenGap ?? this.splitscreenGap,
       enabledDisplayModes: enabledDisplayModes ?? this.enabledDisplayModes,
       defaultDisplayMode: defaultDisplayMode ?? this.defaultDisplayMode,
+      enablePericope: enablePericope ?? this.enablePericope,
       quoteColor: quoteColor ?? this.quoteColor,
       addColor: addColor ?? this.addColor,
       enableStrongWordsRender:
@@ -252,6 +257,7 @@ class BibleViewSettings extends Equatable {
         _Keys.enabledDisplayModes:
             enabledDisplayModes.map((e) => e.name).toList(),
         _Keys.defaultDisplayMode: defaultDisplayMode.name,
+        _Keys.enablePericope: enablePericope,
         _Keys.quoteColor: ColorsUtil.colorToHex(quoteColor),
         _Keys.addColor: ColorsUtil.colorToHex(addColor),
         _Keys.enableStrongWordsRender: enableStrongWordsRender,
@@ -314,6 +320,8 @@ class BibleViewSettings extends Equatable {
       defaultDisplayMode: (json[_Keys.defaultDisplayMode] as String?) != null
           ? DisplayMode.values.byName(json[_Keys.defaultDisplayMode] as String)
           : defaults.defaultDisplayMode,
+      enablePericope:
+          json[_Keys.enablePericope] as bool? ?? defaults.enablePericope,
       quoteColor: json[_Keys.quoteColor] != null
           ? Color(ColorsUtil.parseHex(json[_Keys.quoteColor] as String))
           : defaults.quoteColor,
@@ -388,6 +396,7 @@ class BibleViewSettings extends Equatable {
         splitscreenGap,
         enabledDisplayModes,
         defaultDisplayMode,
+        enablePericope,
         quoteColor,
         addColor,
         enableStrongWordsRender,

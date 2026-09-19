@@ -199,6 +199,7 @@ void _registerLocalDatabaseBible(GetIt sl) {
       contentDatasource: sl.get(instanceName: type.name),
       catalogDatasource:
           sl.get<BibleCatalogDatasource>(instanceName: type.name),
+      pericopeDatasource: sl(),
     ),
     instanceName: type.name,
   );
@@ -264,9 +265,11 @@ void _registerCloudBible(GetIt sl) {
   );
   sl.registerLazySingleton<BiblePaneRepository>(
       () => BiblePaneRepositoryImpl(
-          contentDatasource: sl.get(instanceName: type.name),
-          catalogDatasource:
-              sl.get<BibleCatalogDatasource>(instanceName: type.name)),
+            contentDatasource: sl.get(instanceName: type.name),
+            catalogDatasource:
+                sl.get<BibleCatalogDatasource>(instanceName: type.name),
+            pericopeDatasource: sl(),
+          ),
       instanceName: type.name);
   sl.registerLazySingleton<MyLibraryCubit>(
       () => MyLibraryCubit(

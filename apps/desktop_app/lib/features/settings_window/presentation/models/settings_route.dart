@@ -6,6 +6,7 @@ import '../../../bible_display/settings/presentation/pages/bible_view_settings_p
 import '../../../bible_importer/presentation/pages/importer_page.dart';
 import '../../../my_library/presentation/pages/library_manager_page.dart';
 import '../../../obs_live_overlay/presentation/pages/obs_live_overlay_settings_page.dart';
+import '../../../pericopes_mgr/presentation/pages/pericopes_mgr_page.dart';
 import '../../../remote_controller/presentation/pages/remote_controller_settings_page.dart';
 import '../../../shortcuts/presentation/pages/shortcuts_screen.dart';
 import '../pages/about_setting_page.dart';
@@ -43,6 +44,12 @@ enum SettingsPage {
     route: '/biblemanager/importer',
     name: 'Import',
     icon: LucideIcons.download,
+    group: SettingsGroup.bibleManager,
+  ),
+  pericopes(
+    route: '/biblemanager/pericopes',
+    name: 'Pericopes',
+    icon: LucideIcons.squareDashedText,
     group: SettingsGroup.bibleManager,
   ),
   obsLiveOverlay(
@@ -103,6 +110,7 @@ final Map<SettingsPage, WidgetBuilder> settingsBuilders = {
   SettingsPage.bibleViewer: (_) => const BibleViewSettingsPage(),
   SettingsPage.library: (_) => const LibrariesPage(),
   SettingsPage.importer: (_) => const ImporterPage(),
+  SettingsPage.pericopes: (_) => const PericopesMgrPage(),
   SettingsPage.obsLiveOverlay: (_) => const ObsLiveOverlaySettingsPage(),
   SettingsPage.remoteController: (_) => const RemoteControllerSettingsPage(),
   SettingsPage.shortcuts: (_) => const ShortcutsScreen(),

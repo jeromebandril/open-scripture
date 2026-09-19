@@ -14,7 +14,8 @@ part 'database.g.dart';
 
 @DriftDatabase(
   include: {
-    'tables/core_tables.drift',
+    'tables/core_tables_schema.drift',
+    'tables/pericopes_schema.drift',
     // TODO: disable for the moment, until refactor is complete
     // 'tables/verse_fts5.drift',
   },

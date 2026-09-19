@@ -20,6 +20,7 @@ import '../../features/obs_live_overlay/domain/repostiory/overlay_repository.dar
 import '../../features/obs_live_overlay/domain/service/verse_html_formatter.dart';
 import '../../features/obs_live_overlay/presentation/state/obs_live_overlay_cubit.dart';
 import '../../features/obs_live_overlay/settings/overlay_settings.dart';
+import '../../features/pericopes_mgr/data/datasources/pericope_datasource.dart';
 import '../../features/remote_controller/data/datasource/remote_controller_ws.dart';
 import '../../features/remote_controller/data/repositories/remote_controller_repo_impl.dart';
 import '../../features/remote_controller/domain/repositories/remote_controller_repo.dart';
@@ -43,6 +44,7 @@ import '../../shared/domain/repositories/bible_install_repository.dart';
 import '../../shared/domain/repositories/bible_pane_repository_factory.dart';
 import '../../shared/enums/bible_repository_type.dart';
 import '../engines/remote_controller/remote_command_router.dart';
+import '../infrastructure/database/daos/pericopes_dao.dart';
 import '../infrastructure/event_bus/selected_verse_bus.dart';
 import '../lifecycle/app_lifecycle.dart';
 import '../lifecycle/app_lifecycle_desktop_impl.dart';
@@ -55,6 +57,7 @@ import '../settings/settings_repository.dart';
 Future<void> init(GetIt sl) async {
   _registerSwordBible(sl);
   _registerBibleSupport(sl); // importer, resolver, install repo, factory
+  _registerPericopesSupport(sl);
   _registerRemoteController(sl);
   _registerObsOverlay(sl);
   _registerShortcuts(sl);
@@ -89,7 +92,8 @@ void _registerSwordBible(GetIt sl) {
   sl.registerLazySingletonAsync<BiblePaneRepository>(
     () async => BiblePaneRepositoryImpl(
       contentDatasource: await sl.getAsync<BibleContentDatasource>(instanceName: type.name),
-      catalogDatasource: await sl.getAsync<BibleCatalogDatasource>(instanceName: type.name),
+      catalogDatasource: await sl.getAsync<BibleCatalogDatasource>(instanceName: type.name), 
+      pericopeDatasource: sl(),
     ),
     instanceName: type.name,
   );
@@ -245,9 +249,13 @@ void _registerShortcuts(GetIt sl) {
   );
 }
 
+void _registerPericopesSupport(GetIt sl) {
+  sl.registerLazySingleton(() => PericopesDao(sl()));
+  sl.registerLazySingleton<PericopeDatasource>(() => PericopeDatasourceImpl(sl()));
+}
+
 // Called once from main.dart right after init() completes. this is where
 // "core" is actually decided, not in the registration style above.
 void warmUp(GetIt sl) {
   sl<AppLifecycleService>();
 }
-

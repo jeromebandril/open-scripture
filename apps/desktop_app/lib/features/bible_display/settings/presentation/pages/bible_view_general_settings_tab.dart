@@ -186,6 +186,20 @@ class _BibleViewGeneralSettingsTabState
                   title: 'Render options',
                   children: [
                     Setting(
+                        label: 'Render pericope headings',
+                        description:
+                            'Render pericope headings if available in the bible text, or use default headings',
+                        settingWidth: 100,
+                        child: AppInputBool(
+                          value: context.select(
+                              (SettingsCubit<BibleViewSettings> c) =>
+                                  c.state.enablePericope),
+                          onChanged: (val) {
+                            cubit
+                                .update((p) => p.copyWith(enablePericope: val));
+                          },
+                        )),
+                    Setting(
                         label: 'Quote color',
                         description:
                             'Set color for the verse quotes (usually "word of jesus")',

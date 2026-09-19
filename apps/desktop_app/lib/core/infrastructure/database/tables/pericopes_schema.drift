@@ -1,0 +1,28 @@
+import 'core_tables_schema.drift';
+
+CREATE TABLE pericope_sets (
+    id INTEGER PRIMARY KEY,
+    extId TEXT NOT NULL UNIQUE,   -- "id" from the file, e.g. 'kjv-en'
+    langIsoCode TEXT NOT NULL,    -- language the titles are written in
+    versionNumber INTEGER NOT NULL DEFAULT 1,
+    attribution TEXT
+) STRICT;
+
+CREATE TABLE pericopes (
+    setId INTEGER NOT NULL,
+    bookId INTEGER NOT NULL,
+    startChapter INTEGER NOT NULL,
+    startVerse INTEGER NOT NULL,
+    endChapter INTEGER NOT NULL,
+    endVerse INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    PRIMARY KEY (setId, bookId, startChapter, startVerse),
+    FOREIGN KEY (setId) REFERENCES pericope_sets(id) ON DELETE CASCADE,
+    FOREIGN KEY (bookId) REFERENCES canonical_books(id) ON DELETE RESTRICT
+) STRICT, WITHOUT ROWID;
+
+CREATE TABLE pericope_assignments (
+    langIsoCode TEXT PRIMARY KEY, -- same codes as languages.isoCode
+    setId INTEGER,                -- NULL = user explicitly chose "none"
+    FOREIGN KEY (setId) REFERENCES pericope_sets(id) ON DELETE CASCADE
+) STRICT, WITHOUT ROWID;

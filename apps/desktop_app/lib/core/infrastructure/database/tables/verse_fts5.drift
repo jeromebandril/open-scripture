@@ -1,4 +1,4 @@
-import 'core_tables.drift';
+import 'core_tables_schema.drift';
 
 CREATE TABLE verse_text (
   id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,

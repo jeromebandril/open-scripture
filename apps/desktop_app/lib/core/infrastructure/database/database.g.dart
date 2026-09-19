@@ -3,6 +3,1149 @@
 part of 'database.dart';
 
 // ignore_for_file: type=lint
+class PericopeSets extends Table with TableInfo<PericopeSets, PericopeSet> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  PericopeSets(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      $customConstraints: 'PRIMARY KEY');
+  static const VerificationMeta _extIdMeta = const VerificationMeta('extId');
+  late final GeneratedColumn<String> extId = GeneratedColumn<String>(
+      'extId', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL UNIQUE');
+  static const VerificationMeta _langIsoCodeMeta =
+      const VerificationMeta('langIsoCode');
+  late final GeneratedColumn<String> langIsoCode = GeneratedColumn<String>(
+      'langIsoCode', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _versionNumberMeta =
+      const VerificationMeta('versionNumber');
+  late final GeneratedColumn<int> versionNumber = GeneratedColumn<int>(
+      'versionNumber', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      $customConstraints: 'NOT NULL DEFAULT 1',
+      defaultValue: const CustomExpression('1'));
+  static const VerificationMeta _attributionMeta =
+      const VerificationMeta('attribution');
+  late final GeneratedColumn<String> attribution = GeneratedColumn<String>(
+      'attribution', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, extId, langIsoCode, versionNumber, attribution];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'pericope_sets';
+  @override
+  VerificationContext validateIntegrity(Insertable<PericopeSet> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('extId')) {
+      context.handle(
+          _extIdMeta, extId.isAcceptableOrUnknown(data['extId']!, _extIdMeta));
+    } else if (isInserting) {
+      context.missing(_extIdMeta);
+    }
+    if (data.containsKey('langIsoCode')) {
+      context.handle(
+          _langIsoCodeMeta,
+          langIsoCode.isAcceptableOrUnknown(
+              data['langIsoCode']!, _langIsoCodeMeta));
+    } else if (isInserting) {
+      context.missing(_langIsoCodeMeta);
+    }
+    if (data.containsKey('versionNumber')) {
+      context.handle(
+          _versionNumberMeta,
+          versionNumber.isAcceptableOrUnknown(
+              data['versionNumber']!, _versionNumberMeta));
+    }
+    if (data.containsKey('attribution')) {
+      context.handle(
+          _attributionMeta,
+          attribution.isAcceptableOrUnknown(
+              data['attribution']!, _attributionMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  PericopeSet map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PericopeSet(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      extId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}extId'])!,
+      langIsoCode: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}langIsoCode'])!,
+      versionNumber: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}versionNumber'])!,
+      attribution: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}attribution']),
+    );
+  }
+
+  @override
+  PericopeSets createAlias(String alias) {
+    return PericopeSets(attachedDatabase, alias);
+  }
+
+  @override
+  bool get isStrict => true;
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class PericopeSet extends DataClass implements Insertable<PericopeSet> {
+  final int id;
+  final String extId;
+
+  /// "id" from the file, e.g. 'kjv-en'
+  final String langIsoCode;
+
+  /// language the titles are written in
+  final int versionNumber;
+  final String? attribution;
+  const PericopeSet(
+      {required this.id,
+      required this.extId,
+      required this.langIsoCode,
+      required this.versionNumber,
+      this.attribution});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['extId'] = Variable<String>(extId);
+    map['langIsoCode'] = Variable<String>(langIsoCode);
+    map['versionNumber'] = Variable<int>(versionNumber);
+    if (!nullToAbsent || attribution != null) {
+      map['attribution'] = Variable<String>(attribution);
+    }
+    return map;
+  }
+
+  PericopeSetsCompanion toCompanion(bool nullToAbsent) {
+    return PericopeSetsCompanion(
+      id: Value(id),
+      extId: Value(extId),
+      langIsoCode: Value(langIsoCode),
+      versionNumber: Value(versionNumber),
+      attribution: attribution == null && nullToAbsent
+          ? const Value.absent()
+          : Value(attribution),
+    );
+  }
+
+  factory PericopeSet.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PericopeSet(
+      id: serializer.fromJson<int>(json['id']),
+      extId: serializer.fromJson<String>(json['extId']),
+      langIsoCode: serializer.fromJson<String>(json['langIsoCode']),
+      versionNumber: serializer.fromJson<int>(json['versionNumber']),
+      attribution: serializer.fromJson<String?>(json['attribution']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'extId': serializer.toJson<String>(extId),
+      'langIsoCode': serializer.toJson<String>(langIsoCode),
+      'versionNumber': serializer.toJson<int>(versionNumber),
+      'attribution': serializer.toJson<String?>(attribution),
+    };
+  }
+
+  PericopeSet copyWith(
+          {int? id,
+          String? extId,
+          String? langIsoCode,
+          int? versionNumber,
+          Value<String?> attribution = const Value.absent()}) =>
+      PericopeSet(
+        id: id ?? this.id,
+        extId: extId ?? this.extId,
+        langIsoCode: langIsoCode ?? this.langIsoCode,
+        versionNumber: versionNumber ?? this.versionNumber,
+        attribution: attribution.present ? attribution.value : this.attribution,
+      );
+  PericopeSet copyWithCompanion(PericopeSetsCompanion data) {
+    return PericopeSet(
+      id: data.id.present ? data.id.value : this.id,
+      extId: data.extId.present ? data.extId.value : this.extId,
+      langIsoCode:
+          data.langIsoCode.present ? data.langIsoCode.value : this.langIsoCode,
+      versionNumber: data.versionNumber.present
+          ? data.versionNumber.value
+          : this.versionNumber,
+      attribution:
+          data.attribution.present ? data.attribution.value : this.attribution,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PericopeSet(')
+          ..write('id: $id, ')
+          ..write('extId: $extId, ')
+          ..write('langIsoCode: $langIsoCode, ')
+          ..write('versionNumber: $versionNumber, ')
+          ..write('attribution: $attribution')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, extId, langIsoCode, versionNumber, attribution);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PericopeSet &&
+          other.id == this.id &&
+          other.extId == this.extId &&
+          other.langIsoCode == this.langIsoCode &&
+          other.versionNumber == this.versionNumber &&
+          other.attribution == this.attribution);
+}
+
+class PericopeSetsCompanion extends UpdateCompanion<PericopeSet> {
+  final Value<int> id;
+  final Value<String> extId;
+  final Value<String> langIsoCode;
+  final Value<int> versionNumber;
+  final Value<String?> attribution;
+  const PericopeSetsCompanion({
+    this.id = const Value.absent(),
+    this.extId = const Value.absent(),
+    this.langIsoCode = const Value.absent(),
+    this.versionNumber = const Value.absent(),
+    this.attribution = const Value.absent(),
+  });
+  PericopeSetsCompanion.insert({
+    this.id = const Value.absent(),
+    required String extId,
+    required String langIsoCode,
+    this.versionNumber = const Value.absent(),
+    this.attribution = const Value.absent(),
+  })  : extId = Value(extId),
+        langIsoCode = Value(langIsoCode);
+  static Insertable<PericopeSet> custom({
+    Expression<int>? id,
+    Expression<String>? extId,
+    Expression<String>? langIsoCode,
+    Expression<int>? versionNumber,
+    Expression<String>? attribution,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (extId != null) 'extId': extId,
+      if (langIsoCode != null) 'langIsoCode': langIsoCode,
+      if (versionNumber != null) 'versionNumber': versionNumber,
+      if (attribution != null) 'attribution': attribution,
+    });
+  }
+
+  PericopeSetsCompanion copyWith(
+      {Value<int>? id,
+      Value<String>? extId,
+      Value<String>? langIsoCode,
+      Value<int>? versionNumber,
+      Value<String?>? attribution}) {
+    return PericopeSetsCompanion(
+      id: id ?? this.id,
+      extId: extId ?? this.extId,
+      langIsoCode: langIsoCode ?? this.langIsoCode,
+      versionNumber: versionNumber ?? this.versionNumber,
+      attribution: attribution ?? this.attribution,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (extId.present) {
+      map['extId'] = Variable<String>(extId.value);
+    }
+    if (langIsoCode.present) {
+      map['langIsoCode'] = Variable<String>(langIsoCode.value);
+    }
+    if (versionNumber.present) {
+      map['versionNumber'] = Variable<int>(versionNumber.value);
+    }
+    if (attribution.present) {
+      map['attribution'] = Variable<String>(attribution.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PericopeSetsCompanion(')
+          ..write('id: $id, ')
+          ..write('extId: $extId, ')
+          ..write('langIsoCode: $langIsoCode, ')
+          ..write('versionNumber: $versionNumber, ')
+          ..write('attribution: $attribution')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class CanonicalBooks extends Table
+    with TableInfo<CanonicalBooks, CanonicalBook> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  CanonicalBooks(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      $customConstraints: 'PRIMARY KEY');
+  static const VerificationMeta _bookTokenMeta =
+      const VerificationMeta('bookToken');
+  late final GeneratedColumn<String> bookToken = GeneratedColumn<String>(
+      'bookToken', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL UNIQUE');
+  static const VerificationMeta _bookOrderMeta =
+      const VerificationMeta('bookOrder');
+  late final GeneratedColumn<int> bookOrder = GeneratedColumn<int>(
+      'bookOrder', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  @override
+  List<GeneratedColumn> get $columns => [id, bookToken, bookOrder];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'canonical_books';
+  @override
+  VerificationContext validateIntegrity(Insertable<CanonicalBook> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('bookToken')) {
+      context.handle(_bookTokenMeta,
+          bookToken.isAcceptableOrUnknown(data['bookToken']!, _bookTokenMeta));
+    } else if (isInserting) {
+      context.missing(_bookTokenMeta);
+    }
+    if (data.containsKey('bookOrder')) {
+      context.handle(_bookOrderMeta,
+          bookOrder.isAcceptableOrUnknown(data['bookOrder']!, _bookOrderMeta));
+    } else if (isInserting) {
+      context.missing(_bookOrderMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  CanonicalBook map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CanonicalBook(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      bookToken: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}bookToken'])!,
+      bookOrder: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}bookOrder'])!,
+    );
+  }
+
+  @override
+  CanonicalBooks createAlias(String alias) {
+    return CanonicalBooks(attachedDatabase, alias);
+  }
+
+  @override
+  bool get isStrict => true;
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class CanonicalBook extends DataClass implements Insertable<CanonicalBook> {
+  final int id;
+  final String bookToken;
+
+  /// e.g., 'GEN', 'EXO'
+  final int bookOrder;
+  const CanonicalBook(
+      {required this.id, required this.bookToken, required this.bookOrder});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['bookToken'] = Variable<String>(bookToken);
+    map['bookOrder'] = Variable<int>(bookOrder);
+    return map;
+  }
+
+  CanonicalBooksCompanion toCompanion(bool nullToAbsent) {
+    return CanonicalBooksCompanion(
+      id: Value(id),
+      bookToken: Value(bookToken),
+      bookOrder: Value(bookOrder),
+    );
+  }
+
+  factory CanonicalBook.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CanonicalBook(
+      id: serializer.fromJson<int>(json['id']),
+      bookToken: serializer.fromJson<String>(json['bookToken']),
+      bookOrder: serializer.fromJson<int>(json['bookOrder']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'bookToken': serializer.toJson<String>(bookToken),
+      'bookOrder': serializer.toJson<int>(bookOrder),
+    };
+  }
+
+  CanonicalBook copyWith({int? id, String? bookToken, int? bookOrder}) =>
+      CanonicalBook(
+        id: id ?? this.id,
+        bookToken: bookToken ?? this.bookToken,
+        bookOrder: bookOrder ?? this.bookOrder,
+      );
+  CanonicalBook copyWithCompanion(CanonicalBooksCompanion data) {
+    return CanonicalBook(
+      id: data.id.present ? data.id.value : this.id,
+      bookToken: data.bookToken.present ? data.bookToken.value : this.bookToken,
+      bookOrder: data.bookOrder.present ? data.bookOrder.value : this.bookOrder,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CanonicalBook(')
+          ..write('id: $id, ')
+          ..write('bookToken: $bookToken, ')
+          ..write('bookOrder: $bookOrder')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, bookToken, bookOrder);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CanonicalBook &&
+          other.id == this.id &&
+          other.bookToken == this.bookToken &&
+          other.bookOrder == this.bookOrder);
+}
+
+class CanonicalBooksCompanion extends UpdateCompanion<CanonicalBook> {
+  final Value<int> id;
+  final Value<String> bookToken;
+  final Value<int> bookOrder;
+  const CanonicalBooksCompanion({
+    this.id = const Value.absent(),
+    this.bookToken = const Value.absent(),
+    this.bookOrder = const Value.absent(),
+  });
+  CanonicalBooksCompanion.insert({
+    this.id = const Value.absent(),
+    required String bookToken,
+    required int bookOrder,
+  })  : bookToken = Value(bookToken),
+        bookOrder = Value(bookOrder);
+  static Insertable<CanonicalBook> custom({
+    Expression<int>? id,
+    Expression<String>? bookToken,
+    Expression<int>? bookOrder,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (bookToken != null) 'bookToken': bookToken,
+      if (bookOrder != null) 'bookOrder': bookOrder,
+    });
+  }
+
+  CanonicalBooksCompanion copyWith(
+      {Value<int>? id, Value<String>? bookToken, Value<int>? bookOrder}) {
+    return CanonicalBooksCompanion(
+      id: id ?? this.id,
+      bookToken: bookToken ?? this.bookToken,
+      bookOrder: bookOrder ?? this.bookOrder,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (bookToken.present) {
+      map['bookToken'] = Variable<String>(bookToken.value);
+    }
+    if (bookOrder.present) {
+      map['bookOrder'] = Variable<int>(bookOrder.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CanonicalBooksCompanion(')
+          ..write('id: $id, ')
+          ..write('bookToken: $bookToken, ')
+          ..write('bookOrder: $bookOrder')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class Pericopes extends Table with TableInfo<Pericopes, Pericope> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  Pericopes(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _setIdMeta = const VerificationMeta('setId');
+  late final GeneratedColumn<int> setId = GeneratedColumn<int>(
+      'setId', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _bookIdMeta = const VerificationMeta('bookId');
+  late final GeneratedColumn<int> bookId = GeneratedColumn<int>(
+      'bookId', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _startChapterMeta =
+      const VerificationMeta('startChapter');
+  late final GeneratedColumn<int> startChapter = GeneratedColumn<int>(
+      'startChapter', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _startVerseMeta =
+      const VerificationMeta('startVerse');
+  late final GeneratedColumn<int> startVerse = GeneratedColumn<int>(
+      'startVerse', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _endChapterMeta =
+      const VerificationMeta('endChapter');
+  late final GeneratedColumn<int> endChapter = GeneratedColumn<int>(
+      'endChapter', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _endVerseMeta =
+      const VerificationMeta('endVerse');
+  late final GeneratedColumn<int> endVerse = GeneratedColumn<int>(
+      'endVerse', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  @override
+  List<GeneratedColumn> get $columns =>
+      [setId, bookId, startChapter, startVerse, endChapter, endVerse, title];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'pericopes';
+  @override
+  VerificationContext validateIntegrity(Insertable<Pericope> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('setId')) {
+      context.handle(
+          _setIdMeta, setId.isAcceptableOrUnknown(data['setId']!, _setIdMeta));
+    } else if (isInserting) {
+      context.missing(_setIdMeta);
+    }
+    if (data.containsKey('bookId')) {
+      context.handle(_bookIdMeta,
+          bookId.isAcceptableOrUnknown(data['bookId']!, _bookIdMeta));
+    } else if (isInserting) {
+      context.missing(_bookIdMeta);
+    }
+    if (data.containsKey('startChapter')) {
+      context.handle(
+          _startChapterMeta,
+          startChapter.isAcceptableOrUnknown(
+              data['startChapter']!, _startChapterMeta));
+    } else if (isInserting) {
+      context.missing(_startChapterMeta);
+    }
+    if (data.containsKey('startVerse')) {
+      context.handle(
+          _startVerseMeta,
+          startVerse.isAcceptableOrUnknown(
+              data['startVerse']!, _startVerseMeta));
+    } else if (isInserting) {
+      context.missing(_startVerseMeta);
+    }
+    if (data.containsKey('endChapter')) {
+      context.handle(
+          _endChapterMeta,
+          endChapter.isAcceptableOrUnknown(
+              data['endChapter']!, _endChapterMeta));
+    } else if (isInserting) {
+      context.missing(_endChapterMeta);
+    }
+    if (data.containsKey('endVerse')) {
+      context.handle(_endVerseMeta,
+          endVerse.isAcceptableOrUnknown(data['endVerse']!, _endVerseMeta));
+    } else if (isInserting) {
+      context.missing(_endVerseMeta);
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+          _titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey =>
+      {setId, bookId, startChapter, startVerse};
+  @override
+  Pericope map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Pericope(
+      setId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}setId'])!,
+      bookId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}bookId'])!,
+      startChapter: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}startChapter'])!,
+      startVerse: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}startVerse'])!,
+      endChapter: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}endChapter'])!,
+      endVerse: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}endVerse'])!,
+      title: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+    );
+  }
+
+  @override
+  Pericopes createAlias(String alias) {
+    return Pericopes(attachedDatabase, alias);
+  }
+
+  @override
+  bool get withoutRowId => true;
+  @override
+  bool get isStrict => true;
+  @override
+  List<String> get customConstraints => const [
+        'PRIMARY KEY(setId, bookId, startChapter, startVerse)',
+        'FOREIGN KEY(setId)REFERENCES pericope_sets(id)ON DELETE CASCADE',
+        'FOREIGN KEY(bookId)REFERENCES canonical_books(id)ON DELETE RESTRICT'
+      ];
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class Pericope extends DataClass implements Insertable<Pericope> {
+  final int setId;
+  final int bookId;
+  final int startChapter;
+  final int startVerse;
+  final int endChapter;
+  final int endVerse;
+  final String title;
+  const Pericope(
+      {required this.setId,
+      required this.bookId,
+      required this.startChapter,
+      required this.startVerse,
+      required this.endChapter,
+      required this.endVerse,
+      required this.title});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['setId'] = Variable<int>(setId);
+    map['bookId'] = Variable<int>(bookId);
+    map['startChapter'] = Variable<int>(startChapter);
+    map['startVerse'] = Variable<int>(startVerse);
+    map['endChapter'] = Variable<int>(endChapter);
+    map['endVerse'] = Variable<int>(endVerse);
+    map['title'] = Variable<String>(title);
+    return map;
+  }
+
+  PericopesCompanion toCompanion(bool nullToAbsent) {
+    return PericopesCompanion(
+      setId: Value(setId),
+      bookId: Value(bookId),
+      startChapter: Value(startChapter),
+      startVerse: Value(startVerse),
+      endChapter: Value(endChapter),
+      endVerse: Value(endVerse),
+      title: Value(title),
+    );
+  }
+
+  factory Pericope.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Pericope(
+      setId: serializer.fromJson<int>(json['setId']),
+      bookId: serializer.fromJson<int>(json['bookId']),
+      startChapter: serializer.fromJson<int>(json['startChapter']),
+      startVerse: serializer.fromJson<int>(json['startVerse']),
+      endChapter: serializer.fromJson<int>(json['endChapter']),
+      endVerse: serializer.fromJson<int>(json['endVerse']),
+      title: serializer.fromJson<String>(json['title']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'setId': serializer.toJson<int>(setId),
+      'bookId': serializer.toJson<int>(bookId),
+      'startChapter': serializer.toJson<int>(startChapter),
+      'startVerse': serializer.toJson<int>(startVerse),
+      'endChapter': serializer.toJson<int>(endChapter),
+      'endVerse': serializer.toJson<int>(endVerse),
+      'title': serializer.toJson<String>(title),
+    };
+  }
+
+  Pericope copyWith(
+          {int? setId,
+          int? bookId,
+          int? startChapter,
+          int? startVerse,
+          int? endChapter,
+          int? endVerse,
+          String? title}) =>
+      Pericope(
+        setId: setId ?? this.setId,
+        bookId: bookId ?? this.bookId,
+        startChapter: startChapter ?? this.startChapter,
+        startVerse: startVerse ?? this.startVerse,
+        endChapter: endChapter ?? this.endChapter,
+        endVerse: endVerse ?? this.endVerse,
+        title: title ?? this.title,
+      );
+  Pericope copyWithCompanion(PericopesCompanion data) {
+    return Pericope(
+      setId: data.setId.present ? data.setId.value : this.setId,
+      bookId: data.bookId.present ? data.bookId.value : this.bookId,
+      startChapter: data.startChapter.present
+          ? data.startChapter.value
+          : this.startChapter,
+      startVerse:
+          data.startVerse.present ? data.startVerse.value : this.startVerse,
+      endChapter:
+          data.endChapter.present ? data.endChapter.value : this.endChapter,
+      endVerse: data.endVerse.present ? data.endVerse.value : this.endVerse,
+      title: data.title.present ? data.title.value : this.title,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Pericope(')
+          ..write('setId: $setId, ')
+          ..write('bookId: $bookId, ')
+          ..write('startChapter: $startChapter, ')
+          ..write('startVerse: $startVerse, ')
+          ..write('endChapter: $endChapter, ')
+          ..write('endVerse: $endVerse, ')
+          ..write('title: $title')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      setId, bookId, startChapter, startVerse, endChapter, endVerse, title);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Pericope &&
+          other.setId == this.setId &&
+          other.bookId == this.bookId &&
+          other.startChapter == this.startChapter &&
+          other.startVerse == this.startVerse &&
+          other.endChapter == this.endChapter &&
+          other.endVerse == this.endVerse &&
+          other.title == this.title);
+}
+
+class PericopesCompanion extends UpdateCompanion<Pericope> {
+  final Value<int> setId;
+  final Value<int> bookId;
+  final Value<int> startChapter;
+  final Value<int> startVerse;
+  final Value<int> endChapter;
+  final Value<int> endVerse;
+  final Value<String> title;
+  const PericopesCompanion({
+    this.setId = const Value.absent(),
+    this.bookId = const Value.absent(),
+    this.startChapter = const Value.absent(),
+    this.startVerse = const Value.absent(),
+    this.endChapter = const Value.absent(),
+    this.endVerse = const Value.absent(),
+    this.title = const Value.absent(),
+  });
+  PericopesCompanion.insert({
+    required int setId,
+    required int bookId,
+    required int startChapter,
+    required int startVerse,
+    required int endChapter,
+    required int endVerse,
+    required String title,
+  })  : setId = Value(setId),
+        bookId = Value(bookId),
+        startChapter = Value(startChapter),
+        startVerse = Value(startVerse),
+        endChapter = Value(endChapter),
+        endVerse = Value(endVerse),
+        title = Value(title);
+  static Insertable<Pericope> custom({
+    Expression<int>? setId,
+    Expression<int>? bookId,
+    Expression<int>? startChapter,
+    Expression<int>? startVerse,
+    Expression<int>? endChapter,
+    Expression<int>? endVerse,
+    Expression<String>? title,
+  }) {
+    return RawValuesInsertable({
+      if (setId != null) 'setId': setId,
+      if (bookId != null) 'bookId': bookId,
+      if (startChapter != null) 'startChapter': startChapter,
+      if (startVerse != null) 'startVerse': startVerse,
+      if (endChapter != null) 'endChapter': endChapter,
+      if (endVerse != null) 'endVerse': endVerse,
+      if (title != null) 'title': title,
+    });
+  }
+
+  PericopesCompanion copyWith(
+      {Value<int>? setId,
+      Value<int>? bookId,
+      Value<int>? startChapter,
+      Value<int>? startVerse,
+      Value<int>? endChapter,
+      Value<int>? endVerse,
+      Value<String>? title}) {
+    return PericopesCompanion(
+      setId: setId ?? this.setId,
+      bookId: bookId ?? this.bookId,
+      startChapter: startChapter ?? this.startChapter,
+      startVerse: startVerse ?? this.startVerse,
+      endChapter: endChapter ?? this.endChapter,
+      endVerse: endVerse ?? this.endVerse,
+      title: title ?? this.title,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (setId.present) {
+      map['setId'] = Variable<int>(setId.value);
+    }
+    if (bookId.present) {
+      map['bookId'] = Variable<int>(bookId.value);
+    }
+    if (startChapter.present) {
+      map['startChapter'] = Variable<int>(startChapter.value);
+    }
+    if (startVerse.present) {
+      map['startVerse'] = Variable<int>(startVerse.value);
+    }
+    if (endChapter.present) {
+      map['endChapter'] = Variable<int>(endChapter.value);
+    }
+    if (endVerse.present) {
+      map['endVerse'] = Variable<int>(endVerse.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PericopesCompanion(')
+          ..write('setId: $setId, ')
+          ..write('bookId: $bookId, ')
+          ..write('startChapter: $startChapter, ')
+          ..write('startVerse: $startVerse, ')
+          ..write('endChapter: $endChapter, ')
+          ..write('endVerse: $endVerse, ')
+          ..write('title: $title')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class PericopeAssignments extends Table
+    with TableInfo<PericopeAssignments, PericopeAssignment> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  PericopeAssignments(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _langIsoCodeMeta =
+      const VerificationMeta('langIsoCode');
+  late final GeneratedColumn<String> langIsoCode = GeneratedColumn<String>(
+      'langIsoCode', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'PRIMARY KEY');
+  static const VerificationMeta _setIdMeta = const VerificationMeta('setId');
+  late final GeneratedColumn<int> setId = GeneratedColumn<int>(
+      'setId', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  @override
+  List<GeneratedColumn> get $columns => [langIsoCode, setId];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'pericope_assignments';
+  @override
+  VerificationContext validateIntegrity(Insertable<PericopeAssignment> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('langIsoCode')) {
+      context.handle(
+          _langIsoCodeMeta,
+          langIsoCode.isAcceptableOrUnknown(
+              data['langIsoCode']!, _langIsoCodeMeta));
+    } else if (isInserting) {
+      context.missing(_langIsoCodeMeta);
+    }
+    if (data.containsKey('setId')) {
+      context.handle(
+          _setIdMeta, setId.isAcceptableOrUnknown(data['setId']!, _setIdMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {langIsoCode};
+  @override
+  PericopeAssignment map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PericopeAssignment(
+      langIsoCode: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}langIsoCode'])!,
+      setId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}setId']),
+    );
+  }
+
+  @override
+  PericopeAssignments createAlias(String alias) {
+    return PericopeAssignments(attachedDatabase, alias);
+  }
+
+  @override
+  bool get withoutRowId => true;
+  @override
+  bool get isStrict => true;
+  @override
+  List<String> get customConstraints =>
+      const ['FOREIGN KEY(setId)REFERENCES pericope_sets(id)ON DELETE CASCADE'];
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class PericopeAssignment extends DataClass
+    implements Insertable<PericopeAssignment> {
+  final String langIsoCode;
+
+  /// same codes as languages.isoCode
+  final int? setId;
+  const PericopeAssignment({required this.langIsoCode, this.setId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['langIsoCode'] = Variable<String>(langIsoCode);
+    if (!nullToAbsent || setId != null) {
+      map['setId'] = Variable<int>(setId);
+    }
+    return map;
+  }
+
+  PericopeAssignmentsCompanion toCompanion(bool nullToAbsent) {
+    return PericopeAssignmentsCompanion(
+      langIsoCode: Value(langIsoCode),
+      setId:
+          setId == null && nullToAbsent ? const Value.absent() : Value(setId),
+    );
+  }
+
+  factory PericopeAssignment.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PericopeAssignment(
+      langIsoCode: serializer.fromJson<String>(json['langIsoCode']),
+      setId: serializer.fromJson<int?>(json['setId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'langIsoCode': serializer.toJson<String>(langIsoCode),
+      'setId': serializer.toJson<int?>(setId),
+    };
+  }
+
+  PericopeAssignment copyWith(
+          {String? langIsoCode, Value<int?> setId = const Value.absent()}) =>
+      PericopeAssignment(
+        langIsoCode: langIsoCode ?? this.langIsoCode,
+        setId: setId.present ? setId.value : this.setId,
+      );
+  PericopeAssignment copyWithCompanion(PericopeAssignmentsCompanion data) {
+    return PericopeAssignment(
+      langIsoCode:
+          data.langIsoCode.present ? data.langIsoCode.value : this.langIsoCode,
+      setId: data.setId.present ? data.setId.value : this.setId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PericopeAssignment(')
+          ..write('langIsoCode: $langIsoCode, ')
+          ..write('setId: $setId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(langIsoCode, setId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PericopeAssignment &&
+          other.langIsoCode == this.langIsoCode &&
+          other.setId == this.setId);
+}
+
+class PericopeAssignmentsCompanion extends UpdateCompanion<PericopeAssignment> {
+  final Value<String> langIsoCode;
+  final Value<int?> setId;
+  const PericopeAssignmentsCompanion({
+    this.langIsoCode = const Value.absent(),
+    this.setId = const Value.absent(),
+  });
+  PericopeAssignmentsCompanion.insert({
+    required String langIsoCode,
+    this.setId = const Value.absent(),
+  }) : langIsoCode = Value(langIsoCode);
+  static Insertable<PericopeAssignment> custom({
+    Expression<String>? langIsoCode,
+    Expression<int>? setId,
+  }) {
+    return RawValuesInsertable({
+      if (langIsoCode != null) 'langIsoCode': langIsoCode,
+      if (setId != null) 'setId': setId,
+    });
+  }
+
+  PericopeAssignmentsCompanion copyWith(
+      {Value<String>? langIsoCode, Value<int?>? setId}) {
+    return PericopeAssignmentsCompanion(
+      langIsoCode: langIsoCode ?? this.langIsoCode,
+      setId: setId ?? this.setId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (langIsoCode.present) {
+      map['langIsoCode'] = Variable<String>(langIsoCode.value);
+    }
+    if (setId.present) {
+      map['setId'] = Variable<int>(setId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PericopeAssignmentsCompanion(')
+          ..write('langIsoCode: $langIsoCode, ')
+          ..write('setId: $setId')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class Languages extends Table with TableInfo<Languages, Language> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -267,229 +1410,6 @@ class LanguagesCompanion extends UpdateCompanion<Language> {
           ..write('isoCode: $isoCode, ')
           ..write('engName: $engName, ')
           ..write('nativeName: $nativeName')
-          ..write(')'))
-        .toString();
-  }
-}
-
-class CanonicalBooks extends Table
-    with TableInfo<CanonicalBooks, CanonicalBook> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  CanonicalBooks(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      $customConstraints: 'PRIMARY KEY');
-  static const VerificationMeta _bookTokenMeta =
-      const VerificationMeta('bookToken');
-  late final GeneratedColumn<String> bookToken = GeneratedColumn<String>(
-      'bookToken', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL UNIQUE');
-  static const VerificationMeta _bookOrderMeta =
-      const VerificationMeta('bookOrder');
-  late final GeneratedColumn<int> bookOrder = GeneratedColumn<int>(
-      'bookOrder', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
-  @override
-  List<GeneratedColumn> get $columns => [id, bookToken, bookOrder];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'canonical_books';
-  @override
-  VerificationContext validateIntegrity(Insertable<CanonicalBook> instance,
-      {bool isInserting = false}) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('bookToken')) {
-      context.handle(_bookTokenMeta,
-          bookToken.isAcceptableOrUnknown(data['bookToken']!, _bookTokenMeta));
-    } else if (isInserting) {
-      context.missing(_bookTokenMeta);
-    }
-    if (data.containsKey('bookOrder')) {
-      context.handle(_bookOrderMeta,
-          bookOrder.isAcceptableOrUnknown(data['bookOrder']!, _bookOrderMeta));
-    } else if (isInserting) {
-      context.missing(_bookOrderMeta);
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  CanonicalBook map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return CanonicalBook(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      bookToken: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}bookToken'])!,
-      bookOrder: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}bookOrder'])!,
-    );
-  }
-
-  @override
-  CanonicalBooks createAlias(String alias) {
-    return CanonicalBooks(attachedDatabase, alias);
-  }
-
-  @override
-  bool get isStrict => true;
-  @override
-  bool get dontWriteConstraints => true;
-}
-
-class CanonicalBook extends DataClass implements Insertable<CanonicalBook> {
-  final int id;
-  final String bookToken;
-
-  /// e.g., 'GEN', 'EXO'
-  final int bookOrder;
-  const CanonicalBook(
-      {required this.id, required this.bookToken, required this.bookOrder});
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
-    map['bookToken'] = Variable<String>(bookToken);
-    map['bookOrder'] = Variable<int>(bookOrder);
-    return map;
-  }
-
-  CanonicalBooksCompanion toCompanion(bool nullToAbsent) {
-    return CanonicalBooksCompanion(
-      id: Value(id),
-      bookToken: Value(bookToken),
-      bookOrder: Value(bookOrder),
-    );
-  }
-
-  factory CanonicalBook.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return CanonicalBook(
-      id: serializer.fromJson<int>(json['id']),
-      bookToken: serializer.fromJson<String>(json['bookToken']),
-      bookOrder: serializer.fromJson<int>(json['bookOrder']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'bookToken': serializer.toJson<String>(bookToken),
-      'bookOrder': serializer.toJson<int>(bookOrder),
-    };
-  }
-
-  CanonicalBook copyWith({int? id, String? bookToken, int? bookOrder}) =>
-      CanonicalBook(
-        id: id ?? this.id,
-        bookToken: bookToken ?? this.bookToken,
-        bookOrder: bookOrder ?? this.bookOrder,
-      );
-  CanonicalBook copyWithCompanion(CanonicalBooksCompanion data) {
-    return CanonicalBook(
-      id: data.id.present ? data.id.value : this.id,
-      bookToken: data.bookToken.present ? data.bookToken.value : this.bookToken,
-      bookOrder: data.bookOrder.present ? data.bookOrder.value : this.bookOrder,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('CanonicalBook(')
-          ..write('id: $id, ')
-          ..write('bookToken: $bookToken, ')
-          ..write('bookOrder: $bookOrder')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(id, bookToken, bookOrder);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is CanonicalBook &&
-          other.id == this.id &&
-          other.bookToken == this.bookToken &&
-          other.bookOrder == this.bookOrder);
-}
-
-class CanonicalBooksCompanion extends UpdateCompanion<CanonicalBook> {
-  final Value<int> id;
-  final Value<String> bookToken;
-  final Value<int> bookOrder;
-  const CanonicalBooksCompanion({
-    this.id = const Value.absent(),
-    this.bookToken = const Value.absent(),
-    this.bookOrder = const Value.absent(),
-  });
-  CanonicalBooksCompanion.insert({
-    this.id = const Value.absent(),
-    required String bookToken,
-    required int bookOrder,
-  })  : bookToken = Value(bookToken),
-        bookOrder = Value(bookOrder);
-  static Insertable<CanonicalBook> custom({
-    Expression<int>? id,
-    Expression<String>? bookToken,
-    Expression<int>? bookOrder,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (bookToken != null) 'bookToken': bookToken,
-      if (bookOrder != null) 'bookOrder': bookOrder,
-    });
-  }
-
-  CanonicalBooksCompanion copyWith(
-      {Value<int>? id, Value<String>? bookToken, Value<int>? bookOrder}) {
-    return CanonicalBooksCompanion(
-      id: id ?? this.id,
-      bookToken: bookToken ?? this.bookToken,
-      bookOrder: bookOrder ?? this.bookOrder,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
-    }
-    if (bookToken.present) {
-      map['bookToken'] = Variable<String>(bookToken.value);
-    }
-    if (bookOrder.present) {
-      map['bookOrder'] = Variable<int>(bookOrder.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('CanonicalBooksCompanion(')
-          ..write('id: $id, ')
-          ..write('bookToken: $bookToken, ')
-          ..write('bookOrder: $bookOrder')
           ..write(')'))
         .toString();
   }
@@ -1847,8 +2767,12 @@ class VerseSegmentsCompanion extends UpdateCompanion<VerseSegment> {
 abstract class _$AppDb extends GeneratedDatabase {
   _$AppDb(QueryExecutor e) : super(e);
   $AppDbManager get managers => $AppDbManager(this);
-  late final Languages languages = Languages(this);
+  late final PericopeSets pericopeSets = PericopeSets(this);
   late final CanonicalBooks canonicalBooks = CanonicalBooks(this);
+  late final Pericopes pericopes = Pericopes(this);
+  late final PericopeAssignments pericopeAssignments =
+      PericopeAssignments(this);
+  late final Languages languages = Languages(this);
   late final Bibles bibles = Bibles(this);
   late final LocalizedBookNames localizedBookNames = LocalizedBookNames(this);
   late final VerseSegments verseSegments = VerseSegments(this);
@@ -1864,8 +2788,11 @@ abstract class _$AppDb extends GeneratedDatabase {
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
-        languages,
+        pericopeSets,
         canonicalBooks,
+        pericopes,
+        pericopeAssignments,
+        languages,
         bibles,
         localizedBookNames,
         verseSegments,
@@ -1874,6 +2801,20 @@ abstract class _$AppDb extends GeneratedDatabase {
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules(
         [
+          WritePropagation(
+            on: TableUpdateQuery.onTableName('pericope_sets',
+                limitUpdateKind: UpdateKind.delete),
+            result: [
+              TableUpdate('pericopes', kind: UpdateKind.delete),
+            ],
+          ),
+          WritePropagation(
+            on: TableUpdateQuery.onTableName('pericope_sets',
+                limitUpdateKind: UpdateKind.delete),
+            result: [
+              TableUpdate('pericope_assignments', kind: UpdateKind.delete),
+            ],
+          ),
           WritePropagation(
             on: TableUpdateQuery.onTableName('bibles',
                 limitUpdateKind: UpdateKind.delete),
@@ -1899,6 +2840,602 @@ abstract class _$AppDb extends GeneratedDatabase {
       );
 }
 
+typedef $PericopeSetsCreateCompanionBuilder = PericopeSetsCompanion Function({
+  Value<int> id,
+  required String extId,
+  required String langIsoCode,
+  Value<int> versionNumber,
+  Value<String?> attribution,
+});
+typedef $PericopeSetsUpdateCompanionBuilder = PericopeSetsCompanion Function({
+  Value<int> id,
+  Value<String> extId,
+  Value<String> langIsoCode,
+  Value<int> versionNumber,
+  Value<String?> attribution,
+});
+
+class $PericopeSetsFilterComposer extends Composer<_$AppDb, PericopeSets> {
+  $PericopeSetsFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get extId => $composableBuilder(
+      column: $table.extId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get langIsoCode => $composableBuilder(
+      column: $table.langIsoCode, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get versionNumber => $composableBuilder(
+      column: $table.versionNumber, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get attribution => $composableBuilder(
+      column: $table.attribution, builder: (column) => ColumnFilters(column));
+}
+
+class $PericopeSetsOrderingComposer extends Composer<_$AppDb, PericopeSets> {
+  $PericopeSetsOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get extId => $composableBuilder(
+      column: $table.extId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get langIsoCode => $composableBuilder(
+      column: $table.langIsoCode, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get versionNumber => $composableBuilder(
+      column: $table.versionNumber,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get attribution => $composableBuilder(
+      column: $table.attribution, builder: (column) => ColumnOrderings(column));
+}
+
+class $PericopeSetsAnnotationComposer extends Composer<_$AppDb, PericopeSets> {
+  $PericopeSetsAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get extId =>
+      $composableBuilder(column: $table.extId, builder: (column) => column);
+
+  GeneratedColumn<String> get langIsoCode => $composableBuilder(
+      column: $table.langIsoCode, builder: (column) => column);
+
+  GeneratedColumn<int> get versionNumber => $composableBuilder(
+      column: $table.versionNumber, builder: (column) => column);
+
+  GeneratedColumn<String> get attribution => $composableBuilder(
+      column: $table.attribution, builder: (column) => column);
+}
+
+class $PericopeSetsTableManager extends RootTableManager<
+    _$AppDb,
+    PericopeSets,
+    PericopeSet,
+    $PericopeSetsFilterComposer,
+    $PericopeSetsOrderingComposer,
+    $PericopeSetsAnnotationComposer,
+    $PericopeSetsCreateCompanionBuilder,
+    $PericopeSetsUpdateCompanionBuilder,
+    (PericopeSet, BaseReferences<_$AppDb, PericopeSets, PericopeSet>),
+    PericopeSet,
+    PrefetchHooks Function()> {
+  $PericopeSetsTableManager(_$AppDb db, PericopeSets table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $PericopeSetsFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $PericopeSetsOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $PericopeSetsAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> extId = const Value.absent(),
+            Value<String> langIsoCode = const Value.absent(),
+            Value<int> versionNumber = const Value.absent(),
+            Value<String?> attribution = const Value.absent(),
+          }) =>
+              PericopeSetsCompanion(
+            id: id,
+            extId: extId,
+            langIsoCode: langIsoCode,
+            versionNumber: versionNumber,
+            attribution: attribution,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String extId,
+            required String langIsoCode,
+            Value<int> versionNumber = const Value.absent(),
+            Value<String?> attribution = const Value.absent(),
+          }) =>
+              PericopeSetsCompanion.insert(
+            id: id,
+            extId: extId,
+            langIsoCode: langIsoCode,
+            versionNumber: versionNumber,
+            attribution: attribution,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $PericopeSetsProcessedTableManager = ProcessedTableManager<
+    _$AppDb,
+    PericopeSets,
+    PericopeSet,
+    $PericopeSetsFilterComposer,
+    $PericopeSetsOrderingComposer,
+    $PericopeSetsAnnotationComposer,
+    $PericopeSetsCreateCompanionBuilder,
+    $PericopeSetsUpdateCompanionBuilder,
+    (PericopeSet, BaseReferences<_$AppDb, PericopeSets, PericopeSet>),
+    PericopeSet,
+    PrefetchHooks Function()>;
+typedef $CanonicalBooksCreateCompanionBuilder = CanonicalBooksCompanion
+    Function({
+  Value<int> id,
+  required String bookToken,
+  required int bookOrder,
+});
+typedef $CanonicalBooksUpdateCompanionBuilder = CanonicalBooksCompanion
+    Function({
+  Value<int> id,
+  Value<String> bookToken,
+  Value<int> bookOrder,
+});
+
+class $CanonicalBooksFilterComposer extends Composer<_$AppDb, CanonicalBooks> {
+  $CanonicalBooksFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get bookToken => $composableBuilder(
+      column: $table.bookToken, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get bookOrder => $composableBuilder(
+      column: $table.bookOrder, builder: (column) => ColumnFilters(column));
+}
+
+class $CanonicalBooksOrderingComposer
+    extends Composer<_$AppDb, CanonicalBooks> {
+  $CanonicalBooksOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get bookToken => $composableBuilder(
+      column: $table.bookToken, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get bookOrder => $composableBuilder(
+      column: $table.bookOrder, builder: (column) => ColumnOrderings(column));
+}
+
+class $CanonicalBooksAnnotationComposer
+    extends Composer<_$AppDb, CanonicalBooks> {
+  $CanonicalBooksAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get bookToken =>
+      $composableBuilder(column: $table.bookToken, builder: (column) => column);
+
+  GeneratedColumn<int> get bookOrder =>
+      $composableBuilder(column: $table.bookOrder, builder: (column) => column);
+}
+
+class $CanonicalBooksTableManager extends RootTableManager<
+    _$AppDb,
+    CanonicalBooks,
+    CanonicalBook,
+    $CanonicalBooksFilterComposer,
+    $CanonicalBooksOrderingComposer,
+    $CanonicalBooksAnnotationComposer,
+    $CanonicalBooksCreateCompanionBuilder,
+    $CanonicalBooksUpdateCompanionBuilder,
+    (CanonicalBook, BaseReferences<_$AppDb, CanonicalBooks, CanonicalBook>),
+    CanonicalBook,
+    PrefetchHooks Function()> {
+  $CanonicalBooksTableManager(_$AppDb db, CanonicalBooks table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $CanonicalBooksFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $CanonicalBooksOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $CanonicalBooksAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> bookToken = const Value.absent(),
+            Value<int> bookOrder = const Value.absent(),
+          }) =>
+              CanonicalBooksCompanion(
+            id: id,
+            bookToken: bookToken,
+            bookOrder: bookOrder,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String bookToken,
+            required int bookOrder,
+          }) =>
+              CanonicalBooksCompanion.insert(
+            id: id,
+            bookToken: bookToken,
+            bookOrder: bookOrder,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $CanonicalBooksProcessedTableManager = ProcessedTableManager<
+    _$AppDb,
+    CanonicalBooks,
+    CanonicalBook,
+    $CanonicalBooksFilterComposer,
+    $CanonicalBooksOrderingComposer,
+    $CanonicalBooksAnnotationComposer,
+    $CanonicalBooksCreateCompanionBuilder,
+    $CanonicalBooksUpdateCompanionBuilder,
+    (CanonicalBook, BaseReferences<_$AppDb, CanonicalBooks, CanonicalBook>),
+    CanonicalBook,
+    PrefetchHooks Function()>;
+typedef $PericopesCreateCompanionBuilder = PericopesCompanion Function({
+  required int setId,
+  required int bookId,
+  required int startChapter,
+  required int startVerse,
+  required int endChapter,
+  required int endVerse,
+  required String title,
+});
+typedef $PericopesUpdateCompanionBuilder = PericopesCompanion Function({
+  Value<int> setId,
+  Value<int> bookId,
+  Value<int> startChapter,
+  Value<int> startVerse,
+  Value<int> endChapter,
+  Value<int> endVerse,
+  Value<String> title,
+});
+
+class $PericopesFilterComposer extends Composer<_$AppDb, Pericopes> {
+  $PericopesFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get setId => $composableBuilder(
+      column: $table.setId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get bookId => $composableBuilder(
+      column: $table.bookId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get startChapter => $composableBuilder(
+      column: $table.startChapter, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get startVerse => $composableBuilder(
+      column: $table.startVerse, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get endChapter => $composableBuilder(
+      column: $table.endChapter, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get endVerse => $composableBuilder(
+      column: $table.endVerse, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get title => $composableBuilder(
+      column: $table.title, builder: (column) => ColumnFilters(column));
+}
+
+class $PericopesOrderingComposer extends Composer<_$AppDb, Pericopes> {
+  $PericopesOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get setId => $composableBuilder(
+      column: $table.setId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get bookId => $composableBuilder(
+      column: $table.bookId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get startChapter => $composableBuilder(
+      column: $table.startChapter,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get startVerse => $composableBuilder(
+      column: $table.startVerse, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get endChapter => $composableBuilder(
+      column: $table.endChapter, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get endVerse => $composableBuilder(
+      column: $table.endVerse, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get title => $composableBuilder(
+      column: $table.title, builder: (column) => ColumnOrderings(column));
+}
+
+class $PericopesAnnotationComposer extends Composer<_$AppDb, Pericopes> {
+  $PericopesAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get setId =>
+      $composableBuilder(column: $table.setId, builder: (column) => column);
+
+  GeneratedColumn<int> get bookId =>
+      $composableBuilder(column: $table.bookId, builder: (column) => column);
+
+  GeneratedColumn<int> get startChapter => $composableBuilder(
+      column: $table.startChapter, builder: (column) => column);
+
+  GeneratedColumn<int> get startVerse => $composableBuilder(
+      column: $table.startVerse, builder: (column) => column);
+
+  GeneratedColumn<int> get endChapter => $composableBuilder(
+      column: $table.endChapter, builder: (column) => column);
+
+  GeneratedColumn<int> get endVerse =>
+      $composableBuilder(column: $table.endVerse, builder: (column) => column);
+
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+}
+
+class $PericopesTableManager extends RootTableManager<
+    _$AppDb,
+    Pericopes,
+    Pericope,
+    $PericopesFilterComposer,
+    $PericopesOrderingComposer,
+    $PericopesAnnotationComposer,
+    $PericopesCreateCompanionBuilder,
+    $PericopesUpdateCompanionBuilder,
+    (Pericope, BaseReferences<_$AppDb, Pericopes, Pericope>),
+    Pericope,
+    PrefetchHooks Function()> {
+  $PericopesTableManager(_$AppDb db, Pericopes table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $PericopesFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $PericopesOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $PericopesAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> setId = const Value.absent(),
+            Value<int> bookId = const Value.absent(),
+            Value<int> startChapter = const Value.absent(),
+            Value<int> startVerse = const Value.absent(),
+            Value<int> endChapter = const Value.absent(),
+            Value<int> endVerse = const Value.absent(),
+            Value<String> title = const Value.absent(),
+          }) =>
+              PericopesCompanion(
+            setId: setId,
+            bookId: bookId,
+            startChapter: startChapter,
+            startVerse: startVerse,
+            endChapter: endChapter,
+            endVerse: endVerse,
+            title: title,
+          ),
+          createCompanionCallback: ({
+            required int setId,
+            required int bookId,
+            required int startChapter,
+            required int startVerse,
+            required int endChapter,
+            required int endVerse,
+            required String title,
+          }) =>
+              PericopesCompanion.insert(
+            setId: setId,
+            bookId: bookId,
+            startChapter: startChapter,
+            startVerse: startVerse,
+            endChapter: endChapter,
+            endVerse: endVerse,
+            title: title,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $PericopesProcessedTableManager = ProcessedTableManager<
+    _$AppDb,
+    Pericopes,
+    Pericope,
+    $PericopesFilterComposer,
+    $PericopesOrderingComposer,
+    $PericopesAnnotationComposer,
+    $PericopesCreateCompanionBuilder,
+    $PericopesUpdateCompanionBuilder,
+    (Pericope, BaseReferences<_$AppDb, Pericopes, Pericope>),
+    Pericope,
+    PrefetchHooks Function()>;
+typedef $PericopeAssignmentsCreateCompanionBuilder
+    = PericopeAssignmentsCompanion Function({
+  required String langIsoCode,
+  Value<int?> setId,
+});
+typedef $PericopeAssignmentsUpdateCompanionBuilder
+    = PericopeAssignmentsCompanion Function({
+  Value<String> langIsoCode,
+  Value<int?> setId,
+});
+
+class $PericopeAssignmentsFilterComposer
+    extends Composer<_$AppDb, PericopeAssignments> {
+  $PericopeAssignmentsFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get langIsoCode => $composableBuilder(
+      column: $table.langIsoCode, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get setId => $composableBuilder(
+      column: $table.setId, builder: (column) => ColumnFilters(column));
+}
+
+class $PericopeAssignmentsOrderingComposer
+    extends Composer<_$AppDb, PericopeAssignments> {
+  $PericopeAssignmentsOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get langIsoCode => $composableBuilder(
+      column: $table.langIsoCode, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get setId => $composableBuilder(
+      column: $table.setId, builder: (column) => ColumnOrderings(column));
+}
+
+class $PericopeAssignmentsAnnotationComposer
+    extends Composer<_$AppDb, PericopeAssignments> {
+  $PericopeAssignmentsAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get langIsoCode => $composableBuilder(
+      column: $table.langIsoCode, builder: (column) => column);
+
+  GeneratedColumn<int> get setId =>
+      $composableBuilder(column: $table.setId, builder: (column) => column);
+}
+
+class $PericopeAssignmentsTableManager extends RootTableManager<
+    _$AppDb,
+    PericopeAssignments,
+    PericopeAssignment,
+    $PericopeAssignmentsFilterComposer,
+    $PericopeAssignmentsOrderingComposer,
+    $PericopeAssignmentsAnnotationComposer,
+    $PericopeAssignmentsCreateCompanionBuilder,
+    $PericopeAssignmentsUpdateCompanionBuilder,
+    (
+      PericopeAssignment,
+      BaseReferences<_$AppDb, PericopeAssignments, PericopeAssignment>
+    ),
+    PericopeAssignment,
+    PrefetchHooks Function()> {
+  $PericopeAssignmentsTableManager(_$AppDb db, PericopeAssignments table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $PericopeAssignmentsFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $PericopeAssignmentsOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $PericopeAssignmentsAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> langIsoCode = const Value.absent(),
+            Value<int?> setId = const Value.absent(),
+          }) =>
+              PericopeAssignmentsCompanion(
+            langIsoCode: langIsoCode,
+            setId: setId,
+          ),
+          createCompanionCallback: ({
+            required String langIsoCode,
+            Value<int?> setId = const Value.absent(),
+          }) =>
+              PericopeAssignmentsCompanion.insert(
+            langIsoCode: langIsoCode,
+            setId: setId,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $PericopeAssignmentsProcessedTableManager = ProcessedTableManager<
+    _$AppDb,
+    PericopeAssignments,
+    PericopeAssignment,
+    $PericopeAssignmentsFilterComposer,
+    $PericopeAssignmentsOrderingComposer,
+    $PericopeAssignmentsAnnotationComposer,
+    $PericopeAssignmentsCreateCompanionBuilder,
+    $PericopeAssignmentsUpdateCompanionBuilder,
+    (
+      PericopeAssignment,
+      BaseReferences<_$AppDb, PericopeAssignments, PericopeAssignment>
+    ),
+    PericopeAssignment,
+    PrefetchHooks Function()>;
 typedef $LanguagesCreateCompanionBuilder = LanguagesCompanion Function({
   Value<int> id,
   required String isoCode,
@@ -2039,136 +3576,6 @@ typedef $LanguagesProcessedTableManager = ProcessedTableManager<
     $LanguagesUpdateCompanionBuilder,
     (Language, BaseReferences<_$AppDb, Languages, Language>),
     Language,
-    PrefetchHooks Function()>;
-typedef $CanonicalBooksCreateCompanionBuilder = CanonicalBooksCompanion
-    Function({
-  Value<int> id,
-  required String bookToken,
-  required int bookOrder,
-});
-typedef $CanonicalBooksUpdateCompanionBuilder = CanonicalBooksCompanion
-    Function({
-  Value<int> id,
-  Value<String> bookToken,
-  Value<int> bookOrder,
-});
-
-class $CanonicalBooksFilterComposer extends Composer<_$AppDb, CanonicalBooks> {
-  $CanonicalBooksFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<String> get bookToken => $composableBuilder(
-      column: $table.bookToken, builder: (column) => ColumnFilters(column));
-
-  ColumnFilters<int> get bookOrder => $composableBuilder(
-      column: $table.bookOrder, builder: (column) => ColumnFilters(column));
-}
-
-class $CanonicalBooksOrderingComposer
-    extends Composer<_$AppDb, CanonicalBooks> {
-  $CanonicalBooksOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<String> get bookToken => $composableBuilder(
-      column: $table.bookToken, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<int> get bookOrder => $composableBuilder(
-      column: $table.bookOrder, builder: (column) => ColumnOrderings(column));
-}
-
-class $CanonicalBooksAnnotationComposer
-    extends Composer<_$AppDb, CanonicalBooks> {
-  $CanonicalBooksAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<int> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get bookToken =>
-      $composableBuilder(column: $table.bookToken, builder: (column) => column);
-
-  GeneratedColumn<int> get bookOrder =>
-      $composableBuilder(column: $table.bookOrder, builder: (column) => column);
-}
-
-class $CanonicalBooksTableManager extends RootTableManager<
-    _$AppDb,
-    CanonicalBooks,
-    CanonicalBook,
-    $CanonicalBooksFilterComposer,
-    $CanonicalBooksOrderingComposer,
-    $CanonicalBooksAnnotationComposer,
-    $CanonicalBooksCreateCompanionBuilder,
-    $CanonicalBooksUpdateCompanionBuilder,
-    (CanonicalBook, BaseReferences<_$AppDb, CanonicalBooks, CanonicalBook>),
-    CanonicalBook,
-    PrefetchHooks Function()> {
-  $CanonicalBooksTableManager(_$AppDb db, CanonicalBooks table)
-      : super(TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $CanonicalBooksFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $CanonicalBooksOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $CanonicalBooksAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            Value<String> bookToken = const Value.absent(),
-            Value<int> bookOrder = const Value.absent(),
-          }) =>
-              CanonicalBooksCompanion(
-            id: id,
-            bookToken: bookToken,
-            bookOrder: bookOrder,
-          ),
-          createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            required String bookToken,
-            required int bookOrder,
-          }) =>
-              CanonicalBooksCompanion.insert(
-            id: id,
-            bookToken: bookToken,
-            bookOrder: bookOrder,
-          ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
-              .toList(),
-          prefetchHooksCallback: null,
-        ));
-}
-
-typedef $CanonicalBooksProcessedTableManager = ProcessedTableManager<
-    _$AppDb,
-    CanonicalBooks,
-    CanonicalBook,
-    $CanonicalBooksFilterComposer,
-    $CanonicalBooksOrderingComposer,
-    $CanonicalBooksAnnotationComposer,
-    $CanonicalBooksCreateCompanionBuilder,
-    $CanonicalBooksUpdateCompanionBuilder,
-    (CanonicalBook, BaseReferences<_$AppDb, CanonicalBooks, CanonicalBook>),
-    CanonicalBook,
     PrefetchHooks Function()>;
 typedef $BiblesCreateCompanionBuilder = BiblesCompanion Function({
   Value<int> id,
@@ -2797,10 +4204,16 @@ typedef $VerseSegmentsProcessedTableManager = ProcessedTableManager<
 class $AppDbManager {
   final _$AppDb _db;
   $AppDbManager(this._db);
-  $LanguagesTableManager get languages =>
-      $LanguagesTableManager(_db, _db.languages);
+  $PericopeSetsTableManager get pericopeSets =>
+      $PericopeSetsTableManager(_db, _db.pericopeSets);
   $CanonicalBooksTableManager get canonicalBooks =>
       $CanonicalBooksTableManager(_db, _db.canonicalBooks);
+  $PericopesTableManager get pericopes =>
+      $PericopesTableManager(_db, _db.pericopes);
+  $PericopeAssignmentsTableManager get pericopeAssignments =>
+      $PericopeAssignmentsTableManager(_db, _db.pericopeAssignments);
+  $LanguagesTableManager get languages =>
+      $LanguagesTableManager(_db, _db.languages);
   $BiblesTableManager get bibles => $BiblesTableManager(_db, _db.bibles);
   $LocalizedBookNamesTableManager get localizedBookNames =>
       $LocalizedBookNamesTableManager(_db, _db.localizedBookNames);

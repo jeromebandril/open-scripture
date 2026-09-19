@@ -197,11 +197,11 @@ class _ParallelView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final spacing = BibleViewSettingsScope.of(context).listParallelSpacing;
+    final enablePericope = BibleViewSettingsScope.of(context).enablePericope;
 
-    return Row(
+    final row = Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      // TODO: make this field a double
       spacing: spacing.toDouble(),
       children: verses.map((v) {
         if (v == null) return const Expanded(child: SizedBox());
@@ -214,6 +214,18 @@ class _ParallelView extends StatelessWidget {
           ),
         );
       }).toList(),
+    );
+
+    if (!enablePericope) return row;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      spacing: 12,
+      children: [
+        _PericopeRow(verses: verses, spacing: spacing.toDouble()),
+        row,
+      ],
     );
   }
 }
@@ -306,3 +318,43 @@ class _VerseWidget extends StatelessWidget {
     return result;
   }
 }
+
+class _PericopeRow extends StatelessWidget {
+  const _PericopeRow({required this.verses, required this.spacing});
+
+  final List<Verse?> verses;
+  final double spacing;
+
+  @override
+  Widget build(BuildContext context) {
+    if (verses.every((v) => v?.heading == null)) {
+      return const SizedBox.shrink();
+    }
+
+    final viewSettings = BibleViewSettingsScope.of(context);
+
+    // Inherit the verse text style so the title follows the font-size setting.
+    final style = DefaultTextStyle.of(context).style.copyWith(
+          fontWeight: FontWeight.bold,
+          color: viewSettings.verseColor,
+          decoration: TextDecoration.underline,
+        );
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 24, bottom: 24),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: spacing,
+        children: verses.map((v) {
+          final title = v?.heading;
+          return Expanded(
+            child: title == null
+                ? const SizedBox()
+                : Text(title, style: style, textAlign: TextAlign.center),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+// =======================

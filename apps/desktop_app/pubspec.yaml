@@ -93,6 +93,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/icon/icon.png
+    - assets/pericopes/kjv-en.json
     - lib/features/obs_live_overlay/overlay_web/overlay.html
     - lib/features/obs_live_overlay/overlay_web/overlay.js
     - lib/features/obs_live_overlay/overlay_web/overlay.css

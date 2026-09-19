@@ -1,3 +1,5 @@
+import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 
 import '../../../../../shared/data/datasources/bible_catalog_datasource/bible_catalog_datasource.dart';
@@ -10,17 +12,22 @@ import '../../../../../shared/domain/entities/bible_translation.dart';
 import '../../../../../shared/domain/entities/verse.dart';
 import '../../../../../shared/error/exception.dart';
 import '../../../../../shared/error/failure.dart';
+import '../../../../pericopes_mgr/data/datasources/pericope_datasource.dart';
+import '../../../../pericopes_mgr/domain/entities/pericope.dart';
 import '../../domain/repositories/bible_pane_repository.dart';
 import '../../error/bible_failures.dart';
 
 class BiblePaneRepositoryImpl implements BiblePaneRepository {
   final BibleContentDatasource _contentDatasource;
   final BibleCatalogDatasource _catalogDatasource;
+  final PericopeDatasource? _pericopeDatasource;
 
   const BiblePaneRepositoryImpl({
     required BibleContentDatasource contentDatasource,
     required BibleCatalogDatasource catalogDatasource,
-  })  : _contentDatasource = contentDatasource,
+    PericopeDatasource? pericopeDatasource,
+  })  : _pericopeDatasource = pericopeDatasource,
+        _contentDatasource = contentDatasource,
         _catalogDatasource = catalogDatasource;
 
   @override
@@ -104,7 +111,14 @@ class BiblePaneRepositoryImpl implements BiblePaneRepository {
           );
         }).toList();
 
-        return verses;
+        if (_pericopeDatasource == null) {
+          debugPrint(
+              'Pericope datasource not available, skipping pericope overlay');
+          return verses;
+        }
+
+        final pericopes = await _loadPericopes(bibleId, ref);
+        return attachPericopes(verses, pericopes);
       },
       (error, st) => switch (error) {
         NotFoundException e =>
@@ -116,5 +130,43 @@ class BiblePaneRepositoryImpl implements BiblePaneRepository {
         _ => UnexpectedFailure(cause: error, stackTrace: st),
       },
     );
+  }
+
+  List<Verse> attachPericopes(List<Verse> verses, List<Pericope> pericopes) {
+    debugPrint(
+        'Attaching ${pericopes.length} pericopes to ${verses.length} verses');
+    if (verses.isEmpty || pericopes.isEmpty) return verses;
+
+    final byVerse = <int, Pericope>{};
+    for (final p in pericopes) {
+      // Versification differences: snap to the first verse that exists
+      // at or after the pericope's start, or skip if there is none.
+      final target =
+          verses.firstWhereOrNull((v) => v.ref.verseStart! >= p.startVerse);
+      if (target != null) byVerse.putIfAbsent(target.ref.verseStart!, () => p);
+    }
+
+    final p = verses.map((v) {
+      final p = byVerse[v.ref.verseStart];
+      final hasSourceHeading = v.segments.any((s) => s.heading != null);
+      // The Bible's own heading wins over the overlay.
+      return p == null || hasSourceHeading ? v : v.copyWith(heading: p.title);
+    }).toList();
+    debugPrint(p.toString());
+    return p;
+  }
+
+  Future<List<Pericope>> _loadPericopes(BibleId bibleId, BibleRef ref) async {
+    if (_pericopeDatasource == null) return const [];
+    try {
+      return await _pericopeDatasource.getForChapter(
+        bibleId.externalId,
+        ref.book,
+        ref.chapter,
+      );
+    } catch (e, st) {
+      debugPrint('Pericope load failed: $e\n$st');
+      return const [];
+    }
   }
 }

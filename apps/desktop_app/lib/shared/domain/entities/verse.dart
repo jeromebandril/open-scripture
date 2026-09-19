@@ -58,6 +58,7 @@ class VerseSegment extends Equatable {
 
 /// The aggregate root for a Biblical Verse.
 class Verse extends Equatable {
+  final String? heading;
   final String translationId; // e.g., 'KJV', 'NIV', 'RVR60'
   final BibleRef ref;
   final List<VerseSegment> segments;
@@ -66,6 +67,7 @@ class Verse extends Equatable {
     required this.translationId,
     required this.ref,
     required this.segments,
+    this.heading,
   });
 
   /// Utility to get the raw text devoid of formatting.
@@ -78,6 +80,20 @@ class Verse extends Equatable {
   List<VerseSpan> get spans =>
       segments.expand((segment) => segment.spans).toList();
 
+  Verse copyWith({
+    String? translationId,
+    BibleRef? ref,
+    List<VerseSegment>? segments,
+    String? heading,
+  }) {
+    return Verse(
+      translationId: translationId ?? this.translationId,
+      ref: ref ?? this.ref,
+      segments: segments ?? this.segments,
+      heading: heading ?? this.heading,
+    );
+  }
+
   @override
-  List<Object?> get props => [translationId, ref, segments];
+  List<Object?> get props => [translationId, ref, segments, heading];
 }
