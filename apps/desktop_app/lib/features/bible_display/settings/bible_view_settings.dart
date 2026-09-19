@@ -40,6 +40,7 @@ abstract class _Keys {
   static const enabledDisplayModes = 'enabledDisplayModes';
   static const defaultDisplayMode = 'defaultDisplayMode';
   static const verseSpacing = 'verseSpacing';
+  static const verseLetterSpacing = 'verseLetterSpacing';
 }
 
 class BibleViewSettings extends Equatable {
@@ -56,6 +57,7 @@ class BibleViewSettings extends Equatable {
   final Color selectedRefColor;
   final Color verseColor;
   final Color refColor;
+  final double? verseLetterSpacing;
   // other
   final double widthAdjustmentOffset;
   final double xPadding;
@@ -95,6 +97,8 @@ class BibleViewSettings extends Equatable {
     this.backgroundColor = const Color(0xFF0C0C0C),
     this.selectedRefColor = const Color(0xFFA390FF),
     this.refColor = const Color(0xFF81811E),
+    // ignore: avoid_init_to_null
+    this.verseLetterSpacing = null,
     this.useAppTheme = false,
     this.verseFontWeight = BibleViewFontWeight.regular,
     this.widthAdjustmentOffset = 0.0,
@@ -153,6 +157,8 @@ class BibleViewSettings extends Equatable {
     Color? backgroundColor,
     Color? selectedRefColor,
     Color? refColor,
+    double? Function()? textHeight,
+    double? Function()? verseLetterSpacing,
     bool? useAppTheme,
     BibleViewFontWeight? verseFontWeight,
     double? widthAdjustmentOffset,
@@ -188,6 +194,9 @@ class BibleViewSettings extends Equatable {
       backgroundColor: backgroundColor ?? this.backgroundColor,
       selectedRefColor: selectedRefColor ?? this.selectedRefColor,
       refColor: refColor ?? this.refColor,
+      verseLetterSpacing: verseLetterSpacing != null
+          ? verseLetterSpacing()
+          : this.verseLetterSpacing,
       useAppTheme: useAppTheme ?? this.useAppTheme,
       verseFontWeight: verseFontWeight ?? this.verseFontWeight,
       widthAdjustmentOffset:
@@ -233,6 +242,7 @@ class BibleViewSettings extends Equatable {
         _Keys.backgroundColor: ColorsUtil.colorToHex(backgroundColor),
         _Keys.selectedRefColor: ColorsUtil.colorToHex(selectedRefColor),
         _Keys.refColor: ColorsUtil.colorToHex(refColor),
+        _Keys.verseLetterSpacing: verseLetterSpacing,
         _Keys.useAppTheme: useAppTheme,
         _Keys.verseFontWeight: verseFontWeight.wire,
         _Keys.widthAdjustmentOffset: widthAdjustmentOffset,
@@ -282,6 +292,9 @@ class BibleViewSettings extends Equatable {
       refColor: json[_Keys.refColor] != null
           ? Color(ColorsUtil.parseHex(json[_Keys.refColor] as String))
           : defaults.refColor,
+      verseLetterSpacing: json[_Keys.verseLetterSpacing] != null
+          ? json[_Keys.verseLetterSpacing] as double
+          : defaults.verseLetterSpacing,
       useAppTheme: json[_Keys.useAppTheme] as bool? ?? defaults.useAppTheme,
       verseFontWeight: json[_Keys.verseFontWeight] != null
           ? AppFontWeightWire.fromWire(json[_Keys.verseFontWeight] as String)
@@ -366,6 +379,7 @@ class BibleViewSettings extends Equatable {
         backgroundColor,
         selectedRefColor,
         refColor,
+        verseLetterSpacing,
         useAppTheme,
         verseFontWeight,
         widthAdjustmentOffset,

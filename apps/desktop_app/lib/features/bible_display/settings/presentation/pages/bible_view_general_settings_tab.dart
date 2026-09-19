@@ -319,6 +319,44 @@ class _BibleViewGeneralSettingsTabState
                         ),
                       ],
                     ),
+                    SettingSection(title: 'Advanced', children: [
+                      Setting(
+                          label: 'Use custom text letter spacing',
+                          description:
+                              'Can set custom letter spacing or use default specified from the font family itself',
+                          child: AppInputBool(
+                            value: context.select(
+                                    (SettingsCubit<BibleViewSettings> c) =>
+                                        c.state.verseLetterSpacing) !=
+                                null,
+                            onChanged: (val) {
+                              final s = val ? 0.0 : null;
+                              cubit.update((p) =>
+                                  p.copyWith(verseLetterSpacing: () => s));
+                            },
+                          )),
+                      Setting(
+                          label: 'Text letter spacing',
+                          description:
+                              'Set distance between letters (can be negative)',
+                          child: AppInputNumber(
+                            enabled: context.select(
+                                    (SettingsCubit<BibleViewSettings> c) =>
+                                        c.state.verseLetterSpacing) !=
+                                null,
+                            min: -10,
+                            max: 10,
+                            decimal: true,
+                            onSubmitted: (n) {
+                              cubit.update((p) => p.copyWith(
+                                  verseLetterSpacing: () => n.toDouble()));
+                            },
+                            value: context.select(
+                              (SettingsCubit<BibleViewSettings> c) =>
+                                  c.state.verseLetterSpacing,
+                            ),
+                          )),
+                    ]),
                   ],
                 ),
                 SettingSection(
