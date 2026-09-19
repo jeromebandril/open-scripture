@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../../app/settings/app_settings.dart';
 import '../../../../../app/widgets/font_picker.dart';
 import '../../../../../core/settings/settings_cubit.dart';
+import '../../../../../shared/design_system/design_system.dart';
 import '../../../../../shared/fonts/app_font.dart';
 import '../../../../../shared/widgets/ui/inputs/app_input_bool.dart';
 import '../../../../../shared/widgets/ui/inputs/app_input_color.dart';
 import '../../../../../shared/widgets/ui/inputs/app_input_number.dart';
 import '../../../../../shared/widgets/ui/inputs/app_input_option.dart';
+import '../../../../pericopes_mgr/presentation/pages/pericope_customization_page.dart';
 import '../../../../settings_window/presentation/widgets/setting.dart';
 import '../../../../settings_window/presentation/widgets/setting_section.dart';
+import '../../../../window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import '../../../bible_pane/domain/display_mode.dart';
 import '../../bible_view_settings.dart';
 import '../../domain/entities/bible_view_font_weight.dart';
@@ -190,14 +194,30 @@ class _BibleViewGeneralSettingsTabState
                         description:
                             'Render pericope headings if available in the bible text, or use default headings',
                         settingWidth: 100,
-                        child: AppInputBool(
-                          value: context.select(
-                              (SettingsCubit<BibleViewSettings> c) =>
-                                  c.state.enablePericope),
-                          onChanged: (val) {
-                            cubit
-                                .update((p) => p.copyWith(enablePericope: val));
-                          },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          spacing: AppSpacing.sm,
+                          children: [
+                            IconButton(
+                              onPressed: () => context
+                                  .read<WindowStackManagerBloc>()
+                                  .add(WindowStackManagerOpen(
+                                    title: 'Pericope customization',
+                                    size: const Size(600, 400),
+                                    widget: const PericopeCustomizationPage(),
+                                  )),
+                              icon: const Icon(LucideIcons.settings),
+                            ),
+                            AppInputBool(
+                              value: context.select(
+                                  (SettingsCubit<BibleViewSettings> c) =>
+                                      c.state.enablePericope),
+                              onChanged: (val) {
+                                cubit.update(
+                                    (p) => p.copyWith(enablePericope: val));
+                              },
+                            ),
+                          ],
                         )),
                     Setting(
                         label: 'Quote color',

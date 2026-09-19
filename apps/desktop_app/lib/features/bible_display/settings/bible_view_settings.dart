@@ -42,6 +42,10 @@ abstract class _Keys {
   static const verseSpacing = 'verseSpacing';
   static const verseLetterSpacing = 'verseLetterSpacing';
   static const enablePericope = 'enablePericope';
+  static const pericopeSpacingTop = 'pericopeSpacingTop';
+  static const pericopeSpacingBottom = 'pericopeSpacingBottom';
+  static const pericopeUnderline = 'pericopeUnderline';
+  static const pericopeColor = 'pericopeColor';
 }
 
 class BibleViewSettings extends Equatable {
@@ -69,9 +73,14 @@ class BibleViewSettings extends Equatable {
   final bool useAppTheme;
   final bool enableStrongWordsRender;
   // special render
-  final bool enablePericope;
   final Color quoteColor;
   final Color addColor;
+  // pericope
+  final bool enablePericope;
+  final double pericopeSpacingTop;
+  final double pericopeSpacingBottom;
+  final bool pericopeUnderline;
+  final Color pericopeColor;
 
   // --- LIST view ---
   final bool underlineRefs;
@@ -112,9 +121,13 @@ class BibleViewSettings extends Equatable {
       DisplayMode.presentation
     ],
     this.defaultDisplayMode = DisplayMode.list,
-    this.enablePericope = true,
     this.quoteColor = const Color(0xFFE04A4A),
     this.addColor = const Color(0xFFD2D2D2),
+    this.enablePericope = true,
+    this.pericopeSpacingTop = 24,
+    this.pericopeSpacingBottom = 24,
+    this.pericopeUnderline = true,
+    this.pericopeColor = const Color(0xFFB9B9B9),
     this.enableStrongWordsRender = false,
     this.selectedRefFontWeight = BibleViewFontWeight.semiBold,
     this.refFontWeight = BibleViewFontWeight.regular,
@@ -141,6 +154,7 @@ class BibleViewSettings extends Equatable {
         verseFontWeight: BibleViewFontWeight.regular,
         refFontWeight: BibleViewFontWeight.regular,
         selectedRefFontWeight: BibleViewFontWeight.semiBold,
+        pericopeColor: Color(0xFFB9B9B9),
       );
 
   factory BibleViewSettings.defaultThemeLight() => const BibleViewSettings(
@@ -151,6 +165,7 @@ class BibleViewSettings extends Equatable {
         verseFontWeight: BibleViewFontWeight.semiBold,
         refFontWeight: BibleViewFontWeight.semiBold,
         selectedRefFontWeight: BibleViewFontWeight.bold,
+        pericopeColor: Color(0xFF0C0C0C),
       );
 
   BibleViewSettings copyWith({
@@ -170,9 +185,13 @@ class BibleViewSettings extends Equatable {
     double? splitscreenGap,
     List<DisplayMode>? enabledDisplayModes,
     DisplayMode? defaultDisplayMode,
-    bool? enablePericope,
     Color? quoteColor,
     Color? addColor,
+    bool? enablePericope,
+    double? pericopeSpacingTop,
+    double? pericopeSpacingBottom,
+    bool? pericopeUnderline,
+    Color? pericopeColor,
     bool? enableStrongWordsRender,
     BibleViewFontWeight? selectedRefFontWeight,
     BibleViewFontWeight? refFontWeight,
@@ -210,9 +229,14 @@ class BibleViewSettings extends Equatable {
       splitscreenGap: splitscreenGap ?? this.splitscreenGap,
       enabledDisplayModes: enabledDisplayModes ?? this.enabledDisplayModes,
       defaultDisplayMode: defaultDisplayMode ?? this.defaultDisplayMode,
-      enablePericope: enablePericope ?? this.enablePericope,
       quoteColor: quoteColor ?? this.quoteColor,
       addColor: addColor ?? this.addColor,
+      enablePericope: enablePericope ?? this.enablePericope,
+      pericopeSpacingTop: pericopeSpacingTop ?? this.pericopeSpacingTop,
+      pericopeSpacingBottom:
+          pericopeSpacingBottom ?? this.pericopeSpacingBottom,
+      pericopeUnderline: pericopeUnderline ?? this.pericopeUnderline,
+      pericopeColor: pericopeColor ?? this.pericopeColor,
       enableStrongWordsRender:
           enableStrongWordsRender ?? this.enableStrongWordsRender,
       selectedRefFontWeight:
@@ -257,9 +281,13 @@ class BibleViewSettings extends Equatable {
         _Keys.enabledDisplayModes:
             enabledDisplayModes.map((e) => e.name).toList(),
         _Keys.defaultDisplayMode: defaultDisplayMode.name,
-        _Keys.enablePericope: enablePericope,
         _Keys.quoteColor: ColorsUtil.colorToHex(quoteColor),
         _Keys.addColor: ColorsUtil.colorToHex(addColor),
+        _Keys.enablePericope: enablePericope,
+        _Keys.pericopeSpacingTop: pericopeSpacingTop,
+        _Keys.pericopeSpacingBottom: pericopeSpacingBottom,
+        _Keys.pericopeUnderline: pericopeUnderline,
+        _Keys.pericopeColor: ColorsUtil.colorToHex(pericopeColor),
         _Keys.enableStrongWordsRender: enableStrongWordsRender,
         _Keys.selectedRefFontWeight: selectedRefFontWeight.wire,
         _Keys.refFontWeight: refFontWeight.wire,
@@ -320,14 +348,25 @@ class BibleViewSettings extends Equatable {
       defaultDisplayMode: (json[_Keys.defaultDisplayMode] as String?) != null
           ? DisplayMode.values.byName(json[_Keys.defaultDisplayMode] as String)
           : defaults.defaultDisplayMode,
-      enablePericope:
-          json[_Keys.enablePericope] as bool? ?? defaults.enablePericope,
       quoteColor: json[_Keys.quoteColor] != null
           ? Color(ColorsUtil.parseHex(json[_Keys.quoteColor] as String))
           : defaults.quoteColor,
       addColor: json[_Keys.addColor] != null
           ? Color(ColorsUtil.parseHex(json[_Keys.addColor] as String))
           : defaults.addColor,
+      enablePericope:
+          json[_Keys.enablePericope] as bool? ?? defaults.enablePericope,
+      pericopeSpacingTop:
+          (json[_Keys.pericopeSpacingTop] as num?)?.toDouble() ??
+              defaults.pericopeSpacingTop,
+      pericopeSpacingBottom:
+          (json[_Keys.pericopeSpacingBottom] as num?)?.toDouble() ??
+              defaults.pericopeSpacingBottom,
+      pericopeUnderline:
+          json[_Keys.pericopeUnderline] as bool? ?? defaults.pericopeUnderline,
+      pericopeColor: json[_Keys.pericopeColor] != null
+          ? Color(ColorsUtil.parseHex(json[_Keys.pericopeColor] as String))
+          : defaults.pericopeColor,
       enableStrongWordsRender: json[_Keys.enableStrongWordsRender] as bool? ??
           defaults.enableStrongWordsRender,
       selectedRefFontWeight: json[_Keys.selectedRefFontWeight] != null
@@ -396,9 +435,13 @@ class BibleViewSettings extends Equatable {
         splitscreenGap,
         enabledDisplayModes,
         defaultDisplayMode,
-        enablePericope,
         quoteColor,
         addColor,
+        enablePericope,
+        pericopeSpacingTop,
+        pericopeSpacingBottom,
+        pericopeUnderline,
+        pericopeColor,
         enableStrongWordsRender,
         selectedRefFontWeight,
         refFontWeight,

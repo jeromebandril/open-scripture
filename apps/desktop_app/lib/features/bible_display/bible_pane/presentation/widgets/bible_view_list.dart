@@ -336,12 +336,17 @@ class _PericopeRow extends StatelessWidget {
     // Inherit the verse text style so the title follows the font-size setting.
     final style = DefaultTextStyle.of(context).style.copyWith(
           fontWeight: FontWeight.bold,
-          color: viewSettings.verseColor,
-          decoration: TextDecoration.underline,
+          color: viewSettings.pericopeColor,
+          decorationColor: viewSettings.pericopeColor,
+          decoration:
+              viewSettings.pericopeUnderline ? TextDecoration.underline : null,
         );
 
     return Padding(
-      padding: const EdgeInsets.only(top: 24, bottom: 24),
+      padding: EdgeInsets.only(
+        top: viewSettings.pericopeSpacingTop,
+        bottom: viewSettings.pericopeSpacingBottom,
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: spacing,
