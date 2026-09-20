@@ -311,7 +311,7 @@ void _registerBibleImporter(GetIt sl) {
       () => SourceFetcherServiceImpl());
   sl.registerLazySingleton<BookResolver>(
     () => ChainedBookResolver(
-        [DriftBookResolver(sl()), ProgrammaticIdResolver()]),
+        [ProgrammaticIdResolver(), DriftBookResolver(sl())]),
   );
 }
 
