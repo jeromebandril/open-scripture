@@ -17,23 +17,65 @@ class DriftBookResolver implements BookResolver {
     final sanitizedInput = input.trim().toLowerCase();
     if (sanitizedInput.isEmpty) return null;
 
-    // For '1 Sam' matching '1 Samuel'
     final prefixMatch = '$sanitizedInput%';
-    // For finding 'sos' inside 'sng, song, sos'
     final containsMatch = '%$sanitizedInput%';
 
-    // Build the Drift query with a Join
-    final query = _db.select(_db.localizedBookNames).join([
+    final localized = _db.localizedBookNames;
+    final canonical = _db.canonicalBooks;
+    // Filter with proprity
+    final matchRank = CaseWhenExpression<int>(
+      cases: [
+        // Exact abbreviation: "eph" == "EPH"
+        CaseWhen(
+          localized.abbr.lower().isValue(sanitizedInput),
+          then: const Constant(1),
+        ),
+        // Abbreviation prefix: "eph%"
+        CaseWhen(
+          localized.abbr.lower().like(prefixMatch),
+          then: const Constant(2),
+        ),
+        // Exact short name: "ephesians"
+        CaseWhen(
+          localized.shortName.lower().isValue(sanitizedInput),
+          then: const Constant(3),
+        ),
+        // Short name prefix: "eph%"
+        CaseWhen(
+          localized.shortName.lower().like(prefixMatch),
+          then: const Constant(4),
+        ),
+        // Long name contains: "%eph%"
+        CaseWhen(
+          localized.longName.lower().like(containsMatch),
+          then: const Constant(5),
+        ),
+        // Alias contains: "%eph%"
+        CaseWhen(
+          localized.aliases.lower().like(containsMatch),
+          then: const Constant(6),
+        ),
+      ],
+      orElse: const Constant(99),
+    );
+
+    final query = _db.select(localized).join([
       innerJoin(
-        _db.canonicalBooks,
-        _db.canonicalBooks.id.equalsExp(_db.localizedBookNames.bookId),
+        canonical,
+        canonical.id.equalsExp(localized.bookId),
       ),
     ])
-      ..where(_db.localizedBookNames.bibleId.equals(bibleId) &
-          (_db.localizedBookNames.longName.lower().like(containsMatch) |
-              _db.localizedBookNames.shortName.lower().like(containsMatch) |
-              _db.localizedBookNames.abbr.lower().like(prefixMatch) |
-              _db.localizedBookNames.aliases.lower().like(containsMatch)))
+      ..where(
+        localized.bibleId.equals(bibleId) &
+            (localized.abbr.lower().like(prefixMatch) |
+                localized.shortName.lower().like(prefixMatch) |
+                localized.longName.lower().like(containsMatch) |
+                localized.aliases.lower().like(containsMatch)),
+      )
+      ..orderBy([
+        OrderingTerm.asc(matchRank),
+        OrderingTerm.asc(canonical.id),
+      ])
       ..limit(1);
 
     final result = await query.getSingleOrNull();
