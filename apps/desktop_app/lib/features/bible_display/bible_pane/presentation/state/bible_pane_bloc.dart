@@ -118,7 +118,6 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
       ));
       // fetch and restore content with updated translations
       if (state.isNotSameBookChapter) {
-        print('Restoring content with updated translations');
         add(BiblePaneDisplayVerses(contentRefs));
       } else if (state.reference != null) {
         add(BiblePaneDisplayChapter(ref: state.reference!));
@@ -126,7 +125,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     } else {
       emit(state.copyWith(
         status: () => BiblePaneStatus.error,
-        errorMessage: () => '${failure.message} ${failure.cause.toString()}',
+        error: () => failure,
       ));
     }
   }
@@ -215,7 +214,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
           reference: () => event.refs.first,
           content: () => content,
           isNotSameBookChapter: () => true,
-          errorMessage: () => errors.first.message,
+          error: () => errors.first,
           verseCount: () => maxVerseCount,
         ));
       }
@@ -308,7 +307,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
           reference: () => event.ref,
           content: () => content,
           isNotSameBookChapter: () => false,
-          errorMessage: () => errors.first.message,
+          error: () => errors.first,
           verseCount: () => maxVerseCount,
         ));
       }

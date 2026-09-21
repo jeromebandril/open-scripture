@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import '../../../../core/infrastructure/database/database.dart';
+import '../../../error/exception.dart';
 import '../../models/bible_install_dto.dart';
 import 'bible_catalog_datasource.dart';
 
@@ -35,7 +36,9 @@ class LocalBibleCatalogDataSourceImpl implements BibleCatalogDatasource {
       ),
     ])
           ..where(db.bibles.extId.equals(extId)))
-        .getSingle();
+        .getSingleOrNull();
+
+    if (row == null) throw NotFoundException(extId);
 
     return TranslationInstallDtoMapper.fromDatabase(
       row.readTable(db.bibles),

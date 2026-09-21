@@ -15,7 +15,7 @@ class BiblePaneState extends Equatable {
     required this.content,
     required this.parallelOrder,
     required this.isNotSameBookChapter,
-    required this.errorMessage,
+    required this.error,
     required this.dMode,
     required this.verseCount,
     required this.repoType,
@@ -29,7 +29,7 @@ class BiblePaneState extends Equatable {
     BiblePaneStatus status = BiblePaneStatus.selectBibles,
     BibleRef? reference,
     bool isMixed = false,
-    String? errorMessage,
+    Failure? error,
     required DisplayMode dMode,
     int? verseCount,
     BibleRepositoryType repoType = BibleRepositoryType.localDatabase,
@@ -42,7 +42,7 @@ class BiblePaneState extends Equatable {
       content: content,
       parallelOrder: parallelOrder,
       isNotSameBookChapter: isMixed,
-      errorMessage: errorMessage,
+      error: error,
       dMode: dMode,
       verseCount: verseCount,
       repoType: repoType,
@@ -56,7 +56,7 @@ class BiblePaneState extends Equatable {
   final ParallelBibleConfig content;
   final List<BibleId> parallelOrder;
   final bool isNotSameBookChapter;
-  final String? errorMessage;
+  final Failure? error;
   final DisplayMode dMode;
   final int? verseCount;
   final BibleRepositoryType repoType;
@@ -74,7 +74,7 @@ class BiblePaneState extends Equatable {
     ParallelBibleConfig Function()? content,
     List<BibleId> Function()? parallelOrder,
     bool Function()? isNotSameBookChapter,
-    String? Function()? errorMessage,
+    Failure? Function()? error,
     DisplayMode Function()? dMode,
     int? Function()? verseCount,
     BibleRepositoryType Function()? repoType,
@@ -90,7 +90,7 @@ class BiblePaneState extends Equatable {
       isMixed: isNotSameBookChapter != null
           ? isNotSameBookChapter()
           : this.isNotSameBookChapter,
-      errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
+      error: error != null ? error() : this.error,
       dMode: dMode != null ? dMode() : this.dMode,
       verseCount: verseCount != null ? verseCount() : this.verseCount,
       repoType: repoType != null ? repoType() : this.repoType,
@@ -106,7 +106,7 @@ class BiblePaneState extends Equatable {
         content,
         parallelOrder,
         isNotSameBookChapter,
-        errorMessage,
+        error,
         dMode,
         verseCount,
         repoType,

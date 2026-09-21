@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../shared/domain/entities/bible_ref.dart';
+import '../../../../../shared/error/failure.dart';
 import '../../../../text_scaler/presentation/widgets/text_scaler_host.dart';
 import '../../../bible_selector/presentation/widgets/bible_selector.dart';
 import '../../../multi_pane_manager/presentation/models/multi_pane_data.dart';
 import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
 import '../../domain/display_mode.dart';
+import '../../error/bible_failures.dart';
 import '../state/bible_pane_bloc.dart';
 import 'bible_view_list.dart';
 import 'bible_view_presentation.dart';
@@ -106,7 +108,7 @@ class BiblePane extends StatelessWidget {
             //
             buildWhen: (prev, curr) =>
                 prev.status != curr.status ||
-                prev.errorMessage != curr.errorMessage ||
+                prev.error != curr.error ||
                 prev.content.isContentEmpty != curr.content.isContentEmpty,
             builder: (context, state) {
               final Widget content = switch (state.status) {
@@ -122,8 +124,7 @@ class BiblePane extends StatelessWidget {
                 //
                 // ERROR SCREEN
                 //
-                BiblePaneStatus.error =>
-                  Center(child: Text(state.errorMessage ?? 'Unknown Error')),
+                BiblePaneStatus.error => _ErrorDisplay(state.error),
                 //
                 // READY SCREEN
                 //
@@ -151,5 +152,37 @@ class BiblePane extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _ErrorDisplay extends StatelessWidget {
+  const _ErrorDisplay(this.error);
+
+  final Failure? error;
+
+  @override
+  Widget build(BuildContext context) {
+    if (error == null) {
+      return const Center(
+          child: Text('Unkown error', textAlign: TextAlign.center));
+    }
+
+    return Center(
+        child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // error message sits on top
+        Text(
+          error!.message,
+          textAlign: TextAlign.center,
+        ),
+        // put optional widgets
+        if (error.runtimeType == BibleNotFoundFailure)
+          TextButton(
+              onPressed: () =>
+                  context.read<BiblePaneBloc>().add(BiblePaneChooseBibles()),
+              child: const Text('Open another bible')),
+      ],
+    ));
   }
 }
