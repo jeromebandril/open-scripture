@@ -25,7 +25,7 @@ class HelpTriggerBtn extends StatelessWidget {
                           .add(WindowStackManagerClose());
                     },
                   ),
-                  size: Size(530, 615),
+                  maxSize: Size(530, 615),
                 ),
               );
         },

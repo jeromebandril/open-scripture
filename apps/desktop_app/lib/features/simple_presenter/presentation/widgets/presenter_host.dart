@@ -13,7 +13,7 @@ class PresenterHost extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final maxHeight = MediaQuery.of(context).size.height;
-    final presenterHeght = maxHeight * 0.45;
+    final presenterHeght = maxHeight * 0.40;
 
     return BlocSelector<PresenterCubit, PresenterState, bool>(
       selector: (state) => state.isShowing,

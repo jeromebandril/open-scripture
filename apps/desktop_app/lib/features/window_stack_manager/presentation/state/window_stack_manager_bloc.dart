@@ -21,7 +21,7 @@ class WindowStackManagerBloc
         ? event.widget
         : CustomWindowWrapper(
             title: event.title!,
-            size: event.size!,
+            maxSize: event.maxSize!,
             elevation: (state.windows.length + 1) * 100,
             child: event.widget,
           );

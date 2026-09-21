@@ -113,7 +113,7 @@ class _RemoteControllerSettingsPageState
                                                     title: 'Connected Devices',
                                                     widget:
                                                         const _ConnectedClientsList(),
-                                                    size: Size(400, 400)));
+                                                    maxSize: Size(400, 400)));
                                           },
                                           child:
                                               Text('Manage connected devices')),

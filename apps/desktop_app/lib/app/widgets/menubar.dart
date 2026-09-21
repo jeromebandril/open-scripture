@@ -4,7 +4,6 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../features/settings_window/presentation/models/settings_route.dart';
 import '../../features/settings_window/presentation/pages/settings_window.dart';
-import '../../features/simple_presenter/presentation/cubit/presenter_cubit.dart';
 import '../../features/simple_presenter/presentation/pages/presenter_setup_page.dart';
 import '../../features/window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import 'toolbar.dart';
@@ -36,7 +35,7 @@ class MyMenuBar extends StatelessWidget {
                     WindowStackManagerOpen(
                       widget: const PresenterSetupPage(),
                       title: 'Presenter setup',
-                      size: const Size(500, 500),
+                      maxSize: Size(500, 1000),
                     ),
                   );
             },

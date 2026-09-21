@@ -203,7 +203,7 @@ class _BibleViewGeneralSettingsTabState
                                   .read<WindowStackManagerBloc>()
                                   .add(WindowStackManagerOpen(
                                     title: 'Pericope customization',
-                                    size: const Size(600, 400),
+                                    maxSize: const Size(600, 400),
                                     widget: const PericopeCustomizationPage(),
                                   )),
                               icon: const Icon(LucideIcons.settings),

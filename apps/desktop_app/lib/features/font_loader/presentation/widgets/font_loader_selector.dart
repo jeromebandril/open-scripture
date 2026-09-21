@@ -23,7 +23,7 @@ class FontLoaderSelector extends StatelessWidget {
                 WindowStackManagerOpen(
                   title: 'Load Font from URL',
                   widget: _FontLoaderSelectorWindow(),
-                  size: Size(300, 260),
+                  maxSize: Size(300, 260),
                 ),
               );
         },
