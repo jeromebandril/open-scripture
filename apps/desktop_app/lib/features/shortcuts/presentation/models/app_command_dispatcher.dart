@@ -10,6 +10,7 @@ import '../../../bible_searchbar/search/presentation/state/search_bloc.dart';
 import '../../../obs_live_overlay/presentation/state/obs_live_overlay_cubit.dart';
 import '../../../settings_window/presentation/models/settings_route.dart';
 import '../../../settings_window/presentation/pages/settings_window.dart';
+import '../../../simple_presenter/presentation/cubit/presenter_cubit.dart';
 import '../../../window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import '../../domain/models/app_command.dart';
 
@@ -24,6 +25,7 @@ class AppCommandDispatcher {
     required this.fullscreenCubit,
     required this.interfaceVisibilityCubit,
     required this.windowStackManagerBloc,
+    required this.presenterCubit,
     this.overlayCubit,
   });
 
@@ -32,6 +34,7 @@ class AppCommandDispatcher {
   final FullscreenCubit Function() fullscreenCubit;
   final InterfaceVisibilityCubit Function() interfaceVisibilityCubit;
   final WindowStackManagerBloc Function() windowStackManagerBloc;
+  final PresenterCubit Function() presenterCubit;
   final ObsLiveOverlayCubit Function()? overlayCubit;
 
   void dispatch(AppCommand command) {
@@ -83,7 +86,10 @@ class AppCommandDispatcher {
           ),
         ),
       );
-    }
+    },
+    AppCommand.togglePresenter: () => presenterCubit().toggleShow(),
+    AppCommand.goNextSlide: () => presenterCubit().goNextSlide(),
+    AppCommand.goPrevSlide: () => presenterCubit().goPrevSlide(),
   };
 
   T? _withActiveRef<T>(T Function(BiblePaneBloc bloc, BibleRef ref) fn) {

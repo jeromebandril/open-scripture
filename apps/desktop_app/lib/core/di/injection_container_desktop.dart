@@ -27,6 +27,7 @@ import '../../features/remote_controller/domain/repositories/remote_controller_r
 import '../../features/remote_controller/presentation/state/remote_controller_cubit.dart';
 import '../../features/remote_controller/settings/remote_controller_settings.dart';
 import '../../features/shortcuts/presentation/models/app_command_dispatcher.dart';
+import '../../features/simple_presenter/presentation/cubit/presenter_cubit.dart';
 import '../../features/sword/settings/sword_engine_settings.dart';
 import '../../features/sword/settings/sword_engine_settings_cubit.dart';
 import '../../features/window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
@@ -244,7 +245,8 @@ void _registerShortcuts(GetIt sl) {
       fullscreenCubit: () => sl<FullscreenCubit>(),
       interfaceVisibilityCubit: () => sl<InterfaceVisibilityCubit>(),
       overlayCubit: () => sl<ObsLiveOverlayCubit>(),
-      windowStackManagerBloc: () => sl<WindowStackManagerBloc>()
+      windowStackManagerBloc: () => sl<WindowStackManagerBloc>(), 
+      presenterCubit: () => sl<PresenterCubit>(),
     ),
   );
 }

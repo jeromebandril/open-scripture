@@ -125,5 +125,11 @@ final Map<AppCommand, ShortcutActivator> appCommandShortcuts = {
   AppCommand.flushOverlayBuffer: SingleActivator(LogicalKeyboardKey.keyU,
       control: !_isMacDesktop, meta: _isMacDesktop, includeRepeats: false),
   AppCommand.openSettings: SingleActivator(LogicalKeyboardKey.keyS,
+      control: !_isMacDesktop, meta: _isMacDesktop, includeRepeats: false),
+  AppCommand.togglePresenter: SingleActivator(LogicalKeyboardKey.keyM,
+      control: !_isMacDesktop, meta: _isMacDesktop, includeRepeats: false),
+  AppCommand.goNextSlide: SingleActivator(LogicalKeyboardKey.keyK,
+      control: !_isMacDesktop, meta: _isMacDesktop, includeRepeats: false),
+  AppCommand.goPrevSlide: SingleActivator(LogicalKeyboardKey.keyJ,
       control: !_isMacDesktop, meta: _isMacDesktop, includeRepeats: false)
 };

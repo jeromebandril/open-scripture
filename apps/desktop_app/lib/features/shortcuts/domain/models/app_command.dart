@@ -19,6 +19,9 @@ enum AppCommand {
   zoomOut,
   flushOverlayBuffer,
   openSettings,
+  togglePresenter,
+  goNextSlide,
+  goPrevSlide,
   // private shortcuts
   // do not show as shortcut in the app
   closeWhatever,

@@ -10,6 +10,7 @@ import '../features/bible_searchbar/search/presentation/widgets/bible_searchbar.
 import '../features/obs_live_overlay/presentation/widgets/obs_live_overlay_indicator.dart';
 import '../features/remote_controller/presentation/widgets/remote_controller_indicator.dart';
 import '../features/shortcuts/presentation/widgets/shortcuts_host.dart';
+import '../features/simple_presenter/presentation/widgets/presenter_host.dart';
 import '../features/three_tap_navigator/presentation/widgets/three_tap_navigator.dart';
 import '../features/window_stack_manager/presentation/widgets/window_stack_manager_host.dart';
 import '../shared/design_system/design_system.dart';
@@ -65,39 +66,41 @@ class AppShell extends StatelessWidget {
               // Main screen/workspace
               //
               Expanded(
-                child: Stack(
-                  children: [
-                    //
-                    // Bible Panes
-                    //
-                    Positioned.fill(child: const MultiPaneContainer()),
-                    //
-                    // Dynamic/fullscreen only interfaces
-                    //
-                    if (enableDynamicInterface) ...[
+                child: PresenterHost(
+                  child: Stack(
+                    children: [
                       //
-                      // Dynamic searchbar
+                      // Bible Panes
                       //
-                      const DynamicSearchbar(),
+                      Positioned.fill(child: const MultiPaneContainer()),
                       //
-                      // Dynamic History viewer
+                      // Dynamic/fullscreen only interfaces
                       //
-                      FloatingPanel(
-                        visible: showHistory,
-                        top: screen.height * 0.08 + 100,
-                        left: 0,
-                        right: 0,
-                        width: 350,
-                        height: 250,
-                        padding: const EdgeInsets.only(
-                            right: 0,
-                            left: 0,
-                            top: AppSpacing.lg,
-                            bottom: AppSpacing.md),
-                        child: const HistoryList(size: HistoryListSize.big),
-                      )
+                      if (enableDynamicInterface) ...[
+                        //
+                        // Dynamic searchbar
+                        //
+                        const DynamicSearchbar(),
+                        //
+                        // Dynamic History viewer
+                        //
+                        FloatingPanel(
+                          visible: showHistory,
+                          top: screen.height * 0.08 + 100,
+                          left: 0,
+                          right: 0,
+                          width: 350,
+                          height: 250,
+                          padding: const EdgeInsets.only(
+                              right: 0,
+                              left: 0,
+                              top: AppSpacing.lg,
+                              bottom: AppSpacing.md),
+                          child: const HistoryList(size: HistoryListSize.big),
+                        )
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
             ],

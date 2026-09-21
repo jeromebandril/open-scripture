@@ -22,6 +22,7 @@ import '../../features/my_library/settings/my_library_settings.dart';
 import '../../features/shortcuts/data/repositories/shortcuts_repo_impl.dart';
 import '../../features/shortcuts/domain/repositories/shortcuts_repo.dart';
 import '../../features/shortcuts/presentation/state/shortcuts_cubit.dart';
+import '../../features/simple_presenter/presentation/cubit/presenter_cubit.dart';
 import '../../features/text_scaler/presentation/state/text_scaler_cubit.dart';
 import '../../features/three_tap_navigator/data/repository/three_tap_navigator_repository_impl.dart';
 import '../../features/three_tap_navigator/domain/repository/three_tap_navigator_repository.dart';
@@ -78,6 +79,7 @@ Future<void> init(GetIt sl) async {
   _registerThreeTapNavigator(sl);
   _registerBibleViewSettings(sl);
   _registerAppSettings(sl);
+  _registerPresenter(sl);
 
   // bloc factory
   sl.registerFactoryParam<BiblePaneBloc, int, void>(
@@ -128,6 +130,10 @@ Future<void> init(GetIt sl) async {
     dispose: (repo) => repo.dispose(),
   );
   sl.registerSingleton(SettingsCubit<MyLibrarySettings>(sl()));
+}
+
+void _registerPresenter(GetIt sl) {
+  sl.registerLazySingleton(() => PresenterCubit());
 }
 
 void _registerAppSettings(GetIt sl) {
