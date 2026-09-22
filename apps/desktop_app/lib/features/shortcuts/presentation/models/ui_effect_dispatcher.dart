@@ -1,9 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../app/state/fullscreen_cubit.dart';
 import '../../../../shared/widgets/simple_floating_notification.dart';
+import '../../../simple_presenter/presentation/cubit/presenter_cubit.dart';
 import '../../domain/models/app_command.dart';
 import '../widgets/shortcut_view.dart';
 import 'app_command_shortcuts.dart';
@@ -54,6 +56,27 @@ class UiEffectDispatcher {
                   activator: appCommandShortcuts[AppCommand.toggleFullscreen]),
               Text('to exit fullscreen'),
             ]),
+      );
+    },
+    AppCommand.togglePresenter: () {
+      final state = context.read<PresenterCubit>().state;
+      if (state.status != PresenterStatus.error) return;
+      if (state.errorMessage == null) return;
+
+      context.showFloatingNotification(
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          spacing: 8,
+          children: [
+            Icon(
+              LucideIcons.messageSquareWarning,
+              color: Theme.of(context).colorScheme.surface,
+            ),
+            Text(state.errorMessage!),
+          ],
+        ),
       );
     }
   };

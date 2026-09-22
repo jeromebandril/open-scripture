@@ -11,12 +11,12 @@ class SlideData {
 
   SlideData copyWith({
     String? title,
-    String? subtitle,
+    String? Function()? subtitle,
   }) {
     return SlideData(
       id: id,
       title: title ?? this.title,
-      subtitle: subtitle ?? this.subtitle,
+      subtitle: subtitle != null ? subtitle() : this.subtitle,
     );
   }
 }

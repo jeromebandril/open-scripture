@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../shared/design_system/design_system.dart';
+import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
+import '../../../../shared/widgets/ui/inputs/app_input_option.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_text.dart';
+import '../../../settings_window/presentation/widgets/setting.dart';
+import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../domain/entities/slide_data.dart';
 
 class SlidesEditor extends StatefulWidget {
@@ -45,8 +49,6 @@ class _SlidesEditorState extends State<SlidesEditor> {
   }
 
   void _removeSlide(int index) {
-    if (_slides.length <= 1) return;
-
     setState(() {
       _slides.removeAt(index);
     });
@@ -60,7 +62,7 @@ class _SlidesEditorState extends State<SlidesEditor> {
     setState(() {
       _slides[index] = _slides[index].copyWith(
         title: title,
-        subtitle: subtitle,
+        subtitle: () => subtitle,
       );
     });
   }
@@ -77,51 +79,102 @@ class _SlidesEditorState extends State<SlidesEditor> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
+    return Row(
+      spacing: AppSpacing.md,
       children: [
         Expanded(
-          child: ReorderableListView.builder(
-            itemCount: _slides.length,
-            buildDefaultDragHandles: false,
-            onReorderItem: _reorderSlides,
-            itemBuilder: (context, index) {
-              final slide = _slides[index];
-
-              return SlideInput(
-                key: ValueKey(slide.id),
-                index: index,
-                slide: slide,
-                canRemove: _slides.length > 1,
-                dragHandle: ReorderableDragStartListener(
-                  index: index,
-                  child: const Padding(
-                    padding: EdgeInsets.all(8),
-                    child: Icon(LucideIcons.gripHorizontal),
+          flex: 10,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            spacing: AppSpacing.xl,
+            children: [
+              Expanded(
+                child: ReorderableListView.builder(
+                  itemCount: _slides.length,
+                  buildDefaultDragHandles: false,
+                  onReorderItem: _reorderSlides,
+                  footer: SizedBox(
+                    height: 150,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: AppSpacing.xs),
+                        OutlinedButton.icon(
+                          onPressed: _addSlide,
+                          icon: const Icon(Icons.add),
+                          label: const Text('Add slide'),
+                        ),
+                      ],
+                    ),
                   ),
+                  itemBuilder: (context, index) {
+                    final slide = _slides[index];
+
+                    return SlideInput(
+                      key: ValueKey(slide.id),
+                      index: index,
+                      slide: slide,
+                      dragHandle: ReorderableDragStartListener(
+                        index: index,
+                        child: const Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Icon(LucideIcons.gripHorizontal),
+                        ),
+                      ),
+                      onChanged: ({String? title, String? subtitle}) {
+                        _updateSlide(index, title: title, subtitle: subtitle);
+                      },
+                      onRemove: () => _removeSlide(index),
+                    );
+                  },
                 ),
-                onChanged: ({String? title, String? subtitle}) {
-                  _updateSlide(index, title: title, subtitle: subtitle);
-                },
-                onRemove: () => _removeSlide(index),
-              );
-            },
+              ),
+            ],
           ),
         ),
-        Row(
-          spacing: 4,
-          children: [
-            Expanded(
-              child: OutlinedButton.icon(
-                onPressed: _addSlide,
-                icon: const Icon(Icons.add),
-                label: const Text('Add slide'),
+        const VerticalDivider(),
+        Expanded(
+          flex: 6,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            spacing: AppSpacing.md,
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: SettingSection(
+                    children: [
+                      Setting(
+                        label: 'Auto number titles',
+                        description:
+                            'Automatically adds sequential numbers (1, 2, 3...) to the front of your slide titles.',
+                        child: AppInputBool(
+                          enabled: false,
+                          value: false,
+                        ),
+                      ),
+                      Setting(
+                          label: 'Title font weight',
+                          child: AppInputOption(
+                            onChanged: (fw) {},
+                            items: [],
+                          )),
+                      Setting(
+                          label: 'Subtitle font weight',
+                          child: AppInputOption(
+                            onChanged: (fw) {},
+                            items: [],
+                          )),
+                    ],
+                  ),
+                ),
               ),
-            ),
-            Expanded(
-                child: ElevatedButton(
-                    onPressed: _apply, child: const Text('Apply'))),
-          ],
+              ElevatedButton(
+                onPressed: _apply,
+                child: const Text('Apply'),
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -135,7 +188,6 @@ class SlideInput extends StatefulWidget {
     required this.slide,
     required this.onChanged,
     required this.onRemove,
-    required this.canRemove,
     required this.dragHandle,
   });
 
@@ -143,12 +195,11 @@ class SlideInput extends StatefulWidget {
   final SlideData slide;
 
   final void Function({
-    String? title,
+    String title,
     String? subtitle,
   }) onChanged;
 
   final VoidCallback onRemove;
-  final bool canRemove;
   final Widget dragHandle;
 
   @override
@@ -185,21 +236,23 @@ class _SlideInputState extends State<SlideInput> {
                     style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
                   const Spacer(),
-                  if (widget.canRemove)
-                    IconButton(
-                      onPressed: widget.onRemove,
-                      icon: const Icon(LucideIcons.trash),
-                    ),
+                  IconButton(
+                    onPressed: widget.onRemove,
+                    icon: const Icon(LucideIcons.trash),
+                    tooltip: "Remove",
+                  ),
                 ],
               ),
               const SizedBox(height: 12),
               AppInputText(
+                label: "Title",
                 key: ValueKey('${widget.slide.id}-title'),
                 value: _title,
                 onChanged: (value) => widget.onChanged(title: value),
               ),
               const SizedBox(height: 10),
               AppInputText(
+                label: "Subtitle",
                 key: ValueKey('${widget.slide.id}-subtitle'),
                 value: _subtitle,
                 onChanged: (value) =>

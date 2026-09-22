@@ -4,7 +4,7 @@ import '../../../../shared/design_system/tokens/tokens.dart';
 class Setting extends StatelessWidget {
   const Setting({
     required this.label,
-    required this.description,
+    this.description,
     required this.child,
     this.settingWidth = 200,
     this.breakpoint = 450,
@@ -12,7 +12,7 @@ class Setting extends StatelessWidget {
   });
 
   final String label;
-  final String description;
+  final String? description;
   final Widget child;
   final double settingWidth;
   final double breakpoint;
@@ -32,10 +32,11 @@ class Setting extends StatelessWidget {
               label,
               style: const TextStyle(fontWeight: FontWeight.w500),
             ),
-            Text(
-              description,
-              style: const TextStyle(fontWeight: FontWeight.w300),
-            ),
+            if (description != null)
+              Text(
+                description!,
+                style: const TextStyle(fontWeight: FontWeight.w300),
+              ),
           ],
         );
 

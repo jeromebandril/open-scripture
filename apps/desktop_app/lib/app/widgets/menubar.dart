@@ -35,11 +35,11 @@ class MyMenuBar extends StatelessWidget {
                     WindowStackManagerOpen(
                       widget: const PresenterSetupPage(),
                       title: 'Presenter setup',
-                      maxSize: Size(500, 1000),
+                      maxSize: Size(800, 700),
                     ),
                   );
             },
-            icon: const Icon(LucideIcons.rectangleHorizontal)),
+            icon: const Icon(LucideIcons.rectangleCircle)),
       ]),
     );
   }
