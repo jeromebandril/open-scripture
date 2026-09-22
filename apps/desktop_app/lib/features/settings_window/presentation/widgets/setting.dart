@@ -7,6 +7,7 @@ class Setting extends StatelessWidget {
     required this.description,
     required this.child,
     this.settingWidth = 200,
+    this.breakpoint = 450,
     super.key,
   });
 
@@ -14,29 +15,57 @@ class Setting extends StatelessWidget {
   final String description;
   final Widget child;
   final double settingWidth;
+  final double breakpoint;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      spacing: AppSpacing.md,
-      children: [
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: AppSpacing.xs,
-            children: [
-              Text(label, style: TextStyle(fontWeight: FontWeight.w500)),
-              Text(description, style: TextStyle(fontWeight: FontWeight.w300)),
-            ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isCompact = constraints.maxWidth < breakpoint;
+
+        final labelWidget = Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: isCompact ? 0 : AppSpacing.xs,
+          children: [
+            Text(
+              label,
+              style: const TextStyle(fontWeight: FontWeight.w500),
+            ),
+            Text(
+              description,
+              style: const TextStyle(fontWeight: FontWeight.w300),
+            ),
+          ],
+        );
+
+        final settingWidget = SizedBox(
+          width: isCompact ? double.infinity : settingWidth,
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: child,
           ),
-        ),
-        Container(
-          alignment: Alignment.centerRight,
-          width: settingWidth,
-          child: child,
-        )
-      ],
+        );
+
+        if (isCompact) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: AppSpacing.sm,
+            children: [
+              labelWidget,
+              settingWidget,
+            ],
+          );
+        }
+
+        return Row(
+          spacing: AppSpacing.md,
+          children: [
+            Expanded(child: labelWidget),
+            settingWidget,
+          ],
+        );
+      },
     );
   }
 }
