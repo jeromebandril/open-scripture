@@ -51,6 +51,7 @@ abstract final class AppIconButtonTheme {
           }
           return SystemMouseCursors.click;
         }),
+        visualDensity: VisualDensity.compact,
       ),
     );
   }

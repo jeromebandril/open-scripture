@@ -49,6 +49,7 @@ abstract final class AppTextButtonTheme {
           }
           return SystemMouseCursors.click;
         }),
+        visualDensity: VisualDensity.compact,
       ),
     );
   }

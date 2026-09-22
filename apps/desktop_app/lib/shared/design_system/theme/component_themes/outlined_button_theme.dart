@@ -64,6 +64,7 @@ abstract final class AppOutlinedButtonTheme {
           }
           return SystemMouseCursors.click;
         }),
+        visualDensity: VisualDensity.compact,
       ),
     );
   }

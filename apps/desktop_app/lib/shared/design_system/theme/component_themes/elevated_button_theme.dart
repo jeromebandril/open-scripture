@@ -56,6 +56,7 @@ abstract final class AppElevatedButtonTheme {
           }
           return SystemMouseCursors.click;
         }),
+        visualDensity: VisualDensity.compact,
       ),
     );
   }
