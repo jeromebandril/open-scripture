@@ -5,7 +5,7 @@ import '../../../../app/settings/app_settings.dart';
 import '../../../../core/di/injection_container.dart' as di;
 import '../../../../core/settings/settings_cubit.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
-import '../../../../shared/widgets/ui/inputs/app_input_color.dart';
+import '../../../../shared/widgets/ui/inputs/app_input_color/app_input_color.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
 import '../../../bible_display/settings/bible_view_settings.dart';
 import '../../../settings_window/presentation/widgets/setting.dart';

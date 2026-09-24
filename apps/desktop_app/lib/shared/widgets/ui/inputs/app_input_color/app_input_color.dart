@@ -1,10 +1,9 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import '../../../../features/settings_window/presentation/widgets/parts/reset_button.dart';
+import '../../../../../features/settings_window/presentation/widgets/parts/reset_button.dart';
 
-import '../../../utils/colors_util.dart';
+import '../../../../utils/colors_util.dart';
+import 'color_circle.dart';
 
 class AppInputColor extends StatefulWidget {
   const AppInputColor({
@@ -37,10 +36,9 @@ class _AppInputColorState extends State<AppInputColor> {
     final overlay = Overlay.of(context, rootOverlay: true);
     final renderBox = context.findRenderObject() as RenderBox;
     final size = renderBox.size;
-    // final offset = renderBox.localToGlobal(Offset.zero);
 
     entry = OverlayEntry(
-        // Capture *the app’s* inherited theme widgets from the button’s context.
+        // Capture the app’s inherited theme widgets from the button’s context.
         builder: (ctx) => InheritedTheme.captureAll(
               context,
               Stack(
@@ -88,15 +86,6 @@ class _AppInputColorState extends State<AppInputColor> {
           pickerAreaHeightPercent: 0.5,
           pickerAreaBorderRadius: BorderRadius.circular(8),
         ),
-
-        // ColorPicker(
-        //   pickerColor: widget.color,
-        //   onColorChanged: (color) {},
-        //   paletteType: PaletteType.hsl,
-        //   enableAlpha: true,
-        //   displayThumbColor: true,
-        //   pickerAreaHeightPercent: 1,
-        // ),
       ),
     );
   }
@@ -137,7 +126,7 @@ class _AppInputColorState extends State<AppInputColor> {
                 _hideOverlay();
               }
             },
-            child: _ColorCircle(
+            child: ColorCircle(
                 size: 24,
                 isDisabled: widget.isDisabled,
                 color: widget.isDisabled
@@ -147,87 +136,5 @@ class _AppInputColorState extends State<AppInputColor> {
         )
       ],
     );
-  }
-}
-
-class _ColorCircle extends StatelessWidget {
-  const _ColorCircle({
-    required this.color,
-    this.size = 24,
-    this.isDisabled = false,
-  });
-
-  final double size;
-  final Color color;
-  final bool isDisabled;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: size,
-      width: size,
-      child: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: color,
-            ),
-          ),
-          if (isDisabled)
-            Center(
-              child: CustomPaint(
-                size: Size(size, size),
-                painter: const _DiagonalLinePainter(
-                  strokeWidth: 2,
-                  color: Colors.red,
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DiagonalLinePainter extends CustomPainter {
-  const _DiagonalLinePainter({
-    this.strokeWidth = 2,
-    this.color = Colors.red,
-    this.angleRadians = math.pi / 4, // 45 degrees: top-left -> bottom-right
-    this.strokeCap = StrokeCap.butt, // use butt for exact diameter length
-  });
-
-  final double strokeWidth;
-  final Color color;
-  final double angleRadians;
-  final StrokeCap strokeCap;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final r = size.shortestSide / 2.0;
-    final c = Offset(r, r);
-
-    final paint = Paint()
-      ..color = color
-      ..strokeWidth = strokeWidth
-      ..strokeCap = strokeCap;
-
-    canvas.save();
-    canvas.translate(c.dx, c.dy);
-    canvas.rotate(angleRadians);
-
-    // Draw a line exactly equal to the circle diameter (2r), centered.
-    canvas.drawLine(Offset(-r, 0), Offset(r, 0), paint);
-
-    canvas.restore();
-  }
-
-  @override
-  bool shouldRepaint(covariant _DiagonalLinePainter oldDelegate) {
-    return strokeWidth != oldDelegate.strokeWidth ||
-        color != oldDelegate.color ||
-        angleRadians != oldDelegate.angleRadians ||
-        strokeCap != oldDelegate.strokeCap;
   }
 }

@@ -8,7 +8,7 @@ import '../../../../../core/settings/settings_cubit.dart';
 import '../../../../../shared/design_system/design_system.dart';
 import '../../../../../shared/fonts/app_font.dart';
 import '../../../../../shared/widgets/ui/inputs/app_input_bool.dart';
-import '../../../../../shared/widgets/ui/inputs/app_input_color.dart';
+import '../../../../../shared/widgets/ui/inputs/app_input_color/app_input_color.dart';
 import '../../../../../shared/widgets/ui/inputs/app_input_number.dart';
 import '../../../../../shared/widgets/ui/inputs/app_input_option.dart';
 import '../../../../pericopes_mgr/presentation/pages/pericope_customization_page.dart';
