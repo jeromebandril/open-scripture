@@ -17,9 +17,6 @@ class PresenterHost extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final maxHeight = MediaQuery.of(context).size.height;
-    final presenterHeght = maxHeight * 0.45;
-
     return BlocProvider.value(
       value: di.sl<SettingsCubit<PresenterSettings>>(),
       child: BlocSelector<PresenterCubit, PresenterState, PresenterStatus>(
@@ -31,51 +28,56 @@ class PresenterHost extends StatelessWidget {
           // Make text slightly bigger when Prester is expanded
           final scale = status == PresenterStatus.expanded ? 1.25 : 1.0;
 
-          return Column(
-            children: [
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-                height: switch (status) {
-                  PresenterStatus.expanded => maxHeight,
-                  PresenterStatus.showing => presenterHeght,
-                  PresenterStatus.hidden => 0,
-                  PresenterStatus.error => 0,
-                },
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  gradient: settings.useGradientBackground
-                      ? GradientPreset.fromName(settings.gradientBackground)
-                          ?.gradient
-                      : null,
-                  color: settings.backgroundColor,
-                ),
-                // This is for animating the text scaling
-                child: TweenAnimationBuilder<double>(
-                  tween: Tween(begin: 1.0, end: scale),
+          return LayoutBuilder(builder: (context, constraints) {
+            final maxHeight = constraints.maxHeight;
+            final presenterHeght = maxHeight * 0.45;
+
+            return Column(
+              children: [
+                AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
-                  builder: (context, statusScale, child) {
-                    final mq = MediaQuery.of(context);
-
-                    return MediaQuery(
-                      data: mq.copyWith(
-                        textScaler: TextScaler.linear(
-                          mq.textScaler.scale(1.0) * statusScale,
-                        ),
-                      ),
-                      child: child!,
-                    );
+                  height: switch (status) {
+                    PresenterStatus.expanded => maxHeight,
+                    PresenterStatus.showing => presenterHeght,
+                    PresenterStatus.hidden => 0,
+                    PresenterStatus.error => 0,
                   },
-                  child: TextScalerHost(
-                    initialiSize: 40,
-                    child: _Slider(),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: settings.useGradientBackground
+                        ? GradientPreset.fromName(settings.gradientBackground)
+                            ?.gradient
+                        : null,
+                    color: settings.backgroundColor,
+                  ),
+                  // This is for animating the text scaling
+                  child: TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 1.0, end: scale),
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    builder: (context, statusScale, child) {
+                      final mq = MediaQuery.of(context);
+
+                      return MediaQuery(
+                        data: mq.copyWith(
+                          textScaler: TextScaler.linear(
+                            mq.textScaler.scale(1.0) * statusScale,
+                          ),
+                        ),
+                        child: child!,
+                      );
+                    },
+                    child: TextScalerHost(
+                      initialiSize: 40,
+                      child: _Slider(),
+                    ),
                   ),
                 ),
-              ),
-              Expanded(child: RepaintBoundary(child: child)),
-            ],
-          );
+                Expanded(child: RepaintBoundary(child: child)),
+              ],
+            );
+          });
         },
       ),
     );
