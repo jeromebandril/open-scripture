@@ -12,6 +12,7 @@ class AppInputText extends StatefulWidget {
     this.enabled = true,
     this.focusNode,
     this.debounce,
+    this.maxLines = 1,
     this.onChanged,
     this.onSubmitted,
   });
@@ -28,6 +29,8 @@ class AppInputText extends StatefulWidget {
   /// instead of on every keystroke. Submitting (Enter) always flushes any
   /// pending call immediately. Leave null for fire-on-every-keystroke behavior.
   final Duration? debounce;
+
+  final int? maxLines;
 
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onSubmitted;
@@ -90,6 +93,7 @@ class _AppInputTextState extends State<AppInputText> {
       controller: _controller,
       focusNode: widget.focusNode,
       enabled: widget.enabled,
+      maxLines: widget.maxLines,
       onChanged: _handleChanged,
       onSubmitted:
           widget.debounce != null ? _handleSubmitted : widget.onSubmitted,
