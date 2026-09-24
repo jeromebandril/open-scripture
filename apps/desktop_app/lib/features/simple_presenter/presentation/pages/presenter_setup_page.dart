@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/di/injection_container.dart' as di;
+import '../../../../core/settings/settings_cubit.dart';
 import '../../../window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
+import '../../settings/presenter_settings.dart';
 import '../cubit/presenter_cubit.dart';
 import '../widgets/slides_editor.dart';
 
@@ -10,18 +13,21 @@ class PresenterSetupPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PresenterCubit, PresenterState>(
-      builder: (context, state) {
-        return SlidesEditor(
-          onApply: (val) {
-            context.read<PresenterCubit>().updateSlides(val);
-            context
-                .read<WindowStackManagerBloc>()
-                .add(WindowStackManagerClose());
-          },
-          initialSlides: state.slides,
-        );
-      },
+    return BlocProvider.value(
+      value: di.sl<SettingsCubit<PresenterSettings>>(),
+      child: BlocBuilder<PresenterCubit, PresenterState>(
+        builder: (context, state) {
+          return SlidesEditor(
+            onApply: (val) {
+              context.read<PresenterCubit>().updateSlides(val);
+              context
+                  .read<WindowStackManagerBloc>()
+                  .add(WindowStackManagerClose());
+            },
+            initialSlides: state.slides,
+          );
+        },
+      ),
     );
   }
 }

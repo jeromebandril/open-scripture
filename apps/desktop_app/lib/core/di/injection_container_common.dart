@@ -23,6 +23,7 @@ import '../../features/shortcuts/data/repositories/shortcuts_repo_impl.dart';
 import '../../features/shortcuts/domain/repositories/shortcuts_repo.dart';
 import '../../features/shortcuts/presentation/state/shortcuts_cubit.dart';
 import '../../features/simple_presenter/presentation/cubit/presenter_cubit.dart';
+import '../../features/simple_presenter/settings/presenter_settings.dart';
 import '../../features/text_scaler/presentation/state/text_scaler_cubit.dart';
 import '../../features/three_tap_navigator/data/repository/three_tap_navigator_repository_impl.dart';
 import '../../features/three_tap_navigator/domain/repository/three_tap_navigator_repository.dart';
@@ -132,10 +133,26 @@ Future<void> init(GetIt sl) async {
   sl.registerSingleton(SettingsCubit<MyLibrarySettings>(sl()));
 }
 
+// ---------------------------------------------------------------------------
 void _registerPresenter(GetIt sl) {
   sl.registerLazySingleton(() => PresenterCubit());
+
+  // config
+  sl.registerLazySingleton<SettingsRepository<PresenterSettings>>(
+    () => SettingsRepositoryImpl<PresenterSettings>(
+      SettingsDatasourceDesktop<PresenterSettings>(
+        fileName: 'presenter.json',
+        fromJson: PresenterSettings.fromJson,
+        toJson: (l) => l.toJson(),
+        defaultValue: const PresenterSettings(),
+      ),
+    ),
+    dispose: (repo) => repo.dispose(),
+  );
+  sl.registerLazySingleton(() => SettingsCubit<PresenterSettings>(sl()));
 }
 
+// ---------------------------------------------------------------------------
 void _registerAppSettings(GetIt sl) {
   sl.registerLazySingleton<SettingsRepository<AppSettings>>(
     () => SettingsRepositoryImpl<AppSettings>(

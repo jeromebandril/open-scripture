@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-import '../../../../../shared/design_system/design_system.dart';
-import '../../../../../shared/domain/entities/bible_translation.dart';
-import '../../../../text_scaler/presentation/state/text_scaler_cubit.dart';
-import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
-import '../../../multi_pane_manager/presentation/widgets/active_pane_indicator.dart';
-import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
 import '../../domain/display_mode.dart';
 import '../../domain/entities/word_info.dart';
 import '../state/bible_pane_bloc.dart';
+import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
+import '../../../multi_pane_manager/presentation/widgets/active_pane_indicator.dart';
+import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
+import '../../../../simple_presenter/presentation/cubit/presenter_cubit.dart';
+import '../../../../text_scaler/presentation/state/text_scaler_cubit.dart';
+import '../../../../../shared/design_system/design_system.dart';
+import '../../../../../shared/domain/entities/bible_translation.dart';
 
 class _PaneInfoItem extends StatelessWidget {
   const _PaneInfoItem({
@@ -81,6 +82,29 @@ class _PaneInfoState extends State<PaneInfo> {
         ),
         child: Row(
           children: [
+            if (context.select(
+                    (MultiPaneManagerCubit p) => p.state.activePaneId) ==
+                paneId)
+              BlocBuilder<PresenterCubit, PresenterState>(
+                buildWhen: (prev, curr) =>
+                    prev.currentSlideIndex != curr.currentSlideIndex ||
+                    prev.numberOfSlides != curr.numberOfSlides,
+                builder: (context, state) {
+                  return state.numberOfSlides == 0
+                      ? const SizedBox()
+                      : Row(
+                          children: [
+                            _PaneInfoItem(
+                              tooltip: 'Slides',
+                              icon: LucideIcons.rectangleCircle,
+                              text:
+                                  '${state.currentSlideIndex + 1}/${state.numberOfSlides} ${state.getCurrentSlide()?.title}',
+                            ),
+                            const VerticalDivider(),
+                          ],
+                        );
+                },
+              ),
             BlocBuilder<TextScalerCubit, TextScalerState>(
               builder: (context, state) {
                 return _PaneInfoItem(

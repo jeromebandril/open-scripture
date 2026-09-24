@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../shared/design_system/design_system.dart';
-import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
-import '../../../../shared/widgets/ui/inputs/app_input_option.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_text.dart';
-import '../../../settings_window/presentation/widgets/setting.dart';
-import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../domain/entities/slide_data.dart';
+import '../cubit/presenter_cubit.dart';
+import '../pages/presenter_settings_page.dart';
+import 'quick_slides_import.dart';
 
 class SlidesEditor extends StatefulWidget {
   const SlidesEditor({
@@ -43,6 +42,7 @@ class _SlidesEditorState extends State<SlidesEditor> {
   }
 
   void _addSlide() {
+    if (_slides.length >= PresenterCubit.kLimitNumOfSlides) return;
     setState(() {
       _slides.add(_newSlide());
     });
@@ -88,6 +88,7 @@ class _SlidesEditorState extends State<SlidesEditor> {
             mainAxisSize: MainAxisSize.min,
             spacing: AppSpacing.xl,
             children: [
+              // const QuickSlidesImport(),
               Expanded(
                 child: ReorderableListView.builder(
                   itemCount: _slides.length,
@@ -140,35 +141,7 @@ class _SlidesEditorState extends State<SlidesEditor> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             spacing: AppSpacing.md,
             children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: SettingSection(
-                    children: [
-                      Setting(
-                        label: 'Auto number titles',
-                        description:
-                            'Automatically adds sequential numbers (1, 2, 3...) to the front of your slide titles.',
-                        child: AppInputBool(
-                          enabled: false,
-                          value: false,
-                        ),
-                      ),
-                      Setting(
-                          label: 'Title font weight',
-                          child: AppInputOption(
-                            onChanged: (fw) {},
-                            items: [],
-                          )),
-                      Setting(
-                          label: 'Subtitle font weight',
-                          child: AppInputOption(
-                            onChanged: (fw) {},
-                            items: [],
-                          )),
-                    ],
-                  ),
-                ),
-              ),
+              Expanded(child: PresenterSettingsPage()),
               ElevatedButton(
                 onPressed: _apply,
                 child: const Text('Apply'),
@@ -209,6 +182,7 @@ class SlideInput extends StatefulWidget {
 class _SlideInputState extends State<SlideInput> {
   String _title = '';
   String? _subtitle;
+  bool isExtended = false;
 
   @override
   void initState() {
@@ -237,6 +211,13 @@ class _SlideInputState extends State<SlideInput> {
                   ),
                   const Spacer(),
                   IconButton(
+                    onPressed: () => setState(() => isExtended = !isExtended),
+                    icon: isExtended
+                        ? const Icon(LucideIcons.chevronUp)
+                        : const Icon(LucideIcons.chevronDown),
+                    tooltip: "Add more",
+                  ),
+                  IconButton(
                     onPressed: widget.onRemove,
                     icon: const Icon(LucideIcons.trash),
                     tooltip: "Remove",
@@ -255,10 +236,61 @@ class _SlideInputState extends State<SlideInput> {
                 label: "Subtitle",
                 key: ValueKey('${widget.slide.id}-subtitle'),
                 value: _subtitle,
+                maxLines: 3,
                 onChanged: (value) =>
                     widget.onChanged(subtitle: value.isEmpty ? null : value),
                 // maxLines: 2,
               ),
+              if (isExtended) ...[
+                // const SizedBox(height: 10),
+                // Row(
+                //   spacing: 10,
+                //   children: [
+                //     Expanded(
+                //       child: AppInputText(
+                //         label: "Top Left",
+                //         key: ValueKey('${widget.slide.id}-title'),
+                //         value: _title,
+                //         onChanged: (value) => widget.onChanged(title: value),
+                //       ),
+                //     ),
+                //     Expanded(
+                //       child: AppInputText(
+                //         label: "Top Right",
+                //         key: ValueKey('${widget.slide.id}-subtitle'),
+                //         value: _subtitle,
+                //         onChanged: (value) => widget.onChanged(
+                //             subtitle: value.isEmpty ? null : value),
+                //         // maxLines: 2,
+                //       ),
+                //     ),
+                //   ],
+                // ),
+                // const SizedBox(height: 10),
+                // Row(
+                //   spacing: 10,
+                //   children: [
+                //     Expanded(
+                //       child: AppInputText(
+                //         label: "Bottom Left",
+                //         key: ValueKey('${widget.slide.id}-title'),
+                //         value: _title,
+                //         onChanged: (value) => widget.onChanged(title: value),
+                //       ),
+                //     ),
+                //     Expanded(
+                //       child: AppInputText(
+                //         label: "Bottom Right",
+                //         key: ValueKey('${widget.slide.id}-subtitle'),
+                //         value: _subtitle,
+                //         onChanged: (value) => widget.onChanged(
+                //             subtitle: value.isEmpty ? null : value),
+                //         // maxLines: 2,
+                //       ),
+                //     ),
+                //   ],
+                // )
+              ]
             ],
           ),
         ),

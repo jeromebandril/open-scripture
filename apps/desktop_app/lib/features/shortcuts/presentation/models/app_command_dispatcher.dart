@@ -88,6 +88,7 @@ class AppCommandDispatcher {
       );
     },
     AppCommand.togglePresenter: () => presenterCubit().toggleShow(),
+    AppCommand.expandPresenter: () => presenterCubit().toggleExpand(),
     AppCommand.goNextSlide: () => presenterCubit().goNextSlide(),
     AppCommand.goPrevSlide: () => presenterCubit().goPrevSlide(),
   };

@@ -76,9 +76,6 @@ class PericopesDao extends DatabaseAccessor<AppDb> with _$PericopesDaoMixin {
 
     final result = await query.map((r) => r.readTable(db.pericopes)).get();
 
-    debugPrint('pericopes: bible=$bibleExtId lang=$isoCode '
-        '${book.canonical} $chapter -> ${result.length} rows');
-
     return result;
   }
 

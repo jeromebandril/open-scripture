@@ -111,11 +111,7 @@ class BiblePaneRepositoryImpl implements BiblePaneRepository {
           );
         }).toList();
 
-        if (_pericopeDatasource == null) {
-          debugPrint(
-              'Pericope datasource not available, skipping pericope overlay');
-          return verses;
-        }
+        if (_pericopeDatasource == null) return verses;
 
         final pericopes = await _loadPericopes(bibleId, ref);
         return attachPericopes(verses, pericopes);
@@ -133,8 +129,6 @@ class BiblePaneRepositoryImpl implements BiblePaneRepository {
   }
 
   List<Verse> attachPericopes(List<Verse> verses, List<Pericope> pericopes) {
-    debugPrint(
-        'Attaching ${pericopes.length} pericopes to ${verses.length} verses');
     if (verses.isEmpty || pericopes.isEmpty) return verses;
 
     final byVerse = <int, Pericope>{};
@@ -152,7 +146,6 @@ class BiblePaneRepositoryImpl implements BiblePaneRepository {
       // The Bible's own heading wins over the overlay.
       return p == null || hasSourceHeading ? v : v.copyWith(heading: p.title);
     }).toList();
-    debugPrint(p.toString());
     return p;
   }
 
@@ -165,7 +158,6 @@ class BiblePaneRepositoryImpl implements BiblePaneRepository {
         ref.chapter,
       );
     } catch (e, st) {
-      debugPrint('Pericope load failed: $e\n$st');
       return const [];
     }
   }

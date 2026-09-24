@@ -83,10 +83,7 @@ class PericopeDatasourceImpl implements PericopeDatasource {
     BibleBook book,
     int chapter,
   ) async {
-    debugPrint('Loading pericopes for $bibleExtId ${book.name} $chapter');
     final rows = await _dao.getForChapter(bibleExtId, book, chapter);
-    debugPrint(
-        'Found ${rows.length} pericopes for $bibleExtId ${book.name} $chapter');
     return rows
         .map((r) => Pericope(
               setId: r.setId,

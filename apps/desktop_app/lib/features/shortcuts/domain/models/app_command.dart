@@ -20,6 +20,7 @@ enum AppCommand {
   flushOverlayBuffer,
   openSettings,
   togglePresenter,
+  expandPresenter,
   goNextSlide,
   goPrevSlide,
   // private shortcuts
