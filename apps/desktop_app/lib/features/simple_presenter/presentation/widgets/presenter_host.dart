@@ -30,7 +30,7 @@ class PresenterHost extends StatelessWidget {
 
           return LayoutBuilder(builder: (context, constraints) {
             final maxHeight = constraints.maxHeight;
-            final presenterHeght = maxHeight * 0.45;
+            final presenterHeght = maxHeight * settings.sizeFactor;
 
             return Column(
               children: [

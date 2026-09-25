@@ -10,6 +10,7 @@ class PresenterSettings extends Equatable {
   final bool useGradientBackground;
   final bool enableAutoNumbering;
   final int startNumberingFrom;
+  final double sizeFactor;
 
   const PresenterSettings({
     this.textColor = Colors.white,
@@ -18,6 +19,7 @@ class PresenterSettings extends Equatable {
     this.useGradientBackground = true,
     this.enableAutoNumbering = true,
     this.startNumberingFrom = 2,
+    this.sizeFactor = 0.45,
   });
 
   PresenterSettings copyWith({
@@ -27,6 +29,7 @@ class PresenterSettings extends Equatable {
     bool? useGradientBackground,
     bool? enableAutoNumbering,
     int? startNumberingFrom,
+    double? sizeFactor,
   }) {
     return PresenterSettings(
       textColor: textColor ?? this.textColor,
@@ -36,6 +39,7 @@ class PresenterSettings extends Equatable {
           useGradientBackground ?? this.useGradientBackground,
       enableAutoNumbering: enableAutoNumbering ?? this.enableAutoNumbering,
       startNumberingFrom: startNumberingFrom ?? this.startNumberingFrom,
+      sizeFactor: sizeFactor ?? this.sizeFactor,
     );
   }
 
@@ -61,6 +65,9 @@ class PresenterSettings extends Equatable {
       startNumberingFrom: json['startNumberingFrom'] != null
           ? json['startNumberingFrom'] as int
           : defaults.startNumberingFrom,
+      sizeFactor: json['sizeFactor'] != null
+          ? json['sizeFactor'] as double
+          : defaults.sizeFactor,
     );
   }
 
@@ -72,6 +79,7 @@ class PresenterSettings extends Equatable {
       'useGradientBackground': useGradientBackground,
       'enableAutoNumbering': enableAutoNumbering,
       'startNumberingFrom': startNumberingFrom,
+      'sizeFactor': sizeFactor,
     };
   }
 
@@ -83,5 +91,6 @@ class PresenterSettings extends Equatable {
         useGradientBackground,
         enableAutoNumbering,
         startNumberingFrom,
+        sizeFactor,
       ];
 }

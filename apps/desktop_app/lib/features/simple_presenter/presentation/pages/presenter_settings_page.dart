@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/settings/settings_cubit.dart';
 import '../../../../shared/design_system/design_system.dart';
@@ -97,6 +98,21 @@ class PresenterSettingsPage extends StatelessWidget {
                     onChanged: (fw) {},
                     items: [],
                   )),
+              Setting(
+                label: 'Size factor',
+                description:
+                    'How much space in the screen does the Presenter take when it is visible',
+                child: AppInputNumber(
+                  suffixIcon: LucideIcons.percent,
+                  min: 10,
+                  max: 90,
+                  decimal: false,
+                  onSubmitted: (n) {
+                    cubit.update((p) => p.copyWith(sizeFactor: (n / 100)));
+                  },
+                  value: (state.sizeFactor * 100).round(),
+                ),
+              ),
             ],
           ),
         );
