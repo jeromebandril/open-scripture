@@ -74,7 +74,7 @@ class PresenterCubit extends Cubit<PresenterState> {
     emit(state.copyWith(
       slides: limitedSlides,
       currentSlideIndex: state.currentSlideIndex >= limitedSlides.length
-          ? limitedSlides.length - 1
+          ? (limitedSlides.length - 1).clamp(0, kLimitNumOfSlides)
           : null,
     ));
   }
