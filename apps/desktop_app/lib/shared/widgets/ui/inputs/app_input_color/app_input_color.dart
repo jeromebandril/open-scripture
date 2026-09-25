@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import '../../../../../features/settings_window/presentation/widgets/parts/reset_button.dart';
 
@@ -30,6 +31,18 @@ class _AppInputColorState extends State<AppInputColor> {
   OverlayEntry? entry;
   final LayerLink layerLink = LayerLink();
   Color? selectedColor;
+  bool _focused = false;
+  final FocusScopeNode _pickerFocusScopeNode = FocusScopeNode();
+
+  void _toggleOverlay() {
+    if (widget.isDisabled) return;
+
+    if (entry == null) {
+      _showOverlay();
+    } else {
+      _hideOverlay();
+    }
+  }
 
   void _showOverlay() {
     final screen = MediaQuery.of(context).size;
@@ -62,29 +75,38 @@ class _AppInputColorState extends State<AppInputColor> {
               ),
             ));
     overlay.insert(entry!);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && entry != null) {
+        _pickerFocusScopeNode.requestFocus();
+      }
+    });
   }
 
   Widget _buildOverlay(Size screenSize) {
-    return Card(
-      elevation: 10,
-      child: Container(
-        width: 300,
-        height: 280,
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: ColorPicker(
-          pickerColor: widget.color,
-          onColorChanged: (color) => selectedColor = color,
-          hexInputBar: true,
-          colorPickerWidth: 300,
-          labelTypes: [],
-          portraitOnly: true,
-          enableAlpha: false,
-          pickerAreaHeightPercent: 0.5,
-          pickerAreaBorderRadius: BorderRadius.circular(8),
+    return FocusScope(
+      node: _pickerFocusScopeNode,
+      child: Card(
+        elevation: 10,
+        child: Container(
+          width: 300,
+          height: 280,
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: ColorPicker(
+            pickerColor: widget.color,
+            onColorChanged: (color) => selectedColor = color,
+            hexInputBar: true,
+            colorPickerWidth: 300,
+            labelTypes: [],
+            portraitOnly: true,
+            enableAlpha: false,
+            pickerAreaHeightPercent: 0.5,
+            pickerAreaBorderRadius: BorderRadius.circular(8),
+          ),
         ),
       ),
     );
@@ -101,6 +123,7 @@ class _AppInputColorState extends State<AppInputColor> {
   @override
   void dispose() {
     _hideOverlay();
+    _pickerFocusScopeNode.dispose();
     super.dispose();
   }
 
@@ -117,21 +140,55 @@ class _AppInputColorState extends State<AppInputColor> {
         Text('#${ColorsUtil.colorToHex(widget.color)}'),
         CompositedTransformTarget(
           link: layerLink,
-          child: GestureDetector(
-            onTap: () {
-              if (widget.isDisabled) return;
-              if (entry == null) {
-                _showOverlay();
-              } else {
-                _hideOverlay();
-              }
+          child: FocusableActionDetector(
+            enabled: !widget.isDisabled,
+            mouseCursor: widget.isDisabled
+                ? SystemMouseCursors.forbidden
+                : SystemMouseCursors.click,
+            onFocusChange: (focused) {
+              setState(() {
+                _focused = focused;
+              });
             },
-            child: ColorCircle(
-                size: 24,
-                isDisabled: widget.isDisabled,
-                color: widget.isDisabled
-                    ? Theme.of(context).colorScheme.onSurface.withAlpha(97)
-                    : widget.color),
+            shortcuts: const {
+              SingleActivator(LogicalKeyboardKey.enter): ActivateIntent(),
+              SingleActivator(LogicalKeyboardKey.space): ActivateIntent(),
+            },
+            actions: {
+              ActivateIntent: CallbackAction<ActivateIntent>(
+                onInvoke: (_) {
+                  _toggleOverlay();
+                  return null;
+                },
+              ),
+            },
+            child: GestureDetector(
+              onTap: widget.isDisabled ? null : _toggleOverlay,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: _focused
+                      ? Border.all(
+                          color: Theme.of(context).colorScheme.primary,
+                          width: 1.5,
+                        )
+                      : null,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(2),
+                  child: ColorCircle(
+                    size: 24,
+                    isDisabled: widget.isDisabled,
+                    color: widget.isDisabled
+                        ? Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.38)
+                        : widget.color,
+                  ),
+                ),
+              ),
+            ),
           ),
         )
       ],

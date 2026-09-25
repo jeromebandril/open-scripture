@@ -91,6 +91,21 @@ class _BContainerTabBarState extends State<BContainerTabBar>
             labelColor: theme.colorScheme.onPrimaryContainer,
             unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
             splashBorderRadius: BorderRadius.circular(widget.height / 2 - 4),
+            overlayColor: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.focused)) {
+                return theme.colorScheme.primary.withValues(alpha: 0.12);
+              }
+
+              if (states.contains(WidgetState.pressed)) {
+                return theme.colorScheme.primary.withValues(alpha: 0.16);
+              }
+
+              if (states.contains(WidgetState.hovered)) {
+                return theme.colorScheme.onSurface.withValues(alpha: 0.05);
+              }
+
+              return Colors.transparent;
+            }),
             tabs: widget.tabs.map((t) => Tab(text: t)).toList(),
           ),
         ),

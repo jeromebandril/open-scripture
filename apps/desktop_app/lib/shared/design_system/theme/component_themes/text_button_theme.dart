@@ -29,6 +29,12 @@ abstract final class AppTextButtonTheme {
           }
           return AppColors.transparent;
         }),
+        side: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.focused)) {
+            return BorderSide(color: fg, width: 1.5);
+          }
+          return BorderSide.none;
+        }),
         elevation: WidgetStateProperty.all(0),
         shadowColor: WidgetStateProperty.all(AppColors.transparent),
         shape: WidgetStateProperty.all(

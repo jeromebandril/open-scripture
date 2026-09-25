@@ -29,6 +29,15 @@ abstract final class AppIconButtonTheme {
           }
           return AppColors.transparent;
         }),
+        side: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.focused)) {
+            return BorderSide(
+              color: isLight ? AppColors.primary : AppColors.primaryDark,
+              width: 1.5,
+            );
+          }
+          return BorderSide.none;
+        }),
         overlayColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.pressed)) {
             return AppColors.blackOverlay(isLight ? 0.10 : 0.14);

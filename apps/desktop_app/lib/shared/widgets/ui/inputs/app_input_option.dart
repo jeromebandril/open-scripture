@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../../design_system/design_system.dart';
 import '../../dropdown_menu_anchor.dart';
 
@@ -118,6 +119,9 @@ class AppInputOption<T> extends StatefulWidget {
 class _AppInputOptionState<T> extends State<AppInputOption<T>> {
   final _menuVisible = ValueNotifier<bool>(false);
   final _triggerKey = GlobalKey();
+
+  final FocusNode _triggerFocusNode = FocusNode();
+
   String? _error;
 
   @override
@@ -128,6 +132,7 @@ class _AppInputOptionState<T> extends State<AppInputOption<T>> {
 
   @override
   void dispose() {
+    _triggerFocusNode.dispose();
     _menuVisible.removeListener(_clearErrorOnClose);
     _menuVisible.dispose();
     super.dispose();
@@ -207,6 +212,16 @@ class _AppInputOptionState<T> extends State<AppInputOption<T>> {
     return '${selected.length} selected';
   }
 
+  void _closeMenu() {
+    _menuVisible.value = false;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _triggerFocusNode.requestFocus();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<bool>(
@@ -225,6 +240,7 @@ class _AppInputOptionState<T> extends State<AppInputOption<T>> {
           menuHeight: widget.maxMenuHeight,
           trigger: _DropdownTrigger(
             key: _triggerKey,
+            focusNode: _triggerFocusNode,
             leading: widget.leading ??
                 (selected.length == 1 ? selected.first.leading : null),
             label: _triggerLabel(selected),
@@ -233,7 +249,9 @@ class _AppInputOptionState<T> extends State<AppInputOption<T>> {
             isOpen: isOpen,
             errorText: _error,
             onTap: widget.enabled
-                ? () => _menuVisible.value = !_menuVisible.value
+                ? () => _menuVisible.value
+                    ? _closeMenu()
+                    : _menuVisible.value = true
                 : null,
           ),
           menuContent: _DropdownMenu<T>(
@@ -249,7 +267,7 @@ class _AppInputOptionState<T> extends State<AppInputOption<T>> {
   }
 }
 
-class _DropdownTrigger extends StatelessWidget {
+class _DropdownTrigger extends StatefulWidget {
   const _DropdownTrigger({
     super.key,
     this.label,
@@ -259,6 +277,7 @@ class _DropdownTrigger extends StatelessWidget {
     this.onTap,
     this.leading,
     this.errorText,
+    this.focusNode,
   });
 
   final String? label;
@@ -268,40 +287,67 @@ class _DropdownTrigger extends StatelessWidget {
   final VoidCallback? onTap;
   final Widget? leading;
   final String? errorText;
+  final FocusNode? focusNode;
+
+  @override
+  State<_DropdownTrigger> createState() => _DropdownTriggerState();
+}
+
+class _DropdownTriggerState extends State<_DropdownTrigger> {
+  bool _focused = false;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return MouseRegion(
-      cursor: enabled ? SystemMouseCursors.click : SystemMouseCursors.forbidden,
+    return FocusableActionDetector(
+      focusNode: widget.focusNode,
+      enabled: widget.enabled,
+      mouseCursor: widget.enabled
+          ? SystemMouseCursors.click
+          : SystemMouseCursors.forbidden,
+      onFocusChange: (focused) {
+        setState(() => _focused = focused);
+      },
+      shortcuts: const {
+        SingleActivator(LogicalKeyboardKey.enter): ActivateIntent(),
+        SingleActivator(LogicalKeyboardKey.space): ActivateIntent(),
+      },
+      actions: {
+        ActivateIntent: CallbackAction<ActivateIntent>(
+          onInvoke: (_) {
+            widget.onTap?.call();
+            return null;
+          },
+        ),
+      },
       child: GestureDetector(
-        onTap: onTap,
+        onTap: widget.onTap,
         child: InputDecorator(
-          isFocused: isOpen,
+          isFocused: _focused || widget.isOpen,
           isEmpty: false,
           decoration: InputDecoration(
-            enabled: enabled,
-            errorText: errorText,
+            enabled: widget.enabled,
+            errorText: widget.errorText,
             errorMaxLines: 2,
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              if (leading != null) ...[
-                leading!,
+              if (widget.leading != null) ...[
+                widget.leading!,
                 const SizedBox(width: AppSpacing.sm),
               ],
               Expanded(
-                child: label != null
+                child: widget.label != null
                     ? Text(
-                        label!,
+                        widget.label!,
                         style: theme.textTheme.bodyMedium,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       )
                     : Text(
-                        hint ?? '',
+                        widget.hint ?? '',
                         style: theme.inputDecorationTheme.hintStyle ??
                             theme.textTheme.bodyMedium?.copyWith(
                               color: theme.disabledColor,
@@ -312,9 +358,12 @@ class _DropdownTrigger extends StatelessWidget {
               ),
               const SizedBox(width: AppSpacing.xs),
               AnimatedRotation(
-                turns: isOpen ? 0.5 : 0,
+                turns: widget.isOpen ? 0.5 : 0,
                 duration: const Duration(milliseconds: 100),
-                child: const Icon(Icons.keyboard_arrow_down, size: 18),
+                child: const Icon(
+                  Icons.keyboard_arrow_down,
+                  size: 18,
+                ),
               ),
             ],
           ),
@@ -324,7 +373,7 @@ class _DropdownTrigger extends StatelessWidget {
   }
 }
 
-class _DropdownMenu<T> extends StatelessWidget {
+class _DropdownMenu<T> extends StatefulWidget {
   const _DropdownMenu({
     required this.items,
     required this.multiple,
@@ -340,53 +389,70 @@ class _DropdownMenu<T> extends StatelessWidget {
   final ValueChanged<AppDropdownItem<T>> onSelect;
 
   @override
+  State<_DropdownMenu<T>> createState() => _DropdownMenuState<T>();
+}
+
+class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
+  final FocusScopeNode _focusScopeNode = FocusScopeNode();
+
+  @override
+  void dispose() {
+    _focusScopeNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding:
-          const EdgeInsets.symmetric(vertical: AppSpacing.xs + AppSpacing.xs),
-      shrinkWrap: true,
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        final item = items[index];
+    return FocusScope(
+      node: _focusScopeNode,
+      child: ListView.builder(
+        padding:
+            const EdgeInsets.symmetric(vertical: AppSpacing.xs + AppSpacing.xs),
+        shrinkWrap: true,
+        itemCount: widget.items.length,
+        itemBuilder: (context, index) {
+          final item = widget.items[index];
 
-        if (!item.enabled && item.value == null) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 8,
-            ),
-            child: Text(
-              item.label.toUpperCase(),
-              style: const TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                color: Colors.grey,
-                letterSpacing: 1.2,
+          if (!item.enabled && item.value == null) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 8,
               ),
-            ),
+              child: Text(
+                item.label.toUpperCase(),
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.grey,
+                  letterSpacing: 1.2,
+                ),
+              ),
+            );
+          }
+
+          final isSelected = widget.multiple
+              ? (item.value != null &&
+                  widget.selectedValues.contains(item.value))
+              : item.value == widget.selected;
+
+          return ListTile(
+            dense: true,
+            visualDensity: VisualDensity.compact,
+            contentPadding: const EdgeInsets.symmetric(
+                vertical: AppSpacing.xs2, horizontal: AppSpacing.sm),
+            selected: isSelected,
+            leading: widget.multiple
+                ? _MultiSelectLeading(checked: isSelected, icon: item.leading)
+                : item.leading,
+            title: Text(item.label),
+            trailing: !widget.multiple && isSelected
+                ? const Icon(Icons.check, size: 16)
+                : null,
+            onTap: item.enabled ? () => widget.onSelect(item) : null,
           );
-        }
-
-        final isSelected = multiple
-            ? (item.value != null && selectedValues.contains(item.value))
-            : item.value == selected;
-
-        return ListTile(
-          dense: true,
-          visualDensity: VisualDensity.compact,
-          contentPadding: const EdgeInsets.symmetric(
-              vertical: AppSpacing.xs2, horizontal: AppSpacing.sm),
-          selected: isSelected,
-          leading: multiple
-              ? _MultiSelectLeading(checked: isSelected, icon: item.leading)
-              : item.leading,
-          title: Text(item.label),
-          trailing: !multiple && isSelected
-              ? const Icon(Icons.check, size: 16)
-              : null,
-          onTap: item.enabled ? () => onSelect(item) : null,
-        );
-      },
+        },
+      ),
     );
   }
 }
