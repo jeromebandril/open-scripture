@@ -12,7 +12,7 @@ import '../../../../shared/widgets/ui/inputs/app_input_option.dart';
 import '../../../settings_window/presentation/widgets/setting.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../settings/presenter_settings.dart';
-import '../models/gradient_preset.dart';
+import '../../../../app/models/gradient_preset.dart';
 
 class PresenterSettingsPage extends StatelessWidget {
   const PresenterSettingsPage({super.key});
@@ -172,7 +172,7 @@ class _GradientSelectorState extends State<_GradientSelector> {
               widget.onChanged(selected);
             },
             child: ColorCircle(
-              gradient: p.gradient,
+              gradientPreset: p,
               size: 28,
             ),
           ),

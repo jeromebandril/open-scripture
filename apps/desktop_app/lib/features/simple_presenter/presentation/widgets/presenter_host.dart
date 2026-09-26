@@ -7,7 +7,8 @@ import '../../../text_scaler/presentation/widgets/text_scaler_host.dart';
 import '../../domain/entities/slide_data.dart';
 import '../../settings/presenter_settings.dart';
 import '../cubit/presenter_cubit.dart';
-import '../models/gradient_preset.dart';
+import '../../../../app/models/gradient_background.dart';
+import '../../../../app/models/gradient_preset.dart';
 import 'slide.dart';
 
 class PresenterHost extends StatelessWidget {
@@ -28,6 +29,11 @@ class PresenterHost extends StatelessWidget {
           // Make text slightly bigger when Prester is expanded
           final scale = status == PresenterStatus.expanded ? 1.25 : 1.0;
 
+          // background
+          final gradientPreset =
+              GradientPreset.fromName(settings.gradientBackground);
+          final book = settings.useGradientBackground && gradientPreset != null;
+
           return LayoutBuilder(builder: (context, constraints) {
             final maxHeight = constraints.maxHeight;
             final presenterHeght = maxHeight * settings.sizeFactor;
@@ -43,35 +49,36 @@ class PresenterHost extends StatelessWidget {
                     PresenterStatus.hidden => 0,
                     PresenterStatus.error => 0,
                   },
-                  width: double.infinity,
                   decoration: BoxDecoration(
-                    gradient: settings.useGradientBackground
-                        ? GradientPreset.fromName(settings.gradientBackground)
-                            ?.gradient
-                        : null,
-                    color: settings.backgroundColor,
+                    color: book ? null : settings.backgroundColor,
                   ),
-                  // This is for animating the text scaling
-                  child: TweenAnimationBuilder<double>(
-                    tween: Tween(begin: 1.0, end: scale),
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                    builder: (context, statusScale, child) {
-                      final mq = MediaQuery.of(context);
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      if (book) GradientBackground(preset: gradientPreset),
+                      // This is for animating the text scaling
+                      TweenAnimationBuilder<double>(
+                        tween: Tween(begin: 1.0, end: scale),
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                        builder: (context, statusScale, child) {
+                          final mq = MediaQuery.of(context);
 
-                      return MediaQuery(
-                        data: mq.copyWith(
-                          textScaler: TextScaler.linear(
-                            mq.textScaler.scale(1.0) * statusScale,
-                          ),
+                          return MediaQuery(
+                            data: mq.copyWith(
+                              textScaler: TextScaler.linear(
+                                mq.textScaler.scale(1.0) * statusScale,
+                              ),
+                            ),
+                            child: child!,
+                          );
+                        },
+                        child: const TextScalerHost(
+                          initialiSize: 40,
+                          child: _Slider(),
                         ),
-                        child: child!,
-                      );
-                    },
-                    child: TextScalerHost(
-                      initialiSize: 40,
-                      child: _Slider(),
-                    ),
+                      ),
+                    ],
                   ),
                 ),
                 Expanded(child: RepaintBoundary(child: child)),
