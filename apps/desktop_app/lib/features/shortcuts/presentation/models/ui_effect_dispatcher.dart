@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../../app/extensions/build_context_extensions.dart';
 import '../../../../app/state/fullscreen_cubit.dart';
 import '../../../../shared/widgets/simple_floating_notification.dart';
+import '../../../settings_window/presentation/pages/settings_window.dart';
 import '../../../simple_presenter/presentation/cubit/presenter_cubit.dart';
 import '../../domain/models/app_command.dart';
 import '../widgets/shortcut_view.dart';
@@ -36,6 +38,8 @@ class UiEffectDispatcher {
     AppCommand.closeWhatever: () => rootFocusNode.requestFocus(),
     AppCommand.toggleToolbar: () => rootFocusNode.requestFocus(),
     AppCommand.switchDisplayMode: () => rootFocusNode.requestFocus(),
+    AppCommand.openSettings: () =>
+        context.pushWindow(builder: (_) => const SettingsWindow()),
     AppCommand.toggleFullscreen: () {
       if (kIsWeb) return;
       if (context.read<FullscreenCubit>().state) return;

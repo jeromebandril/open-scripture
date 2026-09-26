@@ -28,7 +28,6 @@ import '../../features/text_scaler/presentation/state/text_scaler_cubit.dart';
 import '../../features/three_tap_navigator/data/repository/three_tap_navigator_repository_impl.dart';
 import '../../features/three_tap_navigator/domain/repository/three_tap_navigator_repository.dart';
 import '../../features/three_tap_navigator/presentation/state/three_tap_navigator_cubit.dart';
-import '../../features/window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import '../../shared/data/datasources/bible_catalog_datasource/bible_catalog_datasource.dart';
 import '../../shared/data/datasources/bible_catalog_datasource/local_bible_catalog_datasource_impl.dart';
 import '../../shared/data/datasources/bible_catalog_datasource/remote_bible_catalog_datasource_impl.dart';
@@ -111,8 +110,6 @@ Future<void> init(GetIt sl) async {
   sl.registerLazySingleton<MultiPaneManagerCubit>(() => MultiPaneManagerCubit(
       searchIntentBus: sl(), bookResolver: sl(), searchResultBus: sl()));
 
-  // init window stack manager
-  sl.registerLazySingleton(() => WindowStackManagerBloc());
   sl.registerFactoryParam<BibleSelectorCubit, List<BibleId>,
       BibleRepositoryType>((selectedIds,
           repoType) =>

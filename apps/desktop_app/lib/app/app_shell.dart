@@ -12,7 +12,6 @@ import '../features/remote_controller/presentation/widgets/remote_controller_ind
 import '../features/shortcuts/presentation/widgets/shortcuts_host.dart';
 import '../features/simple_presenter/presentation/widgets/presenter_host.dart';
 import '../features/three_tap_navigator/presentation/widgets/three_tap_navigator.dart';
-import '../features/window_stack_manager/presentation/widgets/window_stack_manager_host.dart';
 import '../shared/design_system/design_system.dart';
 import '../shared/widgets/floating_panel.dart';
 import 'settings/app_settings.dart';
@@ -41,70 +40,68 @@ class AppShell extends StatelessWidget {
         // Bloc Listner to show a small floating notification
         // when user go full screen mode
         //
-        body: WindowStackManagerHost(
-          child: Column(
-            children: [
-              //
-              // Titlebar with controls
-              //
-              if (showMenuBar || (!isFullscreen && !kIsWeb))
-                Titlebar(
-                  showMenuBar: true,
-                  showLogo: !isFullscreen && !kIsWeb,
-                  showButtons: !isFullscreen && !kIsWeb,
-                  centerItems: [
-                    const _AppHeader(),
-                  ],
-                  rightItems: kIsWeb
-                      ? null
-                      : [
-                          const ObsLiveOverlayIndicator(),
-                          const RemoteControllerIndicator(),
-                        ],
-                ),
-              //
-              // Main screen/workspace
-              //
-              Expanded(
-                child: PresenterHost(
-                  child: Stack(
-                    children: [
-                      //
-                      // Bible Panes
-                      //
-                      Positioned.fill(child: const MultiPaneContainer()),
-                      //
-                      // Dynamic/fullscreen only interfaces
-                      //
-                      if (enableDynamicInterface) ...[
-                        //
-                        // Dynamic searchbar
-                        //
-                        const DynamicSearchbar(),
-                        //
-                        // Dynamic History viewer
-                        //
-                        FloatingPanel(
-                          visible: showHistory,
-                          top: screen.height * 0.08 + 100,
-                          left: 0,
-                          right: 0,
-                          width: 350,
-                          height: 250,
-                          padding: const EdgeInsets.only(
-                              right: 0,
-                              left: 0,
-                              top: AppSpacing.lg,
-                              bottom: AppSpacing.md),
-                          child: const HistoryList(size: HistoryListSize.big),
-                        )
+        body: Column(
+          children: [
+            //
+            // Titlebar with controls
+            //
+            if (showMenuBar || (!isFullscreen && !kIsWeb))
+              Titlebar(
+                showMenuBar: true,
+                showLogo: !isFullscreen && !kIsWeb,
+                showButtons: !isFullscreen && !kIsWeb,
+                centerItems: [
+                  const _AppHeader(),
+                ],
+                rightItems: kIsWeb
+                    ? null
+                    : [
+                        const ObsLiveOverlayIndicator(),
+                        const RemoteControllerIndicator(),
                       ],
+              ),
+            //
+            // Main screen/workspace
+            //
+            Expanded(
+              child: PresenterHost(
+                child: Stack(
+                  children: [
+                    //
+                    // Bible Panes
+                    //
+                    Positioned.fill(child: const MultiPaneContainer()),
+                    //
+                    // Dynamic/fullscreen only interfaces
+                    //
+                    if (enableDynamicInterface) ...[
+                      //
+                      // Dynamic searchbar
+                      //
+                      const DynamicSearchbar(),
+                      //
+                      // Dynamic History viewer
+                      //
+                      FloatingPanel(
+                        visible: showHistory,
+                        top: screen.height * 0.08 + 100,
+                        left: 0,
+                        right: 0,
+                        width: 350,
+                        height: 250,
+                        padding: const EdgeInsets.only(
+                            right: 0,
+                            left: 0,
+                            top: AppSpacing.lg,
+                            bottom: AppSpacing.md),
+                        child: const HistoryList(size: HistoryListSize.big),
+                      )
                     ],
-                  ),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

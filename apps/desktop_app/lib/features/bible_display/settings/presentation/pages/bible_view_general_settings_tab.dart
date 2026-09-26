@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../../../app/extensions/build_context_extensions.dart';
 import '../../../../../app/settings/app_settings.dart';
 import '../../../../../app/widgets/font_picker.dart';
 import '../../../../../core/settings/settings_cubit.dart';
@@ -14,7 +15,6 @@ import '../../../../../shared/widgets/ui/inputs/app_input_option.dart';
 import '../../../../pericopes_mgr/presentation/pages/pericope_customization_page.dart';
 import '../../../../settings_window/presentation/widgets/setting.dart';
 import '../../../../settings_window/presentation/widgets/setting_section.dart';
-import '../../../../window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import '../../../bible_pane/domain/display_mode.dart';
 import '../../bible_view_settings.dart';
 import '../../domain/entities/bible_view_font_weight.dart';
@@ -199,13 +199,12 @@ class _BibleViewGeneralSettingsTabState
                           spacing: AppSpacing.sm,
                           children: [
                             IconButton(
-                              onPressed: () => context
-                                  .read<WindowStackManagerBloc>()
-                                  .add(WindowStackManagerOpen(
-                                    title: 'Pericope customization',
-                                    maxSize: const Size(600, 400),
-                                    widget: const PericopeCustomizationPage(),
-                                  )),
+                              onPressed: () => context.pushStandardWindow(
+                                title: 'Pericope customization',
+                                maxSize: const Size(600, 400),
+                                builder: (_) =>
+                                    const PericopeCustomizationPage(),
+                              ),
                               icon: const Icon(LucideIcons.settings),
                             ),
                             AppInputBool(

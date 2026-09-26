@@ -8,10 +8,7 @@ import '../../../bible_display/multi_pane_manager/presentation/state/multi_pane_
 import '../../../bible_display/settings/bible_view_settings.dart';
 import '../../../bible_searchbar/search/presentation/state/search_bloc.dart';
 import '../../../obs_live_overlay/presentation/state/obs_live_overlay_cubit.dart';
-import '../../../settings_window/presentation/models/settings_route.dart';
-import '../../../settings_window/presentation/pages/settings_window.dart';
 import '../../../simple_presenter/presentation/cubit/presenter_cubit.dart';
-import '../../../window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import '../../domain/models/app_command.dart';
 
 typedef CommandHandler = void Function();
@@ -24,7 +21,6 @@ class AppCommandDispatcher {
     required this.searchbarBloc,
     required this.fullscreenCubit,
     required this.interfaceVisibilityCubit,
-    required this.windowStackManagerBloc,
     required this.presenterCubit,
     this.overlayCubit,
   });
@@ -33,7 +29,6 @@ class AppCommandDispatcher {
   final SearchBloc Function() searchbarBloc;
   final FullscreenCubit Function() fullscreenCubit;
   final InterfaceVisibilityCubit Function() interfaceVisibilityCubit;
-  final WindowStackManagerBloc Function() windowStackManagerBloc;
   final PresenterCubit Function() presenterCubit;
   final ObsLiveOverlayCubit Function()? overlayCubit;
 
@@ -78,15 +73,6 @@ class AppCommandDispatcher {
     AppCommand.movePaneToLeft: () => paneManagerCubit()
         .swapPanesWithDelta(paneManagerCubit().state.activePaneId, -1),
     AppCommand.flushOverlayBuffer: () => overlayCubit?.call().flushBuffer(),
-    AppCommand.openSettings: () {
-      windowStackManagerBloc().add(
-        WindowStackManagerOpen.selfManaged(
-          widget: const SettingsWindow(
-            initialPage: SettingsPage.globalAppearance,
-          ),
-        ),
-      );
-    },
     AppCommand.togglePresenter: () => presenterCubit().toggleShow(),
     AppCommand.expandPresenter: () => presenterCubit().toggleExpand(),
     AppCommand.goNextSlide: () => presenterCubit().goNextSlide(),

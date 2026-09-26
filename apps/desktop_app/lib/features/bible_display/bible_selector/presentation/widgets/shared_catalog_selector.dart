@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../app/extensions/build_context_extensions.dart';
 import '../../../../../core/di/get_it_by_type.dart';
 import '../../../../../core/di/injection_container.dart' as di;
 import '../../../../../shared/design_system/design_system.dart';
@@ -10,7 +11,6 @@ import '../../../../../shared/widgets/ui/inputs/app_input_text.dart';
 import '../../../../my_library/presentation/state/my_library_cubit.dart';
 import '../../../../settings_window/presentation/models/settings_route.dart';
 import '../../../../settings_window/presentation/pages/settings_window.dart';
-import '../../../../window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import '../cubit/bible_selector_cubit.dart';
 
 class SharedCatalogSelector extends StatelessWidget {
@@ -101,15 +101,12 @@ class SharedCatalogSelector extends StatelessWidget {
                                           BibleRepositoryType.cloudAPI)
                                         TextButton.icon(
                                             onPressed: () {
-                                              context
-                                                  .read<
-                                                      WindowStackManagerBloc>()
-                                                  .add(WindowStackManagerOpen
-                                                      .selfManaged(
-                                                          widget: SettingsWindow(
-                                                              initialPage:
-                                                                  SettingsPage
-                                                                      .importer)));
+                                              context.pushWindow(
+                                                  builder: (_) =>
+                                                      SettingsWindow(
+                                                          initialPage:
+                                                              SettingsPage
+                                                                  .importer));
                                             },
                                             icon: Icon(
                                                 Icons.file_upload_outlined),

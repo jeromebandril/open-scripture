@@ -22,7 +22,6 @@ import '../features/remote_controller/settings/remote_controller_settings.dart';
 import '../features/shortcuts/presentation/state/shortcuts_cubit.dart';
 import '../features/simple_presenter/presentation/cubit/presenter_cubit.dart';
 import '../features/three_tap_navigator/presentation/state/three_tap_navigator_cubit.dart';
-import '../features/window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import '../shared/design_system/design_system.dart';
 import 'app_shell.dart';
 import 'settings/app_settings.dart';
@@ -99,7 +98,6 @@ class _MyAppState extends State<MyApp> {
                   BlocProvider(create: (_) => di.sl<ShortcutsCubit>()),
                   BlocProvider(create: (_) => di.sl<ThreeTapNavigatorCubit>()),
                   BlocProvider(create: (_) => di.sl<FullscreenCubit>()..init()),
-                  BlocProvider(create: (_) => di.sl<WindowStackManagerBloc>()),
                   BlocProvider(create: (_) => di.sl<InterfaceVisibilityCubit>()),
                   BlocProvider(create: (_) => di.sl<PresenterCubit>()),
                   if (!kIsWeb) ...[

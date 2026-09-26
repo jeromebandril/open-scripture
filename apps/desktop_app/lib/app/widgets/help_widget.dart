@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../features/shortcuts/domain/models/app_command.dart';
 import '../../features/shortcuts/presentation/models/app_command_shortcuts.dart';
 import '../../features/shortcuts/presentation/widgets/keycap.dart';
 import '../../features/shortcuts/presentation/widgets/shortcut_view.dart';
-import '../../features/window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
+import '../extensions/build_context_extensions.dart';
 
 class HelpTriggerBtn extends StatelessWidget {
   const HelpTriggerBtn({super.key});
@@ -15,19 +14,13 @@ class HelpTriggerBtn extends StatelessWidget {
     return IconButton(
         tooltip: 'Help',
         onPressed: () {
-          context.read<WindowStackManagerBloc>().add(
-                WindowStackManagerOpen(
-                  title: 'Quick Overview',
-                  widget: HelpScreen(
-                    onClose: () {
-                      context
-                          .read<WindowStackManagerBloc>()
-                          .add(WindowStackManagerClose());
-                    },
-                  ),
-                  maxSize: Size(530, 615),
-                ),
-              );
+          context.pushStandardWindow(
+            title: 'Quick Overview',
+            maxSize: Size(530, 615),
+            builder: (_) => HelpScreen(
+              onClose: () => context.closeWindow(),
+            ),
+          );
         },
         icon: Icon(Icons.help_outline_rounded));
   }

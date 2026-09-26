@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../../app/extensions/build_context_extensions.dart';
 import '../../../../core/settings/settings_cubit.dart';
 import '../../../../shared/design_system/design_system.dart';
 import '../../../../shared/widgets/service_status_indicator_shell.dart';
 import '../../../settings_window/presentation/models/settings_route.dart';
 import '../../../settings_window/presentation/pages/settings_window.dart';
-import '../../../window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import '../../settings/overlay_settings.dart';
 import '../state/obs_live_overlay_cubit.dart';
 
@@ -48,12 +48,11 @@ class ObsLiveOverlayIndicator extends StatelessWidget {
               : null,
           icon: SettingsPage.obsLiveOverlay.icon,
           iconTooltipMessage: 'Open overlay settings',
-          onIconPressed: () => context
-              .read<WindowStackManagerBloc>()
-              .add(WindowStackManagerOpen.selfManaged(
-                  widget: SettingsWindow(
-                initialPage: SettingsPage.obsLiveOverlay,
-              ))),
+          onIconPressed: () => context.pushWindow(
+            builder: (_) => SettingsWindow(
+              initialPage: SettingsPage.obsLiveOverlay,
+            ),
+          ),
         );
       },
     );

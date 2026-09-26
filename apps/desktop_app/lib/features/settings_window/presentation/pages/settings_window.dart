@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../app/extensions/build_context_extensions.dart';
 import '../../../../app/widgets/app_reveal_animation.dart';
 import '../../../../shared/design_system/design_system.dart';
 
-import '../../../window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import '../models/settings_route.dart';
 import 'parts/sidebar_navigator.dart';
 
@@ -12,7 +11,7 @@ class SettingsWindow extends StatefulWidget {
   final Function()? onClose;
 
   const SettingsWindow({
-    required this.initialPage,
+    this.initialPage = SettingsPage.globalAppearance,
     this.onClose,
     super.key,
   });
@@ -62,9 +61,7 @@ class _SettingsWindowState extends State<SettingsWindow> {
             Expanded(
               flex: 4,
               child: _SettingRouteLayout(
-                onClose: () => context
-                    .read<WindowStackManagerBloc>()
-                    .add(WindowStackManagerClose()),
+                onClose: () => context.closeWindow(),
                 child: Navigator(
                   key: _navKey,
                   initialRoute: widget.initialPage.route,

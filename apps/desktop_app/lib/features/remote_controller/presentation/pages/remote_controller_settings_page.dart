@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
+import '../../../../app/extensions/build_context_extensions.dart';
 import '../../../../core/settings/settings_cubit.dart';
 import '../../../../shared/design_system/design_system.dart';
 import '../../../../shared/utils/network_utils.dart';
@@ -12,7 +13,6 @@ import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
 import '../../../settings_window/presentation/pages/not_available_page.dart';
 import '../../../settings_window/presentation/widgets/setting.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
-import '../../../window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import '../../domain/entities/client_info.dart';
 import '../../settings/remote_controller_settings.dart';
 import '../state/remote_controller_cubit.dart';
@@ -107,13 +107,12 @@ class _RemoteControllerSettingsPageState
                                     if (state.isRunning)
                                       TextButton(
                                           onPressed: () {
-                                            context
-                                                .read<WindowStackManagerBloc>()
-                                                .add(WindowStackManagerOpen(
-                                                    title: 'Connected Devices',
-                                                    widget:
-                                                        const _ConnectedClientsList(),
-                                                    maxSize: Size(400, 400)));
+                                            context.pushStandardWindow(
+                                              title: 'Connected Devices',
+                                              maxSize: Size(400, 400),
+                                              builder: (_) =>
+                                                  const _ConnectedClientsList(),
+                                            );
                                           },
                                           child:
                                               Text('Manage connected devices')),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../app/extensions/build_context_extensions.dart';
 import '../../../../core/di/injection_container.dart' as di;
 import '../../../../core/settings/settings_cubit.dart';
-import '../../../window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import '../../settings/presenter_settings.dart';
 import '../cubit/presenter_cubit.dart';
 import '../widgets/slides_editor.dart';
@@ -20,9 +20,7 @@ class PresenterSetupPage extends StatelessWidget {
           return SlidesEditor(
             onApply: (val) {
               context.read<PresenterCubit>().updateSlides(val);
-              context
-                  .read<WindowStackManagerBloc>()
-                  .add(WindowStackManagerClose());
+              context.closeWindow();
             },
             initialSlides: state.slides,
           );

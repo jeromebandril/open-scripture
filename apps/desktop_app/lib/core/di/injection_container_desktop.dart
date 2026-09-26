@@ -30,7 +30,6 @@ import '../../features/shortcuts/presentation/models/app_command_dispatcher.dart
 import '../../features/simple_presenter/presentation/cubit/presenter_cubit.dart';
 import '../../features/sword/settings/sword_engine_settings.dart';
 import '../../features/sword/settings/sword_engine_settings_cubit.dart';
-import '../../features/window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import '../../shared/data/datasources/bible_catalog_datasource/bible_catalog_datasource.dart';
 import '../../shared/data/datasources/bible_catalog_datasource/sword_bible_catalog_datasource_impl.dart';
 import '../../shared/data/datasources/bible_content_datasource/bible_content_datasourcee.dart';
@@ -245,7 +244,6 @@ void _registerShortcuts(GetIt sl) {
       fullscreenCubit: () => sl<FullscreenCubit>(),
       interfaceVisibilityCubit: () => sl<InterfaceVisibilityCubit>(),
       overlayCubit: () => sl<ObsLiveOverlayCubit>(),
-      windowStackManagerBloc: () => sl<WindowStackManagerBloc>(), 
       presenterCubit: () => sl<PresenterCubit>(),
     ),
   );

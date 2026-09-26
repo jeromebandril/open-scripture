@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../app/extensions/build_context_extensions.dart';
 import '../../../../core/di/injection_container.dart';
-import '../../../window_stack_manager/presentation/state/window_stack_manager_bloc.dart';
 import '../state/font_loader_cubit.dart';
 
 class FontLoaderSelector extends StatelessWidget {
@@ -19,13 +19,11 @@ class FontLoaderSelector extends StatelessWidget {
         onPressed: () {
           // open the font loader selector window using stack manager bloc
           // instead of using an overlay
-          context.read<WindowStackManagerBloc>().add(
-                WindowStackManagerOpen(
-                  title: 'Load Font from URL',
-                  widget: _FontLoaderSelectorWindow(),
-                  maxSize: Size(300, 260),
-                ),
-              );
+          context.pushStandardWindow(
+            title: 'Load Font from URL',
+            maxSize: Size(300, 260),
+            builder: (_) => _FontLoaderSelectorWindow(),
+          );
         },
         icon: const Icon(Icons.font_download));
   }
@@ -43,11 +41,8 @@ class _FontLoaderSelectorWindow extends StatelessWidget {
       child: BlocConsumer<FontLoaderCubit, FontLoaderState>(
           listenWhen: (prev, curr) => prev.status != curr.status,
           listener: (context, state) {
-            if (state.status == FontLoaderStatus.loaded) {
-              context
-                  .read<WindowStackManagerBloc>()
-                  .add(WindowStackManagerClose());
-            }
+            if (state.status != FontLoaderStatus.loaded) return;
+            context.closeWindow();
           },
           builder: (context, state) {
             return state.status == FontLoaderStatus.loading
