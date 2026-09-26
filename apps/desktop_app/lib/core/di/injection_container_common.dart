@@ -19,6 +19,7 @@ import '../../features/bible_searchbar/settings/search_settings.dart';
 import '../../features/font_loader/presentation/state/font_loader_cubit.dart';
 import '../../features/my_library/presentation/state/my_library_cubit.dart';
 import '../../features/my_library/settings/my_library_settings.dart';
+import '../../features/pericopes_mgr/data/datasources/pericope_datasource.dart';
 import '../../features/shortcuts/data/repositories/shortcuts_repo_impl.dart';
 import '../../features/shortcuts/domain/repositories/shortcuts_repo.dart';
 import '../../features/shortcuts/presentation/state/shortcuts_cubit.dart';
@@ -61,6 +62,7 @@ import '../engines/bible_compiler/import/importer_registry.dart';
 import '../infrastructure/database/daos/bible_content_dao.dart';
 import '../infrastructure/database/daos/bible_installation_dao.dart';
 import '../infrastructure/database/daos/installed_bibles_dao.dart';
+import '../infrastructure/database/daos/pericopes_dao.dart';
 import '../infrastructure/database/database.dart';
 import '../infrastructure/event_bus/install_notifier.dart';
 import '../infrastructure/event_bus/resolved_search_intent_bus.dart';
@@ -76,6 +78,7 @@ Future<void> init(GetIt sl) async {
   _registerLocalDatabaseBible(sl);
   _registerMyLibrary(sl);
   _registerSearch(sl);
+  _registerPericopesSupport(sl);
   _registerCloudBible(sl);
   _registerShortcuts(sl);
   _registerBibleImporter(sl);
@@ -352,6 +355,12 @@ void _registerThreeTapNavigator(GetIt sl) {
     ),
   );
   sl.registerLazySingleton(() => ThreeTapNavigatorCubit(repo: sl()));
+}
+
+void _registerPericopesSupport(GetIt sl) {
+  sl.registerLazySingleton(() => PericopesDao(sl()));
+  sl.registerLazySingleton<PericopeDatasource>(
+      () => PericopeDatasourceImpl(sl()));
 }
 
 // ----------------------------------------------------------------------------
