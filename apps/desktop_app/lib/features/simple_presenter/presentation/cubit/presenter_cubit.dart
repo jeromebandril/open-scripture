@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:file_picker/file_picker.dart';
 
 import '../../domain/entities/slide_data.dart';
+import '../../domain/repositories/presenter_repository.dart';
 
 part 'presenter_state.dart';
 
@@ -48,7 +49,25 @@ const _testData = [
 class PresenterCubit extends Cubit<PresenterState> {
   static const kLimitNumOfSlides = 20;
 
-  PresenterCubit() : super(PresenterState()) {
+  final PresenterRepository _repo;
+
+  PresenterCubit({required PresenterRepository repo})
+      : _repo = repo,
+        super(PresenterState()) {
+    _restorePreviousSession();
+  }
+
+  void _restorePreviousSession() async {
+    final result = await _repo.restorePreviousSession().run();
+
+    result.fold(
+      (failure) {},
+      (slides) => updateSlides(slides),
+    );
+  }
+
+  // TODO: remember to delete this when it is not used anymore
+  void loadDemoData() {
     final slides = [
       for (final data in _testData)
         SlideData(
@@ -68,7 +87,7 @@ class PresenterCubit extends Cubit<PresenterState> {
     _toggleStatus(PresenterStatus.expanded);
   }
 
-  void updateSlides(List<SlideData> slides) {
+  void updateSlides(List<SlideData> slides) async {
     final limitedSlides = slides.take(kLimitNumOfSlides).toList();
 
     emit(state.copyWith(
@@ -77,6 +96,8 @@ class PresenterCubit extends Cubit<PresenterState> {
           ? (limitedSlides.length - 1).clamp(0, kLimitNumOfSlides)
           : null,
     ));
+
+    await _repo.saveSession(slides: limitedSlides).run();
   }
 
   void goNextSlide() => _moveSlide(1);

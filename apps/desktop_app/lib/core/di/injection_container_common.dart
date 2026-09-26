@@ -22,6 +22,9 @@ import '../../features/my_library/settings/my_library_settings.dart';
 import '../../features/shortcuts/data/repositories/shortcuts_repo_impl.dart';
 import '../../features/shortcuts/domain/repositories/shortcuts_repo.dart';
 import '../../features/shortcuts/presentation/state/shortcuts_cubit.dart';
+import '../../features/simple_presenter/data/datasource/presenter_datasource.dart';
+import '../../features/simple_presenter/data/repositories/presenter_repository_impl.dart';
+import '../../features/simple_presenter/domain/repositories/presenter_repository.dart';
 import '../../features/simple_presenter/presentation/cubit/presenter_cubit.dart';
 import '../../features/simple_presenter/settings/presenter_settings.dart';
 import '../../features/text_scaler/presentation/state/text_scaler_cubit.dart';
@@ -132,7 +135,11 @@ Future<void> init(GetIt sl) async {
 
 // ---------------------------------------------------------------------------
 void _registerPresenter(GetIt sl) {
-  sl.registerLazySingleton(() => PresenterCubit());
+  sl.registerLazySingleton<PresenterDatasource>(
+      () => PresenterDatasourceImpl());
+  sl.registerLazySingleton<PresenterRepository>(
+      () => PresenterRepositoryImpl(datasource: sl()));
+  sl.registerLazySingleton(() => PresenterCubit(repo: sl()));
 
   // config
   sl.registerLazySingleton<SettingsRepository<PresenterSettings>>(

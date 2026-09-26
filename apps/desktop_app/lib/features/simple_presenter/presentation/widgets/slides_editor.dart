@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../shared/design_system/design_system.dart';
@@ -6,7 +7,6 @@ import '../../../../shared/widgets/ui/inputs/app_input_text.dart';
 import '../../domain/entities/slide_data.dart';
 import '../cubit/presenter_cubit.dart';
 import '../pages/presenter_settings_page.dart';
-import 'quick_slides_import.dart';
 
 class SlidesEditor extends StatefulWidget {
   const SlidesEditor({
@@ -88,7 +88,18 @@ class _SlidesEditorState extends State<SlidesEditor> {
             mainAxisSize: MainAxisSize.min,
             spacing: AppSpacing.xl,
             children: [
-              // const QuickSlidesImport(),
+              SizedBox(
+                height: 20,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                        onPressed: () =>
+                            context.read<PresenterCubit>().loadDemoData(),
+                        child: Text('Load demo data'))
+                  ],
+                ),
+              ),
               Expanded(
                 child: ReorderableListView.builder(
                   itemCount: _slides.length,
@@ -180,15 +191,11 @@ class SlideInput extends StatefulWidget {
 }
 
 class _SlideInputState extends State<SlideInput> {
-  String _title = '';
-  String? _subtitle;
   bool isExtended = false;
 
   @override
   void initState() {
     super.initState();
-    _title = widget.slide.title;
-    _subtitle = widget.slide.subtitle;
   }
 
   @override
@@ -228,14 +235,14 @@ class _SlideInputState extends State<SlideInput> {
               AppInputText(
                 label: "Title",
                 key: ValueKey('${widget.slide.id}-title'),
-                value: _title,
+                value: widget.slide.title,
                 onChanged: (value) => widget.onChanged(title: value),
               ),
               const SizedBox(height: 10),
               AppInputText(
                 label: "Subtitle",
                 key: ValueKey('${widget.slide.id}-subtitle'),
-                value: _subtitle,
+                value: widget.slide.subtitle,
                 maxLines: 3,
                 onChanged: (value) =>
                     widget.onChanged(subtitle: value.isEmpty ? null : value),

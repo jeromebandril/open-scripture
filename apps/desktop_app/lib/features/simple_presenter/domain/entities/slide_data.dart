@@ -15,6 +15,7 @@ class SlideData {
     this.topRight,
     this.bottomLeft,
     this.bottomRight,
+    Object? data,
   });
 
   SlideData copyWith({
@@ -25,6 +26,22 @@ class SlideData {
       id: id,
       title: title ?? this.title,
       subtitle: subtitle != null ? subtitle() : this.subtitle,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "title": title,
+      "subtitle": subtitle,
+    };
+  }
+
+  static SlideData fromJson(Map<String, dynamic> data) {
+    return SlideData(
+      id: data['id'],
+      title: data['title'],
+      subtitle: data['subtitle'],
     );
   }
 }
