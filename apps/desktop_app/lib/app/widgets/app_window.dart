@@ -7,50 +7,60 @@ class AppWindow extends StatelessWidget {
     super.key,
     required this.title,
     required this.child,
-    required this.maxSize,
+    this.minSize = Size.zero,
+    this.maxSize = const Size(double.infinity, double.infinity),
   });
 
   final String title;
   final Widget child;
+  final Size minSize;
   final Size maxSize;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(
-        left: AppSpacing.md,
-        right: AppSpacing.md,
-        top: AppSpacing.md,
-        bottom: AppSpacing.lg,
-      ),
-      constraints: BoxConstraints(
-        maxWidth: maxSize.width,
-        maxHeight: maxSize.height,
-      ),
-      child: Column(
-        spacing: AppSpacing.md,
-        children: [
-          Row(
-            children: [
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-              IconButton(
-                onPressed: () => Navigator.of(context).pop(),
-                icon: const Icon(Icons.close),
-              ),
-            ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return ConstrainedBox(
+          constraints: BoxConstraints(
+            minWidth: minSize.width,
+            minHeight: minSize.height,
+            maxWidth: maxSize.width,
+            maxHeight: maxSize.height,
           ),
-          Expanded(child: child),
-        ],
-      ),
+          child: Container(
+            padding: const EdgeInsets.only(
+              left: AppSpacing.md,
+              right: AppSpacing.md,
+              top: AppSpacing.md,
+              bottom: AppSpacing.lg,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              spacing: AppSpacing.md,
+              children: [
+                Row(
+                  children: [
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.close),
+                    ),
+                  ],
+                ),
+                Flexible(
+                  child: child,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
