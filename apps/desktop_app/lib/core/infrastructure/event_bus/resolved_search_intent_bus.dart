@@ -1,15 +1,8 @@
-import 'dart:async';
-
 import '../../../shared/domain/entities/bible_ref.dart';
 import '../../../shared/domain/entities/bible_ref_partial.dart';
+import 'event_bus.dart';
 
-class ResolvedSearchIntentBus {
-  final _controller = StreamController<ResolvedSearchIntent>.broadcast();
-
-  Stream<ResolvedSearchIntent> get stream => _controller.stream;
-  void emit(ResolvedSearchIntent intent) => _controller.add(intent);
-  void dispose() => _controller.close();
-}
+class ResolvedSearchIntentBus extends EventBus<ResolvedSearchIntent> {}
 
 sealed class ResolvedSearchIntent {}
 

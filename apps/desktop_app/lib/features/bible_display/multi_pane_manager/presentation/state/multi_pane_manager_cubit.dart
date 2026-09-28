@@ -193,7 +193,7 @@ class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
       await b.close();
     }
     _blocs.clear();
-    _searchIntentBus.dispose();
+    _searchIntentBus.close();
     return super.close();
   }
 

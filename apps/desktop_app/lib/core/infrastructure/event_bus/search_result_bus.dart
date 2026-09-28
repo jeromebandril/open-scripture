@@ -1,15 +1,9 @@
-import 'dart:async';
-
 import '../../../shared/domain/entities/bible_ref.dart';
+import 'event_bus.dart';
 
 enum IntentSource { searchbar }
 
-class SearchResultBus {
-  final _c = StreamController<SearchResultEvent>.broadcast();
-  Stream<SearchResultEvent> get stream => _c.stream;
-  void emit(SearchResultEvent e) => _c.add(e);
-  Future<void> close() => _c.close();
-}
+class SearchResultBus extends EventBus<SearchResultEvent> {}
 
 sealed class SearchResultEvent {
   final IntentSource? source;

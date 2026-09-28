@@ -1,15 +1,11 @@
-import 'dart:async';
-
 import '../../../shared/domain/entities/bible_ref.dart';
 import '../../../shared/domain/entities/verse.dart';
+import 'event_bus.dart';
 
-class SelectedVerseBus {
-  final _c = StreamController<SelectedVerseBusItem>.broadcast();
-  Stream<SelectedVerseBusItem> get stream => _c.stream;
-
-  void update(SelectedVerseBusItem data) => _c.add(data);
-
-  Future<void> close() => _c.close();
+class SelectedVerseBus extends EventBus<SelectedVerseBusItem> {
+  void update(SelectedVerseBusItem data) {
+    emit(data);
+  }
 }
 
 class SelectedVerseBusItem {
