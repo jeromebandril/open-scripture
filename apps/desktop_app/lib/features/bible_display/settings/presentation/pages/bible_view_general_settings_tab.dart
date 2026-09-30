@@ -51,7 +51,6 @@ class _BibleViewGeneralSettingsTabState
         Expanded(
           flex: 2,
           child: SingleChildScrollView(
-            padding: EdgeInsets.fromLTRB(0, 0, 24, 0),
             child: Column(
               children: [
                 SettingSection(

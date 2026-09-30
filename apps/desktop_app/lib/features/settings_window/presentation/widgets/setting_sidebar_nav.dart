@@ -18,6 +18,7 @@ class SettingSidebarNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final navigationMenu = sidebarNavigation;
+    final isCompact = MediaQuery.of(context).size.width < AppBreakpoints.small;
 
     return Flexible(
       flex: 1,
@@ -28,17 +29,20 @@ class SettingSidebarNav extends StatelessWidget {
               bottomLeft: Radius.circular(AppRadius.lg)),
           color: Theme.of(context).colorScheme.surfaceContainerHigh,
         ),
-        padding:
-            const EdgeInsets.symmetric(vertical: AppSpacing.lg, horizontal: 12),
+        padding: EdgeInsets.symmetric(
+          vertical: isCompact ? 0 : AppSpacing.lg,
+          horizontal: 12,
+        ),
         child: ListView(
           children: [
-            const Padding(
-              padding: EdgeInsets.only(left: 12),
-              child: Text(
-                'Settings',
-                style: TextStyle(fontWeight: FontWeight.w600),
+            if (!isCompact)
+              const Padding(
+                padding: EdgeInsets.only(left: 12),
+                child: Text(
+                  'Settings',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
               ),
-            ),
             const SizedBox(height: 18),
             ...navigationMenu.entries.expand((entry) {
               final group = entry.key;
@@ -49,16 +53,21 @@ class SettingSidebarNav extends StatelessWidget {
 
               return [
                 // Group Header Text
-                Padding(
-                  padding: const EdgeInsets.only(left: 12, top: 12, bottom: 6),
-                  child: Text(
-                    group.title,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+
+                if (!isCompact)
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 12, top: 12, bottom: 6),
+                    child: Text(
+                      group.title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ),
-                ),
+
+                if (isCompact) const SizedBox(height: AppSpacing.xs),
 
                 // Group Section Box
                 Container(
@@ -75,6 +84,7 @@ class SettingSidebarNav extends StatelessWidget {
                           icon: page.icon,
                           route: page.route,
                           isSelected: page.route == selectedRoute,
+                          isCompact: isCompact,
                           onTap: () => onSelectRoute(page.route),
                         )
                     ],
@@ -95,6 +105,7 @@ class _NavigationButton extends StatelessWidget {
   final String route;
   final bool isSelected;
   final Function()? onTap;
+  final bool isCompact;
 
   const _NavigationButton(
     this.text, {
@@ -102,6 +113,7 @@ class _NavigationButton extends StatelessWidget {
     required this.route,
     this.isSelected = false,
     this.onTap,
+    this.isCompact = false,
   });
 
   @override
@@ -113,24 +125,31 @@ class _NavigationButton extends StatelessWidget {
       color: isSelected
           ? Theme.of(context).colorScheme.primaryContainer
           : Colors.transparent,
-      child: InkWell(
-        splashFactory: NoSplash.splashFactory,
-        borderRadius: BorderRadius.circular(AppRadius.sm),
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          alignment: Alignment.centerLeft,
-          height: 40,
-          child: Row(
-            children: [
-              Icon(
-                icon,
-                size: 16,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-              const SizedBox(width: 16),
-              Expanded(child: Text(text, overflow: TextOverflow.ellipsis)),
-            ],
+      child: Tooltip(
+        message: isCompact ? text : '',
+        child: InkWell(
+          splashFactory: NoSplash.splashFactory,
+          borderRadius: BorderRadius.circular(AppRadius.sm),
+          onTap: onTap,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            alignment: Alignment.centerLeft,
+            height: 40,
+            child: Row(
+              spacing: AppSpacing.lg,
+              mainAxisAlignment: isCompact
+                  ? MainAxisAlignment.center
+                  : MainAxisAlignment.start,
+              children: [
+                Icon(
+                  icon,
+                  size: 16,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+                if (!isCompact)
+                  Expanded(child: Text(text, overflow: TextOverflow.ellipsis)),
+              ],
+            ),
           ),
         ),
       ),

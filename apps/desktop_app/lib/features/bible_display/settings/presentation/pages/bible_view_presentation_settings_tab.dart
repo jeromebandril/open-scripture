@@ -28,7 +28,6 @@ class _BibleViewPresentationSettingsTabState
     final cubit = context.read<SettingsCubit<BibleViewSettings>>();
 
     return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(0, 0, 24, 0),
       child: Column(
         children: [
           SettingSection(
