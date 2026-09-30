@@ -59,7 +59,7 @@ class _NotificationHostState extends State<NotificationHost> {
 
     _listKey.currentState?.insertItem(
       _notifications.length - 1,
-      duration: const Duration(milliseconds: 260),
+      duration: const Duration(milliseconds: 100),
     );
 
     if (_notifications.length > widget.maxVisible) {
