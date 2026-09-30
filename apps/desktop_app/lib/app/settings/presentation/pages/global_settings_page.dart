@@ -56,6 +56,18 @@ class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
                             value: m, label: m.name, leading: Icon(m.icon)))
                         .toList(),
                   )),
+              SettingOption(
+                  label: 'Enable adaptive titlebar',
+                  description:
+                      'Makes titlebar color same as bible viewer background',
+                  child: AppInputBool(
+                    value: context.select((SettingsCubit<AppSettings> c) =>
+                        c.state.enableAdaptiveTitlebar),
+                    onChanged: (val) {
+                      cubit.update(
+                          (a) => a.copyWith(enableAdaptiveTitlebar: val));
+                    },
+                  )),
               // Setting(
               //     label: 'Enable uniform background color',
               //     description:

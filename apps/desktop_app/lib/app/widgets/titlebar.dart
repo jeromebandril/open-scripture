@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:window_manager/window_manager.dart';
 
+import '../../core/settings/settings_cubit.dart';
+import '../../features/bible_display/settings/bible_view_settings.dart';
 import '../../shared/constants.dart';
 import '../../shared/design_system/tokens/tokens.dart';
+import '../settings/app_settings.dart';
 import 'menubar.dart';
 
 class Titlebar extends StatelessWidget {
@@ -25,9 +29,16 @@ class Titlebar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final enableAdaptiveTitlebar = context.select(
+        (SettingsCubit<AppSettings> as) => as.state.enableAdaptiveTitlebar);
+    final bibleViewBg = context.select(
+        (SettingsCubit<BibleViewSettings> bs) => bs.state.backgroundColor);
+
     return Container(
       height: kWindowsTitleBarHeight,
-      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+      color: enableAdaptiveTitlebar
+          ? bibleViewBg
+          : Theme.of(context).colorScheme.surfaceContainerHighest,
       child: Stack(
         children: [
           //
@@ -56,28 +67,8 @@ class Titlebar extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                //
-                // Logo + Menubar
-                //
                 Row(
                   children: [
-                    // if (showLogo) ...[
-                    //   DragToMoveArea(
-                    //     child: Container(
-                    //       height: double.infinity,
-                    //       width: 24 + 16, // icon width + spacing
-                    //       alignment: Alignment.center,
-                    //       color: Colors.transparent,
-                    //       child: Image.asset(
-                    //         'assets/icon/icon.png',
-                    //         width: 24,
-                    //         height: 24,
-                    //         filterQuality: FilterQuality.medium,
-                    //       ),
-                    //     ),
-                    //   ),
-                    //   const SizedBox(width: 2),
-                    // ],
                     if (showMenuBar) ...[
                       const SizedBox(width: AppSpacing.sm),
                       const MyMenuBar(),

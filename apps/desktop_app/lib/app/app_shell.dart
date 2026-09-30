@@ -118,8 +118,10 @@ class _AppHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final enable3TapNav = context
-        .select((SettingsCubit<AppSettings> c) => c.state.enable3TapNavigator);
+    final globalSettings = context.select((SettingsCubit<AppSettings> c) => (
+          enable3TapNavigator: c.state.enable3TapNavigator,
+          enableAdaptiveTitlebar: c.state.enableAdaptiveTitlebar
+        ));
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Row(
@@ -127,11 +129,20 @@ class _AppHeader extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        if (enable3TapNav && screenWidth > AppBreakpoints.compact)
+        if (globalSettings.enable3TapNavigator &&
+            screenWidth > AppBreakpoints.compact)
           const ThreeTapNavigatorTrigger(),
         BSearchbar(
           width:
               screenWidth <= AppBreakpoints.compact ? screenWidth * 0.4 : 300,
+          theme: globalSettings.enableAdaptiveTitlebar
+              ? const SearchBarThemeData(
+                  backgroundColor: WidgetStatePropertyAll(Colors.transparent),
+                  side: WidgetStatePropertyAll(BorderSide(
+                    color: Colors.black12,
+                    width: 0.5,
+                  )))
+              : null,
           //onEditComplete: () => _returnFocusToRoot(),
         ),
         if (screenWidth > AppBreakpoints.compact) ShowHistoryButton(),
