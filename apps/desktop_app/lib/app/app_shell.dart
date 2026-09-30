@@ -18,6 +18,7 @@ import 'settings/app_settings.dart';
 import 'state/fullscreen_cubit.dart';
 import 'state/interface_visibility_cubit.dart';
 import 'widgets/dynamic_searchbar.dart';
+import 'widgets/notification_host.dart';
 import 'widgets/titlebar.dart';
 
 class AppShell extends StatelessWidget {
@@ -64,41 +65,47 @@ class AppShell extends StatelessWidget {
             // Main screen/workspace
             //
             Expanded(
-              child: PresenterHost(
-                child: Stack(
-                  children: [
-                    //
-                    // Bible Panes
-                    //
-                    Positioned.fill(child: const MultiPaneContainer()),
-                    //
-                    // Dynamic/fullscreen only interfaces
-                    //
-                    if (enableDynamicInterface) ...[
-                      //
-                      // Dynamic searchbar
-                      //
-                      const DynamicSearchbar(),
-                      //
-                      // Dynamic History viewer
-                      //
-                      FloatingPanel(
-                        visible: showHistory,
-                        top: screen.height * 0.08 + 100,
-                        left: 0,
-                        right: 0,
-                        width: 350,
-                        height: 250,
-                        padding: const EdgeInsets.only(
-                            right: 0,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  PresenterHost(
+                    child: Stack(
+                      children: [
+                        //
+                        // Bible Panes
+                        //
+                        Positioned.fill(child: const MultiPaneContainer()),
+                        //
+                        // Dynamic/fullscreen only interfaces
+                        //
+                        if (enableDynamicInterface) ...[
+                          //
+                          // Dynamic searchbar
+                          //
+                          const DynamicSearchbar(),
+                          //
+                          // Dynamic History viewer
+                          //
+                          FloatingPanel(
+                            visible: showHistory,
+                            top: screen.height * 0.08 + 100,
                             left: 0,
-                            top: AppSpacing.lg,
-                            bottom: AppSpacing.md),
-                        child: const HistoryList(size: HistoryListSize.big),
-                      )
-                    ],
-                  ],
-                ),
+                            right: 0,
+                            width: 350,
+                            height: 250,
+                            padding: const EdgeInsets.only(
+                                right: 0,
+                                left: 0,
+                                top: AppSpacing.lg,
+                                bottom: AppSpacing.md),
+                            child: const HistoryList(size: HistoryListSize.big),
+                          )
+                        ],
+                      ],
+                    ),
+                  ),
+                  const Positioned.fill(child: NotificationHost()),
+                ],
               ),
             ),
           ],

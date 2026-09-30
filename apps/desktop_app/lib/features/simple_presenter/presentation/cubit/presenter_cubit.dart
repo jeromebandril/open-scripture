@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:file_picker/file_picker.dart';
 
+import '../../../../core/infrastructure/notifications/notification_bus.dart';
 import '../../domain/entities/slide_data.dart';
 import '../../domain/repositories/presenter_repository.dart';
 
@@ -50,9 +51,13 @@ class PresenterCubit extends Cubit<PresenterState> {
   static const kLimitNumOfSlides = 20;
 
   final PresenterRepository _repo;
+  final NotificationBus? _notificationBus;
 
-  PresenterCubit({required PresenterRepository repo})
-      : _repo = repo,
+  PresenterCubit({
+    required PresenterRepository repo,
+    NotificationBus? notificationBus,
+  })  : _notificationBus = notificationBus,
+        _repo = repo,
         super(PresenterState()) {
     _restorePreviousSession();
   }
@@ -142,10 +147,14 @@ class PresenterCubit extends Cubit<PresenterState> {
   bool _canShowPresenter() {
     if (state.slides.isNotEmpty) return true;
 
+    final errorMessage = "You need to setup a presentation first";
+
     emit(state.copyWith(
       status: PresenterStatus.error,
-      errorMessage: () => 'You need to setup a presentation first',
+      errorMessage: () => errorMessage,
     ));
+
+    _notificationBus?.warning(errorMessage);
     return false;
   }
 }

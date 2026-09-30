@@ -1,16 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../app/extensions/build_context_extensions.dart';
-import '../../../../app/state/fullscreen_cubit.dart';
-import '../../../../shared/widgets/simple_floating_notification.dart';
 import '../../../settings_window/presentation/pages/settings_window.dart';
-import '../../../simple_presenter/presentation/cubit/presenter_cubit.dart';
 import '../../domain/models/app_command.dart';
-import '../widgets/shortcut_view.dart';
-import 'app_command_shortcuts.dart';
 
 typedef UiEffectHandler = void Function();
 
@@ -40,48 +32,5 @@ class UiEffectDispatcher {
     AppCommand.switchDisplayMode: () => rootFocusNode.requestFocus(),
     AppCommand.openSettings: () =>
         context.pushWindow(builder: (_) => const SettingsWindow()),
-    AppCommand.toggleFullscreen: () {
-      if (kIsWeb) return;
-      if (context.read<FullscreenCubit>().state) return;
-
-      context.showFloatingNotification(
-        Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            spacing: 8,
-            children: [
-              Text('Press'),
-              ShortcutView(
-                  fillColor: Theme.of(context).colorScheme.onSurface,
-                  textColor: Theme.of(context).colorScheme.surface,
-                  borderColor:
-                      Theme.of(context).colorScheme.surface.withAlpha(80),
-                  activator: appCommandShortcuts[AppCommand.toggleFullscreen]),
-              Text('to exit fullscreen'),
-            ]),
-      );
-    },
-    AppCommand.togglePresenter: () {
-      final state = context.read<PresenterCubit>().state;
-      if (state.status != PresenterStatus.error) return;
-      if (state.errorMessage == null) return;
-
-      context.showFloatingNotification(
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          spacing: 8,
-          children: [
-            Icon(
-              LucideIcons.messageSquareWarning,
-              color: Theme.of(context).colorScheme.surface,
-            ),
-            Text(state.errorMessage!),
-          ],
-        ),
-      );
-    }
   };
 }

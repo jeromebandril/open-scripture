@@ -1,10 +1,17 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../core/infrastructure/notifications/notification_bus.dart';
 import '../../core/infrastructure/window/app_window_manager.dart';
 
 class FullscreenCubit extends Cubit<bool> {
-  FullscreenCubit(this._window) : super(false);
+  FullscreenCubit({
+    required AppWindowManager window,
+    NotificationBus? notificationBus,
+  })  : _window = window,
+        _notificationBus = notificationBus,
+        super(false);
 
   final AppWindowManager _window;
+  final NotificationBus? _notificationBus;
 
   bool _busy = false;
 
@@ -24,6 +31,7 @@ class FullscreenCubit extends Cubit<bool> {
       if (!isClosed) emit(confirmed);
     } finally {
       _busy = false;
+      _notifyWhenFullscreen();
     }
   }
 
@@ -45,6 +53,11 @@ class FullscreenCubit extends Cubit<bool> {
       if (!isClosed) emit(confirmed);
     } finally {
       _busy = false;
+      _notifyWhenFullscreen();
     }
+  }
+
+  void _notifyWhenFullscreen() {
+    if (state) _notificationBus?.info("Press  CTRL+F  to exit fullscreen");
   }
 }

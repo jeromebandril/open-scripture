@@ -68,6 +68,7 @@ import '../infrastructure/event_bus/install_notifier.dart';
 import '../infrastructure/event_bus/resolved_search_intent_bus.dart';
 import '../infrastructure/event_bus/search_result_bus.dart';
 import '../infrastructure/event_bus/selected_verse_bus.dart';
+import '../infrastructure/notifications/notification_bus.dart';
 import '../infrastructure/window/app_window_manager.dart';
 import '../settings/datasource/settings_datasource_desktop.dart';
 import '../settings/settings_cubit.dart';
@@ -107,7 +108,9 @@ Future<void> init(GetIt sl) async {
   sl.registerLazySingleton(() => ResolvedSearchIntentBus());
   sl.registerLazySingleton(() => InstallNotifier());
   sl.registerLazySingleton<AppWindowManager>(() => WindowManagerImpl());
-  sl.registerLazySingleton(() => FullscreenCubit(sl<AppWindowManager>()));
+  sl.registerLazySingleton(() => NotificationBus());
+  sl.registerLazySingleton(() =>
+      FullscreenCubit(window: sl<AppWindowManager>(), notificationBus: sl()));
   sl.registerFactory(() => TextScalerCubit());
   sl.registerFactory(() => FontLoaderCubit());
   sl.registerLazySingleton(() => InterfaceVisibilityCubit());
@@ -142,7 +145,8 @@ void _registerPresenter(GetIt sl) {
       () => PresenterDatasourceImpl());
   sl.registerLazySingleton<PresenterRepository>(
       () => PresenterRepositoryImpl(datasource: sl()));
-  sl.registerLazySingleton(() => PresenterCubit(repo: sl()));
+  sl.registerLazySingleton(
+      () => PresenterCubit(repo: sl(), notificationBus: sl()));
 
   // config
   sl.registerLazySingleton<SettingsRepository<PresenterSettings>>(
