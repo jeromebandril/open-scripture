@@ -11,7 +11,7 @@ import '../../../../shared/widgets/dot.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
 import '../../../settings_window/presentation/pages/not_available_page.dart';
-import '../../../settings_window/presentation/widgets/setting.dart';
+import '../../../settings_window/presentation/widgets/setting_option.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../domain/entities/client_info.dart';
 import '../../settings/remote_controller_settings.dart';
@@ -130,7 +130,7 @@ class _RemoteControllerSettingsPageState
                       SettingSection(
                         title: 'Preferences',
                         children: [
-                          Setting(
+                          SettingOption(
                               label: 'Enable Remote Controller',
                               description:
                                   'Enable/Disable remote controller feature',
@@ -149,7 +149,7 @@ class _RemoteControllerSettingsPageState
                                           enableFeature: val));
                                 },
                               )),
-                          Setting(
+                          SettingOption(
                               label: 'Port',
                               description: 'Preferred connection port',
                               child: AppInputNumber(

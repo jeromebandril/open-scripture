@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/settings/settings_cubit.dart';
 import '../../../../../shared/widgets/ui/inputs/app_input_number.dart';
 import '../../../../../shared/widgets/ui/inputs/app_input_option.dart';
-import '../../../../settings_window/presentation/widgets/setting.dart';
+import '../../../../settings_window/presentation/widgets/setting_option.dart';
 import '../../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../bible_view_settings.dart';
 import '../../domain/entities/bible_view_font_weight.dart';
@@ -34,7 +34,7 @@ class _BibleViewPresentationSettingsTabState
           SettingSection(
             title: 'Options',
             children: [
-              Setting(
+              SettingOption(
                   label: 'Text Font Weight Subtitle',
                   description:
                       'Set font weight for the bible metadata indicator when in parallel view',
@@ -50,7 +50,7 @@ class _BibleViewPresentationSettingsTabState
                             value: fw, label: fw.wire))
                         .toList(),
                   )),
-              Setting(
+              SettingOption(
                   label: 'Title alignment',
                   description: 'Select title alignment',
                   child: AppInputOption<BibleViewTextAlign>(
@@ -66,7 +66,7 @@ class _BibleViewPresentationSettingsTabState
                             value: ta, label: ta.wire, leading: Icon(ta.icon)))
                         .toList(),
                   )),
-              Setting(
+              SettingOption(
                   label: 'Text alignment',
                   description: 'Select text alignment',
                   child: AppInputOption<BibleViewTextAlign>(
@@ -82,7 +82,7 @@ class _BibleViewPresentationSettingsTabState
                             value: ta, label: ta.wire, leading: Icon(ta.icon)))
                         .toList(),
                   )),
-              Setting(
+              SettingOption(
                   label: 'Verse number style',
                   description: 'Select verse number style',
                   child: AppInputOption<InlineVerseNumberStyle>(
@@ -103,7 +103,7 @@ class _BibleViewPresentationSettingsTabState
           SettingSection(
             title: 'Parallel view options',
             children: [
-              Setting(
+              SettingOption(
                   label: 'Spacing',
                   description:
                       'The spacing/distance between each parallel instance',

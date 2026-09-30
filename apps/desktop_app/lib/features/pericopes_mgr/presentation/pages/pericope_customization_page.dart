@@ -8,7 +8,7 @@ import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_color/app_input_color.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
 import '../../../bible_display/settings/bible_view_settings.dart';
-import '../../../settings_window/presentation/widgets/setting.dart';
+import '../../../settings_window/presentation/widgets/setting_option.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
 
 class PericopeCustomizationPage extends StatelessWidget {
@@ -28,7 +28,7 @@ class PericopeCustomizationPage extends StatelessWidget {
         return SingleChildScrollView(
           child: SettingSection(
             children: [
-              Setting(
+              SettingOption(
                   label: 'Pericope color',
                   description: 'Set color for the pericope heading',
                   child: AppInputColor(
@@ -47,7 +47,7 @@ class PericopeCustomizationPage extends StatelessWidget {
                           c.state.pericopeColor,
                     ),
                   )),
-              Setting(
+              SettingOption(
                   label: 'Underline heading',
                   description: 'Underline the pericope heading',
                   child: AppInputBool(
@@ -58,7 +58,7 @@ class PericopeCustomizationPage extends StatelessWidget {
                       cubit.update((a) => a.copyWith(pericopeUnderline: value));
                     },
                   )),
-              Setting(
+              SettingOption(
                   label: 'Spacing above heading',
                   description: 'Set space above the pericope heading',
                   child: AppInputNumber(
@@ -74,7 +74,7 @@ class PericopeCustomizationPage extends StatelessWidget {
                           c.state.pericopeSpacingTop,
                     ),
                   )),
-              Setting(
+              SettingOption(
                   label: 'Spacing below heading',
                   description: 'Set space below the pericope heading',
                   child: AppInputNumber(

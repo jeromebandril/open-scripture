@@ -4,7 +4,7 @@ import '../../../../app/widgets/app_reveal_animation.dart';
 import '../../../../shared/design_system/design_system.dart';
 
 import '../models/settings_route.dart';
-import 'parts/sidebar_navigator.dart';
+import '../widgets/setting_sidebar_nav.dart';
 
 class SettingsWindow extends StatefulWidget {
   final SettingsPage initialPage;
@@ -33,8 +33,6 @@ class _SettingsWindowState extends State<SettingsWindow> {
 
   void _goTo(String route) {
     setState(() => _selectedRoute = route);
-
-    // For "settings sections", replacement is usually better than stacking.
     _navKey.currentState?.pushReplacementNamed(route);
   }
 
@@ -53,7 +51,7 @@ class _SettingsWindowState extends State<SettingsWindow> {
         ),
         child: Row(
           children: [
-            SidebarNavigator(
+            SettingSidebarNav(
               width: 100,
               selectedRoute: _selectedRoute,
               onSelectRoute: _goTo,
@@ -108,12 +106,7 @@ class _SettingRouteLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _HeaderSettings(
-          height: 40,
-          onClose: () {
-            if (onClose != null) onClose!();
-          },
-        ),
+        _HeaderSettings(onClose: () => onClose?.call()),
         SizedBox(height: 16),
         Expanded(child: child),
       ],
@@ -122,24 +115,24 @@ class _SettingRouteLayout extends StatelessWidget {
 }
 
 class _HeaderSettings extends StatelessWidget {
-  final double height;
   final Function()? onClose;
 
-  const _HeaderSettings({
-    required this.height,
-    this.onClose,
-  });
+  const _HeaderSettings({this.onClose});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.centerRight,
-      height: height,
+      height: 40,
+      padding: const EdgeInsets.only(
+        left: AppSpacing.md,
+        right: AppSpacing.md,
+        top: AppSpacing.md,
+      ),
       child: IconButton(
-          onPressed: () {
-            if (onClose != null) onClose!();
-          },
-          icon: const Icon(Icons.close)),
+        onPressed: () => onClose?.call(),
+        icon: const Icon(Icons.close),
+      ),
     );
   }
 }

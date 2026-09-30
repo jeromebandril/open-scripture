@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../shared/design_system/design_system.dart';
-import '../../models/settings_route.dart';
+import '../../../../shared/design_system/design_system.dart';
+import '../models/settings_route.dart';
 
-class SidebarNavigator extends StatelessWidget {
+class SettingSidebarNav extends StatelessWidget {
   final double width;
   final String selectedRoute;
   final ValueChanged<String> onSelectRoute;
 
-  const SidebarNavigator({
+  const SettingSidebarNav({
     super.key,
     required this.width,
     required this.selectedRoute,

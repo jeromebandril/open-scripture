@@ -51,14 +51,12 @@ class AppShell extends StatelessWidget {
                 showMenuBar: true,
                 showLogo: !isFullscreen && !kIsWeb,
                 showButtons: !isFullscreen && !kIsWeb,
-                centerItems: [
-                  const _AppHeader(),
-                ],
+                centerItems: [const _AppHeader()],
                 rightItems: kIsWeb
                     ? null
-                    : [
-                        const ObsLiveOverlayIndicator(),
-                        const RemoteControllerIndicator(),
+                    : const [
+                        ObsLiveOverlayIndicator(),
+                        RemoteControllerIndicator(),
                       ],
               ),
             //

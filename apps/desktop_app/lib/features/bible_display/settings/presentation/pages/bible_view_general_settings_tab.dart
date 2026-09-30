@@ -13,7 +13,7 @@ import '../../../../../shared/widgets/ui/inputs/app_input_color/app_input_color.
 import '../../../../../shared/widgets/ui/inputs/app_input_number.dart';
 import '../../../../../shared/widgets/ui/inputs/app_input_option.dart';
 import '../../../../pericopes_mgr/presentation/pages/pericope_customization_page.dart';
-import '../../../../settings_window/presentation/widgets/setting.dart';
+import '../../../../settings_window/presentation/widgets/setting_option.dart';
 import '../../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../../bible_pane/domain/display_mode.dart';
 import '../../bible_view_settings.dart';
@@ -57,7 +57,7 @@ class _BibleViewGeneralSettingsTabState
                 SettingSection(
                   title: 'Bible viewer theme',
                   children: [
-                    Setting(
+                    SettingOption(
                         label: 'Use app\'s theme',
                         description:
                             'Use app\'s theme and its colorscheme. To use custom colors, disabled this.',
@@ -70,7 +70,7 @@ class _BibleViewGeneralSettingsTabState
                             cubit.update((p) => p.copyWith(useAppTheme: val));
                           },
                         )),
-                    Setting(
+                    SettingOption(
                         label: 'Background color',
                         description: 'Set color for the background',
                         child: AppInputColor(
@@ -93,7 +93,7 @@ class _BibleViewGeneralSettingsTabState
                                 c.state.backgroundColor,
                           ),
                         )),
-                    Setting(
+                    SettingOption(
                         label: 'Verse color',
                         description: 'Set color for the verse text',
                         child: AppInputColor(
@@ -116,7 +116,7 @@ class _BibleViewGeneralSettingsTabState
                                 c.state.verseColor,
                           ),
                         )),
-                    Setting(
+                    SettingOption(
                         label: 'Reference color',
                         description:
                             'Set color for the verse reference (unselected)',
@@ -140,7 +140,7 @@ class _BibleViewGeneralSettingsTabState
                                 c.state.refColor,
                           ),
                         )),
-                    Setting(
+                    SettingOption(
                         label: 'Selected reference color',
                         description:
                             'Set color for the verse reference (selected)',
@@ -189,7 +189,7 @@ class _BibleViewGeneralSettingsTabState
                 SettingSection(
                   title: 'Render options',
                   children: [
-                    Setting(
+                    SettingOption(
                         label: 'Render pericope headings',
                         description:
                             'Render pericope headings if available in the bible text, or use default headings',
@@ -218,7 +218,7 @@ class _BibleViewGeneralSettingsTabState
                             ),
                           ],
                         )),
-                    Setting(
+                    SettingOption(
                         label: 'Quote color',
                         description:
                             'Set color for the verse quotes (usually "word of jesus")',
@@ -239,7 +239,7 @@ class _BibleViewGeneralSettingsTabState
                                 c.state.quoteColor,
                           ),
                         )),
-                    Setting(
+                    SettingOption(
                         label: 'Add color',
                         description: 'Set color for added words',
                         child: AppInputColor(
@@ -265,7 +265,7 @@ class _BibleViewGeneralSettingsTabState
                   title: 'Typography',
                   children: [
                     SettingSection(title: 'Font weight', children: [
-                      Setting(
+                      SettingOption(
                           label: 'Verse font weight',
                           description: 'Set font weight for verse text',
                           child: AppInputOption<BibleViewFontWeight>(
@@ -282,7 +282,7 @@ class _BibleViewGeneralSettingsTabState
                                         value: fw, label: fw.wire))
                                 .toList(),
                           )),
-                      Setting(
+                      SettingOption(
                           label: 'Reference font weight',
                           description:
                               'Set font weight for unselected references',
@@ -300,7 +300,7 @@ class _BibleViewGeneralSettingsTabState
                                         value: fw, label: fw.wire))
                                 .toList(),
                           )),
-                      Setting(
+                      SettingOption(
                           label: 'Selected reference font weight',
                           description:
                               'Set font weight for selected references',
@@ -322,7 +322,7 @@ class _BibleViewGeneralSettingsTabState
                     SettingSection(
                       title: 'Font family',
                       children: [
-                        Setting(
+                        SettingOption(
                           label: 'Verse font family',
                           description: 'Set font for the verse text',
                           child: FontPicker(
@@ -336,7 +336,7 @@ class _BibleViewGeneralSettingsTabState
                                 p.copyWith(verseFontFamily: appFont.family)),
                           ),
                         ),
-                        Setting(
+                        SettingOption(
                           label: 'Reference font family',
                           description: 'Set font for the reference text',
                           child: FontPicker(
@@ -353,7 +353,7 @@ class _BibleViewGeneralSettingsTabState
                       ],
                     ),
                     SettingSection(title: 'Advanced', children: [
-                      Setting(
+                      SettingOption(
                           label: 'Use custom text letter spacing',
                           description:
                               'Can set custom letter spacing or use default specified from the font family itself',
@@ -368,7 +368,7 @@ class _BibleViewGeneralSettingsTabState
                                   p.copyWith(verseLetterSpacing: () => s));
                             },
                           )),
-                      Setting(
+                      SettingOption(
                           label: 'Text letter spacing',
                           description:
                               'Set distance between letters (can be negative)',
@@ -395,7 +395,7 @@ class _BibleViewGeneralSettingsTabState
                 SettingSection(
                   title: 'Behavior',
                   children: [
-                    Setting(
+                    SettingOption(
                         label:
                             'Enable auto scroll to verse for bible list view',
                         description:
@@ -411,7 +411,7 @@ class _BibleViewGeneralSettingsTabState
                                     s.copyWith(enableAutoScrollToVerse: val));
                           },
                         )),
-                    Setting(
+                    SettingOption(
                         label: 'Enable strong words selection',
                         description:
                             'Shows a subtle dotted underline for strong words. If clicked, it shows more information',
@@ -430,7 +430,7 @@ class _BibleViewGeneralSettingsTabState
                 SettingSection(
                   title: 'Splitscreenn prefs',
                   children: [
-                    Setting(
+                    SettingOption(
                         label: 'Gap',
                         description:
                             'Set gap space between each bible pane view',
@@ -451,7 +451,7 @@ class _BibleViewGeneralSettingsTabState
                 SettingSection(
                   title: 'Other options',
                   children: [
-                    Setting(
+                    SettingOption(
                       label: 'Enabled view modes',
                       description: 'Enabled view modes',
                       settingWidth: 230,
@@ -477,7 +477,7 @@ class _BibleViewGeneralSettingsTabState
                         },
                       ),
                     ),
-                    Setting(
+                    SettingOption(
                       label: 'Default view mode',
                       description:
                           'Default view mode when new bible pane is created',

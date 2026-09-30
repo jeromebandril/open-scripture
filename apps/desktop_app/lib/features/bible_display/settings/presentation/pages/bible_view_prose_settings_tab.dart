@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/settings/settings_cubit.dart';
 import '../../../../../shared/widgets/ui/inputs/app_input_bool.dart';
 import '../../../../../shared/widgets/ui/inputs/app_input_number.dart';
-import '../../../../settings_window/presentation/widgets/setting.dart';
+import '../../../../settings_window/presentation/widgets/setting_option.dart';
 import '../../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../bible_view_settings.dart';
 
@@ -28,7 +28,7 @@ class _BibleViewProseSettingsTabState extends State<BibleViewProseSettingsTab> {
           SettingSection(
             title: 'Options',
             children: [
-              Setting(
+              SettingOption(
                 label: 'Emphasize selected verses',
                 description: 'It reduce opacity for unselected verses',
                 child: AppInputBool(
@@ -42,7 +42,7 @@ class _BibleViewProseSettingsTabState extends State<BibleViewProseSettingsTab> {
                   },
                 ),
               ),
-              Setting(
+              SettingOption(
                 label: 'Opacity level of unselected',
                 description:
                     'Opacity level of unselected verses when emphasize selected verses is enabled',

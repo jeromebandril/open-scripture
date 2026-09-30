@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/settings/settings_cubit.dart';
 import '../../../../features/bible_display/settings/bible_view_settings.dart';
 import '../../../../features/bible_searchbar/settings/search_settings.dart';
-import '../../../../features/settings_window/presentation/widgets/setting.dart';
+import '../../../../features/settings_window/presentation/widgets/setting_option.dart';
 import '../../../../features/settings_window/presentation/widgets/setting_section.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_option.dart';
@@ -42,7 +42,7 @@ class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
           SettingSection(
             title: 'Global',
             children: [
-              Setting(
+              SettingOption(
                   label: 'Theme mode',
                   description: 'Set app theme',
                   child: AppInputOption<ThemeMode>(
@@ -73,7 +73,7 @@ class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
           SettingSection(
             title: 'Interface',
             children: [
-              Setting(
+              SettingOption(
                   label: 'Enable 3 Tap Navigator',
                   description:
                       'Select book, chapter and verse with consecutive clicks',
@@ -89,7 +89,7 @@ class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
           SettingSection(
             title: 'Behavior',
             children: [
-              Setting(
+              SettingOption(
                   label: 'Enable searchbar book suggestions',
                   description:
                       'Shows a dropdown menu with book name candidates while typing',
@@ -102,7 +102,7 @@ class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
                           .update((s) => s.copyWith(enableBookSuggestion: val));
                     },
                   )),
-              Setting(
+              SettingOption(
                   label: 'Enable auto-scroll to verse',
                   description:
                       'Automatically scroll to the verse when navigating to a reference',

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/design_system/tokens/tokens.dart';
 
-class Setting extends StatelessWidget {
-  const Setting({
+class SettingOption extends StatelessWidget {
+  const SettingOption({
     required this.label,
     this.description,
     required this.child,

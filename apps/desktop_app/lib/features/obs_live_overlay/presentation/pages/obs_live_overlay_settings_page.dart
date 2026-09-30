@@ -12,7 +12,7 @@ import '../../../../shared/widgets/dot.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
 import '../../../settings_window/presentation/pages/not_available_page.dart';
-import '../../../settings_window/presentation/widgets/setting.dart';
+import '../../../settings_window/presentation/widgets/setting_option.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../settings/overlay_settings.dart';
 import '../state/obs_live_overlay_cubit.dart';
@@ -73,7 +73,7 @@ class ObsLiveOverlaySettingsPage extends StatelessWidget {
                         ],
                       ),
                       SettingSection(title: 'Setup', children: [
-                        Setting(
+                        SettingOption(
                             label: 'URL',
                             description:
                                 'Copy this URL and paste it into an OBS Browser Source. You can also open it in your web browser to preview the overlay',
@@ -102,7 +102,7 @@ class ObsLiveOverlaySettingsPage extends StatelessWidget {
                       SettingSection(
                         title: 'Preferences',
                         children: [
-                          Setting(
+                          SettingOption(
                               label: 'Enable OBS Live Overlay',
                               description:
                                   'Enable/Disable obs live overlay feature',
@@ -116,7 +116,7 @@ class ObsLiveOverlaySettingsPage extends StatelessWidget {
                                           enableFeature: val));
                                 },
                               )),
-                          Setting(
+                          SettingOption(
                               // Not implemented yet, just a placeholder for now
                               label: 'Enable auto start',
                               description:
@@ -133,7 +133,7 @@ class ObsLiveOverlaySettingsPage extends StatelessWidget {
                                   //         settings.copyWith(enableAutoStart: val));
                                 },
                               )),
-                          Setting(
+                          SettingOption(
                               label: 'Enable manual control',
                               description:
                                   'When enabled, selecting a reference will no longer automatically signal the overlay. Press Ctrl+U whenever you want to trigger it',
@@ -149,7 +149,7 @@ class ObsLiveOverlaySettingsPage extends StatelessWidget {
                                           enableManualControl: val));
                                 },
                               )),
-                          Setting(
+                          SettingOption(
                               label: 'Port',
                               description:
                                   'Preferred port for the web page host',
@@ -167,7 +167,7 @@ class ObsLiveOverlaySettingsPage extends StatelessWidget {
                                           settings.copyWith(port: p.toInt()));
                                 },
                               )),
-                          Setting(
+                          SettingOption(
                               label: 'Visibility time',
                               description:
                                   'The number of seconds before the overlay automatically hides',
@@ -190,7 +190,7 @@ class ObsLiveOverlaySettingsPage extends StatelessWidget {
                       SettingSection(
                         title: 'Assets & Customization',
                         children: [
-                          Setting(
+                          SettingOption(
                             label:
                                 'Start editing assets for overlay customization',
                             description:
@@ -257,7 +257,7 @@ class _ResetAssetsActionState extends State<_ResetAssetsAction> {
         ? AppColors.success
         : AppColors.successDark;
 
-    return Setting(
+    return SettingOption(
       label: 'Reset assets to defaults',
       description:
           'Restore the default asset files, replacing any customizations',

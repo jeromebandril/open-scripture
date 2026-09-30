@@ -5,7 +5,7 @@ import '../../../../../core/settings/settings_cubit.dart';
 import '../../../../../shared/widgets/ui/inputs/app_input_bool.dart';
 import '../../../../../shared/widgets/ui/inputs/app_input_number.dart';
 import '../../../../../shared/widgets/ui/inputs/app_input_option.dart';
-import '../../../../settings_window/presentation/widgets/setting.dart';
+import '../../../../settings_window/presentation/widgets/setting_option.dart';
 import '../../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../bible_view_settings.dart';
 import '../../domain/entities/highlight_render_mode.dart';
@@ -33,7 +33,7 @@ class _BibleViewListSettingsTabState extends State<BibleViewListSettingsTab> {
           SettingSection(
             title: 'Options',
             children: [
-              Setting(
+              SettingOption(
                   label: 'Show verse divider',
                   description: 'Show divider between verses',
                   child: AppInputBool(
@@ -45,7 +45,7 @@ class _BibleViewListSettingsTabState extends State<BibleViewListSettingsTab> {
                       cubit.update((l) => l.copyWith(showVerseDivider: val));
                     },
                   )),
-              Setting(
+              SettingOption(
                   label: 'Show full ref',
                   description: 'Show full verse reference or only verse number',
                   child: AppInputBool(
@@ -57,7 +57,7 @@ class _BibleViewListSettingsTabState extends State<BibleViewListSettingsTab> {
                       cubit.update((s) => s.copyWith(showAlwaysFullRef: val));
                     },
                   )),
-              Setting(
+              SettingOption(
                   label: 'Underline all references',
                   description: 'Put underline decoration on all references',
                   child: AppInputBool(
@@ -68,7 +68,7 @@ class _BibleViewListSettingsTabState extends State<BibleViewListSettingsTab> {
                       cubit.update((s) => s.copyWith(underlineRefs: val));
                     },
                   )),
-              Setting(
+              SettingOption(
                   label: 'Selected verses render mode',
                   description: 'How selected verses are rendered',
                   child: AppInputOption<HighlightRenderMode>(
@@ -84,7 +84,7 @@ class _BibleViewListSettingsTabState extends State<BibleViewListSettingsTab> {
                             value: m, label: m.wire))
                         .toList(),
                   )),
-              Setting(
+              SettingOption(
                   label: 'Verse spacing (base)',
                   description: 'Base gap between a verse and the next verse',
                   child: AppInputNumber(
@@ -103,7 +103,7 @@ class _BibleViewListSettingsTabState extends State<BibleViewListSettingsTab> {
           SettingSection(
             title: 'Parallel view options',
             children: [
-              Setting(
+              SettingOption(
                 label: 'Spacing',
                 description:
                     'The spacing/distance between each column in the parallel view',

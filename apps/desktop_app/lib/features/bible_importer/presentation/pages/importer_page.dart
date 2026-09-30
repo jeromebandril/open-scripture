@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../../shared/enums/bible_repository_type.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_option.dart';
-import '../../../settings_window/presentation/widgets/setting.dart';
+import '../../../settings_window/presentation/widgets/setting_option.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../../sword/presentation/widgets/sword_path_selector.dart'
     if (dart.library.html) '../../../sword/presentation/widgets/sword_path_selector_stub.dart';
@@ -31,7 +31,7 @@ class ImporterPage extends StatelessWidget {
               SettingSection(
                 title: 'Importer',
                 children: [
-                  Setting(
+                  SettingOption(
                     label: 'Import type',
                     description:
                         'Select what type of datasource you are importing to',

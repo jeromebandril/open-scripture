@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../settings_window/presentation/widgets/setting.dart';
+import '../../../settings_window/presentation/widgets/setting_option.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../domain/models/app_command_info.dart';
 import '../models/app_command_shortcuts.dart';
@@ -27,7 +27,7 @@ class ShortcutsScreen extends StatelessWidget {
             itemBuilder: (context, i) {
               final info = commands[i];
 
-              return Setting(
+              return SettingOption(
                   label: info.value.label,
                   description: info.value.description,
                   settingWidth: 200,

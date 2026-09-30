@@ -9,7 +9,7 @@ import '../../../../shared/widgets/ui/inputs/app_input_color/app_input_color.dar
 import '../../../../shared/widgets/ui/inputs/app_input_color/color_circle.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_option.dart';
-import '../../../settings_window/presentation/widgets/setting.dart';
+import '../../../settings_window/presentation/widgets/setting_option.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../settings/presenter_settings.dart';
 import '../../../../app/models/gradient_preset.dart';
@@ -26,7 +26,7 @@ class PresenterSettingsPage extends StatelessWidget {
         return SingleChildScrollView(
           child: SettingSection(
             children: [
-              Setting(
+              SettingOption(
                 label: 'Auto number titles',
                 description:
                     'Automatically adds sequential numbers (1, 2, 3...) to the front of your slide titles.',
@@ -36,7 +36,7 @@ class PresenterSettingsPage extends StatelessWidget {
                       cubit.update((p) => p.copyWith(enableAutoNumbering: val)),
                 ),
               ),
-              Setting(
+              SettingOption(
                 label: 'Start numbering from slide',
                 child: AppInputNumber(
                   min: 1,
@@ -47,7 +47,7 @@ class PresenterSettingsPage extends StatelessWidget {
                   value: state.startNumberingFrom,
                 ),
               ),
-              Setting(
+              SettingOption(
                 label: 'Use gradient background',
                 child: AppInputBool(
                   value: state.useGradientBackground,
@@ -55,7 +55,7 @@ class PresenterSettingsPage extends StatelessWidget {
                       .update((p) => p.copyWith(useGradientBackground: val)),
                 ),
               ),
-              Setting(
+              SettingOption(
                 label: 'Background color',
                 child: state.useGradientBackground
                     ? _GradientSelector(
@@ -79,26 +79,26 @@ class PresenterSettingsPage extends StatelessWidget {
                         color: state.backgroundColor,
                       ),
               ),
-              Setting(
+              SettingOption(
                   label: 'Text color',
                   child: AppInputColor(
                     onColorChanged: (c) =>
                         cubit.update((p) => p.copyWith(textColor: c)),
                     color: state.textColor,
                   )),
-              Setting(
+              SettingOption(
                   label: 'Title font weight',
                   child: AppInputOption(
                     onChanged: (fw) {},
                     items: [],
                   )),
-              Setting(
+              SettingOption(
                   label: 'Subtitle font weight',
                   child: AppInputOption(
                     onChanged: (fw) {},
                     items: [],
                   )),
-              Setting(
+              SettingOption(
                 label: 'Size factor',
                 description:
                     'How much space in the screen does the Presenter take when it is visible',
