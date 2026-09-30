@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/settings/settings_cubit.dart';
 import '../../../../shared/design_system/design_system.dart';
 import '../../../../shared/domain/entities/bible_translation.dart';
-import '../../../../shared/widgets/hoverable_container.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../settings/my_library_settings.dart';
 import '../state/my_library_cubit.dart';
@@ -77,15 +76,13 @@ class LibraryManagerPage extends StatelessWidget {
                   final isUninstalling =
                       state.uninstallingBibles.contains(bibles[index]);
 
-                  return GestureDetector(
-                    onTap: () => context.read<MyLibraryCubit>().select(index),
-                    child: _InstalledBiblesRow(
-                      isSelected: isSelected,
-                      bibleMeta: bibles[index],
-                      isUninstalling: isUninstalling,
-                      supportUninstallation: supportUninstallation,
-                      isPreference: pref == bibles[index].extId,
-                    ),
+                  return _InstalledBiblesRow(
+                    index: index,
+                    isSelected: isSelected,
+                    bibleMeta: bibles[index],
+                    isUninstalling: isUninstalling,
+                    supportUninstallation: supportUninstallation,
+                    isPreference: pref == bibles[index].extId,
                   );
                 },
               );
@@ -171,6 +168,7 @@ class LibraryManagerPage extends StatelessWidget {
 }
 
 class _InstalledBiblesRow extends StatelessWidget {
+  final int index;
   final BibleTranslation bibleMeta;
   final bool isSelected;
   final bool isUninstalling;
@@ -178,6 +176,7 @@ class _InstalledBiblesRow extends StatelessWidget {
   final bool isPreference;
 
   const _InstalledBiblesRow({
+    required this.index,
     required this.bibleMeta,
     this.isSelected = false,
     this.isUninstalling = false,
@@ -189,53 +188,61 @@ class _InstalledBiblesRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final primaryColor = Theme.of(context).colorScheme.primaryContainer;
 
-    return HoverableContainer(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppRadius.md),
-        color: isSelected ? primaryColor : Colors.transparent,
-      ),
-      height: 38,
-      hoveredColor: primaryColor,
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Row(
-          spacing: AppSpacing.lg,
-          children: [
-            SizedBox(
-                width: 32,
-                child: isPreference ? Icon(Icons.star_rounded) : null),
-            Expanded(
-              child: Text(
-                bibleMeta.name.split("\\").last,
-                overflow: TextOverflow.ellipsis,
-              ),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        hoverColor: primaryColor,
+        highlightColor: Colors.transparent,
+        onTap: () => context.read<MyLibraryCubit>().select(index),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppRadius.md),
+            color: isSelected ? primaryColor : null,
+          ),
+          height: 38,
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Row(
+              spacing: AppSpacing.lg,
+              children: [
+                SizedBox(
+                    width: 32,
+                    child: isPreference ? Icon(Icons.star_rounded) : null),
+                Expanded(
+                  child: Text(
+                    bibleMeta.name.split("\\").last,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    bibleMeta.langEngName ?? 'uknown',
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                if (supportUninstallation)
+                  isUninstalling
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: LinearProgressIndicator(),
+                        )
+                      : TextButton(
+                          onPressed: () => context
+                              .read<MyLibraryCubit>()
+                              .uninstall(bibleMeta),
+                          child: Row(
+                            spacing: 8,
+                            children: [
+                              const Icon(Icons.delete_forever_outlined),
+                              const Text('Uninstall'),
+                            ],
+                          ),
+                        ),
+              ],
             ),
-            Expanded(
-              child: Text(
-                bibleMeta.langEngName ?? 'uknown',
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            if (supportUninstallation)
-              isUninstalling
-                  ? const SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: LinearProgressIndicator(),
-                    )
-                  : TextButton(
-                      onPressed: () =>
-                          context.read<MyLibraryCubit>().uninstall(bibleMeta),
-                      child: Row(
-                        spacing: 8,
-                        children: [
-                          const Icon(Icons.delete_forever_outlined),
-                          const Text('Uninstall'),
-                        ],
-                      ),
-                    ),
-          ],
+          ),
         ),
       ),
     );
