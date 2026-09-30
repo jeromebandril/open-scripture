@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../app/settings/app_settings.dart';
+import '../../../../app/settings/global_settings.dart';
 import '../../../../core/di/injection_container.dart' as di;
 import '../../../../core/settings/settings_cubit.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
@@ -21,7 +21,7 @@ class PericopeCustomizationPage extends StatelessWidget {
       child: Builder(builder: (context) {
         final cubit = context.read<SettingsCubit<BibleViewSettings>>();
         final defaultTheme =
-            context.select((SettingsCubit<AppSettings> c) => c.state.mode) ==
+            context.select((SettingsCubit<GlobalSettings> c) => c.state.mode) ==
                     ThemeMode.dark
                 ? BibleViewSettings.defaultThemeDark()
                 : BibleViewSettings.defaultThemeLight();

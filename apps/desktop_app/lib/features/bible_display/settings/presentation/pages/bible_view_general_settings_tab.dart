@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../../app/extensions/build_context_extensions.dart';
-import '../../../../../app/settings/app_settings.dart';
+import '../../../../../app/settings/global_settings.dart';
 import '../../../../../app/widgets/font_picker.dart';
 import '../../../../../core/settings/settings_cubit.dart';
 import '../../../../../shared/design_system/design_system.dart';
@@ -40,7 +40,7 @@ class _BibleViewGeneralSettingsTabState
   Widget build(BuildContext context) {
     final cubit = context.read<SettingsCubit<BibleViewSettings>>();
     final defaultTheme =
-        context.select((SettingsCubit<AppSettings> c) => c.state.mode) ==
+        context.select((SettingsCubit<GlobalSettings> c) => c.state.mode) ==
                 ThemeMode.dark
             ? BibleViewSettings.defaultThemeDark()
             : BibleViewSettings.defaultThemeLight();

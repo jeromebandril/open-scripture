@@ -1,6 +1,6 @@
 import 'package:get_it/get_it.dart';
 
-import '../../app/settings/app_settings.dart';
+import '../../app/settings/global_settings.dart';
 import '../../app/state/fullscreen_cubit.dart';
 import '../../app/state/interface_visibility_cubit.dart';
 import '../../features/bible_display/bible_pane/data/repositories/bible_pane_repository_impl.dart';
@@ -165,18 +165,18 @@ void _registerPresenter(GetIt sl) {
 
 // ---------------------------------------------------------------------------
 void _registerAppSettings(GetIt sl) {
-  sl.registerLazySingleton<SettingsRepository<AppSettings>>(
-    () => SettingsRepositoryImpl<AppSettings>(
-      SettingsDatasourceDesktop<AppSettings>(
-        fileName: 'app_settings.json',
-        fromJson: AppSettings.fromJson,
+  sl.registerLazySingleton<SettingsRepository<GlobalSettings>>(
+    () => SettingsRepositoryImpl<GlobalSettings>(
+      SettingsDatasourceDesktop<GlobalSettings>(
+        fileName: 'global_settings.json',
+        fromJson: GlobalSettings.fromJson,
         toJson: (s) => s.toJson(),
-        defaultValue: const AppSettings(),
+        defaultValue: const GlobalSettings(),
       ),
     ),
     dispose: (repo) => repo.dispose(),
   );
-  sl.registerFactory(() => SettingsCubit<AppSettings>(sl()));
+  sl.registerFactory(() => SettingsCubit<GlobalSettings>(sl()));
 }
 
 // ---------------------------------------------------------------------------

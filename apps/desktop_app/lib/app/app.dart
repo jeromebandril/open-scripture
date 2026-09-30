@@ -24,7 +24,7 @@ import '../features/simple_presenter/presentation/cubit/presenter_cubit.dart';
 import '../features/three_tap_navigator/presentation/state/three_tap_navigator_cubit.dart';
 import '../shared/design_system/design_system.dart';
 import 'app_shell.dart';
-import 'settings/app_settings.dart';
+import 'settings/global_settings.dart';
 import 'state/fullscreen_cubit.dart';
 import 'state/interface_visibility_cubit.dart';
 
@@ -64,8 +64,8 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => di.sl<SettingsCubit<AppSettings>>(),
-      child: BlocBuilder<SettingsCubit<AppSettings>, AppSettings>(
+      create: (context) => di.sl<SettingsCubit<GlobalSettings>>(),
+      child: BlocBuilder<SettingsCubit<GlobalSettings>, GlobalSettings>(
         builder: (context, state) {
           final light = AppTheme.light;
           final dark = AppTheme.dark;

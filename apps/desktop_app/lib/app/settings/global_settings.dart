@@ -1,20 +1,20 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
-class AppSettings extends Equatable {
+class GlobalSettings extends Equatable {
   final ThemeMode mode;
   final bool enableAutoColorScheme;
   final bool enable3TapNavigator;
   final bool enableAdaptiveTitlebar;
 
-  const AppSettings({
+  const GlobalSettings({
     this.mode = ThemeMode.light,
     this.enableAutoColorScheme = true,
     this.enable3TapNavigator = false,
     this.enableAdaptiveTitlebar = false,
   });
 
-  AppSettings copyWith({
+  GlobalSettings copyWith({
     ThemeMode? mode,
     // String? fontFamily,
     // Color? accentColor,
@@ -23,7 +23,7 @@ class AppSettings extends Equatable {
     bool? enable3TapNavigator,
     bool? enableAdaptiveTitlebar,
   }) {
-    return AppSettings(
+    return GlobalSettings(
       mode: mode ?? this.mode,
       enableAutoColorScheme:
           enableAutoColorScheme ?? this.enableAutoColorScheme,
@@ -48,7 +48,7 @@ class AppSettings extends Equatable {
         'enableAdaptiveTitlebar': enableAdaptiveTitlebar,
       };
 
-  static AppSettings fromJson(Map<String, dynamic> json) {
+  static GlobalSettings fromJson(Map<String, dynamic> json) {
     ThemeMode parseMode(String? s) {
       switch (s) {
         case 'dark':
@@ -60,7 +60,7 @@ class AppSettings extends Equatable {
       }
     }
 
-    return AppSettings(
+    return GlobalSettings(
       mode: parseMode(json['mode'] as String),
       enableAutoColorScheme: json['enableAutoColorScheme'] as bool,
       enable3TapNavigator: json['enable3TapNavigator'] as bool,

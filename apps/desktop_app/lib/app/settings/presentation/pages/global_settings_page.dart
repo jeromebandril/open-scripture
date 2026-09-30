@@ -8,7 +8,7 @@ import '../../../../features/settings_window/presentation/widgets/setting_option
 import '../../../../features/settings_window/presentation/widgets/setting_section.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_option.dart';
-import '../../app_settings.dart';
+import '../../global_settings.dart';
 
 extension _ThemeModeIcons on ThemeMode {
   IconData get icon {
@@ -33,7 +33,7 @@ class GlobalSettingsPage extends StatefulWidget {
 class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<SettingsCubit<AppSettings>>();
+    final cubit = context.read<SettingsCubit<GlobalSettings>>();
 
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(42, 0, 42, 42),
@@ -46,8 +46,8 @@ class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
                   label: 'Theme mode',
                   description: 'Set app theme',
                   child: AppInputOption<ThemeMode>(
-                    value: context
-                        .select((SettingsCubit<AppSettings> c) => c.state.mode),
+                    value: context.select(
+                        (SettingsCubit<GlobalSettings> c) => c.state.mode),
                     onChanged: (mode) {
                       cubit.update((a) => a.copyWith(mode: mode));
                     },
@@ -61,7 +61,7 @@ class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
                   description:
                       'Makes titlebar color same as bible viewer background',
                   child: AppInputBool(
-                    value: context.select((SettingsCubit<AppSettings> c) =>
+                    value: context.select((SettingsCubit<GlobalSettings> c) =>
                         c.state.enableAdaptiveTitlebar),
                     onChanged: (val) {
                       cubit.update(
@@ -90,7 +90,7 @@ class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
                   description:
                       'Select book, chapter and verse with consecutive clicks',
                   child: AppInputBool(
-                    value: context.select((SettingsCubit<AppSettings> c) =>
+                    value: context.select((SettingsCubit<GlobalSettings> c) =>
                         c.state.enable3TapNavigator),
                     onChanged: (val) {
                       cubit.update((a) => a.copyWith(enable3TapNavigator: val));

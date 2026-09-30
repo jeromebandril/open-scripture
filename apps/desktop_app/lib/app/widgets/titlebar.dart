@@ -6,7 +6,7 @@ import '../../core/settings/settings_cubit.dart';
 import '../../features/bible_display/settings/bible_view_settings.dart';
 import '../../shared/constants.dart';
 import '../../shared/design_system/tokens/tokens.dart';
-import '../settings/app_settings.dart';
+import '../settings/global_settings.dart';
 import 'menubar.dart';
 
 class Titlebar extends StatelessWidget {
@@ -30,7 +30,7 @@ class Titlebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final enableAdaptiveTitlebar = context.select(
-        (SettingsCubit<AppSettings> as) => as.state.enableAdaptiveTitlebar);
+        (SettingsCubit<GlobalSettings> as) => as.state.enableAdaptiveTitlebar);
     final bibleViewBg = context.select(
         (SettingsCubit<BibleViewSettings> bs) => bs.state.backgroundColor);
 
