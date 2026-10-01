@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
+import '../../../../../app/extensions/font_weight.dart';
 import '../../../../../core/settings/settings_cubit.dart';
 import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../../shared/domain/entities/verse.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../../../settings/bible_view_settings.dart';
+import '../../../settings/presentation/models/bible_view_font_weight_flutter.dart';
 import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
 import '../../domain/entities/word_info.dart';
 import '../rendering/verse_ref_label.dart';
@@ -335,7 +337,7 @@ class _PericopeRow extends StatelessWidget {
 
     // Inherit the verse text style so the title follows the font-size setting.
     final style = DefaultTextStyle.of(context).style.copyWith(
-          fontWeight: FontWeight.bold,
+          fontWeight: viewSettings.verseFontWeight.toFlutter().stepUp(steps: 1),
           color: viewSettings.pericopeColor,
           decorationColor: viewSettings.pericopeColor,
           decoration:
