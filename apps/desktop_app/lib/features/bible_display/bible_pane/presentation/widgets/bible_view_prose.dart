@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../app/extensions/font_weight.dart';
 import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../../shared/domain/entities/verse.dart';
 import '../../../settings/presentation/models/bible_view_font_weight_flutter.dart';
@@ -248,20 +249,41 @@ class _BibleViewProseState extends State<BibleViewProse> {
       final key = anchors.putIfAbsent(ref, () => GlobalKey());
 
       var isFirstSegmentOfVerse = true;
-
-      for (final segment in verse.segments) {
-        if (segment.heading != null) {
-          flushParagraph();
-          blocks.add(
-            Padding(
-              padding: const EdgeInsets.only(top: 22, bottom: 10),
+      if (verse.heading != null) {
+        flushParagraph();
+        blocks.add(
+          Center(
+            child: Padding(
+              padding: EdgeInsets.only(
+                top: viewSettings.pericopeSpacingTop,
+                bottom: viewSettings.pericopeSpacingBottom,
+              ),
               child: Text(
-                segment.heading!,
-                style: const TextStyle(fontWeight: FontWeight.w700),
+                verse.heading!,
+                style: TextStyle(
+                    fontWeight: viewSettings.verseFontWeight
+                        .toFlutter()
+                        .stepUp(steps: 2)),
+                textAlign: TextAlign.center,
               ),
             ),
-          );
-        }
+          ),
+        );
+      }
+
+      for (final segment in verse.segments) {
+        // if (segment.heading != null) {
+        //   flushParagraph();
+        //   blocks.add(
+        //     Padding(
+        //       padding: const EdgeInsets.only(top: 22, bottom: 10),
+        //       child: Text(
+        //         segment.heading!,
+        //         style: const TextStyle(fontWeight: FontWeight.w700),
+        //       ),
+        //     ),
+        //   );
+        // }
 
         if (segment.isParagraphStart) {
           flushParagraph();
@@ -306,6 +328,10 @@ class _BibleViewProseState extends State<BibleViewProse> {
                 : () => widget.onVerseTap!(ref.copyWith(verseEnd: () => null)),
           ),
         );
+
+        if (verse.plainText.contains(".") || verse.plainText.contains("?")) {
+          currentSpans.add(TextSpan(text: '\n'));
+        }
       }
     }
 

@@ -5,6 +5,7 @@ import '../../../../../shared/domain/entities/verse.dart';
 import '../../../settings/bible_view_settings.dart';
 import '../../../settings/presentation/models/bible_view_font_weight_flutter.dart';
 import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
+import '../../../../../app/extensions/font_weight.dart';
 
 const _strongWordBold = 'H0430';
 
@@ -97,15 +98,5 @@ class VerseSpanBuilder {
       SpanType.superscript => const TextStyle(fontSize: 10, height: 0.5),
       _ => const TextStyle(),
     };
-  }
-}
-
-extension _FontWeightX on FontWeight {
-  FontWeight stepUp() {
-    final currentIndex = FontWeight.values.indexOf(this);
-    if (currentIndex == -1 || currentIndex >= FontWeight.values.length - 1) {
-      return FontWeight.w900;
-    }
-    return FontWeight.values[currentIndex + 1];
   }
 }
