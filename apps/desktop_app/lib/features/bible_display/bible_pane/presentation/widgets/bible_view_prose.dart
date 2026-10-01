@@ -5,8 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../app/extensions/font_weight.dart';
 import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../../shared/domain/entities/verse.dart';
-import '../../../settings/presentation/models/bible_view_font_weight_flutter.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
+import '../../../settings/presentation/models/bible_view_font_weight_flutter.dart';
 import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
 import '../../domain/entities/word_info.dart';
 import '../rendering/verse_ref_label.dart';
@@ -203,6 +203,7 @@ class _BibleViewProseState extends State<BibleViewProse> {
     dynamic translationId,
   ) {
     final theme = Theme.of(context);
+    final textScaler = MediaQuery.textScalerOf(context);
     final viewSettings = BibleViewSettingsScope.of(context);
 
     final baseStyle = TextStyle(
@@ -222,16 +223,13 @@ class _BibleViewProseState extends State<BibleViewProse> {
     void flushParagraph() {
       if (currentSpans.isEmpty) return;
       blocks.add(
-        Padding(
-          padding: const EdgeInsets.only(bottom: 14),
-          child: SelectableText.rich(
-            TextSpan(style: baseStyle, children: [
-              // paragraph indent
-              WidgetSpan(
-                  child: SizedBox(width: (TextStyle().fontSize ?? 16) * 2)),
-              ...List.of(currentSpans)
-            ]),
-          ),
+        SelectableText.rich(
+          TextSpan(style: baseStyle, children: [
+            // paragraph indent
+            WidgetSpan(
+                child: SizedBox(width: (TextStyle().fontSize ?? 16) * 2)),
+            ...List.of(currentSpans)
+          ]),
         ),
       );
       currentSpans = [];
@@ -255,16 +253,17 @@ class _BibleViewProseState extends State<BibleViewProse> {
           Center(
             child: Padding(
               padding: EdgeInsets.only(
-                top: viewSettings.pericopeSpacingTop,
-                bottom: viewSettings.pericopeSpacingBottom,
+                top: viewSettings.pericopeSpacingTop * textScaler.scale(1.0),
+                bottom:
+                    viewSettings.pericopeSpacingBottom * textScaler.scale(1.0),
               ),
               child: Text(
                 verse.heading!,
-                style: TextStyle(
-                    fontWeight: viewSettings.verseFontWeight
-                        .toFlutter()
-                        .stepUp(steps: 2)),
                 textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight:
+                      viewSettings.verseFontWeight.toFlutter().stepUp(steps: 2),
+                ),
               ),
             ),
           ),
@@ -297,7 +296,6 @@ class _BibleViewProseState extends State<BibleViewProse> {
               child: SizedBox(key: key, width: 0, height: 0),
             ),
           );
-
           currentSpans.add(
             TextSpan(
               text: '${ref.verseStart} ',
@@ -310,7 +308,6 @@ class _BibleViewProseState extends State<BibleViewProse> {
                   : null,
             ),
           );
-
           isFirstSegmentOfVerse = false;
         }
 
@@ -329,7 +326,8 @@ class _BibleViewProseState extends State<BibleViewProse> {
           ),
         );
 
-        if (verse.plainText.contains(".") || verse.plainText.contains("?")) {
+        final versePlainText = verse.plainText;
+        if (versePlainText.contains(".") || versePlainText.contains("?")) {
           currentSpans.add(TextSpan(text: '\n'));
         }
       }

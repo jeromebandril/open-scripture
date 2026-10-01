@@ -342,10 +342,12 @@ class _PericopeRow extends StatelessWidget {
               viewSettings.pericopeUnderline ? TextDecoration.underline : null,
         );
 
+    final textScaler = MediaQuery.textScalerOf(context);
+
     return Padding(
       padding: EdgeInsets.only(
-        top: viewSettings.pericopeSpacingTop,
-        bottom: viewSettings.pericopeSpacingBottom,
+        top: viewSettings.pericopeSpacingTop * textScaler.scale(1.0),
+        bottom: viewSettings.pericopeSpacingBottom * textScaler.scale(1.0),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
