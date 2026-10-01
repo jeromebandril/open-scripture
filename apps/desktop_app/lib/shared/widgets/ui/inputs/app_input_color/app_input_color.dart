@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import '../reset_button.dart';
 
 import '../../../../utils/colors_util.dart';
+import '../reset_button.dart';
 import 'color_circle.dart';
 
 class AppInputColor extends StatefulWidget {
@@ -12,6 +12,7 @@ class AppInputColor extends StatefulWidget {
     this.color = Colors.red,
     this.onColorChanged,
     this.isDisabled = false,
+    this.enableAlpha = false,
     this.showReset = false,
     this.onReset,
   });
@@ -19,6 +20,7 @@ class AppInputColor extends StatefulWidget {
   final Color color;
   final Function(Color)? onColorChanged;
   final bool isDisabled;
+  final bool enableAlpha;
 
   final bool showReset;
   final Function()? onReset;
@@ -90,7 +92,7 @@ class _AppInputColorState extends State<AppInputColor> {
         elevation: 10,
         child: Container(
           width: 300,
-          height: 280,
+          height: widget.enableAlpha ? 310 : 280,
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
@@ -103,7 +105,7 @@ class _AppInputColorState extends State<AppInputColor> {
             colorPickerWidth: 300,
             labelTypes: [],
             portraitOnly: true,
-            enableAlpha: false,
+            enableAlpha: widget.enableAlpha,
             pickerAreaHeightPercent: 0.5,
             pickerAreaBorderRadius: BorderRadius.circular(8),
           ),
