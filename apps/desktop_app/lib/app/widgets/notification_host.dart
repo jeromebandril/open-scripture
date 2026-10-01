@@ -212,7 +212,7 @@ class _NotificationCard extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 13, 8, 13),
-      height: 56,
+      height: 44,
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(AppRadius.lg),

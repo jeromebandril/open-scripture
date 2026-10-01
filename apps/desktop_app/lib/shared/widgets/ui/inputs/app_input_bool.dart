@@ -74,7 +74,7 @@ class _AppInputBoolState extends State<AppInputBool> {
             duration: const Duration(milliseconds: 200),
             curve: Curves.easeInOut,
             width: 44,
-            height: 24,
+            height: 23,
             padding: const EdgeInsets.all(3),
             decoration: BoxDecoration(
               borderRadius: AppRadius.radiusFull,

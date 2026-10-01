@@ -19,15 +19,16 @@ class SettingSidebarNav extends StatelessWidget {
   Widget build(BuildContext context) {
     final navigationMenu = sidebarNavigation;
     final isCompact = MediaQuery.of(context).size.width < AppBreakpoints.small;
+    final theme = Theme.of(context);
 
     return Flexible(
       flex: 1,
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
+          borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(AppRadius.lg),
               bottomLeft: Radius.circular(AppRadius.lg)),
-          color: Theme.of(context).colorScheme.surfaceContainerHigh,
+          color: theme.colorScheme.surfaceContainerHigh,
         ),
         padding: EdgeInsets.symmetric(
           vertical: isCompact ? 0 : AppSpacing.lg,
@@ -36,14 +37,14 @@ class SettingSidebarNav extends StatelessWidget {
         child: ListView(
           children: [
             if (!isCompact)
-              const Padding(
-                padding: EdgeInsets.only(left: 12),
+              Padding(
+                padding: const EdgeInsets.only(left: 12),
                 child: Text(
                   'Settings',
-                  style: TextStyle(fontWeight: FontWeight.w600),
+                  style: theme.textTheme.titleMedium,
                 ),
               ),
-            const SizedBox(height: 18),
+            const SizedBox(height: AppSpacing.lg),
             ...navigationMenu.entries.expand((entry) {
               final group = entry.key;
               final pages = entry.value;
@@ -60,10 +61,7 @@ class SettingSidebarNav extends StatelessWidget {
                         const EdgeInsets.only(left: 12, top: 12, bottom: 6),
                     child: Text(
                       group.title,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
+                      style: theme.textTheme.labelSmall,
                     ),
                   ),
 
@@ -73,8 +71,7 @@ class SettingSidebarNav extends StatelessWidget {
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(AppRadius.sm),
-                    color:
-                        Theme.of(context).colorScheme.surfaceContainerHighest,
+                    color: theme.colorScheme.surfaceContainerHighest,
                   ),
                   child: Column(
                     children: [
@@ -100,6 +97,8 @@ class SettingSidebarNav extends StatelessWidget {
 }
 
 class _NavigationButton extends StatelessWidget {
+  static const height = 40.0;
+
   final String text;
   final IconData? icon;
   final String route;
@@ -118,13 +117,14 @@ class _NavigationButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Material(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.sm),
       ),
-      color: isSelected
-          ? Theme.of(context).colorScheme.primaryContainer
-          : Colors.transparent,
+      color:
+          isSelected ? theme.colorScheme.primaryContainer : Colors.transparent,
       child: Tooltip(
         message: isCompact ? text : '',
         child: InkWell(
@@ -132,9 +132,9 @@ class _NavigationButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadius.sm),
           onTap: onTap,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
             alignment: Alignment.centerLeft,
-            height: 40,
+            height: height,
             child: Row(
               spacing: AppSpacing.lg,
               mainAxisAlignment: isCompact
@@ -144,10 +144,16 @@ class _NavigationButton extends StatelessWidget {
                 Icon(
                   icon,
                   size: 16,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  color: theme.colorScheme.onSurfaceVariant,
                 ),
                 if (!isCompact)
-                  Expanded(child: Text(text, overflow: TextOverflow.ellipsis)),
+                  Expanded(
+                    child: Text(
+                      text,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.labelMedium,
+                    ),
+                  ),
               ],
             ),
           ),

@@ -440,7 +440,9 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
             dense: true,
             visualDensity: VisualDensity.compact,
             contentPadding: const EdgeInsets.symmetric(
-                vertical: AppSpacing.xs2, horizontal: AppSpacing.sm),
+              vertical: 0,
+              horizontal: AppSpacing.sm,
+            ),
             selected: isSelected,
             leading: widget.multiple
                 ? _MultiSelectLeading(checked: isSelected, icon: item.leading)

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../shared/design_system/tokens/tokens.dart';
+import '../../../../shared/design_system/design_system.dart';
 
 class SettingOption extends StatelessWidget {
   const SettingOption({
@@ -19,6 +19,8 @@ class SettingOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final isCompact = constraints.maxWidth < breakpoint;
@@ -26,16 +28,16 @@ class SettingOption extends StatelessWidget {
         final labelWidget = Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: isCompact ? 0 : AppSpacing.xs,
+          spacing: isCompact ? AppSpacing.xs : AppSpacing.sm,
           children: [
             Text(
               label,
-              style: const TextStyle(fontWeight: FontWeight.w500),
+              style: theme.textTheme.labelLarge,
             ),
             if (description != null)
               Text(
                 description!,
-                style: const TextStyle(fontWeight: FontWeight.w300),
+                style: theme.textTheme.bodySmall,
               ),
           ],
         );

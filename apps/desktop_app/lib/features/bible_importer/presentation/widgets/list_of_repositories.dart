@@ -65,7 +65,7 @@ class ListOfBibleRepositories extends StatelessWidget {
               return Card(
                 child: ListTile(
                   title: Text(src.name, style: textTheme.labelMedium),
-                  subtitle: Text(src.description, style: textTheme.bodySmall),
+                  subtitle: Text(src.description, style: textTheme.bodyMedium),
                   trailing: const Icon(LucideIcons.externalLink),
                   onTap: () async => await launchUrl(Uri.parse(src.url)),
                 ),

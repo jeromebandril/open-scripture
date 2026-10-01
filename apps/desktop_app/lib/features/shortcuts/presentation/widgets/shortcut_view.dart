@@ -26,11 +26,12 @@ class ShortcutView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokens = shortcutTokens(activator);
+    final theme = Theme.of(context);
 
     if (tokens.isEmpty) {
       return Text(
         unassignedText,
-        style: Theme.of(context).textTheme.bodySmall,
+        style: theme.textTheme.bodySmall,
       );
     }
 
@@ -48,7 +49,7 @@ class ShortcutView extends StatelessWidget {
                   fontSize: fontSize,
                   hasBorder: hasBorders,
                 ),
-                Text('+', style: TextStyle(fontSize: fontSize))
+                Text('+', style: theme.textTheme.bodySmall)
               ])
           .toList()
         ..removeLast(),

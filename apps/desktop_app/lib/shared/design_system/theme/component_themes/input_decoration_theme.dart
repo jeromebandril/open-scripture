@@ -65,7 +65,7 @@ abstract final class AppInputDecorationTheme {
         borderSide: BorderSide(color: borderDisabled),
       ),
       contentPadding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.lg,
+        horizontal: AppSpacing.md,
         vertical: AppSpacing.md,
       ),
       prefixIconColor: WidgetStateColor.resolveWith((states) {

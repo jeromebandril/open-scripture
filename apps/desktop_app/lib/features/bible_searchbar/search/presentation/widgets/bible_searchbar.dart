@@ -460,7 +460,10 @@ class _SuggestionsList extends StatelessWidget {
             behavior: HitTestBehavior.opaque,
             onTapDown: (_) => onSelected(candidate),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.xs + AppSpacing.xs2,
+              ),
               decoration: BoxDecoration(
                 color: isHighlighted
                     ? theme.colorScheme.primary.withValues(alpha: 0.08)
@@ -471,13 +474,13 @@ class _SuggestionsList extends StatelessWidget {
                 spacing: AppSpacing.sm,
                 children: [
                   Expanded(
-                    child: Text(candidate.englishName,
-                        style: theme.textTheme.bodyMedium,
-                        overflow: TextOverflow.ellipsis),
+                    child: Text(
+                      candidate.englishName,
+                      style: theme.textTheme.bodyMedium,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                  Text(candidate.canonical,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant)),
+                  Text(candidate.canonical, style: theme.textTheme.bodySmall),
                   if (isHighlighted) const Keycap('tab', fontSize: 10)
                 ],
               ),

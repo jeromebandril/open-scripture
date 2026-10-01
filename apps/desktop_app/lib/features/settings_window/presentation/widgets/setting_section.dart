@@ -45,7 +45,7 @@ class _SettingsHeader extends StatelessWidget {
         children: [
           Text(
             title ?? '',
-            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+            style: Theme.of(context).textTheme.titleLarge,
           ),
           if (addInfo != null) ...[
             const SizedBox(width: AppSpacing.md),

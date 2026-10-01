@@ -90,12 +90,12 @@ class _BibleSelectorState extends State<BibleSelector> {
             height: 580,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: AppSpacing.md,
               children: [
                 //
                 // Header
                 //
                 const _Header(),
+                const SizedBox(height: AppSpacing.lg),
                 //
                 // Tabs & Views
                 //
@@ -111,6 +111,7 @@ class _BibleSelectorState extends State<BibleSelector> {
                     views: enabledSelectorWidgets,
                   ),
                 ),
+                const SizedBox(height: AppSpacing.md),
                 _FooterConfirmButton(
                   tabIndex: _tabIndex,
                   repoTypes: _repoTypes,
@@ -130,28 +131,15 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewSettings = BibleViewSettingsScope.of(context);
+    final theme = Theme.of(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: AppSpacing.xs,
-      children: [
-        Text(
-          'Select bibles',
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.w600,
-            color: viewSettings.useAppTheme
-                ? Theme.of(context).colorScheme.onSurfaceVariant
-                : viewSettings.verseColor,
-          ),
-        ),
-        Text(
-          'Choose one source and multiple bibles for parallel view',
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-        ),
-      ],
+    return Text(
+      'Select bibles',
+      style: theme.textTheme.headlineMedium?.copyWith(
+        color: viewSettings.useAppTheme
+            ? theme.colorScheme.onSurfaceVariant
+            : viewSettings.verseColor,
+      ),
     );
   }
 }

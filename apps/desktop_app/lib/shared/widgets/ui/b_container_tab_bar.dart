@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../design_system/design_system.dart';
 import '../../design_system/tokens/radius.dart';
 
 class BContainerTabBar extends StatefulWidget {
@@ -6,7 +7,7 @@ class BContainerTabBar extends StatefulWidget {
     super.key,
     required this.tabs,
     required this.views,
-    this.height = 48.0,
+    this.height = 44.0,
     this.backgroundColor,
     this.viewBackgroundColor,
     this.onTabChanged,
@@ -67,7 +68,7 @@ class _BContainerTabBarState extends State<BContainerTabBar>
         //
         Container(
           height: widget.height,
-          padding: const EdgeInsets.all(4),
+          padding: const EdgeInsets.all(AppSpacing.xs),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(widget.height / 2),
             color:
@@ -115,16 +116,15 @@ class _BContainerTabBarState extends State<BContainerTabBar>
         Expanded(
           child: DecoratedBox(
             decoration: BoxDecoration(
-                color: widget.viewBackgroundColor,
-                borderRadius: BorderRadius.circular(AppRadius.md)),
+              color: widget.viewBackgroundColor,
+              borderRadius: BorderRadius.circular(AppRadius.lg),
+            ),
             child: TabBarView(
               controller: _tabController,
               physics: const NeverScrollableScrollPhysics(),
               children: widget.scrollableView
                   ? widget.views.map((view) {
-                      return SingleChildScrollView(
-                        child: view,
-                      );
+                      return SingleChildScrollView(child: view);
                     }).toList()
                   : widget.views,
             ),

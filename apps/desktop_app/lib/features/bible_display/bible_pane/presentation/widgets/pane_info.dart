@@ -56,6 +56,7 @@ class _PaneInfoState extends State<PaneInfo> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final pl =
         context.select((MultiPaneManagerCubit b) => b.state.panes.length);
     final paneId = context.select((BiblePaneBloc b) => b.state.paneId);
@@ -63,10 +64,11 @@ class _PaneInfoState extends State<PaneInfo> {
         BibleViewSettingsScope.of(context).enableStrongWordsRender;
 
     return DefaultTextStyle(
-      style: TextStyle(
-        color: Theme.of(context).colorScheme.onSurfaceVariant,
-        fontSize: 12,
-      ),
+      style: theme.textTheme.bodySmall ??
+          TextStyle(
+            fontSize: 12,
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
       child: Container(
         height: PaneInfo.kHeight,
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
@@ -75,10 +77,7 @@ class _PaneInfoState extends State<PaneInfo> {
             topLeft: Radius.circular(AppRadius.xs),
             topRight: Radius.circular(AppRadius.xs),
           ),
-          color: Theme.of(context)
-              .colorScheme
-              .surfaceContainerHighest
-              .withAlpha(240),
+          color: theme.colorScheme.surfaceContainerHighest.withAlpha(240),
         ),
         child: Row(
           children: [
