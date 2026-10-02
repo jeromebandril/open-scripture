@@ -32,7 +32,7 @@ class VerseDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-	  final baseSpacing = BibleViewSettingsScope.of(context).verseSpacing;
+    final baseSpacing = BibleViewSettingsScope.of(context).verseSpacing;
     final base = DefaultTextStyle.of(context).style.fontSize ?? 14;
     final effectiveFontSize = MediaQuery.of(context).textScaler.scale(base);
     final spacerHeight = _spacingFromFont(effectiveFontSize, s0: baseSpacing);
@@ -42,7 +42,10 @@ class VerseDivider extends StatelessWidget {
     return isEnabled
         ? Container(
             margin: EdgeInsets.symmetric(vertical: spacerHeight / 1.2),
-            child: Divider(height: 1),
+            child: Divider(
+              height: 1,
+              color: BibleViewSettingsScope.of(context).verseDividerColor,
+            ),
           )
         : SizedBox(height: spacerHeight);
   }
