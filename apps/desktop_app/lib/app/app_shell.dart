@@ -137,6 +137,7 @@ class _AppHeader extends StatelessWidget {
 
     final searchbar = globalSettings.collapseSearchbarToIcon
         ? IconButton(
+            tooltip: 'Search reference',
             onPressed: () =>
                 ShortcutFocusScope.of(context).search.requestFocus(),
             icon: const Icon(LucideIcons.search),

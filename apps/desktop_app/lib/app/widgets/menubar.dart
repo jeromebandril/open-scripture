@@ -15,7 +15,7 @@ class MyMenuBar extends StatelessWidget {
     return SizedBox(
       child: Row(children: [
         IconButton(
-          visualDensity: VisualDensity.compact,
+          tooltip: 'Settings',
           onPressed: () {
             context.pushWindow(
               builder: (_) => SettingsWindow(
@@ -27,6 +27,7 @@ class MyMenuBar extends StatelessWidget {
         ),
         const ToolbarButton(),
         IconButton(
+            tooltip: 'Slides',
             onPressed: () {
               context.pushStandardWindow(
                 builder: (_) => const PresenterSetupPage(),
