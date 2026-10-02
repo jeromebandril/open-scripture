@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/settings/settings_cubit.dart';
-import '../../../../shared/design_system/design_system.dart';
+import '../../../../shared/widgets/action_button_with_feedback.dart';
 import '../../../../shared/widgets/dot.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
 import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
@@ -202,7 +200,26 @@ class ObsLiveOverlaySettingsPage extends StatelessWidget {
                                 icon: const Icon(LucideIcons.folderOpen),
                                 label: const Text('Open assets folder')),
                           ),
-                          const _ResetAssetsAction(),
+                          SettingOption(
+                            label: 'Reset assets to defaults',
+                            description:
+                                'Restore the default asset files, replacing any customizations',
+                            child: ActionButtonWithFeedback(
+                              onPressed: () async => await context
+                                  .read<ObsLiveOverlayCubit>()
+                                  .resetAssetsToDefaults(),
+                              icon: const Icon(LucideIcons.rotateCcw),
+                              label: 'Execute asset reset',
+                              successLabel: 'Assets restored',
+                              buttonBuilder: (onPressed, icon, label) {
+                                return TextButton.icon(
+                                  onPressed: onPressed,
+                                  icon: icon,
+                                  label: label,
+                                );
+                              },
+                            ),
+                          ),
                         ],
                       ),
                     ],
@@ -211,64 +228,5 @@ class ObsLiveOverlaySettingsPage extends StatelessWidget {
               ),
             ),
           );
-  }
-}
-
-class _ResetAssetsAction extends StatefulWidget {
-  const _ResetAssetsAction();
-
-  @override
-  State<_ResetAssetsAction> createState() => _ResetAssetsActionState();
-}
-
-class _ResetAssetsActionState extends State<_ResetAssetsAction> {
-  // removed this because if nothing wrong happens,
-  // it is pratically instantenous
-  // bool _isExec = false;
-  bool _showFeedback = false;
-  Timer? _feedbackTimer;
-
-  Future<void> _resetAssets() async {
-    setState(() {
-      // _isExec = true;
-      _showFeedback = false;
-    });
-    await context.read<ObsLiveOverlayCubit>().resetAssetsToDefaults();
-    setState(() {
-      // _isExec = false;
-      _showFeedback = true;
-    });
-    _feedbackTimer = Timer(const Duration(seconds: 2), () {
-      setState(() => _showFeedback = false);
-      _feedbackTimer = null;
-    });
-  }
-
-  @override
-  void dispose() {
-    _feedbackTimer?.cancel();
-    _feedbackTimer = null;
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final successColor = Theme.of(context).brightness == Brightness.light
-        ? AppColors.success
-        : AppColors.successDark;
-
-    return SettingOption(
-      label: 'Reset assets to defaults',
-      description:
-          'Restore the default asset files, replacing any customizations',
-      child: TextButton.icon(
-          onPressed: _showFeedback ? null : () async => await _resetAssets(),
-          icon: _showFeedback
-              ? Icon(LucideIcons.circleCheckBig, color: successColor)
-              : const Icon(LucideIcons.rotateCcw),
-          label: _showFeedback
-              ? Text('Assets restored', style: TextStyle(color: successColor))
-              : const Text('Execute asset reset')),
-    );
   }
 }
