@@ -96,6 +96,18 @@ class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
                       cubit.update((a) => a.copyWith(enable3TapNavigator: val));
                     },
                   )),
+              SettingOption(
+                  label: 'Collapse searchbar to icon button',
+                  description:
+                      'Moves the search bar to the start of the titlebar and collapses it into an icon. Click the icon to expand the search field',
+                  child: AppInputBool(
+                    value: context.select((SettingsCubit<GlobalSettings> c) =>
+                        c.state.collapseSearchbarToIcon),
+                    onChanged: (val) {
+                      cubit.update(
+                          (a) => a.copyWith(collapseSearchbarToIcon: val));
+                    },
+                  )),
             ],
           ),
           SettingSection(

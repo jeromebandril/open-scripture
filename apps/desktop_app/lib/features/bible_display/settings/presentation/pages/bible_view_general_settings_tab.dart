@@ -18,6 +18,7 @@ import '../../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../../bible_pane/domain/display_mode.dart';
 import '../../bible_view_settings.dart';
 import '../../domain/entities/bible_view_font_weight.dart';
+import '../widgets/qucik_actions.dart';
 
 class BibleViewGeneralSettingsTab extends StatefulWidget {
   const BibleViewGeneralSettingsTab({super.key, this.showPreview = false});
@@ -55,6 +56,16 @@ class _BibleViewGeneralSettingsTabState
               children: [
                 SettingSection(
                   title: 'Bible viewer theme',
+                  actions: [
+                    TextButton.icon(
+                      onPressed: () => context.pushStandardWindow(
+                          title: 'Quick actions',
+                          maxSize: const Size(300, 300),
+                          builder: (_) => const QuickActions()),
+                      icon: Icon(LucideIcons.zap),
+                      label: const Text('Quick actions'),
+                    )
+                  ],
                   children: [
                     SettingOption(
                         label: 'Use app\'s theme',

@@ -59,6 +59,7 @@ class _ShowHistoryButtonState extends State<ShowHistoryButton> {
             .read<InterfaceVisibilityCubit>()
             .setVisibility(history: false),
         trigger: IconButton(
+          tooltip: 'History',
           onPressed: () =>
               context.read<InterfaceVisibilityCubit>().toggleHistory(),
           visualDensity: VisualDensity.compact,

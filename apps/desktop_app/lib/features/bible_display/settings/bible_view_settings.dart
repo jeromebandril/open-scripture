@@ -27,6 +27,7 @@ abstract class _Keys {
   static const refFontWeight = 'refFontWeight';
   static const underlineRefs = 'underlineRefs';
   static const showVerseDivider = 'showVerseDivider';
+  static const verseDividerColor = 'verseDividerColor';
   static const showAlwaysFullRef = 'showAlwaysFullRef';
   static const highlightRenderMode = 'highlightRenderMode';
   static const listParallelSpacing = 'listParallelSpacing';
@@ -85,6 +86,7 @@ class BibleViewSettings extends Equatable {
   // --- LIST view ---
   final bool underlineRefs;
   final bool showVerseDivider;
+  final Color verseDividerColor;
   final bool showAlwaysFullRef;
   final HighlightRenderMode highlightRenderMode;
   final double listParallelSpacing;
@@ -133,6 +135,7 @@ class BibleViewSettings extends Equatable {
     this.refFontWeight = BibleViewFontWeight.regular,
     this.underlineRefs = false,
     this.showVerseDivider = true,
+    this.verseDividerColor = const Color(0xFFCCCCCC),
     this.showAlwaysFullRef = true,
     this.highlightRenderMode = HighlightRenderMode.fullRefWithColor,
     this.listParallelSpacing = 32,
@@ -155,6 +158,7 @@ class BibleViewSettings extends Equatable {
         refFontWeight: BibleViewFontWeight.regular,
         selectedRefFontWeight: BibleViewFontWeight.semiBold,
         pericopeColor: Color(0xFFB9B9B9),
+        verseDividerColor: Color(0xFF333333),
       );
 
   factory BibleViewSettings.defaultThemeLight() => const BibleViewSettings(
@@ -166,6 +170,7 @@ class BibleViewSettings extends Equatable {
         refFontWeight: BibleViewFontWeight.semiBold,
         selectedRefFontWeight: BibleViewFontWeight.bold,
         pericopeColor: Color(0xFF0C0C0C),
+        verseDividerColor: Color(0xFFCCCCCC),
       );
 
   BibleViewSettings copyWith({
@@ -197,6 +202,7 @@ class BibleViewSettings extends Equatable {
     BibleViewFontWeight? refFontWeight,
     bool? underlineRefs,
     bool? showVerseDivider,
+    Color? verseDividerColor,
     bool? showAlwaysFullRef,
     HighlightRenderMode? highlightRenderMode,
     double? listParallelSpacing,
@@ -244,6 +250,7 @@ class BibleViewSettings extends Equatable {
       refFontWeight: refFontWeight ?? this.refFontWeight,
       underlineRefs: underlineRefs ?? this.underlineRefs,
       showVerseDivider: showVerseDivider ?? this.showVerseDivider,
+      verseDividerColor: verseDividerColor ?? this.verseColor,
       showAlwaysFullRef: showAlwaysFullRef ?? this.showAlwaysFullRef,
       highlightRenderMode: highlightRenderMode ?? this.highlightRenderMode,
       listParallelSpacing: listParallelSpacing ?? this.listParallelSpacing,
@@ -293,6 +300,7 @@ class BibleViewSettings extends Equatable {
         _Keys.refFontWeight: refFontWeight.wire,
         _Keys.underlineRefs: underlineRefs,
         _Keys.showVerseDivider: showVerseDivider,
+        _Keys.verseDividerColor: verseDividerColor,
         _Keys.showAlwaysFullRef: showAlwaysFullRef,
         _Keys.highlightRenderMode: highlightRenderMode.wire,
         _Keys.listParallelSpacing: listParallelSpacing,
@@ -380,6 +388,9 @@ class BibleViewSettings extends Equatable {
           json[_Keys.underlineRefs] as bool? ?? defaults.underlineRefs,
       showVerseDivider:
           json[_Keys.showVerseDivider] as bool? ?? defaults.showVerseDivider,
+      verseDividerColor: json[_Keys.verseDividerColor] != null
+          ? Color(ColorsUtil.parseHex(json[_Keys.verseDividerColor] as String))
+          : defaults.verseDividerColor,
       showAlwaysFullRef:
           json[_Keys.showAlwaysFullRef] as bool? ?? defaults.showAlwaysFullRef,
       highlightRenderMode: json[_Keys.highlightRenderMode] != null
@@ -447,6 +458,7 @@ class BibleViewSettings extends Equatable {
         refFontWeight,
         underlineRefs,
         showVerseDivider,
+        verseDividerColor,
         showAlwaysFullRef,
         highlightRenderMode,
         listParallelSpacing,

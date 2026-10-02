@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../core/settings/settings_cubit.dart';
 import '../features/bible_display/multi_pane_manager/presentation/widgets/multi_pane_container.dart';
@@ -9,6 +10,7 @@ import '../features/bible_searchbar/history/presentation/widgets/show_history_bu
 import '../features/bible_searchbar/search/presentation/widgets/bible_searchbar.dart';
 import '../features/obs_live_overlay/presentation/widgets/obs_live_overlay_indicator.dart';
 import '../features/remote_controller/presentation/widgets/remote_controller_indicator.dart';
+import '../features/shortcuts/presentation/widgets/shortcuts_focus_scope.dart';
 import '../features/shortcuts/presentation/widgets/shortcuts_host.dart';
 import '../features/simple_presenter/presentation/widgets/presenter_host.dart';
 import '../features/three_tap_navigator/presentation/widgets/three_tap_navigator.dart';
@@ -31,7 +33,11 @@ class AppShell extends StatelessWidget {
         .select((InterfaceVisibilityCubit i) => i.state.isToolbarVisible);
     final showHistory = context
         .select((InterfaceVisibilityCubit i) => i.state.isHistoryVisible);
+    final collapseSearchbarToIcon = context.select(
+        (SettingsCubit<GlobalSettings> s) => s.state.collapseSearchbarToIcon);
+
     final screen = MediaQuery.of(context).size;
+
     final enableDynamicInterface = (isFullscreen || kIsWeb) && !showMenuBar;
 
     // ShortcusHost must be at the very root after the MaterialApp
@@ -51,7 +57,10 @@ class AppShell extends StatelessWidget {
                 showMenuBar: true,
                 showLogo: !isFullscreen && !kIsWeb,
                 showButtons: !isFullscreen && !kIsWeb,
-                centerItems: [const _AppHeader()],
+                leftItems:
+                    collapseSearchbarToIcon ? const [_AppHeader()] : null,
+                centerItems:
+                    collapseSearchbarToIcon ? null : [const _AppHeader()],
                 rightItems: kIsWeb
                     ? null
                     : const [
@@ -72,18 +81,16 @@ class AppShell extends StatelessWidget {
                         //
                         // Bible Panes
                         //
-                        Positioned.fill(child: const MultiPaneContainer()),
+                        const Positioned.fill(child: MultiPaneContainer()),
                         //
-                        // Dynamic/fullscreen only interfaces
+                        // Dynamic searchbar
                         //
-                        if (enableDynamicInterface) ...[
-                          //
-                          // Dynamic searchbar
-                          //
+                        if (enableDynamicInterface || collapseSearchbarToIcon)
                           const DynamicSearchbar(),
-                          //
-                          // Dynamic History viewer
-                          //
+                        //
+                        // Dynamic History viewer
+                        //
+                        if (enableDynamicInterface)
                           FloatingPanel(
                             visible: showHistory,
                             top: screen.height * 0.08 + 100,
@@ -98,7 +105,6 @@ class AppShell extends StatelessWidget {
                                 bottom: AppSpacing.md),
                             child: const HistoryList(size: HistoryListSize.big),
                           )
-                        ],
                       ],
                     ),
                   ),
@@ -120,32 +126,42 @@ class _AppHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final globalSettings = context.select((SettingsCubit<GlobalSettings> c) => (
           enable3TapNavigator: c.state.enable3TapNavigator,
-          enableAdaptiveTitlebar: c.state.enableAdaptiveTitlebar
+          enableAdaptiveTitlebar: c.state.enableAdaptiveTitlebar,
+          collapseSearchbarToIcon: c.state.collapseSearchbarToIcon
         ));
     final screenWidth = MediaQuery.of(context).size.width;
 
+    final threeTapNav = globalSettings.enable3TapNavigator
+        ? const ThreeTapNavigatorTrigger()
+        : const SizedBox();
+
+    final searchbar = globalSettings.collapseSearchbarToIcon
+        ? IconButton(
+            tooltip: 'Search reference',
+            onPressed: () =>
+                ShortcutFocusScope.of(context).search.requestFocus(),
+            icon: const Icon(LucideIcons.search),
+          )
+        : BSearchbar(
+            width:
+                screenWidth <= AppBreakpoints.compact ? screenWidth * 0.4 : 300,
+            theme: globalSettings.enableAdaptiveTitlebar
+                ? const SearchBarThemeData(
+                    backgroundColor: WidgetStatePropertyAll(Colors.transparent),
+                    side: WidgetStatePropertyAll(
+                      BorderSide(color: Colors.black12, width: 0.5),
+                    ),
+                  )
+                : null,
+          );
+
     return Row(
-      spacing: 4,
       mainAxisAlignment: MainAxisAlignment.center,
-      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      spacing: globalSettings.collapseSearchbarToIcon ? 0 : AppSpacing.xs,
       children: [
-        if (globalSettings.enable3TapNavigator &&
-            screenWidth > AppBreakpoints.compact)
-          const ThreeTapNavigatorTrigger(),
-        BSearchbar(
-          width:
-              screenWidth <= AppBreakpoints.compact ? screenWidth * 0.4 : 300,
-          theme: globalSettings.enableAdaptiveTitlebar
-              ? const SearchBarThemeData(
-                  backgroundColor: WidgetStatePropertyAll(Colors.transparent),
-                  side: WidgetStatePropertyAll(BorderSide(
-                    color: Colors.black12,
-                    width: 0.5,
-                  )))
-              : null,
-          //onEditComplete: () => _returnFocusToRoot(),
-        ),
-        if (screenWidth > AppBreakpoints.compact) ShowHistoryButton(),
+        threeTapNav,
+        searchbar,
+        const ShowHistoryButton(),
       ],
     );
   }
