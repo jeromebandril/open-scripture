@@ -93,6 +93,7 @@ class AppShell extends StatelessWidget {
                         if (enableDynamicInterface)
                           FloatingPanel(
                             visible: showHistory,
+                            maintainState: false,
                             top: screen.height * 0.08 + 100,
                             left: 0,
                             right: 0,

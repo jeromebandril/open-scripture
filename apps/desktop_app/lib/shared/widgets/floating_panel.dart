@@ -54,8 +54,8 @@ class FloatingPanel extends StatelessWidget {
     this.width,
     this.height,
     // Visibility behaviour
+    // make `maintainFocusability` and `maintainAnimation` derive from this
     this.maintainState = true,
-    this.maintainFocusability = true,
     // Decoration
     this.padding = const EdgeInsets.all(6),
     this.decoration,
@@ -84,7 +84,6 @@ class FloatingPanel extends StatelessWidget {
 
   // Visibility behaviour
   final bool maintainState;
-  final bool maintainFocusability;
 
   // Decoration
   final EdgeInsetsGeometry padding;
@@ -109,8 +108,8 @@ class FloatingPanel extends StatelessWidget {
       child: Visibility(
         visible: visible,
         maintainState: maintainState,
-        maintainFocusability: maintainFocusability,
-        maintainAnimation: true, // keep animation ticking while hidden
+        maintainFocusability: maintainState,
+        maintainAnimation: maintainState,
         child: Align(
           alignment: alignment,
           child: AppRevealAnimation(

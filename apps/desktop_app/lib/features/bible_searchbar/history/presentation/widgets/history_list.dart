@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../app/state/interface_visibility_cubit.dart';
@@ -13,14 +12,7 @@ import '../../../search/presentation/state/search_bloc.dart';
 import '../../domain/entities/history_entry.dart';
 import '../state/history_cubit.dart';
 
-// TODO: the entries traversal using the focus system is not smooth
-// - it doesn't scroll bottom or top when looping the list
-// - the focus persist on the last focused item, ideally it should reset top
-
-enum HistoryListSize {
-  small,
-  big,
-}
+enum HistoryListSize { small, big }
 
 class HistoryList extends StatelessWidget {
   const HistoryList({
@@ -39,77 +31,47 @@ class HistoryList extends StatelessWidget {
       builder: (context, state) {
         return FocusScope(
           autofocus: true,
-          child: Shortcuts(
-            shortcuts: const {
-              SingleActivator(LogicalKeyboardKey.arrowUp):
-                  _PreviousItemIntent(),
-              SingleActivator(LogicalKeyboardKey.arrowDown): _NextItemIntent(),
-            },
-            child: Actions(
-              actions: {
-                _PreviousItemIntent: CallbackAction<_PreviousItemIntent>(
-                  onInvoke: (_) => primaryFocus?.previousFocus(),
-                ),
-                _NextItemIntent: CallbackAction<_NextItemIntent>(
-                  onInvoke: (_) => primaryFocus?.nextFocus(),
-                ),
-                DismissIntent: CallbackAction<DismissIntent>(
-                  onInvoke: (_) {
-                    context
-                        .read<InterfaceVisibilityCubit>()
-                        .setVisibility(history: false);
-                    return null;
-                  },
-                ),
-              },
-              child: Column(
-                spacing: AppSpacing.sm,
-                children: [
-                  Expanded(
-                    child: state.history.isEmpty
-                        ? const Center(child: Text('Empty history'))
-                        : ListView.builder(
-                            itemCount: state.history.length,
-                            itemBuilder: (_, i) => _HistoryItem(
-                              index: i,
-                              historyData: state.history[i],
-                              autofocus: i == 0,
-                              onPressed: () => onSelected?.call(),
-                              size: size,
-                            ),
+          child: FocusTraversalGroup(
+            policy: OrderedTraversalPolicy(),
+            child: Column(
+              spacing: AppSpacing.sm,
+              children: [
+                Expanded(
+                  child: state.history.isEmpty
+                      ? const Center(child: Text('Empty history'))
+                      : ListView.builder(
+                          itemCount: state.history.length,
+                          itemBuilder: (_, i) => _HistoryItem(
+                            index: i,
+                            autofocus: i == 0,
+                            historyData: state.history[i],
+                            onPressed: () => onSelected?.call(),
+                            size: size,
                           ),
+                        ),
+                ),
+                SizedBox(
+                  height: 25,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    spacing: AppSpacing.sm,
+                    children: [
+                      Text('Press'),
+                      ShortcutView(
+                          activator:
+                              appCommandShortcuts[AppCommand.toggleHistory]),
+                      Text('to close'),
+                    ],
                   ),
-                  SizedBox(
-                    height: 25,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      spacing: AppSpacing.sm,
-                      children: [
-                        Text('Press'),
-                        ShortcutView(
-                            activator:
-                                appCommandShortcuts[AppCommand.toggleHistory]),
-                        Text('to close'),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         );
       },
     );
   }
-}
-
-class _PreviousItemIntent extends Intent {
-  const _PreviousItemIntent();
-}
-
-class _NextItemIntent extends Intent {
-  const _NextItemIntent();
 }
 
 class _HistoryItem extends StatefulWidget {
