@@ -19,6 +19,7 @@ import '../../../bible_pane/domain/display_mode.dart';
 import '../../bible_view_settings.dart';
 import '../../domain/entities/bible_view_font_weight.dart';
 import '../widgets/qucik_actions.dart';
+import 'strong_word_customization_page.dart';
 
 class BibleViewGeneralSettingsTab extends StatefulWidget {
   const BibleViewGeneralSettingsTab({super.key, this.showPreview = false});
@@ -426,14 +427,29 @@ class _BibleViewGeneralSettingsTabState
                         description:
                             'Shows a subtle dotted underline for strong words. If clicked, it shows more information',
                         settingWidth: 100,
-                        child: AppInputBool(
-                          value: context.select(
-                              (SettingsCubit<BibleViewSettings> c) =>
-                                  c.state.enableStrongWordsRender),
-                          onChanged: (val) {
-                            cubit.update((p) =>
-                                p.copyWith(enableStrongWordsRender: val));
-                          },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          spacing: AppSpacing.sm,
+                          children: [
+                            IconButton(
+                              onPressed: () => context.pushStandardWindow(
+                                title: 'Strong word customization',
+                                maxSize: const Size(600, 400),
+                                builder: (_) =>
+                                    const StrongWordCustomizationPage(),
+                              ),
+                              icon: const Icon(LucideIcons.settings),
+                            ),
+                            AppInputBool(
+                              value: context.select(
+                                  (SettingsCubit<BibleViewSettings> c) =>
+                                      c.state.enableStrongWordsRender),
+                              onChanged: (val) {
+                                cubit.update((p) =>
+                                    p.copyWith(enableStrongWordsRender: val));
+                              },
+                            ),
+                          ],
                         )),
                   ],
                 ),
