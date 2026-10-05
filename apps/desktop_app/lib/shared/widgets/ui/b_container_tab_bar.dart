@@ -13,6 +13,7 @@ class BContainerTabBar extends StatefulWidget {
     this.onTabChanged,
     this.scrollableView = false,
     this.initialIndex = 0,
+    this.footer,
   }) : assert(tabs.length == views.length,
             "Tabs and views must have the same length");
 
@@ -24,6 +25,7 @@ class BContainerTabBar extends StatefulWidget {
   final void Function(int index)? onTabChanged;
   final bool scrollableView;
   final int initialIndex;
+  final Widget? footer;
 
   @override
   State<BContainerTabBar> createState() => _BContainerTabBarState();
@@ -57,6 +59,7 @@ class _BContainerTabBarState extends State<BContainerTabBar>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final borderRadius = BorderRadius.circular(widget.height / 2);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -70,7 +73,7 @@ class _BContainerTabBarState extends State<BContainerTabBar>
           height: widget.height,
           padding: const EdgeInsets.all(AppSpacing.xs),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(widget.height / 2),
+            borderRadius: borderRadius,
             color:
                 widget.backgroundColor ?? theme.colorScheme.surfaceContainerLow,
           ),
@@ -78,7 +81,7 @@ class _BContainerTabBarState extends State<BContainerTabBar>
             controller: _tabController,
             dividerColor: Colors.transparent,
             indicator: BoxDecoration(
-              borderRadius: BorderRadius.circular(widget.height / 2 - 4),
+              borderRadius: borderRadius,
               color: theme.colorScheme.primaryContainer,
               boxShadow: [
                 BoxShadow(
@@ -91,7 +94,7 @@ class _BContainerTabBarState extends State<BContainerTabBar>
             indicatorSize: TabBarIndicatorSize.tab,
             labelColor: theme.colorScheme.onPrimaryContainer,
             unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
-            splashBorderRadius: BorderRadius.circular(widget.height / 2 - 4),
+            splashBorderRadius: borderRadius,
             overlayColor: WidgetStateProperty.resolveWith((states) {
               if (states.contains(WidgetState.focused)) {
                 return theme.colorScheme.primary.withValues(alpha: 0.12);
@@ -119,14 +122,21 @@ class _BContainerTabBarState extends State<BContainerTabBar>
               color: widget.viewBackgroundColor,
               borderRadius: BorderRadius.circular(AppRadius.lg),
             ),
-            child: TabBarView(
-              controller: _tabController,
-              physics: const NeverScrollableScrollPhysics(),
-              children: widget.scrollableView
-                  ? widget.views.map((view) {
-                      return SingleChildScrollView(child: view);
-                    }).toList()
-                  : widget.views,
+            child: Column(
+              children: [
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: widget.scrollableView
+                        ? widget.views.map((view) {
+                            return SingleChildScrollView(child: view);
+                          }).toList()
+                        : widget.views,
+                  ),
+                ),
+                if (widget.footer != null) widget.footer!,
+              ],
             ),
           ),
         ),
