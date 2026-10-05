@@ -90,13 +90,12 @@ class BiblePane extends StatelessWidget {
         ),
         child: DefaultTextStyle.merge(
           style: TextStyle(
-            // do not change color here
-            // instead I do it in the verse renderer
-            // so other text widgets are not not affected
-            //
-            // color: viewSettings.useAppTheme
-            //     ? appTheme.colorScheme.onSurfaceVariant
-            //     : viewSettings.verseColor,
+            // Make default color equal to verseColor,
+            // so it is always readable on bible view background.
+            // The same text color is applied at verse render level.
+            color: viewSettings.useAppTheme
+                ? appTheme.colorScheme.onSurfaceVariant
+                : viewSettings.verseColor,
             fontFamily: viewSettings.verseFontFamily,
             height: kTextHeightNone,
           ),
