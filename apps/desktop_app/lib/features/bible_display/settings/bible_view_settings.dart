@@ -250,7 +250,7 @@ class BibleViewSettings extends Equatable {
       refFontWeight: refFontWeight ?? this.refFontWeight,
       underlineRefs: underlineRefs ?? this.underlineRefs,
       showVerseDivider: showVerseDivider ?? this.showVerseDivider,
-      verseDividerColor: verseDividerColor ?? this.verseColor,
+      verseDividerColor: verseDividerColor ?? this.verseDividerColor,
       showAlwaysFullRef: showAlwaysFullRef ?? this.showAlwaysFullRef,
       highlightRenderMode: highlightRenderMode ?? this.highlightRenderMode,
       listParallelSpacing: listParallelSpacing ?? this.listParallelSpacing,
