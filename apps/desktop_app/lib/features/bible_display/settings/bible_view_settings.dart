@@ -47,6 +47,7 @@ abstract class _Keys {
   static const pericopeSpacingBottom = 'pericopeSpacingBottom';
   static const pericopeUnderline = 'pericopeUnderline';
   static const pericopeColor = 'pericopeColor';
+  static const strongWordsUnderlineColor = 'strongWordsUnderlineColor';
 }
 
 class BibleViewSettings extends Equatable {
@@ -76,6 +77,7 @@ class BibleViewSettings extends Equatable {
   // special render
   final Color quoteColor;
   final Color addColor;
+  final Color strongWordsUnderlineColor;
   // pericope
   final bool enablePericope;
   final double pericopeSpacingTop;
@@ -125,6 +127,7 @@ class BibleViewSettings extends Equatable {
     this.defaultDisplayMode = DisplayMode.list,
     this.quoteColor = const Color(0xFFE04A4A),
     this.addColor = const Color(0xFFD2D2D2),
+    this.strongWordsUnderlineColor = const Color(0x42000000),
     this.enablePericope = true,
     this.pericopeSpacingTop = 24,
     this.pericopeSpacingBottom = 24,
@@ -166,6 +169,7 @@ class BibleViewSettings extends Equatable {
         backgroundColor: Color.fromARGB(255, 240, 240, 240),
         selectedRefColor: Color.fromARGB(255, 114, 34, 218),
         addColor: Color(0xFF858585),
+        strongWordsUnderlineColor: Color(0x42000000),
         verseFontWeight: BibleViewFontWeight.semiBold,
         refFontWeight: BibleViewFontWeight.semiBold,
         selectedRefFontWeight: BibleViewFontWeight.bold,
@@ -192,6 +196,8 @@ class BibleViewSettings extends Equatable {
     DisplayMode? defaultDisplayMode,
     Color? quoteColor,
     Color? addColor,
+    Color? strongWordsUnderlineColor,
+    bool? highlightStrongsWordsOnHover,
     bool? enablePericope,
     double? pericopeSpacingTop,
     double? pericopeSpacingBottom,
@@ -237,6 +243,8 @@ class BibleViewSettings extends Equatable {
       defaultDisplayMode: defaultDisplayMode ?? this.defaultDisplayMode,
       quoteColor: quoteColor ?? this.quoteColor,
       addColor: addColor ?? this.addColor,
+      strongWordsUnderlineColor:
+          strongWordsUnderlineColor ?? this.strongWordsUnderlineColor,
       enablePericope: enablePericope ?? this.enablePericope,
       pericopeSpacingTop: pericopeSpacingTop ?? this.pericopeSpacingTop,
       pericopeSpacingBottom:
@@ -290,6 +298,8 @@ class BibleViewSettings extends Equatable {
         _Keys.defaultDisplayMode: defaultDisplayMode.name,
         _Keys.quoteColor: ColorsUtil.colorToHex(quoteColor),
         _Keys.addColor: ColorsUtil.colorToHex(addColor),
+        _Keys.strongWordsUnderlineColor:
+            ColorsUtil.colorToHex(strongWordsUnderlineColor),
         _Keys.enablePericope: enablePericope,
         _Keys.pericopeSpacingTop: pericopeSpacingTop,
         _Keys.pericopeSpacingBottom: pericopeSpacingBottom,
@@ -362,6 +372,10 @@ class BibleViewSettings extends Equatable {
       addColor: json[_Keys.addColor] != null
           ? Color(ColorsUtil.parseHex(json[_Keys.addColor] as String))
           : defaults.addColor,
+      strongWordsUnderlineColor: json[_Keys.strongWordsUnderlineColor] != null
+          ? Color(ColorsUtil.parseHex(
+              json[_Keys.strongWordsUnderlineColor] as String))
+          : defaults.strongWordsUnderlineColor,
       enablePericope:
           json[_Keys.enablePericope] as bool? ?? defaults.enablePericope,
       pericopeSpacingTop:
@@ -448,6 +462,7 @@ class BibleViewSettings extends Equatable {
         defaultDisplayMode,
         quoteColor,
         addColor,
+        strongWordsUnderlineColor,
         enablePericope,
         pericopeSpacingTop,
         pericopeSpacingBottom,

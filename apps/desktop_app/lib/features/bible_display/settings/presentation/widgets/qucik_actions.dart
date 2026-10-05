@@ -30,6 +30,7 @@ class QuickActions extends StatelessWidget {
             backgroundColor: defaults.backgroundColor,
             selectedRefColor: defaults.selectedRefColor,
             verseDividerColor: defaults.verseDividerColor,
+            strongWordsUnderlineColor: defaults.strongWordsUnderlineColor,
           ),
         );
   }

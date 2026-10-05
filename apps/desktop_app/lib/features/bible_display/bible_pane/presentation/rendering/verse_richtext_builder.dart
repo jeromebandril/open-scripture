@@ -1,11 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../../app/extensions/font_weight.dart';
 import '../../../../../shared/domain/entities/verse.dart';
 import '../../../settings/bible_view_settings.dart';
 import '../../../settings/presentation/models/bible_view_font_weight_flutter.dart';
 import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
-import '../../../../../app/extensions/font_weight.dart';
 
 const _strongWordBold = 'H0430';
 
@@ -36,7 +36,9 @@ class VerseSpanBuilder {
       final isStrongsWord = span.activeStyles.contains(SpanType.strongs);
 
       GestureRecognizer? recognizer;
-      if (isStrongsWord && onWordTap != null) {
+      if (isStrongsWord &&
+          onWordTap != null &&
+          viewSettings.enableStrongWordsRender) {
         recognizer = TapGestureRecognizer()..onTap = () => onWordTap(span);
       } else if (onVerseTap != null) {
         recognizer = TapGestureRecognizer()..onTap = onVerseTap;
@@ -86,7 +88,7 @@ class VerseSpanBuilder {
               ? TextDecoration.underline
               : TextDecoration.none,
           decorationStyle: TextDecorationStyle.dotted,
-          decorationColor: Colors.black26,
+          decorationColor: viewSettings.strongWordsUnderlineColor,
           fontWeight: span.payload == _strongWordBold
               ? viewSettings.verseFontWeight.toFlutter().stepUp()
               : null,
