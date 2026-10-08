@@ -13,6 +13,7 @@ import '../features/remote_controller/presentation/widgets/remote_controller_ind
 import '../features/shortcuts/presentation/widgets/shortcuts_focus_scope.dart';
 import '../features/shortcuts/presentation/widgets/shortcuts_host.dart';
 import '../features/simple_presenter/presentation/widgets/presenter_host.dart';
+import '../features/simple_presenter/presentation/widgets/presenter_indicator.dart';
 import '../features/three_tap_navigator/presentation/widgets/three_tap_navigator.dart';
 import '../shared/design_system/design_system.dart';
 import '../shared/widgets/floating_panel.dart';
@@ -64,6 +65,7 @@ class AppShell extends StatelessWidget {
                 rightItems: kIsWeb
                     ? null
                     : const [
+                        PresenterIndicator(),
                         ObsLiveOverlayIndicator(),
                         RemoteControllerIndicator(),
                       ],

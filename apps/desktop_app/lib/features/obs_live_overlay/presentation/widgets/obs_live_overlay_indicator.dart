@@ -23,9 +23,8 @@ class ObsLiveOverlayIndicator extends StatelessWidget {
     return BlocBuilder<ObsLiveOverlayCubit, ObsLiveOverlayState>(
       builder: (context, state) {
         if (!state.isRunning) return const SizedBox.shrink();
-        final ref = state.snapshot.items['ref'];
 
-        final currentRefStr = ref != null && ref.visible ? ref.text : '<empty>';
+        final currentRefStr = state.currentVerseStr;
         final pendingRefStr = state.pendingVerse?.toDisplayString();
         final showPendingStr = enableManualCtrl &&
             pendingRefStr != null &&

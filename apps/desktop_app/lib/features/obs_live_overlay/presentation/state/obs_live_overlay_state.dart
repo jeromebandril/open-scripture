@@ -25,6 +25,11 @@ class ObsLiveOverlayState extends Equatable {
         snapshot: OverlaySnapshot.initial(),
       );
 
+  String get currentVerseStr =>
+      snapshot.items['ref'] != null && snapshot.items['ref']!.visible
+          ? snapshot.items['ref']!.text
+          : '<empty>';
+
   ObsLiveOverlayState copyWith({
     OverlayStatus? status,
     OverlaySnapshot? snapshot,

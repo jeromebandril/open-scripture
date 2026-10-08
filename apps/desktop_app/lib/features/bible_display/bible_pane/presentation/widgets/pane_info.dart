@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../../../app/state/fullscreen_cubit.dart';
+import '../../../../../app/state/interface_visibility_cubit.dart';
+import '../../../../obs_live_overlay/presentation/state/obs_live_overlay_cubit.dart';
+import '../../../../remote_controller/presentation/state/remote_controller_cubit.dart';
+import '../../../../settings_window/presentation/models/settings_route.dart';
 import '../../domain/display_mode.dart';
 import '../../domain/entities/word_info.dart';
 import '../state/bible_pane_bloc.dart';
@@ -59,7 +64,7 @@ class _PaneInfoState extends State<PaneInfo> {
     final theme = Theme.of(context);
     final pl =
         context.select((MultiPaneManagerCubit b) => b.state.panes.length);
-    final paneId = context.select((BiblePaneBloc b) => b.state.paneId);
+    final paneId = context.read<BiblePaneBloc>().state.paneId;
     final enableStrongWords =
         BibleViewSettingsScope.of(context).enableStrongWordsRender;
 
@@ -81,29 +86,7 @@ class _PaneInfoState extends State<PaneInfo> {
         ),
         child: Row(
           children: [
-            if (context.select(
-                    (MultiPaneManagerCubit p) => p.state.activePaneId) ==
-                paneId)
-              BlocBuilder<PresenterCubit, PresenterState>(
-                buildWhen: (prev, curr) =>
-                    prev.currentSlideIndex != curr.currentSlideIndex ||
-                    prev.numberOfSlides != curr.numberOfSlides,
-                builder: (context, state) {
-                  return state.numberOfSlides == 0
-                      ? const SizedBox()
-                      : Row(
-                          children: [
-                            _PaneInfoItem(
-                              tooltip: 'Slides',
-                              icon: LucideIcons.rectangleCircle,
-                              text:
-                                  '${state.currentSlideIndex + 1}/${state.numberOfSlides} ${state.getCurrentSlide()?.title}',
-                            ),
-                            const VerticalDivider(),
-                          ],
-                        );
-                },
-              ),
+            const GlobalStatus(),
             BlocBuilder<TextScalerCubit, TextScalerState>(
               builder: (context, state) {
                 return _PaneInfoItem(
@@ -164,5 +147,71 @@ class _PaneInfoState extends State<PaneInfo> {
         ),
       ),
     );
+  }
+}
+
+class GlobalStatus extends StatelessWidget {
+  const GlobalStatus({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final isToolbarVisible = context
+        .select((InterfaceVisibilityCubit p) => p.state.isToolbarVisible);
+    final isFullscreen = context.select((FullscreenCubit p) => p.state);
+    final activeId =
+        context.select((MultiPaneManagerCubit p) => p.state.activePaneId);
+    final paneId = context.read<BiblePaneBloc>().state.paneId;
+
+    return activeId != paneId || isToolbarVisible || !isFullscreen
+        ? const SizedBox()
+        : Row(
+            children: [
+              BlocBuilder<PresenterCubit, PresenterState>(
+                buildWhen: (prev, curr) =>
+                    prev.currentSlideIndex != curr.currentSlideIndex ||
+                    prev.numberOfSlides != curr.numberOfSlides,
+                builder: (context, state) {
+                  return state.numberOfSlides == 0
+                      ? const SizedBox()
+                      : _PaneInfoItem(
+                          tooltip: 'Slides',
+                          icon: LucideIcons.rectangleCircle,
+                          text:
+                              '${state.currentSlideIndex + 1}/${state.numberOfSlides} ${state.getCurrentSlide()?.title}',
+                        );
+                },
+              ),
+              BlocBuilder<ObsLiveOverlayCubit, ObsLiveOverlayState>(
+                buildWhen: (prev, curr) =>
+                    prev.isRunning != curr.isRunning ||
+                    prev.snapshot != curr.snapshot,
+                builder: (context, state) {
+                  return !state.isRunning
+                      ? const SizedBox()
+                      : _PaneInfoItem(
+                          tooltip: '(RC) OBS Live Overlay',
+                          icon: SettingsPage.obsLiveOverlay.icon,
+                          text: state.currentVerseStr,
+                        );
+                },
+              ),
+              BlocBuilder<RemoteControllerCubit, RemoteControllerState>(
+                buildWhen: (prev, curr) =>
+                    prev.isRunning != curr.isRunning ||
+                    prev.connectedClients != curr.connectedClients,
+                builder: (context, state) {
+                  final connectedClients = state.connectedClients.length;
+                  return !state.isRunning
+                      ? const SizedBox()
+                      : _PaneInfoItem(
+                          tooltip: '(RC) Connected clients: $connectedClients',
+                          icon: SettingsPage.remoteController.icon,
+                          text: connectedClients.toString(),
+                        );
+                },
+              ),
+              const VerticalDivider(),
+            ],
+          );
   }
 }
