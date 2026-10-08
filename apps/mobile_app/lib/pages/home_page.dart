@@ -73,10 +73,11 @@ class _MyHomePageState extends State<MyHomePage> {
         elevation: 0,
         scrolledUnderElevation: 0,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.book_rounded),
-            onPressed: _openBibleSelectorSheet,
-          ),
+          // disable this button for now, as it is not implemented in the desktop app yet
+          // IconButton(
+          //   icon: const Icon(Icons.book_rounded),
+          //   onPressed: _openBibleSelectorSheet,
+          // ),
         ],
       ),
       body: Container(

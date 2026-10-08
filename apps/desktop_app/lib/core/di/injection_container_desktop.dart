@@ -186,10 +186,7 @@ void _registerRemoteController(GetIt sl) {
     () => RemoteCommandRouter(
       handlers: {
         'search_bar': SearchBarHandler(bloc: sl<SearchBloc>()),
-        'pane': PaneManagerHandler(
-          multiPaneManagerCubit: sl<MultiPaneManagerCubit>(),
-          myLibraryCubit: sl.get<MyLibraryCubit>(instanceName: BibleRepositoryType.localDatabase.name),
-        ),
+        'pane': PaneManagerHandler(multiPaneManagerCubit: sl<MultiPaneManagerCubit>()),
       },
     ),
   );
