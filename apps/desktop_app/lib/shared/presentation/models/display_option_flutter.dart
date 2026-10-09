@@ -22,9 +22,7 @@ extension AppTextAlignFlutter on AppTextAlign {
         AppTextAlign.center => TextAlign.center,
         AppTextAlign.right => TextAlign.right,
       };
-}
 
-extension AppTextAlignIcon on AppTextAlign {
   IconData get icon => switch (this) {
         AppTextAlign.left => Icons.format_align_left_rounded,
         AppTextAlign.center => Icons.format_align_center_rounded,
