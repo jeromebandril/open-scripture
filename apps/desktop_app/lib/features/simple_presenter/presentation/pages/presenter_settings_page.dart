@@ -2,17 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../../app/models/gradient_preset.dart';
 import '../../../../core/settings/settings_cubit.dart';
 import '../../../../shared/design_system/design_system.dart';
+import '../../../../shared/domain/entities/display_options.dart';
 import '../../../../shared/presentation/widgets/ui/inputs/app_input_bool.dart';
 import '../../../../shared/presentation/widgets/ui/inputs/app_input_color/app_input_color.dart';
 import '../../../../shared/presentation/widgets/ui/inputs/app_input_color/color_circle.dart';
 import '../../../../shared/presentation/widgets/ui/inputs/app_input_number.dart';
 import '../../../../shared/presentation/widgets/ui/inputs/app_input_option.dart';
+import '../../../bible_display/settings/bible_view_settings.dart';
 import '../../../settings_window/presentation/widgets/setting_option.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../settings/presenter_settings.dart';
-import '../../../../app/models/gradient_preset.dart';
 
 class PresenterSettingsPage extends StatelessWidget {
   const PresenterSettingsPage({super.key});
@@ -64,15 +66,6 @@ class PresenterSettingsPage extends StatelessWidget {
                         onChanged: (selected) => cubit.update(
                             (p) => p.copyWith(gradientBackground: selected)),
                       )
-                    // ? Setting(
-                    //     label: 'Background color',
-                    //     child: AppInputOption<GradientPreset>(
-                    //       onChanged: (fw) {},
-                    //       items: GradientPreset.values
-                    //           .map(
-                    //               (g) => AppDropdownItem(value: g, label: g.name))
-                    //           .toList(),
-                    //     ))
                     : AppInputColor(
                         onColorChanged: (c) =>
                             cubit.update((p) => p.copyWith(backgroundColor: c)),
@@ -88,16 +81,32 @@ class PresenterSettingsPage extends StatelessWidget {
                   )),
               SettingOption(
                   label: 'Title font weight',
-                  child: AppInputOption(
-                    onChanged: (fw) {},
-                    items: [],
+                  child: AppInputOption<AppFontWeight>(
+                    value: context.select(
+                        (SettingsCubit<PresenterSettings> c) =>
+                            c.state.titleFontWeight),
+                    onChanged: (fw) {
+                      cubit.update((p) => p.copyWith(titleFontWeight: fw));
+                    },
+                    items: AppFontWeight.values
+                        .map((fw) => AppDropdownItem<AppFontWeight>(
+                            value: fw, label: fw.name))
+                        .toList(),
                   )),
               SettingOption(
-                  label: 'Subtitle font weight',
-                  child: AppInputOption(
-                    onChanged: (fw) {},
-                    items: [],
-                  )),
+                label: 'Subtitle font weight',
+                child: AppInputOption<AppFontWeight>(
+                  value: context.select((SettingsCubit<PresenterSettings> c) =>
+                      c.state.subtitleFontWeight),
+                  onChanged: (fw) {
+                    cubit.update((p) => p.copyWith(subtitleFontWeight: fw));
+                  },
+                  items: AppFontWeight.values
+                      .map((fw) => AppDropdownItem<AppFontWeight>(
+                          value: fw, label: fw.name))
+                      .toList(),
+                ),
+              ),
               SettingOption(
                 label: 'Size factor',
                 description:

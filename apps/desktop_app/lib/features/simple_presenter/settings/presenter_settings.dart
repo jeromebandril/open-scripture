@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
+import '../../../shared/domain/entities/display_options.dart';
 import '../../../shared/utils/colors_util.dart';
 
 class PresenterSettings extends Equatable {
@@ -11,6 +12,8 @@ class PresenterSettings extends Equatable {
   final bool enableAutoNumbering;
   final int startNumberingFrom;
   final double sizeFactor;
+  final AppFontWeight titleFontWeight;
+  final AppFontWeight subtitleFontWeight;
 
   const PresenterSettings({
     this.textColor = Colors.white,
@@ -20,6 +23,8 @@ class PresenterSettings extends Equatable {
     this.enableAutoNumbering = true,
     this.startNumberingFrom = 2,
     this.sizeFactor = 0.45,
+    this.titleFontWeight = AppFontWeight.bold,
+    this.subtitleFontWeight = AppFontWeight.medium,
   });
 
   PresenterSettings copyWith({
@@ -30,6 +35,8 @@ class PresenterSettings extends Equatable {
     bool? enableAutoNumbering,
     int? startNumberingFrom,
     double? sizeFactor,
+    AppFontWeight? titleFontWeight,
+    AppFontWeight? subtitleFontWeight,
   }) {
     return PresenterSettings(
       textColor: textColor ?? this.textColor,
@@ -40,6 +47,8 @@ class PresenterSettings extends Equatable {
       enableAutoNumbering: enableAutoNumbering ?? this.enableAutoNumbering,
       startNumberingFrom: startNumberingFrom ?? this.startNumberingFrom,
       sizeFactor: sizeFactor ?? this.sizeFactor,
+      titleFontWeight: titleFontWeight ?? this.titleFontWeight,
+      subtitleFontWeight: subtitleFontWeight ?? this.subtitleFontWeight,
     );
   }
 
@@ -68,6 +77,12 @@ class PresenterSettings extends Equatable {
       sizeFactor: json['sizeFactor'] != null
           ? json['sizeFactor'] as double
           : defaults.sizeFactor,
+      titleFontWeight: json['titleFontWeight'] != null
+          ? AppFontWeight.values.byName(json['titleFontWeight'] as String)
+          : defaults.titleFontWeight,
+      subtitleFontWeight: json['subtitleFontWeight'] != null
+          ? AppFontWeight.values.byName(json['subtitleFontWeight'] as String)
+          : defaults.subtitleFontWeight,
     );
   }
 
@@ -80,6 +95,8 @@ class PresenterSettings extends Equatable {
       'enableAutoNumbering': enableAutoNumbering,
       'startNumberingFrom': startNumberingFrom,
       'sizeFactor': sizeFactor,
+      'titleFontWeight': titleFontWeight.name,
+      'subtitleFontWeight': subtitleFontWeight.name,
     };
   }
 
@@ -92,5 +109,7 @@ class PresenterSettings extends Equatable {
         enableAutoNumbering,
         startNumberingFrom,
         sizeFactor,
+        titleFontWeight,
+        subtitleFontWeight,
       ];
 }
