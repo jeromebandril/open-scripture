@@ -9,6 +9,7 @@ import '../../../../../core/settings/settings_cubit.dart';
 import '../../../../../shared/design_system/design_system.dart';
 import '../../../../../shared/domain/entities/display_options.dart';
 import '../../../../../shared/fonts/app_font.dart';
+import '../../../../../shared/presentation/models/display_option_flutter.dart';
 import '../../../../../shared/presentation/widgets/ui/inputs/app_input_bool.dart';
 import '../../../../../shared/presentation/widgets/ui/inputs/app_input_color/app_input_color.dart';
 import '../../../../../shared/presentation/widgets/ui/inputs/app_input_number.dart';
@@ -46,6 +47,19 @@ class _BibleViewGeneralSettingsTabState
                 ThemeMode.dark
             ? BibleViewSettings.defaultThemeDark()
             : BibleViewSettings.defaultThemeLight();
+
+    final fontWeightItems = AppFontWeight.values
+        .map(
+          (fw) => AppDropdownItem<AppFontWeight>(
+            value: fw,
+            label: fw.name,
+            leading: Text(
+              "Aa",
+              style: TextStyle(fontWeight: fw.toFlutter()),
+            ),
+          ),
+        )
+        .toList();
 
     return Row(
       spacing: 16,
@@ -287,10 +301,7 @@ class _BibleViewGeneralSettingsTabState
                               cubit.update(
                                   (p) => p.copyWith(verseFontWeight: fw));
                             },
-                            items: AppFontWeight.values
-                                .map((fw) => AppDropdownItem<AppFontWeight>(
-                                    value: fw, label: fw.name))
-                                .toList(),
+                            items: fontWeightItems,
                           )),
                       SettingOption(
                           label: 'Reference font weight',
@@ -304,10 +315,7 @@ class _BibleViewGeneralSettingsTabState
                               cubit
                                   .update((p) => p.copyWith(refFontWeight: fw));
                             },
-                            items: AppFontWeight.values
-                                .map((fw) => AppDropdownItem<AppFontWeight>(
-                                    value: fw, label: fw.name))
-                                .toList(),
+                            items: fontWeightItems,
                           )),
                       SettingOption(
                           label: 'Selected reference font weight',
@@ -321,10 +329,7 @@ class _BibleViewGeneralSettingsTabState
                               cubit.update(
                                   (p) => p.copyWith(selectedRefFontWeight: fw));
                             },
-                            items: AppFontWeight.values
-                                .map((fw) => AppDropdownItem<AppFontWeight>(
-                                    value: fw, label: fw.name))
-                                .toList(),
+                            items: fontWeightItems,
                           )),
                     ]),
                     SettingSection(

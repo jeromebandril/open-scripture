@@ -6,12 +6,12 @@ import '../../../../app/models/gradient_preset.dart';
 import '../../../../core/settings/settings_cubit.dart';
 import '../../../../shared/design_system/design_system.dart';
 import '../../../../shared/domain/entities/display_options.dart';
+import '../../../../shared/presentation/models/display_option_flutter.dart';
 import '../../../../shared/presentation/widgets/ui/inputs/app_input_bool.dart';
 import '../../../../shared/presentation/widgets/ui/inputs/app_input_color/app_input_color.dart';
 import '../../../../shared/presentation/widgets/ui/inputs/app_input_color/color_circle.dart';
 import '../../../../shared/presentation/widgets/ui/inputs/app_input_number.dart';
 import '../../../../shared/presentation/widgets/ui/inputs/app_input_option.dart';
-import '../../../bible_display/settings/bible_view_settings.dart';
 import '../../../settings_window/presentation/widgets/setting_option.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../settings/presenter_settings.dart';
@@ -22,6 +22,19 @@ class PresenterSettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<SettingsCubit<PresenterSettings>>();
+
+    final fontWeightItems = AppFontWeight.values
+        .map(
+          (fw) => AppDropdownItem<AppFontWeight>(
+            value: fw,
+            label: fw.name,
+            leading: Text(
+              "Aa",
+              style: TextStyle(fontWeight: fw.toFlutter()),
+            ),
+          ),
+        )
+        .toList();
 
     return BlocBuilder<SettingsCubit<PresenterSettings>, PresenterSettings>(
       builder: (context, state) {
@@ -88,10 +101,7 @@ class PresenterSettingsPage extends StatelessWidget {
                     onChanged: (fw) {
                       cubit.update((p) => p.copyWith(titleFontWeight: fw));
                     },
-                    items: AppFontWeight.values
-                        .map((fw) => AppDropdownItem<AppFontWeight>(
-                            value: fw, label: fw.name))
-                        .toList(),
+                    items: fontWeightItems,
                   )),
               SettingOption(
                 label: 'Subtitle font weight',
@@ -101,10 +111,7 @@ class PresenterSettingsPage extends StatelessWidget {
                   onChanged: (fw) {
                     cubit.update((p) => p.copyWith(subtitleFontWeight: fw));
                   },
-                  items: AppFontWeight.values
-                      .map((fw) => AppDropdownItem<AppFontWeight>(
-                          value: fw, label: fw.name))
-                      .toList(),
+                  items: fontWeightItems,
                 ),
               ),
               SettingOption(

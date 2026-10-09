@@ -9,18 +9,21 @@ class AppDropdownItem<T> {
     required this.label,
     this.leading,
     this.enabled = true,
+    this.customTextStyle,
   });
 
   const AppDropdownItem.header({
     required this.label,
   })  : value = null,
         leading = null,
-        enabled = false;
+        enabled = false,
+        customTextStyle = null;
 
   final T? value;
   final String label;
   final Widget? leading;
   final bool enabled;
+  final TextStyle? customTextStyle;
 }
 
 /// A single- or multi-select input dropdown.
@@ -447,7 +450,7 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
             leading: widget.multiple
                 ? _MultiSelectLeading(checked: isSelected, icon: item.leading)
                 : item.leading,
-            title: Text(item.label),
+            title: Text(item.label, style: item.customTextStyle),
             trailing: !widget.multiple && isSelected
                 ? const Icon(Icons.check, size: 16)
                 : null,
