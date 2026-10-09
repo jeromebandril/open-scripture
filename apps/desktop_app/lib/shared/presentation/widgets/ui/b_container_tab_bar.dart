@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../design_system/design_system.dart';
-import '../../design_system/tokens/radius.dart';
+import '../../../design_system/design_system.dart';
 
 class BContainerTabBar extends StatefulWidget {
   const BContainerTabBar({

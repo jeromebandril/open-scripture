@@ -5,10 +5,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/settings/settings_cubit.dart';
-import '../../../../shared/widgets/action_button_with_feedback.dart';
-import '../../../../shared/widgets/dot.dart';
-import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
-import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
+import '../../../../shared/presentation/widgets/action_button_with_feedback.dart';
+import '../../../../shared/presentation/widgets/dot.dart';
+import '../../../../shared/presentation/widgets/ui/inputs/app_input_bool.dart';
+import '../../../../shared/presentation/widgets/ui/inputs/app_input_number.dart';
 import '../../../settings_window/presentation/pages/not_available_page.dart';
 import '../../../settings_window/presentation/widgets/setting_option.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';

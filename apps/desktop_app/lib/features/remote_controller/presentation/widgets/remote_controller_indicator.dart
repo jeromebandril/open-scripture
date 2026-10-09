@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../app/extensions/build_context_extensions.dart';
-import '../../../../shared/widgets/service_status_indicator_shell.dart';
+import '../../../../shared/presentation/widgets/service_status_indicator_shell.dart';
 
 import '../../../settings_window/presentation/models/settings_route.dart';
 import '../../../settings_window/presentation/pages/settings_window.dart';

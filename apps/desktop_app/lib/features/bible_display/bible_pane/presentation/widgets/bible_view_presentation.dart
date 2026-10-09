@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../shared/domain/entities/bible_ref.dart';
-import '../../../settings/domain/entities/inline_verse_number_style.dart';
-import '../../../settings/presentation/models/bible_view_font_weight_flutter.dart';
-import '../../../settings/presentation/models/bible_view_text_alignment_flutter.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../../../settings/bible_view_settings.dart';
+import '../../../settings/domain/entities/bible_view_options.dart';
+import '../../../../../shared/presentation/models/display_option_flutter.dart';
 import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
 import '../rendering/verse_richtext_builder.dart';
 import '../state/bible_pane_bloc.dart';
@@ -54,6 +53,7 @@ class BibleViewPresentation extends StatelessWidget {
                 right: isLast ? screen.width * viewSettings.xPadding : 0,
               ),
               child: Column(
+                verticalDirection: VerticalDirection.up,
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 spacing: 32,

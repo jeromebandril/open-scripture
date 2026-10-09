@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../shared/design_system/tokens/tokens.dart';
 import '../../../../shared/utils/platform_info.dart';
-import '../../../../shared/widgets/inline_link_button.dart';
+import '../../../../shared/presentation/widgets/inline_link_button.dart';
 import '../widgets/setting_section.dart';
 
 class AboutSettingsPage extends StatelessWidget {

@@ -16,7 +16,7 @@ import '../features/simple_presenter/presentation/widgets/presenter_host.dart';
 import '../features/simple_presenter/presentation/widgets/presenter_indicator.dart';
 import '../features/three_tap_navigator/presentation/widgets/three_tap_navigator.dart';
 import '../shared/design_system/design_system.dart';
-import '../shared/widgets/floating_panel.dart';
+import '../shared/presentation/widgets/floating_panel.dart';
 import 'settings/global_settings.dart';
 import 'state/fullscreen_cubit.dart';
 import 'state/interface_visibility_cubit.dart';

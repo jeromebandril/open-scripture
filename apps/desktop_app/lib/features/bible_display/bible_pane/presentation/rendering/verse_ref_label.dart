@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../shared/domain/entities/bible_ref.dart';
-import '../../../settings/presentation/models/bible_view_font_weight_flutter.dart';
+import '../../../../../shared/presentation/models/display_option_flutter.dart';
 import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
 
 /// How a verse's leading reference/number should look

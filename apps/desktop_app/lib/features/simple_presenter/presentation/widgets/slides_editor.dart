@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../shared/design_system/design_system.dart';
-import '../../../../shared/widgets/ui/inputs/app_input_text.dart';
+import '../../../../shared/presentation/widgets/ui/inputs/app_input_text.dart';
 import '../../domain/entities/slide_data.dart';
 import '../cubit/presenter_cubit.dart';
 import '../pages/presenter_settings_page.dart';

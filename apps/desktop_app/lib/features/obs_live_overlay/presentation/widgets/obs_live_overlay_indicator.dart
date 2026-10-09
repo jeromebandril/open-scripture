@@ -5,7 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../../app/extensions/build_context_extensions.dart';
 import '../../../../core/settings/settings_cubit.dart';
 import '../../../../shared/design_system/design_system.dart';
-import '../../../../shared/widgets/service_status_indicator_shell.dart';
+import '../../../../shared/presentation/widgets/service_status_indicator_shell.dart';
 import '../../../settings_window/presentation/models/settings_route.dart';
 import '../../../settings_window/presentation/pages/settings_window.dart';
 import '../../settings/overlay_settings.dart';

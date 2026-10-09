@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../../../app/extensions/font_weight.dart';
 import '../../../../../shared/domain/entities/verse.dart';
 import '../../../settings/bible_view_settings.dart';
-import '../../../settings/presentation/models/bible_view_font_weight_flutter.dart';
+import '../../../../../shared/presentation/models/display_option_flutter.dart';
 import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
 
 const _strongWordBold = 'H0430';

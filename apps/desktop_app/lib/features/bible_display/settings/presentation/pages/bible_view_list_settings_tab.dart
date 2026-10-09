@@ -3,14 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../app/settings/global_settings.dart';
 import '../../../../../core/settings/settings_cubit.dart';
-import '../../../../../shared/widgets/ui/inputs/app_input_bool.dart';
-import '../../../../../shared/widgets/ui/inputs/app_input_color/app_input_color.dart';
-import '../../../../../shared/widgets/ui/inputs/app_input_number.dart';
-import '../../../../../shared/widgets/ui/inputs/app_input_option.dart';
+import '../../../../../shared/presentation/widgets/ui/inputs/app_input_bool.dart';
+import '../../../../../shared/presentation/widgets/ui/inputs/app_input_color/app_input_color.dart';
+import '../../../../../shared/presentation/widgets/ui/inputs/app_input_number.dart';
+import '../../../../../shared/presentation/widgets/ui/inputs/app_input_option.dart';
 import '../../../../settings_window/presentation/widgets/setting_option.dart';
 import '../../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../bible_view_settings.dart';
-import '../../domain/entities/highlight_render_mode.dart';
+import '../../domain/entities/bible_view_options.dart';
 
 class BibleViewListSettingsTab extends StatefulWidget {
   const BibleViewListSettingsTab({super.key, this.showPreview = false});
@@ -109,7 +109,7 @@ class _BibleViewListSettingsTabState extends State<BibleViewListSettingsTab> {
                     },
                     items: HighlightRenderMode.values
                         .map((m) => AppDropdownItem<HighlightRenderMode>(
-                            value: m, label: m.wire))
+                            value: m, label: m.name))
                         .toList(),
                   )),
               SettingOption(

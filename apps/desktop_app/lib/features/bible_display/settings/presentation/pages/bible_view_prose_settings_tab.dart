@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/settings/settings_cubit.dart';
-import '../../../../../shared/widgets/ui/inputs/app_input_bool.dart';
-import '../../../../../shared/widgets/ui/inputs/app_input_number.dart';
+import '../../../../../shared/presentation/widgets/ui/inputs/app_input_bool.dart';
+import '../../../../../shared/presentation/widgets/ui/inputs/app_input_number.dart';
 import '../../../../settings_window/presentation/widgets/setting_option.dart';
 import '../../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../bible_view_settings.dart';

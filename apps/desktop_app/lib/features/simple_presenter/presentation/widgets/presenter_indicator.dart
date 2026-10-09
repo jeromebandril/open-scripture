@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../shared/design_system/tokens/spacing.dart';
-import '../../../../shared/widgets/service_status_indicator_shell.dart';
+import '../../../../shared/presentation/widgets/service_status_indicator_shell.dart';
 import '../cubit/presenter_cubit.dart';
 
 class PresenterIndicator extends StatelessWidget {

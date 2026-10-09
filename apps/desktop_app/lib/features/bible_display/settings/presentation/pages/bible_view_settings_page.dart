@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../shared/widgets/ui/b_container_tab_bar.dart';
+import '../../../../../shared/presentation/widgets/ui/b_container_tab_bar.dart';
 import 'bible_view_general_settings_tab.dart';
 import 'bible_view_list_settings_tab.dart';
 import 'bible_view_presentation_settings_tab.dart';

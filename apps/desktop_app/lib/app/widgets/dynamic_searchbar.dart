@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../features/bible_searchbar/search/presentation/widgets/bible_searchbar.dart';
 import '../../features/shortcuts/presentation/widgets/shortcuts_focus_scope.dart';
 import '../../shared/design_system/design_system.dart';
-import '../../shared/widgets/floating_panel.dart';
+import '../../shared/presentation/widgets/floating_panel.dart';
 
 class DynamicSearchbar extends StatelessWidget {
   const DynamicSearchbar({super.key});

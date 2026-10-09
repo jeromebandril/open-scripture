@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
-import '../../../../utils/colors_util.dart';
+import '../../../../../utils/colors_util.dart';
 import '../reset_button.dart';
 import 'color_circle.dart';
 

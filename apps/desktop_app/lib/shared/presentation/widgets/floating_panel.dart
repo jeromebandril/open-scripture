@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../app/widgets/app_reveal_animation.dart';
+import '../../../app/widgets/app_reveal_animation.dart';
 
 /// A panel that floats at an absolute position inside a [Stack].
 ///

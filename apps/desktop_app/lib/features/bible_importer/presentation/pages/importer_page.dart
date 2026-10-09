@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/di/injection_container.dart';
 import '../../../../shared/enums/bible_repository_type.dart';
-import '../../../../shared/widgets/ui/inputs/app_input_option.dart';
+import '../../../../shared/presentation/widgets/ui/inputs/app_input_option.dart';
 import '../../../settings_window/presentation/widgets/setting_option.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../../sword/presentation/widgets/sword_path_selector.dart'

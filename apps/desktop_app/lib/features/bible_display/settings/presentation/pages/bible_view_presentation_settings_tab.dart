@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/settings/settings_cubit.dart';
-import '../../../../../shared/widgets/ui/inputs/app_input_number.dart';
-import '../../../../../shared/widgets/ui/inputs/app_input_option.dart';
+import '../../../../../shared/domain/entities/display_options.dart';
+import '../../../../../shared/presentation/models/display_option_flutter.dart';
+import '../../../../../shared/presentation/widgets/ui/inputs/app_input_number.dart';
+import '../../../../../shared/presentation/widgets/ui/inputs/app_input_option.dart';
 import '../../../../settings_window/presentation/widgets/setting_option.dart';
 import '../../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../bible_view_settings.dart';
-import '../../domain/entities/bible_view_font_weight.dart';
-import '../../domain/entities/bible_view_text_align.dart';
-import '../../domain/entities/inline_verse_number_style.dart';
+import '../../domain/entities/bible_view_options.dart';
 
 class BibleViewPresentationSettingsTab extends StatefulWidget {
   const BibleViewPresentationSettingsTab({super.key, this.showPreview = false});
@@ -37,22 +37,22 @@ class _BibleViewPresentationSettingsTabState
                   label: 'Text Font Weight Subtitle',
                   description:
                       'Set font weight for the bible metadata indicator when in parallel view',
-                  child: AppInputOption<BibleViewFontWeight>(
+                  child: AppInputOption<AppFontWeight>(
                     value: context.select(
                         (SettingsCubit<BibleViewSettings> c) =>
                             c.state.subtitleFontWeight),
                     onChanged: (fw) {
                       cubit.update((s) => s.copyWith(subtitleFontWeight: fw));
                     },
-                    items: BibleViewFontWeight.values
-                        .map((fw) => AppDropdownItem<BibleViewFontWeight>(
-                            value: fw, label: fw.wire))
+                    items: AppFontWeight.values
+                        .map((fw) => AppDropdownItem<AppFontWeight>(
+                            value: fw, label: fw.name))
                         .toList(),
                   )),
               SettingOption(
                   label: 'Title alignment',
                   description: 'Select title alignment',
-                  child: AppInputOption<BibleViewTextAlign>(
+                  child: AppInputOption<AppTextAlign>(
                     value: context.select(
                         (SettingsCubit<BibleViewSettings> c) =>
                             c.state.presentationTitleTextAlign),
@@ -60,15 +60,15 @@ class _BibleViewPresentationSettingsTabState
                       cubit.update(
                           (s) => s.copyWith(presentationTitleTextAlign: ta));
                     },
-                    items: BibleViewTextAlign.values
-                        .map((ta) => AppDropdownItem<BibleViewTextAlign>(
-                            value: ta, label: ta.wire, leading: Icon(ta.icon)))
+                    items: AppTextAlign.values
+                        .map((ta) => AppDropdownItem<AppTextAlign>(
+                            value: ta, label: ta.name, leading: Icon(ta.icon)))
                         .toList(),
                   )),
               SettingOption(
                   label: 'Text alignment',
                   description: 'Select text alignment',
-                  child: AppInputOption<BibleViewTextAlign>(
+                  child: AppInputOption<AppTextAlign>(
                     value: context.select(
                         (SettingsCubit<BibleViewSettings> c) =>
                             c.state.presentationSubtitleTextAlign),
@@ -76,9 +76,9 @@ class _BibleViewPresentationSettingsTabState
                       cubit.update(
                           (s) => s.copyWith(presentationSubtitleTextAlign: ta));
                     },
-                    items: BibleViewTextAlign.values
-                        .map((ta) => AppDropdownItem<BibleViewTextAlign>(
-                            value: ta, label: ta.wire, leading: Icon(ta.icon)))
+                    items: AppTextAlign.values
+                        .map((ta) => AppDropdownItem<AppTextAlign>(
+                            value: ta, label: ta.name, leading: Icon(ta.icon)))
                         .toList(),
                   )),
               SettingOption(
@@ -94,7 +94,7 @@ class _BibleViewPresentationSettingsTabState
                     },
                     items: InlineVerseNumberStyle.values
                         .map((vns) => AppDropdownItem<InlineVerseNumberStyle>(
-                            value: vns, label: vns.wire))
+                            value: vns, label: vns.name))
                         .toList(),
                   )),
             ],

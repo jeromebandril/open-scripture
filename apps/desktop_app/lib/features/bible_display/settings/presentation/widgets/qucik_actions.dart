@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../app/settings/global_settings.dart';
 import '../../../../../core/settings/settings_cubit.dart';
-import '../../../../../shared/widgets/action_button_with_feedback.dart';
+import '../../../../../shared/presentation/widgets/action_button_with_feedback.dart';
 import '../../../../settings_window/presentation/widgets/setting_option.dart';
 import '../../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../bible_view_settings.dart';

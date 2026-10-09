@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../../app/state/interface_visibility_cubit.dart';
-import '../../../../../shared/widgets/dropdown_menu_anchor.dart';
+import '../../../../../shared/presentation/widgets/dropdown_menu_anchor.dart';
 import 'history_list.dart';
 
 class ShowHistoryButton extends StatefulWidget {

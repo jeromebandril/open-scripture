@@ -4,11 +4,11 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/settings/settings_cubit.dart';
 import '../../../../shared/design_system/design_system.dart';
-import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
-import '../../../../shared/widgets/ui/inputs/app_input_color/app_input_color.dart';
-import '../../../../shared/widgets/ui/inputs/app_input_color/color_circle.dart';
-import '../../../../shared/widgets/ui/inputs/app_input_number.dart';
-import '../../../../shared/widgets/ui/inputs/app_input_option.dart';
+import '../../../../shared/presentation/widgets/ui/inputs/app_input_bool.dart';
+import '../../../../shared/presentation/widgets/ui/inputs/app_input_color/app_input_color.dart';
+import '../../../../shared/presentation/widgets/ui/inputs/app_input_color/color_circle.dart';
+import '../../../../shared/presentation/widgets/ui/inputs/app_input_number.dart';
+import '../../../../shared/presentation/widgets/ui/inputs/app_input_option.dart';
 import '../../../settings_window/presentation/widgets/setting_option.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../settings/presenter_settings.dart';

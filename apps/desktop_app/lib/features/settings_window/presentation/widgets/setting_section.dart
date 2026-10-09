@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../shared/design_system/design_system.dart';
-import '../../../../shared/widgets/ui/inputs/app_input_text.dart';
+import '../../../../shared/presentation/widgets/ui/inputs/app_input_text.dart';
 
 class _SettingsSurface extends StatelessWidget {
   const _SettingsSurface({

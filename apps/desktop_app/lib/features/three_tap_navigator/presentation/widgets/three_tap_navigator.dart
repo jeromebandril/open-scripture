@@ -7,7 +7,7 @@ import '../../../../shared/design_system/design_system.dart';
 import '../../../../shared/domain/entities/bible_book.dart';
 import '../../../../shared/domain/entities/bible_id.dart';
 import '../../../../shared/domain/entities/localized_book.dart';
-import '../../../../shared/widgets/dropdown_menu_anchor.dart';
+import '../../../../shared/presentation/widgets/dropdown_menu_anchor.dart';
 import '../../../bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../../../bible_searchbar/search/presentation/state/search_bloc.dart';
 import '../state/three_tap_navigator_cubit.dart';

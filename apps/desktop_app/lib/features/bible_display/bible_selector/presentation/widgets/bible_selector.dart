@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/di/injection_container.dart' as di;
 import '../../../../../shared/design_system/design_system.dart';
 import '../../../../../shared/enums/bible_repository_type.dart';
-import '../../../../../shared/widgets/ui/b_container_tab_bar.dart';
+import '../../../../../shared/presentation/widgets/ui/b_container_tab_bar.dart';
 import '../../../../my_library/presentation/state/my_library_cubit.dart';
 import '../../../bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../../../bible_pane/presentation/widgets/pane_info.dart';

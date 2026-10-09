@@ -6,7 +6,7 @@ import '../../../../../app/extensions/font_weight.dart';
 import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../../shared/domain/entities/verse.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
-import '../../../settings/presentation/models/bible_view_font_weight_flutter.dart';
+import '../../../../../shared/presentation/models/display_option_flutter.dart';
 import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
 import '../../domain/entities/word_info.dart';
 import '../rendering/verse_ref_label.dart';

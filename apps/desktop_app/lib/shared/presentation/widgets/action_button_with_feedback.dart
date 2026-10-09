@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-import '../design_system/design_system.dart';
+import '../../design_system/design_system.dart';
 
 // TODO: for now it just shows success feedback, implement also error
 

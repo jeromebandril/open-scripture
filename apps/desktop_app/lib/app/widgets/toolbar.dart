@@ -10,7 +10,7 @@ import '../../features/shortcuts/domain/models/app_command.dart';
 import '../../features/shortcuts/presentation/models/app_command_shortcuts.dart';
 import '../../features/shortcuts/presentation/widgets/shortcut_view.dart';
 import '../../shared/design_system/tokens/tokens.dart';
-import '../../shared/widgets/dropdown_menu_anchor.dart';
+import '../../shared/presentation/widgets/dropdown_menu_anchor.dart';
 import '../state/fullscreen_cubit.dart';
 import '../state/interface_visibility_cubit.dart';
 

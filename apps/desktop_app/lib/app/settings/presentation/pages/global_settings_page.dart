@@ -6,8 +6,8 @@ import '../../../../features/bible_display/settings/bible_view_settings.dart';
 import '../../../../features/bible_searchbar/settings/search_settings.dart';
 import '../../../../features/settings_window/presentation/widgets/setting_option.dart';
 import '../../../../features/settings_window/presentation/widgets/setting_section.dart';
-import '../../../../shared/widgets/ui/inputs/app_input_bool.dart';
-import '../../../../shared/widgets/ui/inputs/app_input_option.dart';
+import '../../../../shared/presentation/widgets/ui/inputs/app_input_bool.dart';
+import '../../../../shared/presentation/widgets/ui/inputs/app_input_option.dart';
 import '../../global_settings.dart';
 
 extension _ThemeModeIcons on ThemeMode {

@@ -3,7 +3,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
-import '../../../../../app/models/gradient_preset.dart';
+import '../../../../../../app/models/gradient_preset.dart';
 
 class ColorCircle extends StatelessWidget {
   const ColorCircle({
