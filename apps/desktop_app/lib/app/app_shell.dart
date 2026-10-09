@@ -8,6 +8,8 @@ import '../features/bible_display/multi_pane_manager/presentation/widgets/multi_
 import '../features/bible_searchbar/history/presentation/widgets/history_list.dart';
 import '../features/bible_searchbar/history/presentation/widgets/show_history_button.dart';
 import '../features/bible_searchbar/search/presentation/widgets/bible_searchbar.dart';
+import '../features/bible_searchbar/settings/domain/entities/searchbar_appearance_option.dart';
+import '../features/bible_searchbar/settings/search_settings.dart';
 import '../features/obs_live_overlay/presentation/widgets/obs_live_overlay_indicator.dart';
 import '../features/remote_controller/presentation/widgets/remote_controller_indicator.dart';
 import '../features/shortcuts/presentation/widgets/shortcuts_focus_scope.dart';
@@ -34,8 +36,9 @@ class AppShell extends StatelessWidget {
         .select((InterfaceVisibilityCubit i) => i.state.isToolbarVisible);
     final showHistory = context
         .select((InterfaceVisibilityCubit i) => i.state.isHistoryVisible);
-    final collapseSearchbarToIcon = context.select(
-        (SettingsCubit<GlobalSettings> s) => s.state.collapseSearchbarToIcon);
+    final isSearchbarCollapsed = context.select(
+        (SettingsCubit<SearchSettings> s) =>
+            s.state.searchbarAppearance == SearchbarAppearanceOption.collapsed);
 
     final screen = MediaQuery.of(context).size;
 
@@ -58,10 +61,8 @@ class AppShell extends StatelessWidget {
                 showMenuBar: true,
                 showLogo: !isFullscreen && !kIsWeb,
                 showButtons: !isFullscreen && !kIsWeb,
-                leftItems:
-                    collapseSearchbarToIcon ? const [_AppHeader()] : null,
-                centerItems:
-                    collapseSearchbarToIcon ? null : [const _AppHeader()],
+                leftItems: isSearchbarCollapsed ? const [_AppHeader()] : null,
+                centerItems: isSearchbarCollapsed ? null : [const _AppHeader()],
                 rightItems: kIsWeb
                     ? null
                     : const [
@@ -87,7 +88,7 @@ class AppShell extends StatelessWidget {
                         //
                         // Dynamic searchbar
                         //
-                        if (enableDynamicInterface || collapseSearchbarToIcon)
+                        if (enableDynamicInterface || isSearchbarCollapsed)
                           const DynamicSearchbar(),
                         //
                         // Dynamic History viewer
@@ -130,15 +131,17 @@ class _AppHeader extends StatelessWidget {
     final globalSettings = context.select((SettingsCubit<GlobalSettings> c) => (
           enable3TapNavigator: c.state.enable3TapNavigator,
           enableAdaptiveTitlebar: c.state.enableAdaptiveTitlebar,
-          collapseSearchbarToIcon: c.state.collapseSearchbarToIcon
         ));
     final screenWidth = MediaQuery.of(context).size.width;
+    final isSearchbarCollapsed = context.select(
+        (SettingsCubit<SearchSettings> c) =>
+            c.state.searchbarAppearance == SearchbarAppearanceOption.collapsed);
 
     final threeTapNav = globalSettings.enable3TapNavigator
         ? const ThreeTapNavigatorTrigger()
         : const SizedBox();
 
-    final searchbar = globalSettings.collapseSearchbarToIcon
+    final searchbar = isSearchbarCollapsed
         ? IconButton(
             tooltip: 'Search reference',
             onPressed: () =>
@@ -160,7 +163,7 @@ class _AppHeader extends StatelessWidget {
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      spacing: globalSettings.collapseSearchbarToIcon ? 0 : AppSpacing.xs,
+      spacing: isSearchbarCollapsed ? 0 : AppSpacing.xs,
       children: [
         threeTapNav,
         searchbar,

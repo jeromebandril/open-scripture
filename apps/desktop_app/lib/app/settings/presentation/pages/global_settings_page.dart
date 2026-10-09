@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/settings/settings_cubit.dart';
 import '../../../../features/bible_display/settings/bible_view_settings.dart';
+import '../../../../features/bible_searchbar/settings/domain/entities/searchbar_appearance_option.dart';
 import '../../../../features/bible_searchbar/settings/search_settings.dart';
 import '../../../../features/settings_window/presentation/widgets/setting_option.dart';
 import '../../../../features/settings_window/presentation/widgets/setting_section.dart';
@@ -100,13 +101,22 @@ class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
                   label: 'Collapse searchbar to icon button',
                   description:
                       'Moves the search bar to the start of the titlebar and collapses it into an icon. Click the icon to expand the search field',
-                  child: AppInputBool(
-                    value: context.select((SettingsCubit<GlobalSettings> c) =>
-                        c.state.collapseSearchbarToIcon),
+                  child: AppInputOption<SearchbarAppearanceOption>(
+                    value: context.select((SettingsCubit<SearchSettings> c) =>
+                        c.state.searchbarAppearance),
                     onChanged: (val) {
-                      cubit.update(
-                          (a) => a.copyWith(collapseSearchbarToIcon: val));
+                      context
+                          .read<SettingsCubit<SearchSettings>>()
+                          .update((a) => a.copyWith(searchbarAppearance: val));
                     },
+                    items: SearchbarAppearanceOption.values
+                        .map(
+                          (opt) => AppDropdownItem<SearchbarAppearanceOption>(
+                            value: opt,
+                            label: opt.name,
+                          ),
+                        )
+                        .toList(),
                   )),
             ],
           ),

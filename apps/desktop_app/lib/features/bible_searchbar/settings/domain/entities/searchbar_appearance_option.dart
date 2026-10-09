@@ -1,0 +1,4 @@
+enum SearchbarAppearanceOption {
+  normal,
+  collapsed;
+}
