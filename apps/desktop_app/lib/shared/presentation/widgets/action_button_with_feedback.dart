@@ -71,8 +71,7 @@ class ActionButtonWithFeedbackState extends State<ActionButtonWithFeedback> {
         : AppColors.successDark;
     final successIcon = Icon(LucideIcons.circleCheckBig, color: successColor);
     final onPressed = _showFeedback ? null : () async => await _resetAssets();
-    final icon =
-        _showFeedback ? successIcon : const Icon(LucideIcons.rotateCcw);
+    final icon = _showFeedback ? successIcon : widget.icon;
     final label = _showFeedback
         ? Text(widget.successLabel, style: TextStyle(color: successColor))
         : Text(widget.label);

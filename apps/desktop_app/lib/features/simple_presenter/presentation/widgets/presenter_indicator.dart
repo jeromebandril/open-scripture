@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-import '../../../../shared/design_system/tokens/spacing.dart';
 import '../../../../shared/presentation/widgets/service_status_indicator_shell.dart';
 import '../cubit/presenter_cubit.dart';
 
@@ -22,9 +20,14 @@ class PresenterIndicator extends StatelessWidget {
         }
 
         return ServiceStatusIndicatorShell(
-          label: Text(
-            state.getCurrentSlide()!.title,
-            style: textTheme.bodySmall,
+          label: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 120),
+            child: Text(
+              state.getCurrentSlide()!.title,
+              style: textTheme.bodySmall,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
           icon: LucideIcons.rectangleCircle,
           onIconPressed: () {},

@@ -15,3 +15,8 @@ enum AppFontWeight {
   extraBold,
   black;
 }
+
+enum AppPosition {
+  top,
+  bottom,
+}

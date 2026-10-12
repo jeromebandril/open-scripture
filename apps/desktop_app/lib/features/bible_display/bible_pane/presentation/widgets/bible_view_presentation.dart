@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../shared/domain/entities/bible_ref.dart';
+import '../../../../../shared/presentation/models/display_option_flutter.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../../../settings/bible_view_settings.dart';
-import '../../../settings/domain/entities/bible_view_options.dart';
-import '../../../../../shared/presentation/models/display_option_flutter.dart';
 import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
+import '../rendering/inline_verse_number_builder.dart';
 import '../rendering/verse_richtext_builder.dart';
 import '../state/bible_pane_bloc.dart';
 
@@ -191,50 +191,16 @@ class BibleViewPresentation extends StatelessWidget {
 
       result.addAll([
         const TextSpan(text: '   '),
-        _buildVerseNumber(ref.verseStart!, viewSettings),
+        InlineVerseNumberBuilder.build(
+          settings: viewSettings,
+          number: ref.verseStart!,
+          style: viewSettings.inlineVerseNumberStyle,
+        ),
         const TextSpan(text: ' '),
         ...spans,
       ]);
     }
 
     return result;
-  }
-
-  static InlineSpan _buildVerseNumber(
-    int number,
-    BibleViewSettings viewSettings,
-  ) {
-    final label = number.toString();
-
-    if (viewSettings.inlineVerseNumberStyle == InlineVerseNumberStyle.simple) {
-      return TextSpan(
-        text: label,
-        style: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
-          color: viewSettings.selectedRefColor,
-          decoration: TextDecoration.underline,
-        ),
-      );
-    }
-
-    return WidgetSpan(
-      alignment: PlaceholderAlignment.middle,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 2.5, vertical: 2),
-        decoration: BoxDecoration(
-          color: viewSettings.selectedRefColor.withAlpha(35),
-          borderRadius: BorderRadius.circular(4),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 3,
-            fontWeight: FontWeight.bold,
-            color: viewSettings.selectedRefColor,
-          ),
-        ),
-      ),
-    );
   }
 }

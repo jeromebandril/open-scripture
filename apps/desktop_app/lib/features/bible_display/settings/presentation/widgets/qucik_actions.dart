@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../../app/settings/global_settings.dart';
 import '../../../../../core/settings/settings_cubit.dart';
@@ -54,6 +55,7 @@ class QuickActions extends StatelessWidget {
                 onPressed: () => _resetColors(context),
                 label: 'Reset colors',
                 successLabel: 'Colors reset',
+                icon: const Icon(LucideIcons.rotateCcw),
                 buttonBuilder: (onPressed, icon, label) {
                   return TextButton.icon(
                     onPressed: onPressed,
@@ -70,6 +72,7 @@ class QuickActions extends StatelessWidget {
                 onPressed: () => _resetEverything(context),
                 label: 'Reset all',
                 successLabel: 'Reset',
+                icon: const Icon(LucideIcons.eraser),
                 buttonBuilder: (onPressed, icon, label) {
                   return TextButton.icon(
                     onPressed: onPressed,

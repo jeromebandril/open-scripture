@@ -8,6 +8,7 @@ import '../../../../../shared/presentation/widgets/ui/inputs/app_input_number.da
 import '../../../../../shared/presentation/widgets/ui/inputs/app_input_option.dart';
 import '../../../../settings_window/presentation/widgets/setting_option.dart';
 import '../../../../settings_window/presentation/widgets/setting_section.dart';
+import '../../../bible_pane/presentation/rendering/inline_verse_number_builder.dart';
 import '../../bible_view_settings.dart';
 import '../../domain/entities/bible_view_options.dart';
 
@@ -27,6 +28,19 @@ class _BibleViewPresentationSettingsTabState
   Widget build(BuildContext context) {
     final cubit = context.read<SettingsCubit<BibleViewSettings>>();
 
+    final fontWeightItems = AppFontWeight.values
+        .map(
+          (fw) => AppDropdownItem<AppFontWeight>(
+            value: fw,
+            label: fw.name,
+            leading: Text(
+              "Aa",
+              style: TextStyle(fontWeight: fw.toFlutter()),
+            ),
+          ),
+        )
+        .toList();
+
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -44,10 +58,7 @@ class _BibleViewPresentationSettingsTabState
                     onChanged: (fw) {
                       cubit.update((s) => s.copyWith(subtitleFontWeight: fw));
                     },
-                    items: AppFontWeight.values
-                        .map((fw) => AppDropdownItem<AppFontWeight>(
-                            value: fw, label: fw.name))
-                        .toList(),
+                    items: fontWeightItems,
                   )),
               SettingOption(
                   label: 'Title alignment',
@@ -93,8 +104,19 @@ class _BibleViewPresentationSettingsTabState
                           (s) => s.copyWith(inlineVerseNumberStyle: vns));
                     },
                     items: InlineVerseNumberStyle.values
-                        .map((vns) => AppDropdownItem<InlineVerseNumberStyle>(
-                            value: vns, label: vns.name))
+                        .map(
+                          (vns) => AppDropdownItem<InlineVerseNumberStyle>(
+                            value: vns,
+                            label: vns.name,
+                            leading: Text.rich(
+                              InlineVerseNumberBuilder.build(
+                                settings: cubit.state,
+                                number: 7,
+                                style: vns,
+                              ),
+                            ),
+                          ),
+                        )
                         .toList(),
                   )),
             ],

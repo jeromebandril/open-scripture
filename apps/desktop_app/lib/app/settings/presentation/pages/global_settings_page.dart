@@ -98,9 +98,12 @@ class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
                     },
                   )),
               SettingOption(
-                  label: 'Collapse searchbar to icon button',
-                  description:
-                      'Moves the search bar to the start of the titlebar and collapses it into an icon. Click the icon to expand the search field',
+                  label: 'Searchbar appearance',
+                  description: '''
+* Normal -- shows the search bar in the middle of the titlebar, with a fixed width.
+* Collapsed -- Moves the search bar to the start of the titlebar and collapses it into an icon. Click the icon to expand the search field
+                      
+                      ''',
                   child: AppInputOption<SearchbarAppearanceOption>(
                     value: context.select((SettingsCubit<SearchSettings> c) =>
                         c.state.searchbarAppearance),
