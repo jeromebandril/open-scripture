@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../core/di/injection_container.dart' as di;
 import '../../core/infrastructure/notifications/notification_bus.dart';
 import '../../core/infrastructure/notifications/notification_data.dart';
+import '../../features/bible_display/settings/presentation/widgets/bible_view_settings_provider.dart';
 import '../../shared/design_system/design_system.dart';
 
 class _NotificationEntry {
@@ -185,27 +186,38 @@ class _NotificationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final backgroundColor = colorScheme.onSurface;
+    final bgBrightness =
+        BibleViewSettingsScope.colorschemeOf(context).brightness;
+    final colors = switch (bgBrightness) {
+      Brightness.dark => (
+          bgColor: colorScheme.onSurface,
+          textColor: colorScheme.surfaceContainerHighest
+        ),
+      Brightness.light => (
+          bgColor: colorScheme.surfaceContainerHighest,
+          textColor: colorScheme.onSurface
+        ),
+    };
 
     final config = switch (notification.type) {
       NotificationType.info => (
           // color: colorScheme.primary,
-          color: colorScheme.surfaceContainerHighest,
+          color: colors.textColor,
           icon: Icons.info_outline_rounded,
         ),
       NotificationType.success => (
           // color: Colors.green.shade600,
-          color: colorScheme.surfaceContainerHighest,
+          color: colors.textColor,
           icon: Icons.check_circle_outline_rounded,
         ),
       NotificationType.warning => (
           // color: Colors.orange.shade700,
-          color: colorScheme.surfaceContainerHighest,
+          color: colors.textColor,
           icon: Icons.warning_amber_rounded,
         ),
       NotificationType.error => (
           // color: colorScheme.error,
-          color: colorScheme.surfaceContainerHighest,
+          color: colors.textColor,
           icon: Icons.error_outline_rounded,
         ),
     };
@@ -214,7 +226,7 @@ class _NotificationCard extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(14, 13, 8, 13),
       height: 44,
       decoration: BoxDecoration(
-        color: backgroundColor,
+        color: colors.bgColor,
         borderRadius: BorderRadius.circular(AppRadius.lg),
         boxShadow: [
           BoxShadow(
@@ -245,7 +257,7 @@ class _NotificationCard extends StatelessWidget {
             style: theme.textTheme.bodyMedium?.copyWith(
               height: 1.35,
               fontWeight: FontWeight.w500,
-              color: colorScheme.surfaceContainerHighest,
+              color: colors.textColor,
             ),
           ),
           const SizedBox(width: 4),
@@ -255,7 +267,7 @@ class _NotificationCard extends StatelessWidget {
             icon: Icon(
               Icons.close_rounded,
               size: 17,
-              color: colorScheme.surfaceContainerHighest,
+              color: colors.textColor,
             ),
           )
         ],
