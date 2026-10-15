@@ -19,7 +19,7 @@ class MyMenuBar extends StatelessWidget {
           onPressed: () {
             context.pushWindow(
               builder: (_) => SettingsWindow(
-                initialPage: SettingsPage.globalAppearance,
+                initialPage: SettingsPage.globalPrefs,
               ),
             );
           },

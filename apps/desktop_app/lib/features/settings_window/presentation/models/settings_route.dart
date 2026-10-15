@@ -12,7 +12,7 @@ import '../../../shortcuts/presentation/pages/shortcuts_screen.dart';
 import '../pages/about_setting_page.dart';
 
 enum SettingsGroup {
-  appearance('Appearance'),
+  customization('Customization'),
   bibleManager('Bible Manager'),
   tools('Tools'),
   others('Others');
@@ -22,17 +22,17 @@ enum SettingsGroup {
 }
 
 enum SettingsPage {
-  globalAppearance(
-    route: '/appearance/global',
+  globalPrefs(
+    route: '/customization/global',
     name: 'Global',
     icon: LucideIcons.settings,
-    group: SettingsGroup.appearance,
+    group: SettingsGroup.customization,
   ),
   bibleViewer(
-    route: '/appearance/bibleview',
+    route: '/customization/bibleview',
     name: 'Bible viewer',
     icon: LucideIcons.palette,
-    group: SettingsGroup.appearance,
+    group: SettingsGroup.customization,
   ),
   library(
     route: '/biblemanager/library',
@@ -106,7 +106,7 @@ enum SettingsPage {
 }
 
 final Map<SettingsPage, WidgetBuilder> settingsBuilders = {
-  SettingsPage.globalAppearance: (_) => const GlobalSettingsPage(),
+  SettingsPage.globalPrefs: (_) => const GlobalSettingsPage(),
   SettingsPage.bibleViewer: (_) => const BibleViewSettingsPage(),
   SettingsPage.library: (_) => const LibrariesPage(),
   SettingsPage.importer: (_) => const ImporterPage(),

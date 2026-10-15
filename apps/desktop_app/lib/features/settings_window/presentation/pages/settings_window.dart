@@ -11,7 +11,7 @@ class SettingsWindow extends StatefulWidget {
   final Function()? onClose;
 
   const SettingsWindow({
-    this.initialPage = SettingsPage.globalAppearance,
+    this.initialPage = SettingsPage.globalPrefs,
     this.onClose,
     super.key,
   });
