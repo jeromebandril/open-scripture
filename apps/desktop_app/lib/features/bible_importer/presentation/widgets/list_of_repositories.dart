@@ -23,6 +23,12 @@ class ListOfBibleRepositories extends StatelessWidget {
       repoType: BibleRepositoryType.localDatabase,
     ),
     BibleSource(
+      name: 'bzerangue/osis-bibles',
+      url: 'https://github.com/bzerangue/osis-bibles',
+      description: '(GitHub). Download OSIS files from here.',
+      repoType: BibleRepositoryType.sword,
+    ),
+    BibleSource(
       name: 'crosswire sword bibles',
       url: 'https://www.crosswire.org/sword/modules/ModDisp.jsp?modType=Bibles',
       description:

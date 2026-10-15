@@ -159,8 +159,7 @@ class BibleViewPresentation extends StatelessWidget {
               : spansByRef.values.first;
 
       final langNativeName = data.meta.langNativeName;
-      final subtitle =
-          '[${data.meta.name}${langNativeName != null ? ' - $langNativeName' : ''}]';
+      final subtitle = '${langNativeName ?? ''}  ';
 
       blocks.add((
         subtitle: subtitle,
