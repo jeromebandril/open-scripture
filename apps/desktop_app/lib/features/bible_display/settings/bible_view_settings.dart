@@ -1,31 +1,22 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import '../../../shared/domain/entities/display_options.dart';
-import '../../../shared/utils/colors_util.dart';
 import '../bible_pane/domain/display_mode.dart';
+import '../colorschemes/domain/entities/bible_view_colorscheme.dart';
 import 'domain/entities/bible_view_options.dart';
 
 abstract class _Keys {
   static const enableAutoScrollToVerse = 'enableAutoScrollToVerse';
   static const verseFontFamily = 'verseFontFamily';
-  static const verseColor = 'verseColor';
-  static const backgroundColor = 'backgroundColor';
-  static const selectedRefColor = 'selectedRefColor';
-  static const refColor = 'refColor';
-  static const useAppTheme = 'useAppTheme';
   static const verseFontWeight = 'verseFontWeight';
   static const widthAdjustmentOffset = 'widthAdjustmentOffset';
   static const refFontFamily = 'refFontFamily';
   static const xPadding = 'xPadding';
   static const splitscreenGap = 'splitscreenGap';
-  static const quoteColor = 'quoteColor';
-  static const addColor = 'addColor';
   static const enableStrongWordsRender = 'enableStrongWordsRender';
   static const selectedRefFontWeight = 'selectedRefFontWeight';
   static const refFontWeight = 'refFontWeight';
   static const underlineRefs = 'underlineRefs';
   static const showVerseDivider = 'showVerseDivider';
-  static const verseDividerColor = 'verseDividerColor';
   static const showAlwaysFullRef = 'showAlwaysFullRef';
   static const highlightRenderMode = 'highlightRenderMode';
   static const listParallelSpacing = 'listParallelSpacing';
@@ -44,13 +35,17 @@ abstract class _Keys {
   static const pericopeSpacingTop = 'pericopeSpacingTop';
   static const pericopeSpacingBottom = 'pericopeSpacingBottom';
   static const pericopeUnderline = 'pericopeUnderline';
-  static const pericopeColor = 'pericopeColor';
-  static const strongWordsUnderlineColor = 'strongWordsUnderlineColor';
+  static const colorscheme = 'colorscheme';
 }
 
 class BibleViewSettings extends Equatable {
   // --- behavior (not view-specific)
   final bool enableAutoScrollToVerse;
+
+  // --- COLORS (all colors live in a BibleViewColorscheme, selected by name) ---
+  /// Name of the colorscheme to use. Resolve it with
+  /// [BibleViewColorscheme.resolve]; if nothing matches, the default is used.
+  final String colorschemeName;
 
   // --- GENERAL (shared appearance, applies to every view type) ---
   final String verseFontFamily;
@@ -58,10 +53,6 @@ class BibleViewSettings extends Equatable {
   final AppFontWeight verseFontWeight;
   final AppFontWeight refFontWeight;
   final AppFontWeight selectedRefFontWeight;
-  final Color backgroundColor;
-  final Color selectedRefColor;
-  final Color verseColor;
-  final Color refColor;
   final double? verseLetterSpacing;
   // other
   final double widthAdjustmentOffset;
@@ -70,23 +61,16 @@ class BibleViewSettings extends Equatable {
   final List<DisplayMode> enabledDisplayModes;
   final DisplayMode defaultDisplayMode;
   // behavior
-  final bool useAppTheme;
   final bool enableStrongWordsRender;
-  // special render
-  final Color quoteColor;
-  final Color addColor;
-  final Color strongWordsUnderlineColor;
   // pericope
   final bool enablePericope;
   final double pericopeSpacingTop;
   final double pericopeSpacingBottom;
   final bool pericopeUnderline;
-  final Color pericopeColor;
 
   // --- LIST view ---
   final bool underlineRefs;
   final bool showVerseDivider;
-  final Color verseDividerColor;
   final bool showAlwaysFullRef;
   final HighlightRenderMode highlightRenderMode;
   final double listParallelSpacing;
@@ -105,14 +89,10 @@ class BibleViewSettings extends Equatable {
 
   const BibleViewSettings({
     this.enableAutoScrollToVerse = true,
+    this.colorschemeName = BibleViewColorscheme.defaultLightName,
     this.verseFontFamily = 'General Sans',
-    this.verseColor = const Color(0xFFB9B9B9),
-    this.backgroundColor = const Color(0xFF0C0C0C),
-    this.selectedRefColor = const Color(0xFFA390FF),
-    this.refColor = const Color(0xFF81811E),
     // ignore: avoid_init_to_null
     this.verseLetterSpacing = null,
-    this.useAppTheme = false,
     this.verseFontWeight = AppFontWeight.regular,
     this.widthAdjustmentOffset = 0.0,
     this.refFontFamily = 'General Sans',
@@ -123,20 +103,15 @@ class BibleViewSettings extends Equatable {
       DisplayMode.presentation
     ],
     this.defaultDisplayMode = DisplayMode.list,
-    this.quoteColor = const Color(0xFFE04A4A),
-    this.addColor = const Color(0xFFD2D2D2),
-    this.strongWordsUnderlineColor = const Color(0x42000000),
     this.enablePericope = true,
     this.pericopeSpacingTop = 10,
     this.pericopeSpacingBottom = 10,
     this.pericopeUnderline = true,
-    this.pericopeColor = const Color(0xFFB9B9B9),
     this.enableStrongWordsRender = false,
     this.selectedRefFontWeight = AppFontWeight.semiBold,
     this.refFontWeight = AppFontWeight.medium,
     this.underlineRefs = false,
     this.showVerseDivider = true,
-    this.verseDividerColor = const Color(0xFFCCCCCC),
     this.showAlwaysFullRef = true,
     this.highlightRenderMode = HighlightRenderMode.fullRefWithColor,
     this.listParallelSpacing = 32,
@@ -151,40 +126,25 @@ class BibleViewSettings extends Equatable {
   });
 
   factory BibleViewSettings.defaultThemeDark() => const BibleViewSettings(
-        verseColor: Color(0xFFB9B9B9),
-        backgroundColor: Color(0xFF0C0C0C),
-        selectedRefColor: Color(0xFFA390FF),
-        addColor: Color(0xFFD2D2D2),
         verseFontWeight: AppFontWeight.medium,
         refFontWeight: AppFontWeight.medium,
         selectedRefFontWeight: AppFontWeight.semiBold,
-        pericopeColor: Color(0xFFB9B9B9),
-        verseDividerColor: Color(0xFF333333),
+        colorschemeName: BibleViewColorscheme.defaultDarkName,
       );
 
   factory BibleViewSettings.defaultThemeLight() => const BibleViewSettings(
-        verseColor: Color(0xFF0C0C0C),
-        backgroundColor: Color.fromARGB(255, 240, 240, 240),
-        selectedRefColor: Color.fromARGB(255, 114, 34, 218),
-        addColor: Color(0xFF858585),
-        strongWordsUnderlineColor: Color(0x42000000),
         verseFontWeight: AppFontWeight.medium,
         refFontWeight: AppFontWeight.medium,
         selectedRefFontWeight: AppFontWeight.semiBold,
-        pericopeColor: Color(0xFF0C0C0C),
-        verseDividerColor: Color(0xFFCCCCCC),
+        colorschemeName: BibleViewColorscheme.defaultLightName,
       );
 
   BibleViewSettings copyWith({
     bool? enableAutoScrollToVerse,
+    String? colorschemeName,
     String? verseFontFamily,
-    Color? verseColor,
-    Color? backgroundColor,
-    Color? selectedRefColor,
-    Color? refColor,
     double? Function()? textHeight,
     double? Function()? verseLetterSpacing,
-    bool? useAppTheme,
     AppFontWeight? verseFontWeight,
     double? widthAdjustmentOffset,
     String? refFontFamily,
@@ -192,21 +152,16 @@ class BibleViewSettings extends Equatable {
     double? splitscreenGap,
     List<DisplayMode>? enabledDisplayModes,
     DisplayMode? defaultDisplayMode,
-    Color? quoteColor,
-    Color? addColor,
-    Color? strongWordsUnderlineColor,
     bool? highlightStrongsWordsOnHover,
     bool? enablePericope,
     double? pericopeSpacingTop,
     double? pericopeSpacingBottom,
     bool? pericopeUnderline,
-    Color? pericopeColor,
     bool? enableStrongWordsRender,
     AppFontWeight? selectedRefFontWeight,
     AppFontWeight? refFontWeight,
     bool? underlineRefs,
     bool? showVerseDivider,
-    Color? verseDividerColor,
     bool? showAlwaysFullRef,
     HighlightRenderMode? highlightRenderMode,
     double? listParallelSpacing,
@@ -222,15 +177,11 @@ class BibleViewSettings extends Equatable {
     return BibleViewSettings(
       enableAutoScrollToVerse:
           enableAutoScrollToVerse ?? this.enableAutoScrollToVerse,
+      colorschemeName: colorschemeName ?? this.colorschemeName,
       verseFontFamily: verseFontFamily ?? this.verseFontFamily,
-      verseColor: verseColor ?? this.verseColor,
-      backgroundColor: backgroundColor ?? this.backgroundColor,
-      selectedRefColor: selectedRefColor ?? this.selectedRefColor,
-      refColor: refColor ?? this.refColor,
       verseLetterSpacing: verseLetterSpacing != null
           ? verseLetterSpacing()
           : this.verseLetterSpacing,
-      useAppTheme: useAppTheme ?? this.useAppTheme,
       verseFontWeight: verseFontWeight ?? this.verseFontWeight,
       widthAdjustmentOffset:
           widthAdjustmentOffset ?? this.widthAdjustmentOffset,
@@ -239,16 +190,11 @@ class BibleViewSettings extends Equatable {
       splitscreenGap: splitscreenGap ?? this.splitscreenGap,
       enabledDisplayModes: enabledDisplayModes ?? this.enabledDisplayModes,
       defaultDisplayMode: defaultDisplayMode ?? this.defaultDisplayMode,
-      quoteColor: quoteColor ?? this.quoteColor,
-      addColor: addColor ?? this.addColor,
-      strongWordsUnderlineColor:
-          strongWordsUnderlineColor ?? this.strongWordsUnderlineColor,
       enablePericope: enablePericope ?? this.enablePericope,
       pericopeSpacingTop: pericopeSpacingTop ?? this.pericopeSpacingTop,
       pericopeSpacingBottom:
           pericopeSpacingBottom ?? this.pericopeSpacingBottom,
       pericopeUnderline: pericopeUnderline ?? this.pericopeUnderline,
-      pericopeColor: pericopeColor ?? this.pericopeColor,
       enableStrongWordsRender:
           enableStrongWordsRender ?? this.enableStrongWordsRender,
       selectedRefFontWeight:
@@ -256,7 +202,6 @@ class BibleViewSettings extends Equatable {
       refFontWeight: refFontWeight ?? this.refFontWeight,
       underlineRefs: underlineRefs ?? this.underlineRefs,
       showVerseDivider: showVerseDivider ?? this.showVerseDivider,
-      verseDividerColor: verseDividerColor ?? this.verseDividerColor,
       showAlwaysFullRef: showAlwaysFullRef ?? this.showAlwaysFullRef,
       highlightRenderMode: highlightRenderMode ?? this.highlightRenderMode,
       listParallelSpacing: listParallelSpacing ?? this.listParallelSpacing,
@@ -279,13 +224,9 @@ class BibleViewSettings extends Equatable {
 
   Map<String, dynamic> toJson() => {
         _Keys.enableAutoScrollToVerse: enableAutoScrollToVerse,
+        _Keys.colorscheme: colorschemeName,
         _Keys.verseFontFamily: verseFontFamily,
-        _Keys.verseColor: ColorsUtil.colorToHex(verseColor),
-        _Keys.backgroundColor: ColorsUtil.colorToHex(backgroundColor),
-        _Keys.selectedRefColor: ColorsUtil.colorToHex(selectedRefColor),
-        _Keys.refColor: ColorsUtil.colorToHex(refColor),
         _Keys.verseLetterSpacing: verseLetterSpacing,
-        _Keys.useAppTheme: useAppTheme,
         _Keys.verseFontWeight: verseFontWeight.name,
         _Keys.widthAdjustmentOffset: widthAdjustmentOffset,
         _Keys.refFontFamily: refFontFamily,
@@ -294,21 +235,15 @@ class BibleViewSettings extends Equatable {
         _Keys.enabledDisplayModes:
             enabledDisplayModes.map((e) => e.name).toList(),
         _Keys.defaultDisplayMode: defaultDisplayMode.name,
-        _Keys.quoteColor: ColorsUtil.colorToHex(quoteColor),
-        _Keys.addColor: ColorsUtil.colorToHex(addColor),
-        _Keys.strongWordsUnderlineColor:
-            ColorsUtil.colorToHex(strongWordsUnderlineColor),
         _Keys.enablePericope: enablePericope,
         _Keys.pericopeSpacingTop: pericopeSpacingTop,
         _Keys.pericopeSpacingBottom: pericopeSpacingBottom,
         _Keys.pericopeUnderline: pericopeUnderline,
-        _Keys.pericopeColor: ColorsUtil.colorToHex(pericopeColor),
         _Keys.enableStrongWordsRender: enableStrongWordsRender,
         _Keys.selectedRefFontWeight: selectedRefFontWeight.name,
         _Keys.refFontWeight: refFontWeight.name,
         _Keys.underlineRefs: underlineRefs,
         _Keys.showVerseDivider: showVerseDivider,
-        _Keys.verseDividerColor: verseDividerColor,
         _Keys.showAlwaysFullRef: showAlwaysFullRef,
         _Keys.highlightRenderMode: highlightRenderMode.name,
         _Keys.listParallelSpacing: listParallelSpacing,
@@ -328,24 +263,13 @@ class BibleViewSettings extends Equatable {
     return BibleViewSettings(
       enableAutoScrollToVerse: json[_Keys.enableAutoScrollToVerse] as bool? ??
           defaults.enableAutoScrollToVerse,
+      colorschemeName:
+          json[_Keys.colorscheme] as String? ?? defaults.colorschemeName,
       verseFontFamily:
           json[_Keys.verseFontFamily] as String? ?? defaults.verseFontFamily,
-      verseColor: json[_Keys.verseColor] != null
-          ? Color(ColorsUtil.parseHex(json[_Keys.verseColor] as String))
-          : defaults.verseColor,
-      backgroundColor: json[_Keys.backgroundColor] != null
-          ? Color(ColorsUtil.parseHex(json[_Keys.backgroundColor] as String))
-          : defaults.backgroundColor,
-      selectedRefColor: json[_Keys.selectedRefColor] != null
-          ? Color(ColorsUtil.parseHex(json[_Keys.selectedRefColor] as String))
-          : defaults.selectedRefColor,
-      refColor: json[_Keys.refColor] != null
-          ? Color(ColorsUtil.parseHex(json[_Keys.refColor] as String))
-          : defaults.refColor,
       verseLetterSpacing: json[_Keys.verseLetterSpacing] != null
           ? json[_Keys.verseLetterSpacing] as double
           : defaults.verseLetterSpacing,
-      useAppTheme: json[_Keys.useAppTheme] as bool? ?? defaults.useAppTheme,
       verseFontWeight: json[_Keys.verseFontWeight] != null
           ? AppFontWeight.values.byName(json[_Keys.verseFontWeight] as String)
           : defaults.verseFontWeight,
@@ -364,16 +288,6 @@ class BibleViewSettings extends Equatable {
       defaultDisplayMode: (json[_Keys.defaultDisplayMode] as String?) != null
           ? DisplayMode.values.byName(json[_Keys.defaultDisplayMode] as String)
           : defaults.defaultDisplayMode,
-      quoteColor: json[_Keys.quoteColor] != null
-          ? Color(ColorsUtil.parseHex(json[_Keys.quoteColor] as String))
-          : defaults.quoteColor,
-      addColor: json[_Keys.addColor] != null
-          ? Color(ColorsUtil.parseHex(json[_Keys.addColor] as String))
-          : defaults.addColor,
-      strongWordsUnderlineColor: json[_Keys.strongWordsUnderlineColor] != null
-          ? Color(ColorsUtil.parseHex(
-              json[_Keys.strongWordsUnderlineColor] as String))
-          : defaults.strongWordsUnderlineColor,
       enablePericope:
           json[_Keys.enablePericope] as bool? ?? defaults.enablePericope,
       pericopeSpacingTop:
@@ -384,9 +298,6 @@ class BibleViewSettings extends Equatable {
               defaults.pericopeSpacingBottom,
       pericopeUnderline:
           json[_Keys.pericopeUnderline] as bool? ?? defaults.pericopeUnderline,
-      pericopeColor: json[_Keys.pericopeColor] != null
-          ? Color(ColorsUtil.parseHex(json[_Keys.pericopeColor] as String))
-          : defaults.pericopeColor,
       enableStrongWordsRender: json[_Keys.enableStrongWordsRender] as bool? ??
           defaults.enableStrongWordsRender,
       selectedRefFontWeight: json[_Keys.selectedRefFontWeight] != null
@@ -400,9 +311,6 @@ class BibleViewSettings extends Equatable {
           json[_Keys.underlineRefs] as bool? ?? defaults.underlineRefs,
       showVerseDivider:
           json[_Keys.showVerseDivider] as bool? ?? defaults.showVerseDivider,
-      verseDividerColor: json[_Keys.verseDividerColor] != null
-          ? Color(ColorsUtil.parseHex(json[_Keys.verseDividerColor] as String))
-          : defaults.verseDividerColor,
       showAlwaysFullRef:
           json[_Keys.showAlwaysFullRef] as bool? ?? defaults.showAlwaysFullRef,
       highlightRenderMode: json[_Keys.highlightRenderMode] != null
@@ -445,13 +353,9 @@ class BibleViewSettings extends Equatable {
   @override
   List<Object?> get props => [
         enableAutoScrollToVerse,
+        colorschemeName,
         verseFontFamily,
-        verseColor,
-        backgroundColor,
-        selectedRefColor,
-        refColor,
         verseLetterSpacing,
-        useAppTheme,
         verseFontWeight,
         widthAdjustmentOffset,
         refFontFamily,
@@ -459,20 +363,15 @@ class BibleViewSettings extends Equatable {
         splitscreenGap,
         enabledDisplayModes,
         defaultDisplayMode,
-        quoteColor,
-        addColor,
-        strongWordsUnderlineColor,
         enablePericope,
         pericopeSpacingTop,
         pericopeSpacingBottom,
         pericopeUnderline,
-        pericopeColor,
         enableStrongWordsRender,
         selectedRefFontWeight,
         refFontWeight,
         underlineRefs,
         showVerseDivider,
-        verseDividerColor,
         showAlwaysFullRef,
         highlightRenderMode,
         listParallelSpacing,

@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
 
-import '../../../settings/bible_view_settings.dart';
 import '../../../settings/domain/entities/bible_view_options.dart';
+import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
 
 class InlineVerseNumberBuilder {
   static InlineSpan build({
-    required BibleViewSettings settings,
+    required BuildContext context,
     required int number,
-    required InlineVerseNumberStyle style,
   }) {
+    final viewSettings = BibleViewSettingsScope.of(context);
+    final viewColors = BibleViewSettingsScope.colorschemeOf(context);
+
     final label = number.toString();
 
-    if (style == InlineVerseNumberStyle.simple) {
+    if (viewSettings.inlineVerseNumberStyle == InlineVerseNumberStyle.simple) {
       return TextSpan(
         text: label,
         style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
-          color: settings.selectedRefColor,
+          color: viewColors.selectedRefColor,
           decoration: TextDecoration.underline,
         ),
       );
@@ -28,7 +30,7 @@ class InlineVerseNumberBuilder {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 2.5, vertical: 2),
         decoration: BoxDecoration(
-          color: settings.selectedRefColor.withAlpha(35),
+          color: viewColors.selectedRefColor.withAlpha(35),
           borderRadius: BorderRadius.circular(4),
         ),
         child: Text(
@@ -36,7 +38,7 @@ class InlineVerseNumberBuilder {
           style: TextStyle(
             fontSize: 3,
             fontWeight: FontWeight.bold,
-            color: settings.selectedRefColor,
+            color: viewColors.selectedRefColor,
           ),
         ),
       ),

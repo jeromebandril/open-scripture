@@ -64,7 +64,8 @@ class BiblePane extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewSettings = BibleViewSettingsScope.of(context);
-    final appTheme = Theme.of(context);
+    final viewColors = BibleViewSettingsScope.colorschemeOf(context);
+
     // A BiblePane is self dependent. The bloc components are injected
     // externally, for instance by a splitscreen manager
     //
@@ -84,18 +85,14 @@ class BiblePane extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
-          color: viewSettings.useAppTheme
-              ? appTheme.colorScheme.surface
-              : viewSettings.backgroundColor,
+          color: viewColors.backgroundColor,
         ),
         child: DefaultTextStyle.merge(
           style: TextStyle(
             // Make default color equal to verseColor,
             // so it is always readable on bible view background.
             // The same text color is applied at verse render level.
-            color: viewSettings.useAppTheme
-                ? appTheme.colorScheme.onSurfaceVariant
-                : viewSettings.verseColor,
+            color: viewColors.verseColor,
             fontFamily: viewSettings.verseFontFamily,
             height: kTextHeightNone,
           ),

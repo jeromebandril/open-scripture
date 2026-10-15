@@ -129,15 +129,13 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewSettings = BibleViewSettingsScope.of(context);
+    final viewColors = BibleViewSettingsScope.colorschemeOf(context);
     final theme = Theme.of(context);
 
     return Text(
       'Select bibles',
       style: theme.textTheme.headlineMedium?.copyWith(
-        color: viewSettings.useAppTheme
-            ? theme.colorScheme.onSurfaceVariant
-            : viewSettings.verseColor,
+        color: viewColors.verseColor,
       ),
     );
   }

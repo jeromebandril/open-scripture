@@ -11,16 +11,14 @@ import '../../../../../shared/domain/entities/display_options.dart';
 import '../../../../../shared/fonts/app_font.dart';
 import '../../../../../shared/presentation/models/display_option_flutter.dart';
 import '../../../../../shared/presentation/widgets/ui/inputs/app_input_bool.dart';
-import '../../../../../shared/presentation/widgets/ui/inputs/app_input_color/app_input_color.dart';
 import '../../../../../shared/presentation/widgets/ui/inputs/app_input_number.dart';
 import '../../../../../shared/presentation/widgets/ui/inputs/app_input_option.dart';
 import '../../../../pericopes_mgr/presentation/pages/pericope_customization_page.dart';
 import '../../../../settings_window/presentation/widgets/setting_option.dart';
 import '../../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../../bible_pane/domain/display_mode.dart';
+import '../../../colorschemes/presentation/widgets/colorscheme_selector.dart';
 import '../../bible_view_settings.dart';
-import '../widgets/qucik_actions.dart';
-import 'strong_word_customization_page.dart';
 
 class BibleViewGeneralSettingsTab extends StatefulWidget {
   const BibleViewGeneralSettingsTab({super.key, this.showPreview = false});
@@ -69,147 +67,23 @@ class _BibleViewGeneralSettingsTabState
           child: SingleChildScrollView(
             child: Column(
               children: [
-                SettingSection(
-                  title: 'Bible viewer theme',
-                  actions: [
-                    TextButton.icon(
-                      onPressed: () => context.pushStandardWindow(
-                          title: 'Quick actions',
-                          maxSize: const Size(300, 300),
-                          builder: (_) => const QuickActions()),
-                      icon: Icon(LucideIcons.zap),
-                      label: const Text('Quick actions'),
-                    )
-                  ],
-                  children: [
-                    SettingOption(
-                        label: 'Use app\'s theme',
-                        description:
-                            'Use app\'s theme and its colorscheme. To use custom colors, disabled this.',
-                        settingWidth: 100,
-                        child: AppInputBool(
-                          value: context.select(
-                              (SettingsCubit<BibleViewSettings> c) =>
-                                  c.state.useAppTheme),
-                          onChanged: (val) {
-                            cubit.update((p) => p.copyWith(useAppTheme: val));
-                          },
-                        )),
-                    SettingOption(
-                        label: 'Background color',
-                        description: 'Set color for the background',
-                        child: AppInputColor(
-                          showReset: defaultTheme.backgroundColor !=
-                              context.select(
-                                  (SettingsCubit<BibleViewSettings> c) =>
-                                      c.state.backgroundColor),
-                          onReset: () {
-                            cubit.update((a) => a.copyWith(
-                                backgroundColor: defaultTheme.backgroundColor));
-                          },
-                          isDisabled: context.select(
-                              (SettingsCubit<BibleViewSettings> c) =>
-                                  c.state.useAppTheme),
-                          onColorChanged: (c) {
-                            cubit.update((p) => p.copyWith(backgroundColor: c));
-                          },
-                          color: context.select(
-                            (SettingsCubit<BibleViewSettings> c) =>
-                                c.state.backgroundColor,
-                          ),
-                        )),
-                    SettingOption(
-                        label: 'Verse color',
-                        description: 'Set color for the verse text',
-                        child: AppInputColor(
-                          showReset: defaultTheme.verseColor !=
-                              context.select(
-                                  (SettingsCubit<BibleViewSettings> c) =>
-                                      c.state.verseColor),
-                          onReset: () {
-                            cubit.update((a) => a.copyWith(
-                                verseColor: defaultTheme.verseColor));
-                          },
-                          isDisabled: context.select(
-                              (SettingsCubit<BibleViewSettings> c) =>
-                                  c.state.useAppTheme),
-                          onColorChanged: (c) {
-                            cubit.update((p) => p.copyWith(verseColor: c));
-                          },
-                          color: context.select(
-                            (SettingsCubit<BibleViewSettings> c) =>
-                                c.state.verseColor,
-                          ),
-                        )),
-                    SettingOption(
-                        label: 'Reference color',
-                        description:
-                            'Set color for the verse reference (unselected)',
-                        child: AppInputColor(
-                          showReset: defaultTheme.refColor !=
-                              context.select(
-                                  (SettingsCubit<BibleViewSettings> c) =>
-                                      c.state.refColor),
-                          onReset: () {
-                            cubit.update((a) =>
-                                a.copyWith(refColor: defaultTheme.refColor));
-                          },
-                          isDisabled: context.select(
-                              (SettingsCubit<BibleViewSettings> c) =>
-                                  c.state.useAppTheme),
-                          onColorChanged: (c) {
-                            cubit.update((p) => p.copyWith(refColor: c));
-                          },
-                          color: context.select(
-                            (SettingsCubit<BibleViewSettings> c) =>
-                                c.state.refColor,
-                          ),
-                        )),
-                    SettingOption(
-                        label: 'Selected reference color',
-                        description:
-                            'Set color for the verse reference (selected)',
-                        settingWidth: 250,
-                        child: AppInputColor(
-                          showReset: defaultTheme.selectedRefColor !=
-                              context.select(
-                                  (SettingsCubit<BibleViewSettings> c) =>
-                                      c.state.selectedRefColor),
-                          onReset: () {
-                            cubit.update((a) => a.copyWith(
-                                selectedRefColor:
-                                    defaultTheme.selectedRefColor));
-                          },
-                          isDisabled: context.select(
-                              (SettingsCubit<BibleViewSettings> c) =>
-                                  c.state.useAppTheme),
-                          onColorChanged: (c) {
-                            cubit
-                                .update((p) => p.copyWith(selectedRefColor: c));
-                          },
-                          color: context.select(
-                            (SettingsCubit<BibleViewSettings> c) =>
-                                c.state.selectedRefColor,
-                          ),
-                        )),
-                    // Setting(
-                    //     label: 'Horizontal padding',
-                    //     description: 'Set horizontal padding',
-                    //     child: AppInputNumber(
-                    //       suffixIcon: Icons.percent,
-                    //       min: 0,
-                    //       max: 100,
-                    //       onSubmitted: (n) {
-                    //         cubit.update(
-                    //              (p) =>
-                    //                 p.copyWith(generalViewSettings: cubit.state.copyWith(xPadding: n / 100));
-                    //       },
-                    //       value: context.select(
-                    //         (SettingsCubit<BibleViewSettings> c) =>
-                    //             (c.state.xPadding * 100),
-                    //       ),
-                    //     )),
-                  ],
+                // SettingSection(
+                //   title: 'Bible viewer theme',
+                //   actions: [
+                //     TextButton.icon(
+                //       onPressed: () => context.pushStandardWindow(
+                //           title: 'Quick actions',
+                //           maxSize: const Size(300, 300),
+                //           builder: (_) => const QuickActions()),
+                //       icon: const Icon(LucideIcons.zap),
+                //       label: const Text('Quick actions'),
+                //     )
+                //   ],
+                //   children: [],
+                // ),
+                SettingSection.single(
+                  title: 'Coloscheme',
+                  child: const BibleViewColorschemeSelector(),
                 ),
                 SettingSection(
                   title: 'Render options',
@@ -242,47 +116,6 @@ class _BibleViewGeneralSettingsTabState
                               },
                             ),
                           ],
-                        )),
-                    SettingOption(
-                        label: 'Quote color',
-                        description:
-                            'Set color for the verse quotes (usually "word of jesus")',
-                        child: AppInputColor(
-                          showReset: defaultTheme.quoteColor !=
-                              context.select(
-                                  (SettingsCubit<BibleViewSettings> c) =>
-                                      c.state.quoteColor),
-                          onReset: () {
-                            cubit.update((a) => a.copyWith(
-                                quoteColor: defaultTheme.quoteColor));
-                          },
-                          onColorChanged: (c) {
-                            cubit.update((p) => p.copyWith(quoteColor: c));
-                          },
-                          color: context.select(
-                            (SettingsCubit<BibleViewSettings> c) =>
-                                c.state.quoteColor,
-                          ),
-                        )),
-                    SettingOption(
-                        label: 'Add color',
-                        description: 'Set color for added words',
-                        child: AppInputColor(
-                          showReset: defaultTheme.addColor !=
-                              context.select(
-                                  (SettingsCubit<BibleViewSettings> c) =>
-                                      c.state.addColor),
-                          onReset: () {
-                            cubit.update((a) =>
-                                a.copyWith(addColor: defaultTheme.addColor));
-                          },
-                          onColorChanged: (c) {
-                            cubit.update((p) => p.copyWith(addColor: c));
-                          },
-                          color: context.select(
-                            (SettingsCubit<BibleViewSettings> c) =>
-                                c.state.addColor,
-                          ),
                         )),
                   ],
                 ),
@@ -425,34 +258,35 @@ class _BibleViewGeneralSettingsTabState
                           },
                         )),
                     SettingOption(
-                        label: 'Enable strong words selection',
-                        description:
-                            'Shows a subtle dotted underline for strong words. If clicked, it shows more information',
-                        settingWidth: 100,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          spacing: AppSpacing.sm,
-                          children: [
-                            IconButton(
-                              onPressed: () => context.pushStandardWindow(
-                                title: 'Strong word customization',
-                                maxSize: const Size(600, 400),
-                                builder: (_) =>
-                                    const StrongWordCustomizationPage(),
-                              ),
-                              icon: const Icon(LucideIcons.settings),
-                            ),
-                            AppInputBool(
-                              value: context.select(
-                                  (SettingsCubit<BibleViewSettings> c) =>
-                                      c.state.enableStrongWordsRender),
-                              onChanged: (val) {
-                                cubit.update((p) =>
-                                    p.copyWith(enableStrongWordsRender: val));
-                              },
-                            ),
-                          ],
-                        )),
+                      label: 'Enable strong words selection',
+                      description:
+                          'Shows a subtle dotted underline for strong words. If clicked, it shows more information',
+                      settingWidth: 100,
+                      child: AppInputBool(
+                        value: context.select(
+                            (SettingsCubit<BibleViewSettings> c) =>
+                                c.state.enableStrongWordsRender),
+                        onChanged: (val) {
+                          cubit.update(
+                              (p) => p.copyWith(enableStrongWordsRender: val));
+                        },
+                      ),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.end,
+                      //   spacing: AppSpacing.sm,
+                      //   children: [
+                      //     IconButton(
+                      //       onPressed: () => context.pushStandardWindow(
+                      //         title: 'Strong word customization',
+                      //         maxSize: const Size(600, 400),
+                      //         builder: (_) =>
+                      //             const StrongWordCustomizationPage(),
+                      //       ),
+                      //       icon: const Icon(LucideIcons.settings),
+                      //     ),
+                      //   ],
+                      // ),
+                    ),
                   ],
                 ),
                 SettingSection(

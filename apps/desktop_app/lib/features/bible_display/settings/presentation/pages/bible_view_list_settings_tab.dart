@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../app/settings/global_settings.dart';
 import '../../../../../core/settings/settings_cubit.dart';
 import '../../../../../shared/presentation/widgets/ui/inputs/app_input_bool.dart';
-import '../../../../../shared/presentation/widgets/ui/inputs/app_input_color/app_input_color.dart';
 import '../../../../../shared/presentation/widgets/ui/inputs/app_input_number.dart';
 import '../../../../../shared/presentation/widgets/ui/inputs/app_input_option.dart';
 import '../../../../settings_window/presentation/widgets/setting_option.dart';
@@ -50,28 +49,6 @@ class _BibleViewListSettingsTabState extends State<BibleViewListSettingsTab> {
                     onChanged: (val) {
                       cubit.update((l) => l.copyWith(showVerseDivider: val));
                     },
-                  )),
-              SettingOption(
-                  label: 'Verse divider color',
-                  description: 'Set color for verse divider',
-                  child: AppInputColor(
-                    showReset: defaultTheme.verseDividerColor !=
-                        context.select((SettingsCubit<BibleViewSettings> c) =>
-                            c.state.verseDividerColor),
-                    onReset: () {
-                      cubit.update((a) => a.copyWith(
-                          verseDividerColor: defaultTheme.verseDividerColor));
-                    },
-                    isDisabled: context.select(
-                        (SettingsCubit<BibleViewSettings> c) =>
-                            c.state.useAppTheme),
-                    onColorChanged: (c) {
-                      cubit.update((p) => p.copyWith(verseDividerColor: c));
-                    },
-                    color: context.select(
-                      (SettingsCubit<BibleViewSettings> c) =>
-                          c.state.verseDividerColor,
-                    ),
                   )),
               SettingOption(
                   label: 'Show full ref',

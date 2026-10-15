@@ -6,9 +6,9 @@ import '../../../../../app/extensions/font_weight.dart';
 import '../../../../../core/settings/settings_cubit.dart';
 import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../../shared/domain/entities/verse.dart';
+import '../../../../../shared/presentation/models/display_option_flutter.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../../../settings/bible_view_settings.dart';
-import '../../../../../shared/presentation/models/display_option_flutter.dart';
 import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
 import '../../domain/entities/word_info.dart';
 import '../rendering/verse_ref_label.dart';
@@ -246,6 +246,7 @@ class _VerseWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewSettings = BibleViewSettingsScope.of(context);
+    final viewColors = BibleViewSettingsScope.colorschemeOf(context);
 
     final refLabel = VerseRefLabel.text(
       verse.ref,
@@ -256,7 +257,7 @@ class _VerseWidget extends StatelessWidget {
 
     final headingStyle = TextStyle(
       fontWeight: FontWeight.bold,
-      color: viewSettings.refColor,
+      color: viewColors.refColor,
       height: 2.0,
     );
 
@@ -334,12 +335,13 @@ class _PericopeRow extends StatelessWidget {
     }
 
     final viewSettings = BibleViewSettingsScope.of(context);
+    final viewColors = BibleViewSettingsScope.colorschemeOf(context);
 
     // Inherit the verse text style so the title follows the font-size setting.
     final style = DefaultTextStyle.of(context).style.copyWith(
           fontWeight: viewSettings.verseFontWeight.toFlutter().stepUp(steps: 1),
-          color: viewSettings.pericopeColor,
-          decorationColor: viewSettings.pericopeColor,
+          color: viewColors.pericopeColor,
+          decorationColor: viewColors.pericopeColor,
           decoration:
               viewSettings.pericopeUnderline ? TextDecoration.underline : null,
         );
@@ -366,4 +368,3 @@ class _PericopeRow extends StatelessWidget {
     );
   }
 }
-// =======================

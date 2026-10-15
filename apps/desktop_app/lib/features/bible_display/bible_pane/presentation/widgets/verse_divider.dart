@@ -44,7 +44,8 @@ class VerseDivider extends StatelessWidget {
             margin: EdgeInsets.symmetric(vertical: spacerHeight / 1.2),
             child: Divider(
               height: 1,
-              color: BibleViewSettingsScope.of(context).verseDividerColor,
+              color: BibleViewSettingsScope.colorschemeOf(context)
+                  .verseDividerColor,
             ),
           )
         : SizedBox(height: spacerHeight);

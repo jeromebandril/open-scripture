@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../../shared/presentation/models/display_option_flutter.dart';
+import '../../../colorschemes/domain/entities/bible_view_colorscheme.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../../../settings/bible_view_settings.dart';
 import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
@@ -20,6 +21,7 @@ class BibleViewPresentation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewSettings = BibleViewSettingsScope.of(context);
+    final viewColors = BibleViewSettingsScope.colorschemeOf(context);
     final screen = MediaQuery.sizeOf(context);
     final panes = context.read<MultiPaneManagerCubit>().state.panes;
 
@@ -58,7 +60,7 @@ class BibleViewPresentation extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 spacing: 32,
                 children: [
-                  _buildTitle(ref, viewSettings),
+                  _buildTitle(ref, viewSettings, viewColors),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -74,6 +76,7 @@ class BibleViewPresentation extends StatelessWidget {
                                 context,
                                 block.subtitle,
                                 viewSettings,
+                                viewColors,
                               ),
                             block.content,
                           ],
@@ -92,6 +95,7 @@ class BibleViewPresentation extends StatelessWidget {
   static Widget _buildTitle(
     BibleRef ref,
     BibleViewSettings viewSettings,
+    BibleViewColorscheme viewColors,
   ) {
     // TODO: make english name be the fallback, prioritize the localized name
     final title = '${ref.book.englishName} ${ref.toStringChapterAndVerse()}';
@@ -102,7 +106,7 @@ class BibleViewPresentation extends StatelessWidget {
       style: TextStyle(
         fontWeight: viewSettings.selectedRefFontWeight.toFlutter(),
         fontFamily: viewSettings.refFontFamily,
-        color: viewSettings.selectedRefColor,
+        color: viewColors.selectedRefColor,
         fontSize: 16,
       ),
     );
@@ -112,14 +116,13 @@ class BibleViewPresentation extends StatelessWidget {
     BuildContext context,
     String subtitle,
     BibleViewSettings viewSettings,
+    BibleViewColorscheme viewColors,
   ) {
     return Text(
       subtitle,
       textAlign: viewSettings.presentationTitleTextAlign.toFlutter(),
       style: TextStyle(
-        color: viewSettings.useAppTheme
-            ? Theme.of(context).colorScheme.primary
-            : viewSettings.refColor,
+        color: viewColors.refColor,
         fontWeight: viewSettings.subtitleFontWeight.toFlutter(),
         fontSize: 8,
       ),
@@ -153,7 +156,7 @@ class BibleViewPresentation extends StatelessWidget {
       };
 
       final children = rangeToDisplay.length > 1
-          ? _interleaveVerseNumbers(rangeToDisplay, spansByRef, viewSettings)
+          ? _interleaveVerseNumbers(rangeToDisplay, spansByRef, context)
           : spansByRef.values.isEmpty
               ? const <InlineSpan>[]
               : spansByRef.values.first;
@@ -180,7 +183,7 @@ class BibleViewPresentation extends StatelessWidget {
   static List<InlineSpan> _interleaveVerseNumbers(
     List<BibleRef> range,
     Map<BibleRef, List<InlineSpan>> spansByRef,
-    BibleViewSettings viewSettings,
+    BuildContext context,
   ) {
     final result = <InlineSpan>[];
 
@@ -191,9 +194,8 @@ class BibleViewPresentation extends StatelessWidget {
       result.addAll([
         const TextSpan(text: '   '),
         InlineVerseNumberBuilder.build(
-          settings: viewSettings,
+          context: context,
           number: ref.verseStart!,
-          style: viewSettings.inlineVerseNumberStyle,
         ),
         const TextSpan(text: ' '),
         ...spans,

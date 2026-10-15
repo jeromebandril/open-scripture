@@ -19,10 +19,8 @@ class MultiPaneContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BibleViewSettingsProvider(
-      child: _PaneContainerDecoration(
-        child: _PaneList(),
-      ),
+    return _PaneContainerDecoration(
+      child: _PaneList(),
     );
   }
 }
@@ -35,6 +33,8 @@ class _PaneContainerDecoration extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewSettings = BibleViewSettingsScope.of(context);
+    final viewColors = BibleViewSettingsScope.colorschemeOf(context);
+
     final offset = viewSettings.widthAdjustmentOffset;
     final isFullscreen = context.select((FullscreenCubit f) => f.state);
     final showMenuBar = context.select(
@@ -49,9 +49,7 @@ class _PaneContainerDecoration extends StatelessWidget {
                 topLeft: Radius.circular(AppRadius.sm),
                 topRight: Radius.circular(AppRadius.sm),
               ),
-        color: viewSettings.useAppTheme
-            ? Theme.of(context).colorScheme.surface
-            : viewSettings.backgroundColor,
+        color: viewColors.backgroundColor,
       ),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 12 + offset),

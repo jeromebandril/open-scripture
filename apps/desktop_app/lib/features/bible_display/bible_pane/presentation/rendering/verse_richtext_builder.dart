@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../app/extensions/font_weight.dart';
 import '../../../../../shared/domain/entities/verse.dart';
+import '../../../colorschemes/domain/entities/bible_view_colorscheme.dart';
 import '../../../settings/bible_view_settings.dart';
 import '../../../../../shared/presentation/models/display_option_flutter.dart';
 import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
@@ -21,15 +22,13 @@ class VerseSpanBuilder {
   }) {
     if (spans.isEmpty) return const [];
 
-    final appTheme = Theme.of(context);
     final viewSettings = BibleViewSettingsScope.of(context);
+    final viewColors = BibleViewSettingsScope.colorschemeOf(context);
     // apply here base style from Bible View Settings
     final base = TextStyle(
       letterSpacing: viewSettings.verseLetterSpacing,
       fontWeight: viewSettings.verseFontWeight.toFlutter(),
-      color: viewSettings.useAppTheme
-          ? appTheme.colorScheme.onSurfaceVariant
-          : viewSettings.verseColor,
+      color: viewColors.verseColor,
     ).merge(addStyle);
 
     return spans.map((span) {
@@ -44,7 +43,8 @@ class VerseSpanBuilder {
         recognizer = TapGestureRecognizer()..onTap = onVerseTap;
       }
 
-      TextStyle style = _buildCombinedStyle(span, base, viewSettings);
+      TextStyle style =
+          _buildCombinedStyle(span, base, viewSettings, viewColors);
       if (colorAlpha != null) {
         style = style.copyWith(color: style.color!.withAlpha(colorAlpha));
       }
@@ -61,12 +61,14 @@ class VerseSpanBuilder {
     VerseSpan span,
     TextStyle base,
     BibleViewSettings viewSettings,
+    BibleViewColorscheme viewColors,
   ) {
     TextStyle style = base;
 
     // Apply styles in order of priority or accumulation
     for (final type in span.activeStyles) {
-      style = style.merge(_getStyleForType(type, span, viewSettings));
+      style =
+          style.merge(_getStyleForType(type, span, viewSettings, viewColors));
     }
 
     return style;
@@ -76,19 +78,20 @@ class VerseSpanBuilder {
     SpanType type,
     VerseSpan span,
     BibleViewSettings viewSettings,
+    BibleViewColorscheme viewColors,
   ) {
     return switch (type) {
       SpanType.italic => const TextStyle(fontStyle: FontStyle.italic),
       SpanType.bold => const TextStyle(fontWeight: FontWeight.w600),
       SpanType.added =>
-        TextStyle(fontStyle: FontStyle.italic, color: viewSettings.addColor),
-      SpanType.redLetter => TextStyle(color: viewSettings.quoteColor),
+        TextStyle(fontStyle: FontStyle.italic, color: viewColors.addColor),
+      SpanType.redLetter => TextStyle(color: viewColors.quoteColor),
       SpanType.strongs => TextStyle(
           decoration: viewSettings.enableStrongWordsRender
               ? TextDecoration.underline
               : TextDecoration.none,
           decorationStyle: TextDecorationStyle.dotted,
-          decorationColor: viewSettings.strongWordsUnderlineColor,
+          decorationColor: viewColors.strongWordsUnderlineColor,
           fontWeight: span.payload == _strongWordBold
               ? viewSettings.verseFontWeight.toFlutter().stepUp()
               : null,

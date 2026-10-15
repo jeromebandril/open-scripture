@@ -51,13 +51,26 @@ extension AppBuildContextExtensions on BuildContext {
     required String title,
     required Size maxSize,
     required WidgetBuilder builder,
+    List<Widget> Function(BuildContext)? actions,
   }) {
     return pushWindow<T>(
       builder: (context) {
         return AppWindow(
           title: title,
           maxSize: maxSize,
-          child: builder(context),
+          child: actions == null
+              ? builder(context)
+              : Column(
+                  spacing: AppSpacing.sm,
+                  children: [
+                    builder(context),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      spacing: AppSpacing.sm,
+                      children: actions.call(context),
+                    ),
+                  ],
+                ),
         );
       },
     );

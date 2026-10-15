@@ -45,7 +45,8 @@ class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
             children: [
               SettingOption(
                   label: 'Theme mode',
-                  description: 'Set app theme',
+                  description:
+                      'Set app theme. It has effect only on app\'s interface. Bible view colorscheme has its own dedicated customization.',
                   child: AppInputOption<ThemeMode>(
                     value: context.select(
                         (SettingsCubit<GlobalSettings> c) => c.state.mode),

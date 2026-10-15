@@ -137,6 +137,7 @@ class _BibleViewProseState extends State<BibleViewProse> {
   @override
   Widget build(BuildContext context) {
     final viewSettings = BibleViewSettingsScope.of(context);
+    final viewColors = BibleViewSettingsScope.colorschemeOf(context);
     final screen = MediaQuery.sizeOf(context);
     final panes = context.read<MultiPaneManagerCubit>().state.panes;
     final thisPaneIndex = panes.indexWhere((e) => e.id == widget.uniqueId);
@@ -163,7 +164,7 @@ class _BibleViewProseState extends State<BibleViewProse> {
                 '${ref?.book.englishName} ${ref?.chapter}',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: viewSettings.selectedRefColor),
+                    color: viewColors.selectedRefColor),
                 textAlign: TextAlign.center,
               ),
             ),

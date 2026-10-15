@@ -110,9 +110,8 @@ class _BibleViewPresentationSettingsTabState
                             label: vns.name,
                             leading: Text.rich(
                               InlineVerseNumberBuilder.build(
-                                settings: cubit.state,
+                                context: context,
                                 number: 7,
-                                style: vns,
                               ),
                             ),
                           ),

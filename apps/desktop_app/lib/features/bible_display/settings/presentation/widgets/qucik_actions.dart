@@ -19,23 +19,6 @@ class QuickActions extends StatelessWidget {
         : BibleViewSettings.defaultThemeLight();
   }
 
-  void _resetColors(BuildContext context) {
-    final defaults = _getDefaults(context);
-    context.read<SettingsCubit<BibleViewSettings>>().update(
-          (s) => s.copyWith(
-            addColor: defaults.addColor,
-            refColor: defaults.refColor,
-            quoteColor: defaults.quoteColor,
-            verseColor: defaults.verseColor,
-            pericopeColor: defaults.pericopeColor,
-            backgroundColor: defaults.backgroundColor,
-            selectedRefColor: defaults.selectedRefColor,
-            verseDividerColor: defaults.verseDividerColor,
-            strongWordsUnderlineColor: defaults.strongWordsUnderlineColor,
-          ),
-        );
-  }
-
   void _resetEverything(BuildContext context) {
     final defaults = _getDefaults(context);
     context.read<SettingsCubit<BibleViewSettings>>().update((s) => defaults);
@@ -48,31 +31,13 @@ class QuickActions extends StatelessWidget {
         SettingSection(
           children: [
             SettingOption(
-              label: 'Reset colors',
-              description:
-                  'Reset all colors options to match the app theme (dark or light mode)',
-              child: ActionButtonWithFeedback(
-                onPressed: () => _resetColors(context),
-                label: 'Reset colors',
-                successLabel: 'Colors reset',
-                icon: const Icon(LucideIcons.rotateCcw),
-                buttonBuilder: (onPressed, icon, label) {
-                  return TextButton.icon(
-                    onPressed: onPressed,
-                    icon: icon,
-                    label: label,
-                  );
-                },
-              ),
-            ),
-            SettingOption(
               label: 'Reset everything',
               description: 'Reset everything to their default values',
               child: ActionButtonWithFeedback(
                 onPressed: () => _resetEverything(context),
                 label: 'Reset all',
                 successLabel: 'Reset',
-                icon: const Icon(LucideIcons.eraser),
+                icon: const Icon(LucideIcons.rotateCcw),
                 buttonBuilder: (onPressed, icon, label) {
                   return TextButton.icon(
                     onPressed: onPressed,

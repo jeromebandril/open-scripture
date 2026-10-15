@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../app/settings/global_settings.dart';
 import '../../../../core/di/injection_container.dart' as di;
 import '../../../../core/settings/settings_cubit.dart';
 import '../../../../shared/presentation/widgets/ui/inputs/app_input_bool.dart';
-import '../../../../shared/presentation/widgets/ui/inputs/app_input_color/app_input_color.dart';
 import '../../../../shared/presentation/widgets/ui/inputs/app_input_number.dart';
 import '../../../bible_display/settings/bible_view_settings.dart';
 import '../../../settings_window/presentation/widgets/setting_option.dart';
@@ -20,33 +18,9 @@ class PericopeCustomizationPage extends StatelessWidget {
       create: (context) => di.sl<SettingsCubit<BibleViewSettings>>(),
       child: Builder(builder: (context) {
         final cubit = context.read<SettingsCubit<BibleViewSettings>>();
-        final defaultTheme =
-            context.select((SettingsCubit<GlobalSettings> c) => c.state.mode) ==
-                    ThemeMode.dark
-                ? BibleViewSettings.defaultThemeDark()
-                : BibleViewSettings.defaultThemeLight();
         return SingleChildScrollView(
           child: SettingSection(
             children: [
-              SettingOption(
-                  label: 'Pericope color',
-                  description: 'Set color for the pericope heading',
-                  child: AppInputColor(
-                    showReset: defaultTheme.pericopeColor !=
-                        context.select((SettingsCubit<BibleViewSettings> c) =>
-                            c.state.pericopeColor),
-                    onReset: () {
-                      cubit.update((a) => a.copyWith(
-                          pericopeColor: defaultTheme.pericopeColor));
-                    },
-                    onColorChanged: (c) {
-                      cubit.update((p) => p.copyWith(pericopeColor: c));
-                    },
-                    color: context.select(
-                      (SettingsCubit<BibleViewSettings> c) =>
-                          c.state.pericopeColor,
-                    ),
-                  )),
               SettingOption(
                   label: 'Underline heading',
                   description: 'Underline the pericope heading',

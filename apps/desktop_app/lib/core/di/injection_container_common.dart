@@ -7,6 +7,10 @@ import '../../features/bible_display/bible_pane/data/repositories/bible_pane_rep
 import '../../features/bible_display/bible_pane/domain/repositories/bible_pane_repository.dart';
 import '../../features/bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../../features/bible_display/bible_selector/presentation/cubit/bible_selector_cubit.dart';
+import '../../features/bible_display/colorschemes/data/datasource/colorscheme_datasource.dart';
+import '../../features/bible_display/colorschemes/data/repositories/colorscheme_repository_impl.dart';
+import '../../features/bible_display/colorschemes/domain/repositories/colorschemes_repository.dart';
+import '../../features/bible_display/colorschemes/presentation/cubit/colorscheme_cubit.dart';
 import '../../features/bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../../features/bible_display/settings/bible_view_settings.dart';
 import '../../features/bible_importer/presentation/state/bible_importer_cubit/bible_importer_cubit.dart';
@@ -87,6 +91,7 @@ Future<void> init(GetIt sl) async {
   _registerBibleViewSettings(sl);
   _registerAppSettings(sl);
   _registerPresenter(sl);
+  _registerColorschemes(sl);
 
   // bloc factory
   sl.registerFactoryParam<BiblePaneBloc, int, void>(
@@ -137,6 +142,15 @@ Future<void> init(GetIt sl) async {
     dispose: (repo) => repo.dispose(),
   );
   sl.registerSingleton(SettingsCubit<MyLibrarySettings>(sl()));
+}
+
+// ---------------------------------------------------------------------------
+void _registerColorschemes(GetIt sl) {
+  sl.registerLazySingleton<ColorschemeDatasource>(
+      () => ColorschemeDatasourceImpl());
+  sl.registerLazySingleton<ColorschemeRepository>(
+      () => ColorschemeRepositoryImpl(datasource: sl()));
+  sl.registerLazySingleton(() => ColorschemesCubit(repo: sl()));
 }
 
 // ---------------------------------------------------------------------------

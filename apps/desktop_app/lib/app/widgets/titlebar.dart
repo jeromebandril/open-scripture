@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:window_manager/window_manager.dart';
 
 import '../../core/settings/settings_cubit.dart';
-import '../../features/bible_display/settings/bible_view_settings.dart';
+import '../../features/bible_display/settings/presentation/widgets/bible_view_settings_provider.dart';
 import '../../shared/constants.dart';
 import '../../shared/design_system/tokens/tokens.dart';
 import '../settings/global_settings.dart';
@@ -31,8 +31,8 @@ class Titlebar extends StatelessWidget {
   Widget build(BuildContext context) {
     final enableAdaptiveTitlebar = context.select(
         (SettingsCubit<GlobalSettings> as) => as.state.enableAdaptiveTitlebar);
-    final bibleViewBg = context.select(
-        (SettingsCubit<BibleViewSettings> bs) => bs.state.backgroundColor);
+    final bibleViewBg =
+        BibleViewSettingsScope.colorschemeOf(context).backgroundColor;
 
     return Container(
       height: kWindowsTitleBarHeight,
