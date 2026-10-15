@@ -61,7 +61,7 @@ class BibleViewColorschemeSelector extends StatelessWidget {
 /// [selectedName] is `settings.colorschemeName`. If it matches nothing, the
 /// default colorscheme is highlighted, because that is what is actually in use.
 class _ColorschemeSelector extends StatelessWidget {
-  static const double kCellWidth = 128;
+  static const double kMinCellWidth = 128;
   static const double kCellHeight = 52;
   static const double kSpacing = AppSpacing.md;
   static const double kSectionSpacing = AppSpacing.xl2;
@@ -85,7 +85,8 @@ class _ColorschemeSelector extends StatelessWidget {
   Widget _buildSection(
     String title,
     List<BibleViewColorscheme> schemes,
-    String activeName, {
+    String activeName,
+    double cellWidth, {
     bool withAddCell = false,
   }) {
     return _Section(
@@ -96,13 +97,13 @@ class _ColorschemeSelector extends StatelessWidget {
           _ColorschemeCell(
             key: ValueKey(scheme.name),
             scheme: scheme,
-            width: kCellWidth,
+            width: cellWidth,
             isSelected: scheme.name == activeName,
             onTap: () => onSelected(scheme),
             onDeleteCustom: onDeleteCustom,
             onEditCustom: onEditCustom,
           ),
-        if (withAddCell) _AddCustomCell(width: kCellWidth, onTap: onAddCustom),
+        if (withAddCell) _AddCustomCell(width: cellWidth, onTap: onAddCustom),
       ],
     );
   }
@@ -116,21 +117,34 @@ class _ColorschemeSelector extends StatelessWidget {
     final dark = colorschemes.where((s) => !s.isCustom && s.isDark).toList();
     final custom = colorschemes.where((s) => s.isCustom).toList();
 
-    final sections = <Widget>[
-      if (light.isNotEmpty) _buildSection('Light', light, activeName),
-      if (dark.isNotEmpty) _buildSection('Dark', dark, activeName),
-      _buildSection('Custom', custom, activeName, withAddCell: true),
-    ];
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final cellPerRow =
+            (constraints.maxWidth / kMinCellWidth).floor().clamp(1, 4);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        for (var i = 0; i < sections.length; i++) ...[
-          if (i > 0) SizedBox(height: kSectionSpacing),
-          sections[i],
-        ],
-      ],
+        final cellWidth =
+            (constraints.maxWidth - kSpacing * (cellPerRow - 1)) / cellPerRow;
+
+        final sections = <Widget>[
+          if (light.isNotEmpty)
+            _buildSection('Light', light, activeName, cellWidth),
+          if (dark.isNotEmpty)
+            _buildSection('Dark', dark, activeName, cellWidth),
+          _buildSection('Custom', custom, activeName, cellWidth,
+              withAddCell: true),
+        ];
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (var i = 0; i < sections.length; i++) ...[
+              if (i > 0) SizedBox(height: kSectionSpacing),
+              sections[i],
+            ],
+          ],
+        );
+      },
     );
   }
 }
@@ -166,7 +180,7 @@ class _Section extends StatelessWidget {
         ),
         Wrap(
           spacing: spacing,
-          runSpacing: spacing,
+          runSpacing: AppSpacing.xs,
           children: children,
         ),
       ],
