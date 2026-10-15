@@ -62,7 +62,7 @@ class SettingOption extends StatelessWidget {
         }
 
         return Row(
-          spacing: AppSpacing.md,
+          spacing: AppSpacing.xl6,
           children: [
             Expanded(child: labelWidget),
             settingWidget,

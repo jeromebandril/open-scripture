@@ -32,8 +32,8 @@ abstract class _Keys {
   static const verseSpacing = 'verseSpacing';
   static const verseLetterSpacing = 'verseLetterSpacing';
   static const enablePericope = 'enablePericope';
-  static const pericopeSpacingTop = 'pericopeSpacingTop';
-  static const pericopeSpacingBottom = 'pericopeSpacingBottom';
+  static const pericopeSpacingBefore = 'pericopeSpacingBefore';
+  static const pericopeSpacingAfter = 'pericopeSpacingAfter';
   static const pericopeUnderline = 'pericopeUnderline';
   static const colorscheme = 'colorscheme';
 }
@@ -64,8 +64,8 @@ class BibleViewSettings extends Equatable {
   final bool enableStrongWordsRender;
   // pericope
   final bool enablePericope;
-  final double pericopeSpacingTop;
-  final double pericopeSpacingBottom;
+  final double pericopeSpacingBefore;
+  final double pericopeSpacingAfter;
   final bool pericopeUnderline;
 
   // --- LIST view ---
@@ -104,8 +104,8 @@ class BibleViewSettings extends Equatable {
     ],
     this.defaultDisplayMode = DisplayMode.list,
     this.enablePericope = true,
-    this.pericopeSpacingTop = 10,
-    this.pericopeSpacingBottom = 10,
+    this.pericopeSpacingBefore = 10,
+    this.pericopeSpacingAfter = 10,
     this.pericopeUnderline = true,
     this.enableStrongWordsRender = false,
     this.selectedRefFontWeight = AppFontWeight.semiBold,
@@ -113,7 +113,7 @@ class BibleViewSettings extends Equatable {
     this.underlineRefs = false,
     this.showVerseDivider = true,
     this.showAlwaysFullRef = true,
-    this.highlightRenderMode = HighlightRenderMode.fullRefWithColor,
+    this.highlightRenderMode = HighlightRenderMode.shortRefWithColor,
     this.listParallelSpacing = 32,
     this.verseSpacing = 32,
     this.presentationTitleTextAlign = AppTextAlign.center,
@@ -154,8 +154,8 @@ class BibleViewSettings extends Equatable {
     DisplayMode? defaultDisplayMode,
     bool? highlightStrongsWordsOnHover,
     bool? enablePericope,
-    double? pericopeSpacingTop,
-    double? pericopeSpacingBottom,
+    double? pericopeSpacingBefore,
+    double? pericopeSpacingAfter,
     bool? pericopeUnderline,
     bool? enableStrongWordsRender,
     AppFontWeight? selectedRefFontWeight,
@@ -191,9 +191,9 @@ class BibleViewSettings extends Equatable {
       enabledDisplayModes: enabledDisplayModes ?? this.enabledDisplayModes,
       defaultDisplayMode: defaultDisplayMode ?? this.defaultDisplayMode,
       enablePericope: enablePericope ?? this.enablePericope,
-      pericopeSpacingTop: pericopeSpacingTop ?? this.pericopeSpacingTop,
-      pericopeSpacingBottom:
-          pericopeSpacingBottom ?? this.pericopeSpacingBottom,
+      pericopeSpacingBefore:
+          pericopeSpacingBefore ?? this.pericopeSpacingBefore,
+      pericopeSpacingAfter: pericopeSpacingAfter ?? this.pericopeSpacingAfter,
       pericopeUnderline: pericopeUnderline ?? this.pericopeUnderline,
       enableStrongWordsRender:
           enableStrongWordsRender ?? this.enableStrongWordsRender,
@@ -236,8 +236,8 @@ class BibleViewSettings extends Equatable {
             enabledDisplayModes.map((e) => e.name).toList(),
         _Keys.defaultDisplayMode: defaultDisplayMode.name,
         _Keys.enablePericope: enablePericope,
-        _Keys.pericopeSpacingTop: pericopeSpacingTop,
-        _Keys.pericopeSpacingBottom: pericopeSpacingBottom,
+        _Keys.pericopeSpacingBefore: pericopeSpacingBefore,
+        _Keys.pericopeSpacingAfter: pericopeSpacingAfter,
         _Keys.pericopeUnderline: pericopeUnderline,
         _Keys.enableStrongWordsRender: enableStrongWordsRender,
         _Keys.selectedRefFontWeight: selectedRefFontWeight.name,
@@ -290,12 +290,12 @@ class BibleViewSettings extends Equatable {
           : defaults.defaultDisplayMode,
       enablePericope:
           json[_Keys.enablePericope] as bool? ?? defaults.enablePericope,
-      pericopeSpacingTop:
-          (json[_Keys.pericopeSpacingTop] as num?)?.toDouble() ??
-              defaults.pericopeSpacingTop,
-      pericopeSpacingBottom:
-          (json[_Keys.pericopeSpacingBottom] as num?)?.toDouble() ??
-              defaults.pericopeSpacingBottom,
+      pericopeSpacingBefore:
+          (json[_Keys.pericopeSpacingBefore] as num?)?.toDouble() ??
+              defaults.pericopeSpacingBefore,
+      pericopeSpacingAfter:
+          (json[_Keys.pericopeSpacingAfter] as num?)?.toDouble() ??
+              defaults.pericopeSpacingAfter,
       pericopeUnderline:
           json[_Keys.pericopeUnderline] as bool? ?? defaults.pericopeUnderline,
       enableStrongWordsRender: json[_Keys.enableStrongWordsRender] as bool? ??
@@ -364,8 +364,8 @@ class BibleViewSettings extends Equatable {
         enabledDisplayModes,
         defaultDisplayMode,
         enablePericope,
-        pericopeSpacingTop,
-        pericopeSpacingBottom,
+        pericopeSpacingBefore,
+        pericopeSpacingAfter,
         pericopeUnderline,
         enableStrongWordsRender,
         selectedRefFontWeight,

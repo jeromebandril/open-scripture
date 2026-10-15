@@ -10,6 +10,7 @@ import '../../../../../shared/design_system/design_system.dart';
 import '../../../../../shared/domain/entities/display_options.dart';
 import '../../../../../shared/fonts/app_font.dart';
 import '../../../../../shared/presentation/models/display_option_flutter.dart';
+import '../../../../../shared/presentation/widgets/action_button_with_feedback.dart';
 import '../../../../../shared/presentation/widgets/ui/inputs/app_input_bool.dart';
 import '../../../../../shared/presentation/widgets/ui/inputs/app_input_number.dart';
 import '../../../../../shared/presentation/widgets/ui/inputs/app_input_option.dart';
@@ -40,11 +41,6 @@ class _BibleViewGeneralSettingsTabState
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<SettingsCubit<BibleViewSettings>>();
-    final defaultTheme =
-        context.select((SettingsCubit<GlobalSettings> c) => c.state.mode) ==
-                ThemeMode.dark
-            ? BibleViewSettings.defaultThemeDark()
-            : BibleViewSettings.defaultThemeLight();
 
     final fontWeightItems = AppFontWeight.values
         .map(
@@ -67,57 +63,9 @@ class _BibleViewGeneralSettingsTabState
           child: SingleChildScrollView(
             child: Column(
               children: [
-                // SettingSection(
-                //   title: 'Bible viewer theme',
-                //   actions: [
-                //     TextButton.icon(
-                //       onPressed: () => context.pushStandardWindow(
-                //           title: 'Quick actions',
-                //           maxSize: const Size(300, 300),
-                //           builder: (_) => const QuickActions()),
-                //       icon: const Icon(LucideIcons.zap),
-                //       label: const Text('Quick actions'),
-                //     )
-                //   ],
-                //   children: [],
-                // ),
                 SettingSection.single(
                   title: 'Coloscheme',
                   child: const BibleViewColorschemeSelector(),
-                ),
-                SettingSection(
-                  title: 'Render options',
-                  children: [
-                    SettingOption(
-                        label: 'Render pericope headings',
-                        description:
-                            'Render pericope headings if available in the bible text, or use default headings',
-                        settingWidth: 100,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          spacing: AppSpacing.sm,
-                          children: [
-                            IconButton(
-                              onPressed: () => context.pushStandardWindow(
-                                title: 'Pericope customization',
-                                maxSize: const Size(600, 400),
-                                builder: (_) =>
-                                    const PericopeCustomizationPage(),
-                              ),
-                              icon: const Icon(LucideIcons.settings),
-                            ),
-                            AppInputBool(
-                              value: context.select(
-                                  (SettingsCubit<BibleViewSettings> c) =>
-                                      c.state.enablePericope),
-                              onChanged: (val) {
-                                cubit.update(
-                                    (p) => p.copyWith(enablePericope: val));
-                              },
-                            ),
-                          ],
-                        )),
-                  ],
                 ),
                 SettingSection(
                   title: 'Typography',
@@ -239,6 +187,40 @@ class _BibleViewGeneralSettingsTabState
                   ],
                 ),
                 SettingSection(
+                  title: 'Content',
+                  children: [
+                    SettingOption(
+                        label: 'Render pericope headings',
+                        description:
+                            'Render pericope headings if available in the bible text, or use default headings',
+                        settingWidth: 100,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          spacing: AppSpacing.sm,
+                          children: [
+                            IconButton(
+                              onPressed: () => context.pushStandardWindow(
+                                title: 'Pericope customization',
+                                maxSize: const Size(600, 400),
+                                builder: (_) =>
+                                    const PericopeCustomizationPage(),
+                              ),
+                              icon: const Icon(LucideIcons.settings),
+                            ),
+                            AppInputBool(
+                              value: context.select(
+                                  (SettingsCubit<BibleViewSettings> c) =>
+                                      c.state.enablePericope),
+                              onChanged: (val) {
+                                cubit.update(
+                                    (p) => p.copyWith(enablePericope: val));
+                              },
+                            ),
+                          ],
+                        )),
+                  ],
+                ),
+                SettingSection(
                   title: 'Behavior',
                   children: [
                     SettingOption(
@@ -290,10 +272,10 @@ class _BibleViewGeneralSettingsTabState
                   ],
                 ),
                 SettingSection(
-                  title: 'Splitscreenn prefs',
+                  title: 'Other options',
                   children: [
                     SettingOption(
-                        label: 'Gap',
+                        label: 'Splitscreen spacing gap',
                         description:
                             'Set gap space between each bible pane view',
                         child: AppInputNumber(
@@ -308,15 +290,9 @@ class _BibleViewGeneralSettingsTabState
                                 c.state.splitscreenGap,
                           ),
                         )),
-                  ],
-                ),
-                SettingSection(
-                  title: 'Other options',
-                  children: [
                     SettingOption(
                       label: 'Enabled view modes',
                       description: 'Enabled view modes',
-                      settingWidth: 230,
                       child: AppInputOption.multiple(
                         items: DisplayMode.values
                             .map(
@@ -343,7 +319,6 @@ class _BibleViewGeneralSettingsTabState
                       label: 'Default view mode',
                       description:
                           'Default view mode when new bible pane is created',
-                      settingWidth: 230,
                       child: AppInputOption(
                         items: DisplayMode.values
                             .map(
@@ -360,6 +335,7 @@ class _BibleViewGeneralSettingsTabState
                             .update((p) => p.copyWith(defaultDisplayMode: v)),
                       ),
                     ),
+                    const _ResetButton(),
                   ],
                 )
               ],
@@ -367,6 +343,43 @@ class _BibleViewGeneralSettingsTabState
           ),
         ),
       ],
+    );
+  }
+}
+
+class _ResetButton extends StatelessWidget {
+  const _ResetButton();
+
+  BibleViewSettings _getDefaults(BuildContext context) {
+    final themeMode = context.read<SettingsCubit<GlobalSettings>>().state.mode;
+    return themeMode == ThemeMode.dark
+        ? BibleViewSettings.defaultThemeDark()
+        : BibleViewSettings.defaultThemeLight();
+  }
+
+  void _resetEverything(BuildContext context) {
+    final defaults = _getDefaults(context);
+    context.read<SettingsCubit<BibleViewSettings>>().update((s) => defaults);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SettingOption(
+      label: 'Reset everything',
+      description: 'Reset everything to their default values',
+      child: ActionButtonWithFeedback(
+        onPressed: () => _resetEverything(context),
+        label: 'Reset all',
+        successLabel: 'Reset',
+        icon: const Icon(LucideIcons.rotateCcw),
+        buttonBuilder: (onPressed, icon, label) {
+          return TextButton.icon(
+            onPressed: onPressed,
+            icon: icon,
+            label: label,
+          );
+        },
+      ),
     );
   }
 }

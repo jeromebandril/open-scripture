@@ -316,7 +316,7 @@ class _ColorschemeCellState extends State<_ColorschemeCell> {
                                   widget.scheme.label,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: theme.textTheme.labelLarge?.copyWith(
+                                  style: theme.textTheme.labelSmall?.copyWith(
                                     fontWeight: widget.isSelected
                                         ? FontWeight.w600
                                         : FontWeight.w500,
@@ -385,7 +385,7 @@ class _AddCustomCell extends StatelessWidget {
                     textAlign: TextAlign.center,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.labelLarge?.copyWith(
+                    style: theme.textTheme.labelSmall?.copyWith(
                       fontWeight: FontWeight.w500,
                       color: muted,
                     ),

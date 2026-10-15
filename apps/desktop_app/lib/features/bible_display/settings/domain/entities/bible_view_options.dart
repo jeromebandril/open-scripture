@@ -4,5 +4,9 @@ enum InlineVerseNumberStyle {
 }
 
 enum HighlightRenderMode {
-  fullRefWithColor;
+  shortRefWithColor;
+
+  String get label => switch (this) {
+        HighlightRenderMode.shortRefWithColor => 'Short ref with color change',
+      };
 }

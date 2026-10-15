@@ -32,7 +32,7 @@ class _BibleViewSettingsPageState extends State<BibleViewSettingsPage> {
     return Padding(
       padding: EdgeInsets.fromLTRB(42, 0, 42, 42),
       child: BContainerTabBar(
-        tabs: ['General', 'List View', 'Presentation View', 'Prose View'],
+        tabs: ['All views', 'List', 'Presentation', 'Prose'],
         views: _tabs,
       ),
     );

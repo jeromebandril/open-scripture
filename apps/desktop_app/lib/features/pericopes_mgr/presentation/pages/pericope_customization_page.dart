@@ -16,12 +16,13 @@ class PericopeCustomizationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => di.sl<SettingsCubit<BibleViewSettings>>(),
-      child: Builder(builder: (context) {
-        final cubit = context.read<SettingsCubit<BibleViewSettings>>();
-        return SingleChildScrollView(
-          child: SettingSection(
-            children: [
-              SettingOption(
+      child: Builder(
+        builder: (context) {
+          final cubit = context.read<SettingsCubit<BibleViewSettings>>();
+          return SingleChildScrollView(
+            child: SettingSection(
+              children: [
+                SettingOption(
                   label: 'Underline heading',
                   description: 'Underline the pericope heading',
                   child: AppInputBool(
@@ -31,43 +32,47 @@ class PericopeCustomizationPage extends StatelessWidget {
                     onChanged: (bool value) {
                       cubit.update((a) => a.copyWith(pericopeUnderline: value));
                     },
-                  )),
-              SettingOption(
-                  label: 'Spacing above heading',
-                  description: 'Set space above the pericope heading',
-                  child: AppInputNumber(
-                    min: 0,
-                    max: 100,
-                    decimal: true,
-                    onSubmitted: (n) {
-                      cubit.update(
-                          (p) => p.copyWith(pericopeSpacingTop: n.toDouble()));
-                    },
-                    value: context.select(
-                      (SettingsCubit<BibleViewSettings> c) =>
-                          c.state.pericopeSpacingTop,
-                    ),
-                  )),
-              SettingOption(
-                  label: 'Spacing below heading',
-                  description: 'Set space below the pericope heading',
+                  ),
+                ),
+                SettingOption(
+                  label: 'Spacing before',
+                  description: 'Set space before (above) the pericope heading',
                   child: AppInputNumber(
                     min: 0,
                     max: 100,
                     decimal: true,
                     onSubmitted: (n) {
                       cubit.update((p) =>
-                          p.copyWith(pericopeSpacingBottom: n.toDouble()));
+                          p.copyWith(pericopeSpacingBefore: n.toDouble()));
                     },
                     value: context.select(
                       (SettingsCubit<BibleViewSettings> c) =>
-                          c.state.pericopeSpacingBottom,
+                          c.state.pericopeSpacingBefore,
                     ),
-                  )),
-            ],
-          ),
-        );
-      }),
+                  ),
+                ),
+                SettingOption(
+                  label: 'Spacing after',
+                  description: 'Set space after (below) the pericope heading',
+                  child: AppInputNumber(
+                    min: 0,
+                    max: 100,
+                    decimal: true,
+                    onSubmitted: (n) {
+                      cubit.update((p) =>
+                          p.copyWith(pericopeSpacingAfter: n.toDouble()));
+                    },
+                    value: context.select(
+                      (SettingsCubit<BibleViewSettings> c) =>
+                          c.state.pericopeSpacingAfter,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

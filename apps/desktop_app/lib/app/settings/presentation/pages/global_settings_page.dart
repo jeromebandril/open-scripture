@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/settings/settings_cubit.dart';
-import '../../../../features/bible_display/settings/bible_view_settings.dart';
 import '../../../../features/bible_searchbar/settings/domain/entities/searchbar_appearance_option.dart';
 import '../../../../features/bible_searchbar/settings/search_settings.dart';
 import '../../../../features/settings_window/presentation/widgets/setting_option.dart';
@@ -44,137 +43,94 @@ class _GlobalSettingsPageState extends State<GlobalSettingsPage> {
             title: 'Global',
             children: [
               SettingOption(
-                  label: 'Theme mode',
-                  description:
-                      'Set app theme. It has effect only on app\'s interface. Bible view colorscheme has its own dedicated customization.',
-                  child: AppInputOption<ThemeMode>(
-                    value: context.select(
-                        (SettingsCubit<GlobalSettings> c) => c.state.mode),
-                    onChanged: (mode) {
-                      cubit.update((a) => a.copyWith(mode: mode));
-                    },
-                    items: ThemeMode.values
-                        .map((m) => AppDropdownItem<ThemeMode>(
-                            value: m, label: m.name, leading: Icon(m.icon)))
-                        .toList(),
-                  )),
+                label: 'Theme mode',
+                description:
+                    'Set app theme. It has effect only on app\'s interface. Bible view colorscheme has its own dedicated customization.',
+                child: AppInputOption<ThemeMode>(
+                  value: context.select(
+                      (SettingsCubit<GlobalSettings> c) => c.state.mode),
+                  onChanged: (mode) {
+                    cubit.update((a) => a.copyWith(mode: mode));
+                  },
+                  items: ThemeMode.values
+                      .map((m) => AppDropdownItem<ThemeMode>(
+                          value: m, label: m.name, leading: Icon(m.icon)))
+                      .toList(),
+                ),
+              ),
               SettingOption(
-                  label: 'Enable adaptive titlebar',
-                  description:
-                      'Makes titlebar color same as bible viewer background',
-                  child: AppInputBool(
-                    value: context.select((SettingsCubit<GlobalSettings> c) =>
-                        c.state.enableAdaptiveTitlebar),
-                    onChanged: (val) {
-                      cubit.update(
-                          (a) => a.copyWith(enableAdaptiveTitlebar: val));
-                    },
-                  )),
-              // Setting(
-              //     label: 'Enable uniform background color',
-              //     description:
-              //         'use bible viewer\'s background color as app color',
-              //     child: SettingBoolInput(
-              //       value: context.select((SettingsCubit<AppSettings> c) =>
-              //           c.state.theme.useBackgroundColorAsAppColor),
-              //       onChanged: (val) {
-              //         cubit.update((theme) =>
-              //             theme.copyWith(useBackgroundColorAsAppColor: val));
-              //       },
-              //     )),
+                label: 'Enable adaptive titlebar',
+                description:
+                    'Makes titlebar color same as bible viewer background',
+                child: AppInputBool(
+                  value: context.select((SettingsCubit<GlobalSettings> c) =>
+                      c.state.enableAdaptiveTitlebar),
+                  onChanged: (val) {
+                    cubit
+                        .update((a) => a.copyWith(enableAdaptiveTitlebar: val));
+                  },
+                ),
+              ),
             ],
           ),
           SettingSection(
             title: 'Interface',
             children: [
               SettingOption(
-                  label: 'Enable 3 Tap Navigator',
-                  description:
-                      'Select book, chapter and verse with consecutive clicks',
-                  child: AppInputBool(
-                    value: context.select((SettingsCubit<GlobalSettings> c) =>
-                        c.state.enable3TapNavigator),
-                    onChanged: (val) {
-                      cubit.update((a) => a.copyWith(enable3TapNavigator: val));
-                    },
-                  )),
+                label: 'Enable 3 Tap Navigator',
+                description:
+                    'Select book, chapter and verse with consecutive clicks',
+                child: AppInputBool(
+                  value: context.select((SettingsCubit<GlobalSettings> c) =>
+                      c.state.enable3TapNavigator),
+                  onChanged: (val) {
+                    cubit.update((a) => a.copyWith(enable3TapNavigator: val));
+                  },
+                ),
+              ),
               SettingOption(
-                  label: 'Searchbar appearance',
-                  description: '''
-* Normal -- shows the search bar in the middle of the titlebar, with a fixed width.
-* Collapsed -- Moves the search bar to the start of the titlebar and collapses it into an icon. Click the icon to expand the search field
-                      
-                      ''',
-                  child: AppInputOption<SearchbarAppearanceOption>(
-                    value: context.select((SettingsCubit<SearchSettings> c) =>
-                        c.state.searchbarAppearance),
-                    onChanged: (val) {
-                      context
-                          .read<SettingsCubit<SearchSettings>>()
-                          .update((a) => a.copyWith(searchbarAppearance: val));
-                    },
-                    items: SearchbarAppearanceOption.values
-                        .map(
-                          (opt) => AppDropdownItem<SearchbarAppearanceOption>(
-                            value: opt,
-                            label: opt.name,
-                          ),
-                        )
-                        .toList(),
-                  )),
+                label: 'Searchbar appearance',
+                description:
+                    'Collapsed appearance moves the search bar to the start of the titlebar and collapses it into an icon. Click the icon to expand the search field',
+                child: AppInputOption<SearchbarAppearanceOption>(
+                  value: context.select((SettingsCubit<SearchSettings> c) =>
+                      c.state.searchbarAppearance),
+                  onChanged: (val) {
+                    context
+                        .read<SettingsCubit<SearchSettings>>()
+                        .update((a) => a.copyWith(searchbarAppearance: val));
+                  },
+                  items: SearchbarAppearanceOption.values
+                      .map(
+                        (opt) => AppDropdownItem<SearchbarAppearanceOption>(
+                          value: opt,
+                          label: opt.name,
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
             ],
           ),
           SettingSection(
             title: 'Behavior',
             children: [
               SettingOption(
-                  label: 'Enable searchbar book suggestions',
-                  description:
-                      'Shows a dropdown menu with book name candidates while typing',
-                  child: AppInputBool(
-                    value: context.select((SettingsCubit<SearchSettings> c) =>
-                        c.state.enableBookSuggestion),
-                    onChanged: (val) {
-                      context
-                          .read<SettingsCubit<SearchSettings>>()
-                          .update((s) => s.copyWith(enableBookSuggestion: val));
-                    },
-                  )),
-              SettingOption(
-                  label: 'Enable auto-scroll to verse',
-                  description:
-                      'Automatically scroll to the verse when navigating to a reference',
-                  child: AppInputBool(
-                    value: context.select(
-                        (SettingsCubit<BibleViewSettings> c) =>
-                            c.state.enableAutoScrollToVerse),
-                    onChanged: (val) {
-                      context.read<SettingsCubit<BibleViewSettings>>().update(
-                          (s) => s.copyWith(enableAutoScrollToVerse: val));
-                    },
-                  )),
+                label: 'Enable searchbar book suggestions',
+                description:
+                    'Shows a dropdown menu with book name candidates while typing',
+                child: AppInputBool(
+                  value: context.select((SettingsCubit<SearchSettings> c) =>
+                      c.state.enableBookSuggestion),
+                  onChanged: (val) {
+                    context
+                        .read<SettingsCubit<SearchSettings>>()
+                        .update((s) => s.copyWith(enableBookSuggestion: val));
+                  },
+                ),
+              ),
             ],
           ),
-          // SettingSection(
-          //   title: 'Advanced',
-          //   children: [
-          //     Setting(
-          //         label: 'Width adjustment',
-          //         description: 'Set horizontal padding to fit screen if needed',
-          //         child: AppInputNumber(
-          //           min: 0,
-          //           max: 100,
-          //           onSubmitted: (n) {
-          //             cubit.update((p) =>
-          //                 p.copyWith(widthAdjustmentOffset: n.toDouble()));
-          //           },
-          //           value: context.select(
-          //             (SettingsCubit<AppSettings> c) =>
-          //                 c.state.widthAdjustmentOffset,
-          //           ),
-          //         )),
-          //   ],
-          // )
         ],
       ),
     );

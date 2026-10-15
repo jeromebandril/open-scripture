@@ -254,9 +254,9 @@ class _BibleViewProseState extends State<BibleViewProse> {
           Center(
             child: Padding(
               padding: EdgeInsets.only(
-                top: viewSettings.pericopeSpacingTop * textScaler.scale(1.0),
+                top: viewSettings.pericopeSpacingBefore * textScaler.scale(1.0),
                 bottom:
-                    viewSettings.pericopeSpacingBottom * textScaler.scale(1.0),
+                    viewSettings.pericopeSpacingAfter * textScaler.scale(1.0),
               ),
               child: Text(
                 verse.heading!,

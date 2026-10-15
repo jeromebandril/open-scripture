@@ -350,8 +350,8 @@ class _PericopeRow extends StatelessWidget {
 
     return Padding(
       padding: EdgeInsets.only(
-        top: viewSettings.pericopeSpacingTop * textScaler.scale(1.0),
-        bottom: viewSettings.pericopeSpacingBottom * textScaler.scale(1.0),
+        top: viewSettings.pericopeSpacingBefore * textScaler.scale(1.0),
+        bottom: viewSettings.pericopeSpacingAfter * textScaler.scale(1.0),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,

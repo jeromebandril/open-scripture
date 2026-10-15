@@ -26,9 +26,11 @@ class _Description extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.all(16),
-      child: Text(
-        'This is the Pericopes Manager Page. Here you can manage pericopes and detected languages.',
-        style: Theme.of(context).textTheme.bodyMedium,
+      child: Center(
+        child: Text(
+          'This is the Pericopes Manager Page. Here you can manage pericopes and detected languages. Coming soon.',
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
       ),
     );
   }

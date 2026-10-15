@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../../app/settings/global_settings.dart';
 import '../../../../../core/settings/settings_cubit.dart';
 import '../../../../../shared/presentation/widgets/ui/inputs/app_input_bool.dart';
 import '../../../../../shared/presentation/widgets/ui/inputs/app_input_number.dart';
@@ -25,18 +24,13 @@ class _BibleViewListSettingsTabState extends State<BibleViewListSettingsTab> {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<SettingsCubit<BibleViewSettings>>();
-    final defaultTheme =
-        context.select((SettingsCubit<GlobalSettings> c) => c.state.mode) ==
-                ThemeMode.dark
-            ? BibleViewSettings.defaultThemeDark()
-            : BibleViewSettings.defaultThemeLight();
 
     return SingleChildScrollView(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           SettingSection(
-            title: 'Options',
+            title: 'Appearance',
             children: [
               SettingOption(
                   label: 'Show verse divider',
@@ -86,12 +80,17 @@ class _BibleViewListSettingsTabState extends State<BibleViewListSettingsTab> {
                     },
                     items: HighlightRenderMode.values
                         .map((m) => AppDropdownItem<HighlightRenderMode>(
-                            value: m, label: m.name))
+                            value: m, label: m.label))
                         .toList(),
                   )),
+            ],
+          ),
+          SettingSection(
+            title: 'Layout',
+            children: [
               SettingOption(
-                  label: 'Verse spacing (base)',
-                  description: 'Base gap between a verse and the next verse',
+                  label: 'Verse spacing',
+                  description: 'Spacing between a verse and the next',
                   child: AppInputNumber(
                     max: 64,
                     min: 0,
@@ -103,13 +102,8 @@ class _BibleViewListSettingsTabState extends State<BibleViewListSettingsTab> {
                           (s) => s.copyWith(verseSpacing: v.toDouble()));
                     },
                   )),
-            ],
-          ),
-          SettingSection(
-            title: 'Parallel view options',
-            children: [
               SettingOption(
-                label: 'Spacing',
+                label: 'Parallel view spacing',
                 description:
                     'The spacing/distance between each column in the parallel view',
                 child: AppInputNumber(

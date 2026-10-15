@@ -87,10 +87,3 @@ class BibleViewSettingsScope extends InheritedWidget {
   bool updateShouldNotify(BibleViewSettingsScope oldWidget) =>
       settings != oldWidget.settings || colorscheme != oldWidget.colorscheme;
 }
-
-// extension BibleViewColorschemeContext on BuildContext {
-//   /// The colorscheme currently used by the bible view:
-//   /// `context.bibleColors.verseDividerColor`
-//   BibleViewColorscheme get bibleColors =>
-//       BibleViewSettingsScope.colorschemeOf(this);
-// }

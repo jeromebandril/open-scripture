@@ -45,56 +45,12 @@ class _BibleViewPresentationSettingsTabState
       child: Column(
         children: [
           SettingSection(
-            title: 'Options',
+            title: 'Appearance',
             children: [
               SettingOption(
-                  label: 'Text Font Weight Subtitle',
-                  description:
-                      'Set font weight for the bible metadata indicator when in parallel view',
-                  child: AppInputOption<AppFontWeight>(
-                    value: context.select(
-                        (SettingsCubit<BibleViewSettings> c) =>
-                            c.state.subtitleFontWeight),
-                    onChanged: (fw) {
-                      cubit.update((s) => s.copyWith(subtitleFontWeight: fw));
-                    },
-                    items: fontWeightItems,
-                  )),
-              SettingOption(
-                  label: 'Title alignment',
-                  description: 'Select title alignment',
-                  child: AppInputOption<AppTextAlign>(
-                    value: context.select(
-                        (SettingsCubit<BibleViewSettings> c) =>
-                            c.state.presentationTitleTextAlign),
-                    onChanged: (ta) {
-                      cubit.update(
-                          (s) => s.copyWith(presentationTitleTextAlign: ta));
-                    },
-                    items: AppTextAlign.values
-                        .map((ta) => AppDropdownItem<AppTextAlign>(
-                            value: ta, label: ta.name, leading: Icon(ta.icon)))
-                        .toList(),
-                  )),
-              SettingOption(
-                  label: 'Text alignment',
-                  description: 'Select text alignment',
-                  child: AppInputOption<AppTextAlign>(
-                    value: context.select(
-                        (SettingsCubit<BibleViewSettings> c) =>
-                            c.state.presentationSubtitleTextAlign),
-                    onChanged: (ta) {
-                      cubit.update(
-                          (s) => s.copyWith(presentationSubtitleTextAlign: ta));
-                    },
-                    items: AppTextAlign.values
-                        .map((ta) => AppDropdownItem<AppTextAlign>(
-                            value: ta, label: ta.name, leading: Icon(ta.icon)))
-                        .toList(),
-                  )),
-              SettingOption(
                   label: 'Verse number style',
-                  description: 'Select verse number style',
+                  description:
+                      'Select verse number style  (by default it is shown only when multiple verses are selected)',
                   child: AppInputOption<InlineVerseNumberStyle>(
                     value: context.select(
                         (SettingsCubit<BibleViewSettings> c) =>
@@ -121,24 +77,75 @@ class _BibleViewPresentationSettingsTabState
             ],
           ),
           SettingSection(
-            title: 'Parallel view options',
+            title: 'Typography',
             children: [
               SettingOption(
-                  label: 'Spacing',
-                  description:
-                      'The spacing/distance between each parallel instance',
-                  child: AppInputNumber(
-                    min: 0,
-                    max: 100,
-                    onSubmitted: (n) {
-                      cubit.update((p) => p.copyWith(
-                          presentationParallelSpacing: n.toDouble()));
-                    },
-                    value: context.select(
-                      (SettingsCubit<BibleViewSettings> c) =>
-                          (c.state.presentationParallelSpacing),
-                    ),
-                  )),
+                label: 'Subtitle font weight',
+                description:
+                    'Set font weight for the bible metadata indicator when in parallel view',
+                child: AppInputOption<AppFontWeight>(
+                  value: context.select((SettingsCubit<BibleViewSettings> c) =>
+                      c.state.subtitleFontWeight),
+                  onChanged: (fw) {
+                    cubit.update((s) => s.copyWith(subtitleFontWeight: fw));
+                  },
+                  items: fontWeightItems,
+                ),
+              ),
+            ],
+          ),
+          SettingSection(
+            title: 'Layout',
+            children: [
+              SettingOption(
+                label: 'Title alignment',
+                description: 'Select title alignment',
+                child: AppInputOption<AppTextAlign>(
+                  value: context.select((SettingsCubit<BibleViewSettings> c) =>
+                      c.state.presentationTitleTextAlign),
+                  onChanged: (ta) {
+                    cubit.update(
+                        (s) => s.copyWith(presentationTitleTextAlign: ta));
+                  },
+                  items: AppTextAlign.values
+                      .map((ta) => AppDropdownItem<AppTextAlign>(
+                          value: ta, label: ta.name, leading: Icon(ta.icon)))
+                      .toList(),
+                ),
+              ),
+              SettingOption(
+                label: 'Verse alignment',
+                description: 'Select text alignment',
+                child: AppInputOption<AppTextAlign>(
+                  value: context.select((SettingsCubit<BibleViewSettings> c) =>
+                      c.state.presentationSubtitleTextAlign),
+                  onChanged: (ta) {
+                    cubit.update(
+                        (s) => s.copyWith(presentationSubtitleTextAlign: ta));
+                  },
+                  items: AppTextAlign.values
+                      .map((ta) => AppDropdownItem<AppTextAlign>(
+                          value: ta, label: ta.name, leading: Icon(ta.icon)))
+                      .toList(),
+                ),
+              ),
+              SettingOption(
+                label: 'Parallel view spacing',
+                description:
+                    'The spacing/distance between each parallel instance',
+                child: AppInputNumber(
+                  min: 0,
+                  max: 100,
+                  onSubmitted: (n) {
+                    cubit.update((p) =>
+                        p.copyWith(presentationParallelSpacing: n.toDouble()));
+                  },
+                  value: context.select(
+                    (SettingsCubit<BibleViewSettings> c) =>
+                        (c.state.presentationParallelSpacing),
+                  ),
+                ),
+              ),
             ],
           ),
         ],
