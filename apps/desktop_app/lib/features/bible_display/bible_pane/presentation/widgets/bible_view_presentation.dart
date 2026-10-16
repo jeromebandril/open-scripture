@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../shared/design_system/design_system.dart';
 import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../../shared/presentation/models/display_option_flutter.dart';
 import '../../../colorschemes/domain/entities/bible_view_colorscheme.dart';
-import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../../../settings/bible_view_settings.dart';
 import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
 import '../rendering/inline_verse_number_builder.dart';
@@ -22,12 +22,6 @@ class BibleViewPresentation extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewSettings = BibleViewSettingsScope.of(context);
     final viewColors = BibleViewSettingsScope.colorschemeOf(context);
-    final screen = MediaQuery.sizeOf(context);
-    final panes = context.read<MultiPaneManagerCubit>().state.panes;
-
-    final thisPaneIndex = panes.indexWhere((e) => e.id == uniqueId);
-    final isFirst = thisPaneIndex == 0;
-    final isLast = thisPaneIndex == panes.length - 1;
 
     return BlocBuilder<BiblePaneBloc, BiblePaneState>(
       buildWhen: (prev, curr) =>
@@ -50,10 +44,7 @@ class BibleViewPresentation extends StatelessWidget {
           color: Colors.transparent,
           child: SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.only(
-                left: isFirst ? screen.width * viewSettings.xPadding : 0,
-                right: isLast ? screen.width * viewSettings.xPadding : 0,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
               child: Column(
                 verticalDirection: VerticalDirection.up,
                 mainAxisAlignment: MainAxisAlignment.center,

@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../app/extensions/font_weight.dart';
+import '../../../../../shared/design_system/design_system.dart';
 import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../../shared/domain/entities/verse.dart';
-import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../../../../../shared/presentation/models/display_option_flutter.dart';
 import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
 import '../../domain/entities/word_info.dart';
@@ -138,9 +138,6 @@ class _BibleViewProseState extends State<BibleViewProse> {
   Widget build(BuildContext context) {
     final viewSettings = BibleViewSettingsScope.of(context);
     final viewColors = BibleViewSettingsScope.colorschemeOf(context);
-    final screen = MediaQuery.sizeOf(context);
-    final panes = context.read<MultiPaneManagerCubit>().state.panes;
-    final thisPaneIndex = panes.indexWhere((e) => e.id == widget.uniqueId);
 
     return BlocConsumer<BiblePaneBloc, BiblePaneState>(
       listenWhen: (prev, curr) =>
@@ -170,14 +167,7 @@ class _BibleViewProseState extends State<BibleViewProse> {
             ),
             Expanded(
               child: Padding(
-                padding: EdgeInsets.only(
-                  left: thisPaneIndex == 0
-                      ? screen.width * viewSettings.xPadding
-                      : 0,
-                  right: thisPaneIndex == panes.length - 1
-                      ? screen.width * viewSettings.xPadding
-                      : 0,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   spacing: viewSettings.listParallelSpacing.toDouble(),

@@ -4,10 +4,10 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../../../../app/extensions/font_weight.dart';
 import '../../../../../core/settings/settings_cubit.dart';
+import '../../../../../shared/design_system/design_system.dart';
 import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../../shared/domain/entities/verse.dart';
 import '../../../../../shared/presentation/models/display_option_flutter.dart';
-import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../../../settings/bible_view_settings.dart';
 import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
 import '../../domain/entities/word_info.dart';
@@ -123,11 +123,6 @@ class _BibleViewListState extends State<BibleViewList> {
 
   @override
   Widget build(BuildContext context) {
-    final viewSettings = BibleViewSettingsScope.of(context);
-    final screen = MediaQuery.sizeOf(context);
-    final panes = context.read<MultiPaneManagerCubit>().state.panes;
-    final thisPaneIndex = panes.indexWhere((e) => e.id == widget.uniqueId);
-
     return BlocConsumer<BiblePaneBloc, BiblePaneState>(
       listenWhen: (prev, curr) =>
           (prev.reference != curr.reference && curr.reference != null),
@@ -146,12 +141,15 @@ class _BibleViewListState extends State<BibleViewList> {
         return ScrollablePositionedList.separated(
           itemScrollController: _itemScrollController,
           itemPositionsListener: _itemPositionsListener,
-          itemCount: unionRefs.length + 1,
-          padding: const EdgeInsets.only(top: 16),
+          itemCount: unionRefs.length,
+          padding: EdgeInsets.only(
+            top: 16,
+            bottom: 200,
+            left: AppSpacing.md,
+            right: AppSpacing.md,
+          ),
           separatorBuilder: (ctx, _) => const VerseDivider(),
           itemBuilder: (_, i) {
-            if (i == unionRefs.length) return const SizedBox(height: 200);
-
             final ref = unionRefs.elementAt(i);
             final verses = state.parallelOrder
                 .map((id) => content.getParallelDataByBibleId(id)?.verses?[ref])
@@ -160,21 +158,11 @@ class _BibleViewListState extends State<BibleViewList> {
                 ? false
                 : state.reference!.contains(ref);
 
-            return Padding(
-              padding: EdgeInsets.only(
-                left: thisPaneIndex == 0
-                    ? screen.width * viewSettings.xPadding
-                    : 0,
-                right: thisPaneIndex == panes.length - 1
-                    ? screen.width * viewSettings.xPadding
-                    : 0,
-              ),
-              child: _ParallelView(
-                ref: ref,
-                isHighlighted: isHighlighted,
-                verses: verses,
-                onVerseTap: widget.onVerseTap,
-              ),
+            return _ParallelView(
+              ref: ref,
+              isHighlighted: isHighlighted,
+              verses: verses,
+              onVerseTap: widget.onVerseTap,
             );
           },
         );
