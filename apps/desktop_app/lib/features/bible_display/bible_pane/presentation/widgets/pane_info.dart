@@ -4,19 +4,19 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../../app/state/fullscreen_cubit.dart';
 import '../../../../../app/state/interface_visibility_cubit.dart';
+import '../../../../../shared/design_system/design_system.dart';
+import '../../../../../shared/domain/entities/bible_translation.dart';
+import '../../../../../shared/domain/entities/verse.dart';
 import '../../../../obs_live_overlay/presentation/state/obs_live_overlay_cubit.dart';
 import '../../../../remote_controller/presentation/state/remote_controller_cubit.dart';
 import '../../../../settings_window/presentation/models/settings_route.dart';
-import '../../domain/display_mode.dart';
-import '../../domain/entities/word_info.dart';
-import '../state/bible_pane_bloc.dart';
+import '../../../../simple_presenter/presentation/cubit/presenter_cubit.dart';
+import '../../../../text_scaler/presentation/state/text_scaler_cubit.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
 import '../../../multi_pane_manager/presentation/widgets/active_pane_indicator.dart';
 import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
-import '../../../../simple_presenter/presentation/cubit/presenter_cubit.dart';
-import '../../../../text_scaler/presentation/state/text_scaler_cubit.dart';
-import '../../../../../shared/design_system/design_system.dart';
-import '../../../../../shared/domain/entities/bible_translation.dart';
+import '../../domain/display_mode.dart';
+import '../state/bible_pane_bloc.dart';
 
 class _PaneInfoItem extends StatelessWidget {
   const _PaneInfoItem({
@@ -115,14 +115,14 @@ class _PaneInfoState extends State<PaneInfo> {
               },
             ),
             if (enableStrongWords)
-              BlocSelector<BiblePaneBloc, BiblePaneState, WordInfo?>(
+              BlocSelector<BiblePaneBloc, BiblePaneState, VerseSpan?>(
                 selector: (state) => state.selectedWord,
                 builder: (context, wordInfo) {
                   return wordInfo == null
                       ? const SizedBox()
                       : _PaneInfoItem(
                           icon: LucideIcons.squareDashedMousePointer,
-                          text: '${wordInfo.text} ~ ${wordInfo.span.payload}');
+                          text: '${wordInfo.text} ~ ${wordInfo.payload}');
                 },
               ),
             BlocSelector<BiblePaneBloc, BiblePaneState, List<BibleTranslation>>(

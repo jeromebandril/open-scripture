@@ -8,7 +8,6 @@ import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../../shared/domain/entities/verse.dart';
 import '../../../../../shared/presentation/models/display_option_flutter.dart';
 import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
-import '../../domain/entities/word_info.dart';
 import '../rendering/verse_ref_label.dart';
 import '../rendering/verse_richtext_builder.dart';
 import '../state/bible_pane_bloc.dart';
@@ -129,9 +128,7 @@ class _BibleViewProseState extends State<BibleViewProse> {
   }
 
   void _onStrongsWordTap(BuildContext context, VerseSpan span) {
-    context
-        .read<BiblePaneBloc>()
-        .add(BiblePaneSelectWord(WordInfo(span: span, text: span.text)));
+    context.read<BiblePaneBloc>().add(BiblePaneSelectWord((span)));
   }
 
   @override

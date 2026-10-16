@@ -33,7 +33,7 @@ class BiblePaneState extends Equatable {
     required DisplayMode dMode,
     int? verseCount,
     BibleRepositoryType repoType = BibleRepositoryType.localDatabase,
-    WordInfo? selectedWord,
+    VerseSpan? selectedWord,
   }) {
     return BiblePaneState._(
       paneId: paneId,
@@ -60,7 +60,7 @@ class BiblePaneState extends Equatable {
   final DisplayMode dMode;
   final int? verseCount;
   final BibleRepositoryType repoType;
-  final WordInfo? selectedWord;
+  final VerseSpan? selectedWord;
 
   SplayTreeSet<BibleRef> get unionRefs =>
       content.computeUnion(preserveOrder: isNotSameBookChapter);
@@ -78,7 +78,7 @@ class BiblePaneState extends Equatable {
     DisplayMode Function()? dMode,
     int? Function()? verseCount,
     BibleRepositoryType Function()? repoType,
-    WordInfo? Function()? selectedWord,
+    VerseSpan? Function()? selectedWord,
   }) {
     return BiblePaneState(
       paneId: paneId != null ? paneId() : this.paneId,

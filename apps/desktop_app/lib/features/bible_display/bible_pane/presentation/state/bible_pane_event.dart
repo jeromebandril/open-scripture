@@ -71,7 +71,7 @@ class BiblePaneAddParallel extends BiblePaneEvent {}
 class BiblePaneRemoveParallel extends BiblePaneEvent {}
 
 class BiblePaneSelectWord extends BiblePaneEvent {
-  final WordInfo? word;
+  final VerseSpan? spanWord;
 
-  const BiblePaneSelectWord(this.word);
+  const BiblePaneSelectWord(this.spanWord);
 }

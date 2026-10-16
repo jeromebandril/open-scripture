@@ -9,13 +9,13 @@ import '../../../../../core/infrastructure/event_bus/selected_verse_bus.dart';
 import '../../../../../core/settings/settings_repository.dart';
 import '../../../../../shared/domain/entities/bible_id.dart';
 import '../../../../../shared/domain/entities/bible_ref.dart';
+import '../../../../../shared/domain/entities/verse.dart';
 import '../../../../../shared/domain/repositories/bible_pane_repository_factory.dart';
 import '../../../../../shared/enums/bible_repository_type.dart';
 import '../../../../../shared/error/failure.dart';
 import '../../../../my_library/settings/my_library_settings.dart';
 import '../../../settings/bible_view_settings.dart';
 import '../../domain/display_mode.dart';
-import '../../domain/entities/word_info.dart';
 import '../../domain/repositories/bible_pane_repository.dart';
 import '../models/parallel_bible_config.dart';
 
@@ -376,5 +376,5 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
   }
 
   void _onSelectWord(BiblePaneSelectWord event, Emitter<BiblePaneState> emit) =>
-      emit(state.copyWith(selectedWord: () => event.word));
+      emit(state.copyWith(selectedWord: () => event.spanWord));
 }

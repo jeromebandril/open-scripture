@@ -3,14 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../../../../app/extensions/font_weight.dart';
-import '../../../../../core/settings/settings_cubit.dart';
 import '../../../../../shared/design_system/design_system.dart';
 import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../../shared/domain/entities/verse.dart';
 import '../../../../../shared/presentation/models/display_option_flutter.dart';
-import '../../../settings/bible_view_settings.dart';
 import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
-import '../../domain/entities/word_info.dart';
 import '../rendering/verse_ref_label.dart';
 import '../rendering/verse_richtext_builder.dart';
 import '../state/bible_pane_bloc.dart';
@@ -20,11 +17,15 @@ class BibleViewList extends StatefulWidget {
   const BibleViewList({
     super.key,
     required this.uniqueId,
+    this.autoscroll = true,
     this.onVerseTap,
+    this.onStrongWordTap,
   });
 
   final int uniqueId;
-  final void Function(BibleRef ref)? onVerseTap;
+  final bool autoscroll;
+  final ValueChanged<BibleRef>? onVerseTap;
+  final ValueChanged<VerseSpan>? onStrongWordTap;
 
   @override
   State<BibleViewList> createState() => _BibleViewListState();
@@ -38,11 +39,6 @@ class _BibleViewListState extends State<BibleViewList> {
   bool _scrollScheduled = false;
   BibleRef? _pendingScrollRef;
 
-  bool get _autoScrollEnabled => context
-      .read<SettingsCubit<BibleViewSettings>>()
-      .state
-      .enableAutoScrollToVerse;
-
   bool _isIndexVisible(int index, Iterable<ItemPosition> positions) {
     return positions.any(
       (p) =>
@@ -54,14 +50,14 @@ class _BibleViewListState extends State<BibleViewList> {
     required List<BibleRef> items,
     bool useAnimation = true,
   }) {
-    if (!_autoScrollEnabled) return;
+    if (!widget.autoscroll) return;
     if (_scrollScheduled) return;
     _scrollScheduled = true;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _scrollScheduled = false;
       if (!mounted) return;
-      if (!_autoScrollEnabled) return;
+      if (!widget.autoscroll) return;
 
       final target = _pendingScrollRef;
       if (target == null) return;
@@ -163,6 +159,7 @@ class _BibleViewListState extends State<BibleViewList> {
               isHighlighted: isHighlighted,
               verses: verses,
               onVerseTap: widget.onVerseTap,
+              onStrongWordTap: widget.onStrongWordTap,
             );
           },
         );
@@ -177,12 +174,14 @@ class _ParallelView extends StatelessWidget {
     required this.ref,
     this.isHighlighted = false,
     this.onVerseTap,
+    this.onStrongWordTap,
   });
 
   final BibleRef ref;
   final List<Verse?> verses;
   final bool isHighlighted;
-  final void Function(BibleRef ref)? onVerseTap;
+  final ValueChanged<BibleRef>? onVerseTap;
+  final ValueChanged<VerseSpan>? onStrongWordTap;
 
   @override
   Widget build(BuildContext context) {
@@ -201,6 +200,7 @@ class _ParallelView extends StatelessWidget {
             verse: v,
             isHighlighted: isHighlighted,
             onVerseTap: onVerseTap,
+            onStrongWordTap: onStrongWordTap,
           ),
         );
       }).toList(),
@@ -223,12 +223,14 @@ class _ParallelView extends StatelessWidget {
 class _VerseWidget extends StatelessWidget {
   final Verse verse;
   final bool isHighlighted;
-  final void Function(BibleRef ref)? onVerseTap;
+  final ValueChanged<BibleRef>? onVerseTap;
+  final ValueChanged<VerseSpan>? onStrongWordTap;
 
   const _VerseWidget({
     required this.verse,
     this.isHighlighted = false,
     this.onVerseTap,
+    this.onStrongWordTap,
   });
 
   @override
@@ -262,7 +264,7 @@ class _VerseWidget extends StatelessWidget {
                 children: [
                   TextSpan(text: refLabel, style: refStyle),
                   const TextSpan(text: '  '),
-                  ..._buildSegmentSpans(context, headingStyle),
+                  ..._buildSegmentSpans(context, headingStyle, onStrongWordTap),
                 ],
               ),
             ),
@@ -275,6 +277,7 @@ class _VerseWidget extends StatelessWidget {
   List<InlineSpan> _buildSegmentSpans(
     BuildContext context,
     TextStyle headingStyle,
+    ValueChanged<VerseSpan>? onStrongWordTap,
   ) {
     final result = <InlineSpan>[];
 
@@ -299,9 +302,7 @@ class _VerseWidget extends StatelessWidget {
         VerseSpanBuilder.build(
           spans: segment.spans,
           context: context,
-          onWordTap: (VerseSpan span) => context
-              .read<BiblePaneBloc>()
-              .add(BiblePaneSelectWord(WordInfo(span: span, text: span.text))),
+          onWordTap: onStrongWordTap,
         ),
       );
     }

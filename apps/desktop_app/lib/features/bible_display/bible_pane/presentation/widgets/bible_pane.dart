@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../core/settings/settings_cubit.dart';
 import '../../../../../shared/domain/entities/bible_ref.dart';
+import '../../../../../shared/domain/entities/verse.dart';
 import '../../../../../shared/error/failure.dart';
 import '../../../../text_scaler/presentation/widgets/text_scaler_host.dart';
 import '../../../bible_selector/presentation/widgets/bible_selector.dart';
 import '../../../multi_pane_manager/presentation/models/multi_pane_data.dart';
+import '../../../settings/bible_view_settings.dart';
 import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
 import '../../domain/display_mode.dart';
 import '../../error/bible_failures.dart';
@@ -30,6 +33,10 @@ class BiblePane extends StatelessWidget {
     context.read<BiblePaneBloc>().add(BiblePaneJustChangeRef(ref: ref));
   }
 
+  void _onStrongWordTap(BuildContext context, VerseSpan span) {
+    context.read<BiblePaneBloc>().add(BiblePaneSelectWord(span));
+  }
+
   Widget _buildDisplay(BuildContext context, DisplayMode dMode) {
     return switch (dMode) {
       DisplayMode.presentation => BibleViewPresentation(
@@ -37,7 +44,12 @@ class BiblePane extends StatelessWidget {
         ),
       DisplayMode.list => BibleViewList(
           uniqueId: uniqueId,
+          autoscroll: context
+              .read<SettingsCubit<BibleViewSettings>>()
+              .state
+              .enableAutoScrollToVerse,
           onVerseTap: (ref) => _onVerseTap(context, ref),
+          onStrongWordTap: (span) => _onStrongWordTap(context, span),
         ),
       DisplayMode.prose => BibleViewProse(
           uniqueId: uniqueId,
