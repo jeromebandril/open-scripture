@@ -99,25 +99,6 @@ class _BibleViewListState extends State<BibleViewList> {
   }
 
   @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-
-      final bloc = context.read<BiblePaneBloc>();
-      final initialRef = bloc.state.reference;
-      if (initialRef == null) return;
-
-      _pendingScrollRef = initialRef.copyWith(verseEnd: () => null);
-      _scheduleScrollAfterBuild(
-        items: bloc.state.unionRefs.toList(),
-        useAnimation: false,
-      );
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return BlocConsumer<BiblePaneBloc, BiblePaneState>(
       listenWhen: (prev, curr) =>
@@ -137,6 +118,9 @@ class _BibleViewListState extends State<BibleViewList> {
         return ScrollablePositionedList.separated(
           itemScrollController: _itemScrollController,
           itemPositionsListener: _itemPositionsListener,
+          initialScrollIndex: state.reference == null
+              ? 0
+              : unionRefs.toList().indexOf(state.reference!),
           itemCount: unionRefs.length,
           padding: EdgeInsets.only(
             top: 16,
