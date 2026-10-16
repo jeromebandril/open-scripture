@@ -221,7 +221,7 @@ class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
       case ResolvedPartialRefIntent():
         // resolve book
         final bibleLocalId =
-            bloc.state.content.asMap.values.firstOrNull?.meta.localId;
+            bloc.state.content.asMap.values.firstOrNull?.translation.localId;
         final book =
             await _bookResolver.resolve(intent.ref.bookToken, bibleLocalId);
         if (book == null) {
@@ -240,7 +240,7 @@ class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
       case ResolvedPartialMultipleRefIntent(:final refs):
         final resolvedRefs = <BibleRef>[];
         final bibleLocalId =
-            bloc.state.content.asMap.values.firstOrNull?.meta.localId;
+            bloc.state.content.asMap.values.firstOrNull?.translation.localId;
         final futures = refs.map((r) async {
           final book = await _bookResolver.resolve(r.bookToken, bibleLocalId);
           return MapEntry(r, book);

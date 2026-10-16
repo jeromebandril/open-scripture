@@ -133,7 +133,7 @@ class BibleViewPresentation extends StatelessWidget {
     final blocks = <_TranslationBlock>[];
 
     for (final id in state.parallelOrder) {
-      final data = state.content.getParallelDataByBibleId(id);
+      final data = state.content.dataFor(id);
       if (data == null || data.verses == null) continue;
       final verses = data.verses!;
 
@@ -152,7 +152,7 @@ class BibleViewPresentation extends StatelessWidget {
               ? const <InlineSpan>[]
               : spansByRef.values.first;
 
-      final langNativeName = data.meta.langNativeName;
+      final langNativeName = data.translation.langNativeName;
       final subtitle = '${langNativeName ?? ''}  ';
 
       blocks.add((

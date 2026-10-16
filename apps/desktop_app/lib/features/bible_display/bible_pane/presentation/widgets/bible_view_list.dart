@@ -107,21 +107,21 @@ class _BibleViewListState extends State<BibleViewList> {
         final ref = state.reference;
         if (ref == null) return;
         _pendingScrollRef = ref.copyWith(verseEnd: () => null);
-        _scheduleScrollAfterBuild(items: state.unionRefs.toList());
+        _scheduleScrollAfterBuild(items: state.content.refs.toList());
       },
       buildWhen: (prev, curr) =>
           prev.reference != curr.reference || prev.content != curr.content,
       builder: (context, state) {
         final content = state.content;
-        final unionRefs = state.unionRefs;
+        final contentRefs = content.refs;
 
         return ScrollablePositionedList.separated(
           itemScrollController: _itemScrollController,
           itemPositionsListener: _itemPositionsListener,
           initialScrollIndex: state.reference == null
               ? 0
-              : unionRefs.toList().indexOf(state.reference!),
-          itemCount: unionRefs.length,
+              : contentRefs.toList().indexOf(state.reference!),
+          itemCount: contentRefs.length,
           padding: EdgeInsets.only(
             top: 16,
             bottom: 200,
@@ -130,9 +130,9 @@ class _BibleViewListState extends State<BibleViewList> {
           ),
           separatorBuilder: (ctx, _) => const VerseDivider(),
           itemBuilder: (_, i) {
-            final ref = unionRefs.elementAt(i);
+            final ref = contentRefs.elementAt(i);
             final verses = state.parallelOrder
-                .map((id) => content.getParallelDataByBibleId(id)?.verses?[ref])
+                .map((id) => content.dataFor(id)?.verses?[ref])
                 .toList();
             final isHighlighted = state.reference == null
                 ? false

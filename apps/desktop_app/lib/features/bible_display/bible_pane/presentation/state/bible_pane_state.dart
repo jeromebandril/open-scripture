@@ -62,10 +62,7 @@ class BiblePaneState extends Equatable {
   final BibleRepositoryType repoType;
   final VerseSpan? selectedWord;
 
-  SplayTreeSet<BibleRef> get unionRefs =>
-      content.computeUnion(preserveOrder: isNotSameBookChapter);
-
-  List<BibleId> get openedBiblesIds => content.keys.toList();
+  List<BibleId> get openedBiblesIds => content.bibleIds.toList();
 
   BiblePaneState copyWith({
     int Function()? paneId,

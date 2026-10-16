@@ -114,7 +114,7 @@ class AppCommandDispatcher {
       }
 
       // Otherwise, move inside the current chapter bounds.
-      final refs = bloc.state.unionRefs.toList();
+      final refs = bloc.state.content.refs;
       final iCurr = refs.indexOf(ref.copyWith(verseEnd: () => null));
       if (iCurr != -1 && iCurr + delta < refs.length && iCurr + delta >= 0) {
         bloc.add(BiblePaneJustChangeRef(ref: refs[iCurr + delta]));
@@ -132,7 +132,7 @@ class AppCommandDispatcher {
       if (bloc.state.isNotSameBookChapter) return;
 
       final last =
-          bloc.state.verseCount ?? bloc.state.unionRefs.last.verseStart ?? 0;
+          bloc.state.verseCount ?? bloc.state.content.refs.last.verseStart ?? 0;
       final start = ref.verseStart ?? 1;
       final end = ref.verseEnd ?? start;
       final nextEnd = end + delta;

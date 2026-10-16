@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:collection';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -96,7 +95,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
           hasAtLeastOneSuccess = true;
           // Add only new translations
           if (newMap[id] != null) return;
-          newMap[id] = BibleData(meta: bm);
+          newMap[id] = BibleData(translation: bm);
         },
       );
     }
@@ -108,7 +107,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
 
     if (hasAtLeastOneSuccess) {
       // before updating the state, save the current displayed refs
-      final contentRefs = state.unionRefs.toList();
+      final contentRefs = state.content.refs;
       // update the state with new translations and reset the content
       emit(state.copyWith(
         status: () => BiblePaneStatus.ready,
@@ -135,6 +134,10 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     Emitter<BiblePaneState> emit,
   ) async {
     if (state.openedBiblesIds.isEmpty) return;
+    // TODO: error while switching from getApiV2 src to canonical src
+    // when it updated content. This function is called 2 times.
+    // first call the event have 0 refs.
+    if (event.refs.isEmpty) return;
 
     final loadingTimer = Timer(_loadingIndicatorThreshold, () {
       if (emit.isDone) return;
@@ -166,9 +169,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
         await failureOrChapter.fold<Future<void>>(
           (failure) async {
             errors.add(failure);
-            newMap[id] = newMap[id]!.copyWith(
-              verses: () => null,
-            );
+            newMap[id] = newMap[id]!.withVerses(null);
           },
           (verses) async {
             hasAtLeastOneSuccess = true;
@@ -179,14 +180,12 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
             if (verseCount > maxVerseCount) maxVerseCount = verseCount;
 
             // set content of the pane
-            newMap[id] = newMap[id]!.copyWith(
-              verses: () => BibleData.versesToMap(verses, preserveOrder: true),
-            );
+            newMap[id] = newMap[id]!.withVerses(verses);
           },
         );
       }
 
-      final content = ParallelBibleConfig.from(newMap);
+      final content = ParallelBibleConfig.from(newMap, preserveOrder: true);
 
       if (emit.isDone) return;
 
@@ -260,9 +259,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
         await failureOrChapter.fold<Future<void>>(
           (failure) async {
             errors.add(failure);
-            newMap[id] = newMap[id]!.copyWith(
-              verses: () => null,
-            );
+            newMap[id] = newMap[id]!.withVerses(null);
           },
           (verses) async {
             hasAtLeastOneSuccess = true;
@@ -273,9 +270,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
             if (verseCount > maxVerseCount) maxVerseCount = verseCount;
 
             // set content of the pane
-            newMap[id] = newMap[id]!.copyWith(
-              verses: () => BibleData.versesToMap(verses),
-            );
+            newMap[id] = newMap[id]!.withVerses(verses);
           },
         );
       }

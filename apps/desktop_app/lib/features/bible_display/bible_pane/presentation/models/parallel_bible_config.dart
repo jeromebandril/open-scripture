@@ -9,147 +9,112 @@ import '../../../../../shared/domain/entities/verse.dart';
 
 typedef ParallelBibleMap = Map<BibleId, BibleData>;
 
+/// The content of a Bible pane: one [BibleData] per Bible/translation shown
+/// side by side, plus the combined list of verse refs across all of them.
 class ParallelBibleConfig extends Equatable {
-  final ParallelBibleMap _config;
+  final ParallelBibleMap _dataById;
 
-  const ParallelBibleConfig._(this._config);
+  /// Union of the refs of every Bible/translation.
+  ///
+  /// Needed because translations can have different chapter lengths.
+  final List<BibleRef> refs;
 
+  const ParallelBibleConfig._(this._dataById, this.refs);
+
+  /// Creates a config from [dataById].
+  ///
+  /// [refs] are sorted by default. Pass [preserveOrder] to keep them in
+  /// first-seen order instead.
   factory ParallelBibleConfig.from(
-    ParallelBibleMap map,
-  ) {
-    return ParallelBibleConfig._(Map.unmodifiable(map));
-  }
-
-  BibleData? getParallelDataByBibleId(BibleId id) => _config[id];
-
-  static const ParallelBibleConfig empty =
-      ParallelBibleConfig._(<BibleId, BibleData>{});
-
-  BibleData? operator [](BibleId id) => _config[id];
-
-  Iterable<BibleId> get keys => _config.keys;
-
-  ParallelBibleMap get asMap => Map.unmodifiable(_config);
-
-  bool get isContentEmpty {
-    if (_config.isEmpty) return true;
-
-    return _config.values.every(
-      (data) => data.verses == null || data.verses!.isEmpty,
-    );
-  }
-
-  /// "union" understood as union of all [BibleRef] between each bible/translation.
-  /// Useful because two bibles/translations can have different chapter lengths
-  SplayTreeSet<BibleRef> computeUnion({bool preserveOrder = false}) {
-    if (!preserveOrder) {
-      final union = SplayTreeSet<BibleRef>();
-      for (final data in _config.values) {
-        final verses = data.verses;
-        if (verses == null) continue;
-        union.addAll(verses.keys);
-      }
-      return union;
-    }
-
-    // first-seen order, walking translations in _config order and
-    // each translation's verses in its own (already-preserved) order
-    final order = <BibleRef, int>{};
-    for (final data in _config.values) {
-      final verses = data.verses;
-      if (verses == null) continue;
-      for (final ref in verses.keys) {
-        order.putIfAbsent(ref, () => order.length);
-      }
-    }
-
-    final union = SplayTreeSet<BibleRef>(
-      (a, b) => order[a]!.compareTo(order[b]!),
-    );
-    union.addAll(order.keys);
-    return union;
-  }
-
-  /// If end ref is passed, then it compares the objects
-  /// otherwise if only start ref is passed, it will
-  /// use the field [verseStart] and [verseEnd]
-  List<BibleRef> getRefsInRange(
-    BibleRef start, {
-    BibleRef? end,
-  }) {
-    final union = computeUnion();
-
-    if (end == null) {
-      return start.verseEnd == null
-          ? [start]
-          : union
-              .where((u) =>
-                  start.verseStart! <= u.verseStart! &&
-                  start.verseEnd! >= u.verseStart!)
-              .toList();
-    }
-
-    final result = <BibleRef>[];
-    for (final ref in union) {
-      if (ref.compareTo(start) < 0) continue;
-      if (ref.compareTo(end) > 0) break;
-
-      result.add(ref);
-    }
-
-    return result;
-  }
-
-  @override
-  List<Object?> get props => [_config];
-}
-
-/// Group of ordered verses per Bible translation
-class BibleData extends Equatable {
-  final BibleTranslation meta;
-  final SplayTreeMap<BibleRef, Verse>? verses;
-
-  const BibleData({required this.meta, this.verses});
-
-  BibleData copyWith({
-    BibleTranslation? meta,
-    SplayTreeMap<BibleRef, Verse>? Function()? verses,
-  }) {
-    return BibleData(
-      meta: meta ?? this.meta,
-      verses: verses != null ? verses() : this.verses,
-    );
-  }
-
-  static SplayTreeMap<BibleRef, Verse> versesToMap(
-    List<Verse> verses, {
+    ParallelBibleMap dataById, {
     bool preserveOrder = false,
   }) {
-    // preserve order of the given list
-    if (preserveOrder) {
-      final order = <BibleRef, int>{
-        for (var i = 0; i < verses.length; i++) verses[i].ref: i,
-      };
-      final map = SplayTreeMap<BibleRef, Verse>(
-        (a, b) => order[a]!.compareTo(order[b]!),
-      );
-      for (final verse in verses) {
-        map[verse.ref] = verse;
-      }
-      // test with
-      // rev 1.2-5; mark 5.1; john 3
-      // print(verses.map((v) => v.ref));
-      // print(map.keys);
-      return map;
-    }
+    final unmodifiableData = Map<BibleId, BibleData>.unmodifiable(dataById);
+    final unionRefs = _unionOfRefs(
+      unmodifiableData,
+      preserveOrder: preserveOrder,
+    );
 
-    return SplayTreeMap.fromIterable(
-      verses,
-      key: (v) => v.ref,
-      value: (v) => v,
+    return ParallelBibleConfig._(
+      unmodifiableData,
+      List.unmodifiable(unionRefs),
     );
   }
 
+  static const ParallelBibleConfig empty =
+      ParallelBibleConfig._(<BibleId, BibleData>{}, []);
+
+  Iterable<BibleId> get bibleIds => _dataById.keys;
+
+  /// Unmodifiable view of the underlying data.
+  ParallelBibleMap get asMap => _dataById;
+
+  bool get isContentEmpty => _dataById.values.every((data) => data.hasNoVerses);
+
+  BibleData? dataFor(BibleId id) => _dataById[id];
+
+  /// Returns the refs from [refs] that fall within a range.
+  ///
+  /// - With [end]: every ref between [start] and [end] (inclusive), compared
+  ///   with [BibleRef.compareTo].
+  /// - Without [end]: if [start] spans several verses (has a `verseEnd`),
+  ///   every ref whose verse number lies within that span; otherwise just
+  ///   [start] itself.
+  List<BibleRef> getRefsInRange(BibleRef start, {BibleRef? end}) {
+    if (end != null) {
+      return refs
+          .where((ref) => ref.compareTo(start) >= 0 && ref.compareTo(end) <= 0)
+          .toList();
+    }
+
+    final lastVerse = start.verseEnd;
+    if (lastVerse == null) return [start];
+
+    final firstVerse = start.verseStart!;
+    return refs
+        .where(
+          (ref) =>
+              ref.verseStart! >= firstVerse && ref.verseStart! <= lastVerse,
+        )
+        .toList();
+  }
+
+  static List<BibleRef> _unionOfRefs(
+    ParallelBibleMap dataById, {
+    required bool preserveOrder,
+  }) {
+    final allRefs = dataById.values.expand(
+      (data) => data.verses?.keys ?? const <BibleRef>[],
+    );
+
+    return preserveOrder
+        ? allRefs.toSet().toList() // Set keeps first-seen order
+        : SplayTreeSet<BibleRef>.of(allRefs).toList();
+  }
+
   @override
-  List<Object?> get props => [meta, verses];
+  List<Object?> get props => [_dataById, refs];
+}
+
+/// A single Bible/translation and, if loaded, its verses.
+class BibleData extends Equatable {
+  final BibleTranslation translation;
+
+  /// Verses keyed by ref, in the order they were loaded.
+  /// `null` if the verses haven't been loaded.
+  final Map<BibleRef, Verse>? verses;
+
+  const BibleData({required this.translation, this.verses});
+
+  bool get hasNoVerses => verses?.isEmpty ?? true;
+
+  BibleData withVerses(List<Verse>? newVerses) => BibleData(
+        translation: translation,
+        verses: newVerses == null
+            ? null
+            : {for (final verse in newVerses) verse.ref: verse},
+      );
+
+  @override
+  List<Object?> get props => [translation, verses];
 }

@@ -201,9 +201,9 @@ class _BibleViewProseState extends State<BibleViewProse> {
     );
     final highlight = theme.colorScheme.primaryContainer;
 
-    final unionRefs = state.unionRefs.toList();
+    final contentRefs = state.content.refs;
     final anchors = _anchorsFor(column);
-    anchors.removeWhere((ref, _) => !unionRefs.contains(ref));
+    anchors.removeWhere((ref, _) => !contentRefs.contains(ref));
 
     final blocks = <Widget>[];
     var currentSpans = <InlineSpan>[];
@@ -223,9 +223,8 @@ class _BibleViewProseState extends State<BibleViewProse> {
       currentSpans = [];
     }
 
-    for (final ref in unionRefs) {
-      final verse =
-          state.content.getParallelDataByBibleId(translationId)?.verses?[ref];
+    for (final ref in contentRefs) {
+      final verse = state.content.dataFor(translationId)?.verses?[ref];
       if (verse == null) continue;
 
       final isHighlighted = state.reference?.contains(ref) ?? false;

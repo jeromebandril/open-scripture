@@ -127,7 +127,7 @@ class _PaneInfoState extends State<PaneInfo> {
               ),
             BlocSelector<BiblePaneBloc, BiblePaneState, List<BibleTranslation>>(
               selector: (state) =>
-                  state.content.asMap.values.map((v) => v.meta).toList(),
+                  state.content.asMap.values.map((v) => v.translation).toList(),
               builder: (context, metas) {
                 late final String text;
                 if (metas.isEmpty) text = _emptyDataPlaceholder;
