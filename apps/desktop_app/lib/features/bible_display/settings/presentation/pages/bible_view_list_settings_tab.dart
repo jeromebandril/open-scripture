@@ -111,7 +111,7 @@ class _BibleViewListSettingsTabState extends State<BibleViewListSettingsTab> {
                   min: 0,
                   value: context.select((SettingsCubit<BibleViewSettings> c) =>
                       c.state.listParallelSpacing),
-                  onSubmitted: (val) => cubit.update((l) => l.copyWith(
+                  onChanged: (val) => cubit.update((l) => l.copyWith(
                         listParallelSpacing: val.toDouble(),
                       )),
                 ),

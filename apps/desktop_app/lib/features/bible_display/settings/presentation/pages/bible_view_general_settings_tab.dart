@@ -174,7 +174,7 @@ class _BibleViewGeneralSettingsTabState
                             min: -10,
                             max: 10,
                             decimal: true,
-                            onSubmitted: (n) {
+                            onChanged: (n) {
                               cubit.update((p) => p.copyWith(
                                   verseLetterSpacing: () => n.toDouble()));
                             },
@@ -281,7 +281,7 @@ class _BibleViewGeneralSettingsTabState
                         child: AppInputNumber(
                           min: 0,
                           max: 256,
-                          onSubmitted: (n) {
+                          onChanged: (n) {
                             cubit.update((p) =>
                                 p.copyWith(splitscreenGap: n.toDouble()));
                           },

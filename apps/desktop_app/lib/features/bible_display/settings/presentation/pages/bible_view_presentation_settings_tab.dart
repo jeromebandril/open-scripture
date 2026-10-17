@@ -136,7 +136,7 @@ class _BibleViewPresentationSettingsTabState
                 child: AppInputNumber(
                   min: 0,
                   max: 100,
-                  onSubmitted: (n) {
+                  onChanged: (n) {
                     cubit.update((p) =>
                         p.copyWith(presentationParallelSpacing: n.toDouble()));
                   },
