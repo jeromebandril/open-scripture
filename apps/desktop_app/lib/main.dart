@@ -5,8 +5,7 @@ import 'package:window_manager/window_manager.dart';
 
 import 'app/app.dart';
 import 'core/di/injection_container.dart' as di;
-import 'core/infrastructure/database/database.dart';
-import 'features/pericopes_mgr/data/services/pericope_importer_impl.dart';
+import 'shared/data/services/pericope_importer.dart';
 
 void main() async {
   await di.init();
@@ -14,9 +13,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Try installing the bundled pericopes.
-  final db = di.sl<AppDb>();
   try {
-    await PericopeImporter(db).installBundled(rootBundle.loadString);
+    await di.sl<PericopeImporter>().installBundled(rootBundle.loadString);
   } catch (e, st) {
     debugPrint('Bundled pericopes install failed: $e\n$st');
   }

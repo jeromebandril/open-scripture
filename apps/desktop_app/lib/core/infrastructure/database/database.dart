@@ -9,6 +9,7 @@ import '../../../shared/domain/entities/bible_book.dart';
 import 'daos/bible_content_dao.dart';
 import 'daos/bible_installation_dao.dart';
 import 'daos/installed_bibles_dao.dart';
+import 'daos/languages_dao.dart';
 
 part 'database.g.dart';
 
@@ -23,6 +24,7 @@ part 'database.g.dart';
     BibleInstallationDao,
     BibleContentDao,
     InstalledBiblesDao,
+    LanguagesDao,
   ],
 )
 class AppDb extends _$AppDb {

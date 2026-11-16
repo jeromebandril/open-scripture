@@ -20,6 +20,10 @@ import '../../features/obs_live_overlay/domain/repostiory/overlay_repository.dar
 import '../../features/obs_live_overlay/domain/service/verse_html_formatter.dart';
 import '../../features/obs_live_overlay/presentation/state/obs_live_overlay_cubit.dart';
 import '../../features/obs_live_overlay/settings/overlay_settings.dart';
+import '../../shared/data/services/pericope_importer.dart';
+import '../../features/pericopes_mgr/data/repositories/pericopes_mgr_repo_impl.dart';
+import '../../features/pericopes_mgr/domain/repositories/pericopes_mgr_repo.dart';
+import '../../features/pericopes_mgr/presentation/cubit/pericopes_mgr_cubit.dart';
 import '../../features/remote_controller/data/datasource/remote_controller_ws.dart';
 import '../../features/remote_controller/data/repositories/remote_controller_repo_impl.dart';
 import '../../features/remote_controller/domain/repositories/remote_controller_repo.dart';
@@ -59,7 +63,9 @@ Future<void> init(GetIt sl) async {
   _registerObsOverlay(sl);
   _registerShortcuts(sl);
   _registerLifecycle(sl);
+  _registerPericopesMgr(sl);
 }
+
 
 // ---------------------------------------------------------------------------
 // OPTIONAL. Everything here is `registerLazySingletonAsync` because Sword
@@ -241,6 +247,12 @@ void _registerShortcuts(GetIt sl) {
       presenterCubit: () => sl<PresenterCubit>(),
     ),
   );
+}
+
+void _registerPericopesMgr(GetIt sl) {
+  sl.registerLazySingleton(() => PericopeImporter(datasource: sl(), bookDatasource: sl()));
+  sl.registerLazySingleton<PericopesMgrRepo>(() => PericopesMgrRepoImpl(datasource: sl(), importer: sl()));
+  sl.registerLazySingleton(() => PericopesMgrCubit(repo: sl()));
 }
 
 // Called once from main.dart right after init() completes. this is where

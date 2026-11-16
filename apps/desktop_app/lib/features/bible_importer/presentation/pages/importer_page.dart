@@ -4,13 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../../shared/enums/bible_repository_type.dart';
 import '../../../../shared/presentation/widgets/ui/inputs/app_input_option.dart';
+import '../../../../shared/presentation/widgets/ui/inputs/file_dropzone.dart';
 import '../../../settings_window/presentation/widgets/setting_option.dart';
 import '../../../settings_window/presentation/widgets/setting_section.dart';
 import '../../../sword/presentation/widgets/sword_path_selector.dart'
     if (dart.library.html) '../../../sword/presentation/widgets/sword_path_selector_stub.dart';
 
 import '../state/bible_importer_cubit/bible_importer_cubit.dart';
-import '../widgets/importer.dart';
 import '../widgets/list_of_repositories.dart';
 
 class ImporterPage extends StatelessWidget {
@@ -48,7 +48,7 @@ class ImporterPage extends StatelessWidget {
                   ),
                   if (targetType == BibleRepositoryType.sword)
                     const SwordPathSelector(),
-                  const ImporterWidget(),
+                  const _ImporterWidget(),
                 ],
               ),
               SettingSection.single(
@@ -59,6 +59,35 @@ class ImporterPage extends StatelessWidget {
           ),
         );
       }),
+    );
+  }
+}
+
+class _ImporterWidget extends StatelessWidget {
+  const _ImporterWidget();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<BibleImporterCubit, BibleImporterState>(
+      builder: (context, state) {
+        return FileDropZoneUi(
+          isDragOver: false,
+          isLoading: state.status == BibleImporterStatus.running,
+          errorText: state.errorMessage,
+          onChoosePressed: () {
+            context.read<BibleImporterCubit>().pickFile();
+          },
+          label: BlocBuilder<BibleImporterCubit, BibleImporterState>(
+            builder: (context, state) {
+              if (state.targetType == BibleRepositoryType.sword) {
+                return const Text(
+                    'Choose a valid ZIP file from the official Crosswire Repository');
+              }
+              return const Text('Choose a ZIP or XML file');
+            },
+          ),
+        );
+      },
     );
   }
 }

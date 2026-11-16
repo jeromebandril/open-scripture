@@ -1,13 +1,5 @@
 import 'core_tables_schema.drift';
 
-CREATE TABLE pericope_sets (
-    id INTEGER PRIMARY KEY,
-    extId TEXT NOT NULL UNIQUE,   -- "id" from the file, e.g. 'kjv-en'
-    langIsoCode TEXT NOT NULL,    -- language the titles are written in
-    versionNumber INTEGER NOT NULL DEFAULT 1,
-    attribution TEXT
-) STRICT;
-
 CREATE TABLE pericopes (
     setId INTEGER NOT NULL,
     bookId INTEGER NOT NULL,
@@ -21,8 +13,22 @@ CREATE TABLE pericopes (
     FOREIGN KEY (bookId) REFERENCES canonical_books(id) ON DELETE RESTRICT
 ) STRICT, WITHOUT ROWID;
 
+CREATE TABLE pericope_sets (
+    id INTEGER PRIMARY KEY,
+    fileNameImportedFrom TEXT NULL,
+    extId TEXT NOT NULL UNIQUE,   -- "id" from the file, e.g. 'kjv-en'
+    languageId INTEGER NULL,
+    versionNumber INTEGER NOT NULL DEFAULT 1,
+    attribution TEXT,
+    FOREIGN KEY (languageId) REFERENCES languages(id) ON DELETE RESTRICT
+) STRICT;
+
+-- SQLite doesn't index FK child columns automatically
+CREATE INDEX ix_pericope_sets_language ON pericope_sets(languageId);
+
 CREATE TABLE pericope_assignments (
-    langIsoCode TEXT PRIMARY KEY, -- same codes as languages.isoCode
+    languageId INTEGER PRIMARY KEY,
     setId INTEGER,                -- NULL = user explicitly chose "none"
+    FOREIGN KEY (languageId) REFERENCES languages(id) ON DELETE CASCADE,
     FOREIGN KEY (setId) REFERENCES pericope_sets(id) ON DELETE CASCADE
 ) STRICT, WITHOUT ROWID;

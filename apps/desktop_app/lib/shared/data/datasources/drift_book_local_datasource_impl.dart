@@ -5,6 +5,7 @@ import '../models/book_dto.dart';
 abstract class BibleBookLocalDataSource {
   Future<List<BookDto>> getBooksForBible(String bibleId);
   Future<List<BookDto>> searchBookByName(String query, int languageId);
+  Future<Map<String, int>> getCanonicalBookIds();
 }
 
 class DriftBibleBookLocalDataSourceImpl implements BibleBookLocalDataSource {
@@ -99,5 +100,11 @@ class DriftBibleBookLocalDataSourceImpl implements BibleBookLocalDataSource {
     }
 
     return uniqueResults;
+  }
+
+  @override
+  Future<Map<String, int>> getCanonicalBookIds() async {
+    final rows = await _db.select(_db.canonicalBooks).get();
+    return {for (final b in rows) b.bookToken: b.id};
   }
 }

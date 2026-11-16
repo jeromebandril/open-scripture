@@ -1,12 +1,9 @@
--- Enable foreign key enforcement
-PRAGMA foreign_keys = ON;
-
 -- 1. Languages Metadata
 CREATE TABLE languages (
     id INTEGER PRIMARY KEY,
     isoCode TEXT NOT NULL UNIQUE,
     engName TEXT NOT NULL,
-    nativeName TEXT
+    nativeName TEXT NULL
 ) STRICT;
 
 -- 2. Canonical Books (The universal structure of the Bible)
@@ -36,7 +33,7 @@ CREATE TABLE localized_book_names (
 CREATE TABLE bibles (
     id INTEGER PRIMARY KEY, 
     extId TEXT NOT NULL UNIQUE, -- e.g., 'KJV', 'RVR1960'
-    languageId INTEGER NOT NULL,
+    languageId INTEGER NULL,
     bName TEXT NOT NULL,
     nameLocal TEXT,
     abbreviation TEXT NOT NULL,

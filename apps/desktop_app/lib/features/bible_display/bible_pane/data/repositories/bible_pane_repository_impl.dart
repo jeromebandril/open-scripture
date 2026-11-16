@@ -1,9 +1,9 @@
 import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 
 import '../../../../../shared/data/datasources/bible_catalog_datasource/bible_catalog_datasource.dart';
 import '../../../../../shared/data/datasources/bible_content_datasource/bible_content_datasourcee.dart';
+import '../../../../../shared/data/datasources/pericope_datasource.dart';
 import '../../../../../shared/data/models/bible_install_dto.dart';
 import '../../../../../shared/data/models/verse_segment_dto.dart';
 import '../../../../../shared/domain/entities/bible_id.dart';
@@ -12,7 +12,6 @@ import '../../../../../shared/domain/entities/bible_translation.dart';
 import '../../../../../shared/domain/entities/verse.dart';
 import '../../../../../shared/error/exception.dart';
 import '../../../../../shared/error/failure.dart';
-import '../../../../pericopes_mgr/data/datasources/pericope_datasource.dart';
 import '../../../../pericopes_mgr/domain/entities/pericope.dart';
 import '../../domain/repositories/bible_pane_repository.dart';
 import '../../error/bible_failures.dart';
@@ -153,9 +152,9 @@ class BiblePaneRepositoryImpl implements BiblePaneRepository {
     if (_pericopeDatasource == null) return const [];
     try {
       return await _pericopeDatasource.getForChapter(
-        bibleId.externalId,
-        ref.book,
-        ref.chapter,
+        bibleExtId: bibleId.externalId,
+        book: ref.book,
+        chapter: ref.chapter,
       );
     } catch (e, st) {
       return const [];
