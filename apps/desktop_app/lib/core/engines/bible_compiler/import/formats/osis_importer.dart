@@ -23,7 +23,7 @@ class _ActiveStyle {
   _ActiveStyle(this.type, this.payload);
 }
 
-final class OsisImporter implements BibleImporter {
+final class OsisImporter extends BibleImporter {
   static const int _canonicalSchemaVersion = 1;
 
   @override
@@ -131,8 +131,8 @@ final class OsisImporter implements BibleImporter {
       langNativeName: lang,
       originSource: null,
       originFormat: formatId,
-      description: desc,
-      copyright: rights,
+      description: normalizeParagraphs(desc),
+      copyright: normalizeParagraphs(rights),
     );
   }
 
