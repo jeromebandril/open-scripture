@@ -6,13 +6,11 @@ import '../../../features/pericopes_mgr/domain/entities/pericope.dart'
 import '../../../features/pericopes_mgr/domain/entities/pericope_set.dart'
     as domain;
 import '../../domain/entities/bible_book.dart' as domain;
+import '../../domain/entities/bible_id.dart';
 
 abstract class PericopeDatasource {
   Future<List<domain.PericopeSet>> getAllPericopeSets();
 
-  /// language ISO code -> assigned set extId.
-  /// A null value means the user explicitly chose "none";
-  Future<Map<String, String?>> getAssignments();
   Future<void> installPericopeSet(
     domain.PericopeSet pericopeSet,
     List<domain.Pericope> pericopes,
@@ -22,7 +20,7 @@ abstract class PericopeDatasource {
   /// It doesn't change its content.
   Future<void> upsertPericopeSet(domain.PericopeSet pericopeSet);
   Future<void> deletePericopeSet(String extId);
-  Future<void> deletePericopeAssignemnt(String langIsoCode);
+  Future<void> deleteAssignemntByBibleId(BibleId bibleId);
 
   /// [setExtId] == null means the user explicitly chose "no pericopes"
   /// for this language
@@ -30,8 +28,10 @@ abstract class PericopeDatasource {
     required String langIsoCode,
     String? setExtId,
   });
+
+  /// Get using bible external id, matching in the db
   Future<List<domain.Pericope>> getForChapter({
-    required String bibleExtId,
+    required BibleId bibleId,
     required domain.BibleBook book,
     required int chapter,
   });
@@ -57,6 +57,7 @@ class PericopeDatasourceImpl implements PericopeDatasource {
   Future<List<domain.PericopeSet>> _querySets({Expression<bool>? where}) async {
     final sets = _db.pericopeSets;
     final lang = _db.languages;
+    final per = _db.pericopeAssignments;
 
     final query = _db.select(sets).join([
       leftOuterJoin(lang, lang.id.equalsExp(sets.languageId)),
@@ -64,37 +65,27 @@ class PericopeDatasourceImpl implements PericopeDatasource {
       ..orderBy([OrderingTerm.asc(sets.extId)]);
     if (where != null) query.where(where);
 
+    final asmt = await _db
+        .select(per)
+        .join([innerJoin(sets, sets.id.equalsExp(per.setId))]).get();
+
     return [
       for (final row in await query.get())
         domain.PericopeSet(
-          name: row.readTable(sets).fileNameImportedFrom,
-          extId: row.readTable(sets).extId,
-          versionNumber: row.readTable(sets).versionNumber,
-          attribution: row.readTable(sets).attribution,
-          langIsoCode: row.readTableOrNull(lang)?.isoCode,
-        ),
+            name: row.readTable(sets).pericopeName,
+            extId: row.readTable(sets).extId,
+            versionNumber: row.readTable(sets).versionNumber,
+            attribution: row.readTable(sets).attribution,
+            langIsoCode: row.readTableOrNull(lang)?.isoCode,
+            assignedTo: asmt
+                .where((a) => a.readTable(sets).id == row.readTable(sets).id)
+                .map((a) => BibleId.fromKey(a.readTable(per).bibleId))
+                .toList()),
     ];
   }
 
   @override
   Future<List<domain.PericopeSet>> getAllPericopeSets() => _querySets();
-
-  @override
-  Future<Map<String, String?>> getAssignments() async {
-    final a = _db.pericopeAssignments;
-    final lang = _db.languages;
-    final sets = _db.pericopeSets;
-
-    final rows = await _db.select(a).join([
-      innerJoin(lang, lang.id.equalsExp(a.languageId)),
-      leftOuterJoin(sets, sets.id.equalsExp(a.setId)),
-    ]).get();
-
-    return {
-      for (final r in rows)
-        r.readTable(lang).isoCode: r.readTableOrNull(sets)?.extId,
-    };
-  }
 
   @override
   Future<void> installPericopeSet(
@@ -112,6 +103,7 @@ class PericopeDatasourceImpl implements PericopeDatasource {
       await _db.into(_db.pericopeSets).insert(
             PericopeSetsCompanion.insert(
               extId: pericopeSet.extId,
+              pericopeName: Value(pericopeSet.name),
               languageId: Value(languageId),
               attribution: Value(pericopeSet.attribution),
               versionNumber: Value(pericopeSet.versionNumber),
@@ -152,18 +144,6 @@ class PericopeDatasourceImpl implements PericopeDatasource {
           ],
         );
       });
-
-      // 5. Auto-assign the set to its language.
-      // TODO: only if there is no existing assignment
-      if (languageId != null) {
-        await _db.into(_db.pericopeAssignments).insert(
-              PericopeAssignmentsCompanion.insert(
-                setId: Value(setId),
-                languageId: languageId,
-              ),
-              mode: InsertMode.insertOrIgnore,
-            );
-      }
     });
   }
 
@@ -181,20 +161,11 @@ class PericopeDatasourceImpl implements PericopeDatasource {
     );
 
     // Upsert pericope set
-    final rowId = await _db.into(_db.pericopeSets).insert(
+    await _db.into(_db.pericopeSets).insert(
           data,
           onConflict: DoUpdate(
             (_) => data,
             target: [_db.pericopeSets.extId],
-          ),
-        );
-
-    // auto assign to the language specified in the pericope set
-    if (languageId == null) return;
-    await _db.into(_db.pericopeAssignments).insertOnConflictUpdate(
-          PericopeAssignmentsCompanion(
-            setId: Value(rowId),
-            languageId: Value(languageId),
           ),
         );
   }
@@ -211,21 +182,14 @@ class PericopeDatasourceImpl implements PericopeDatasource {
           .go();
 
   @override
-  Future<void> deletePericopeAssignemnt(String langIsoCode) async {
-    final langs = _db.languages;
-
-    final languageId = _db.selectOnly(langs)
-      ..addColumns([langs.id])
-      ..where(langs.isoCode.equals(langIsoCode));
-
-    await (_db.delete(_db.pericopeAssignments)
-          ..where((a) => a.languageId.isInQuery(languageId)))
-        .go();
-  }
+  Future<void> deleteAssignemntByBibleId(BibleId bibleId) async =>
+      await (_db.delete(_db.pericopeAssignments)
+            ..where((a) => a.bibleId.equals(bibleId.key)))
+          .go();
 
   @override
   Future<List<domain.Pericope>> getForChapter({
-    required String bibleExtId,
+    required BibleId bibleId,
     required domain.BibleBook book,
     required int chapter,
   }) async {
@@ -234,13 +198,9 @@ class PericopeDatasourceImpl implements PericopeDatasource {
         _db.pericopeAssignments,
         _db.pericopeAssignments.setId.equalsExp(_db.pericopes.setId),
       ),
-      innerJoin(
-        _db.bibles,
-        _db.bibles.languageId.equalsExp(_db.pericopeAssignments.languageId),
-      ),
     ])
       ..where(
-        _db.bibles.extId.equals(bibleExtId) &
+        _db.pericopeAssignments.bibleId.equals(bibleId.key) &
             _db.pericopes.bookId.equals(book.osisIndex) &
             _db.pericopes.startChapter.equals(chapter),
       )

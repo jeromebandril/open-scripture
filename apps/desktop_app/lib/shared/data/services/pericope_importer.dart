@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import '../datasources/drift_book_local_datasource_impl.dart';
-import '../datasources/pericope_datasource.dart';
+import '../../../features/pericopes_mgr/data/models/pericope_set_file.dart';
 import '../../../features/pericopes_mgr/domain/entities/pericope.dart';
 import '../../../features/pericopes_mgr/domain/entities/pericope_set.dart';
 import '../../../features/pericopes_mgr/error/pericopes_mgr_exceptions.dart';
-import '../../../features/pericopes_mgr/data/models/pericope_set_file.dart';
+import '../datasources/drift_book_local_datasource_impl.dart';
+import '../datasources/pericope_datasource.dart';
 
 extension on PericopeSetFile {
   PericopeSet toDomainSet() => PericopeSet(

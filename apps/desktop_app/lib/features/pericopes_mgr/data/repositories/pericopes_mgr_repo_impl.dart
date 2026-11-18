@@ -40,8 +40,14 @@ class PericopesMgrRepoImpl implements PericopesMgrRepo {
   }
 
   @override
-  TaskEither<Failure, List<PericopeSet>> removePericope(String extId) {
-    _datasource.deletePericopeSet(extId);
-    throw UnimplementedError();
+  TaskEither<Failure, void> removePericope(String extId) {
+    return TaskEither.tryCatch(
+      () async => await _datasource.deletePericopeSet(extId),
+      (error, st) => switch (error) {
+        PericopeImportException e =>
+          UnexpectedFailure(cause: e, stackTrace: st),
+        _ => UnexpectedFailure(cause: error, stackTrace: st),
+      },
+    );
   }
 }

@@ -283,13 +283,13 @@ class PericopeSets extends Table with TableInfo<PericopeSets, PericopeSet> {
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       $customConstraints: 'PRIMARY KEY');
-  static const VerificationMeta _fileNameImportedFromMeta =
-      const VerificationMeta('fileNameImportedFrom');
-  late final GeneratedColumn<String> fileNameImportedFrom =
-      GeneratedColumn<String>('fileNameImportedFrom', aliasedName, true,
-          type: DriftSqlType.string,
-          requiredDuringInsert: false,
-          $customConstraints: 'NULL');
+  static const VerificationMeta _pericopeNameMeta =
+      const VerificationMeta('pericopeName');
+  late final GeneratedColumn<String> pericopeName = GeneratedColumn<String>(
+      'pericopeName', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      $customConstraints: 'NULL');
   static const VerificationMeta _extIdMeta = const VerificationMeta('extId');
   late final GeneratedColumn<String> extId = GeneratedColumn<String>(
       'extId', aliasedName, false,
@@ -320,7 +320,7 @@ class PericopeSets extends Table with TableInfo<PericopeSets, PericopeSet> {
       $customConstraints: '');
   @override
   List<GeneratedColumn> get $columns =>
-      [id, fileNameImportedFrom, extId, languageId, versionNumber, attribution];
+      [id, pericopeName, extId, languageId, versionNumber, attribution];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -334,11 +334,11 @@ class PericopeSets extends Table with TableInfo<PericopeSets, PericopeSet> {
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
-    if (data.containsKey('fileNameImportedFrom')) {
+    if (data.containsKey('pericopeName')) {
       context.handle(
-          _fileNameImportedFromMeta,
-          fileNameImportedFrom.isAcceptableOrUnknown(
-              data['fileNameImportedFrom']!, _fileNameImportedFromMeta));
+          _pericopeNameMeta,
+          pericopeName.isAcceptableOrUnknown(
+              data['pericopeName']!, _pericopeNameMeta));
     }
     if (data.containsKey('extId')) {
       context.handle(
@@ -375,8 +375,8 @@ class PericopeSets extends Table with TableInfo<PericopeSets, PericopeSet> {
     return PericopeSet(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      fileNameImportedFrom: attachedDatabase.typeMapping.read(
-          DriftSqlType.string, data['${effectivePrefix}fileNameImportedFrom']),
+      pericopeName: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}pericopeName']),
       extId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}extId'])!,
       languageId: attachedDatabase.typeMapping
@@ -405,7 +405,7 @@ class PericopeSets extends Table with TableInfo<PericopeSets, PericopeSet> {
 
 class PericopeSet extends DataClass implements Insertable<PericopeSet> {
   final int id;
-  final String? fileNameImportedFrom;
+  final String? pericopeName;
   final String extId;
 
   /// "id" from the file, e.g. 'kjv-en'
@@ -414,7 +414,7 @@ class PericopeSet extends DataClass implements Insertable<PericopeSet> {
   final String? attribution;
   const PericopeSet(
       {required this.id,
-      this.fileNameImportedFrom,
+      this.pericopeName,
       required this.extId,
       this.languageId,
       required this.versionNumber,
@@ -423,8 +423,8 @@ class PericopeSet extends DataClass implements Insertable<PericopeSet> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    if (!nullToAbsent || fileNameImportedFrom != null) {
-      map['fileNameImportedFrom'] = Variable<String>(fileNameImportedFrom);
+    if (!nullToAbsent || pericopeName != null) {
+      map['pericopeName'] = Variable<String>(pericopeName);
     }
     map['extId'] = Variable<String>(extId);
     if (!nullToAbsent || languageId != null) {
@@ -440,9 +440,9 @@ class PericopeSet extends DataClass implements Insertable<PericopeSet> {
   PericopeSetsCompanion toCompanion(bool nullToAbsent) {
     return PericopeSetsCompanion(
       id: Value(id),
-      fileNameImportedFrom: fileNameImportedFrom == null && nullToAbsent
+      pericopeName: pericopeName == null && nullToAbsent
           ? const Value.absent()
-          : Value(fileNameImportedFrom),
+          : Value(pericopeName),
       extId: Value(extId),
       languageId: languageId == null && nullToAbsent
           ? const Value.absent()
@@ -459,8 +459,7 @@ class PericopeSet extends DataClass implements Insertable<PericopeSet> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return PericopeSet(
       id: serializer.fromJson<int>(json['id']),
-      fileNameImportedFrom:
-          serializer.fromJson<String?>(json['fileNameImportedFrom']),
+      pericopeName: serializer.fromJson<String?>(json['pericopeName']),
       extId: serializer.fromJson<String>(json['extId']),
       languageId: serializer.fromJson<int?>(json['languageId']),
       versionNumber: serializer.fromJson<int>(json['versionNumber']),
@@ -472,7 +471,7 @@ class PericopeSet extends DataClass implements Insertable<PericopeSet> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'fileNameImportedFrom': serializer.toJson<String?>(fileNameImportedFrom),
+      'pericopeName': serializer.toJson<String?>(pericopeName),
       'extId': serializer.toJson<String>(extId),
       'languageId': serializer.toJson<int?>(languageId),
       'versionNumber': serializer.toJson<int>(versionNumber),
@@ -482,16 +481,15 @@ class PericopeSet extends DataClass implements Insertable<PericopeSet> {
 
   PericopeSet copyWith(
           {int? id,
-          Value<String?> fileNameImportedFrom = const Value.absent(),
+          Value<String?> pericopeName = const Value.absent(),
           String? extId,
           Value<int?> languageId = const Value.absent(),
           int? versionNumber,
           Value<String?> attribution = const Value.absent()}) =>
       PericopeSet(
         id: id ?? this.id,
-        fileNameImportedFrom: fileNameImportedFrom.present
-            ? fileNameImportedFrom.value
-            : this.fileNameImportedFrom,
+        pericopeName:
+            pericopeName.present ? pericopeName.value : this.pericopeName,
         extId: extId ?? this.extId,
         languageId: languageId.present ? languageId.value : this.languageId,
         versionNumber: versionNumber ?? this.versionNumber,
@@ -500,9 +498,9 @@ class PericopeSet extends DataClass implements Insertable<PericopeSet> {
   PericopeSet copyWithCompanion(PericopeSetsCompanion data) {
     return PericopeSet(
       id: data.id.present ? data.id.value : this.id,
-      fileNameImportedFrom: data.fileNameImportedFrom.present
-          ? data.fileNameImportedFrom.value
-          : this.fileNameImportedFrom,
+      pericopeName: data.pericopeName.present
+          ? data.pericopeName.value
+          : this.pericopeName,
       extId: data.extId.present ? data.extId.value : this.extId,
       languageId:
           data.languageId.present ? data.languageId.value : this.languageId,
@@ -518,7 +516,7 @@ class PericopeSet extends DataClass implements Insertable<PericopeSet> {
   String toString() {
     return (StringBuffer('PericopeSet(')
           ..write('id: $id, ')
-          ..write('fileNameImportedFrom: $fileNameImportedFrom, ')
+          ..write('pericopeName: $pericopeName, ')
           ..write('extId: $extId, ')
           ..write('languageId: $languageId, ')
           ..write('versionNumber: $versionNumber, ')
@@ -529,13 +527,13 @@ class PericopeSet extends DataClass implements Insertable<PericopeSet> {
 
   @override
   int get hashCode => Object.hash(
-      id, fileNameImportedFrom, extId, languageId, versionNumber, attribution);
+      id, pericopeName, extId, languageId, versionNumber, attribution);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is PericopeSet &&
           other.id == this.id &&
-          other.fileNameImportedFrom == this.fileNameImportedFrom &&
+          other.pericopeName == this.pericopeName &&
           other.extId == this.extId &&
           other.languageId == this.languageId &&
           other.versionNumber == this.versionNumber &&
@@ -544,14 +542,14 @@ class PericopeSet extends DataClass implements Insertable<PericopeSet> {
 
 class PericopeSetsCompanion extends UpdateCompanion<PericopeSet> {
   final Value<int> id;
-  final Value<String?> fileNameImportedFrom;
+  final Value<String?> pericopeName;
   final Value<String> extId;
   final Value<int?> languageId;
   final Value<int> versionNumber;
   final Value<String?> attribution;
   const PericopeSetsCompanion({
     this.id = const Value.absent(),
-    this.fileNameImportedFrom = const Value.absent(),
+    this.pericopeName = const Value.absent(),
     this.extId = const Value.absent(),
     this.languageId = const Value.absent(),
     this.versionNumber = const Value.absent(),
@@ -559,7 +557,7 @@ class PericopeSetsCompanion extends UpdateCompanion<PericopeSet> {
   });
   PericopeSetsCompanion.insert({
     this.id = const Value.absent(),
-    this.fileNameImportedFrom = const Value.absent(),
+    this.pericopeName = const Value.absent(),
     required String extId,
     this.languageId = const Value.absent(),
     this.versionNumber = const Value.absent(),
@@ -567,7 +565,7 @@ class PericopeSetsCompanion extends UpdateCompanion<PericopeSet> {
   }) : extId = Value(extId);
   static Insertable<PericopeSet> custom({
     Expression<int>? id,
-    Expression<String>? fileNameImportedFrom,
+    Expression<String>? pericopeName,
     Expression<String>? extId,
     Expression<int>? languageId,
     Expression<int>? versionNumber,
@@ -575,8 +573,7 @@ class PericopeSetsCompanion extends UpdateCompanion<PericopeSet> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (fileNameImportedFrom != null)
-        'fileNameImportedFrom': fileNameImportedFrom,
+      if (pericopeName != null) 'pericopeName': pericopeName,
       if (extId != null) 'extId': extId,
       if (languageId != null) 'languageId': languageId,
       if (versionNumber != null) 'versionNumber': versionNumber,
@@ -586,14 +583,14 @@ class PericopeSetsCompanion extends UpdateCompanion<PericopeSet> {
 
   PericopeSetsCompanion copyWith(
       {Value<int>? id,
-      Value<String?>? fileNameImportedFrom,
+      Value<String?>? pericopeName,
       Value<String>? extId,
       Value<int?>? languageId,
       Value<int>? versionNumber,
       Value<String?>? attribution}) {
     return PericopeSetsCompanion(
       id: id ?? this.id,
-      fileNameImportedFrom: fileNameImportedFrom ?? this.fileNameImportedFrom,
+      pericopeName: pericopeName ?? this.pericopeName,
       extId: extId ?? this.extId,
       languageId: languageId ?? this.languageId,
       versionNumber: versionNumber ?? this.versionNumber,
@@ -607,9 +604,8 @@ class PericopeSetsCompanion extends UpdateCompanion<PericopeSet> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
-    if (fileNameImportedFrom.present) {
-      map['fileNameImportedFrom'] =
-          Variable<String>(fileNameImportedFrom.value);
+    if (pericopeName.present) {
+      map['pericopeName'] = Variable<String>(pericopeName.value);
     }
     if (extId.present) {
       map['extId'] = Variable<String>(extId.value);
@@ -630,7 +626,7 @@ class PericopeSetsCompanion extends UpdateCompanion<PericopeSet> {
   String toString() {
     return (StringBuffer('PericopeSetsCompanion(')
           ..write('id: $id, ')
-          ..write('fileNameImportedFrom: $fileNameImportedFrom, ')
+          ..write('pericopeName: $pericopeName, ')
           ..write('extId: $extId, ')
           ..write('languageId: $languageId, ')
           ..write('versionNumber: $versionNumber, ')
@@ -1271,21 +1267,21 @@ class PericopeAssignments extends Table
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   PericopeAssignments(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _languageIdMeta =
-      const VerificationMeta('languageId');
-  late final GeneratedColumn<int> languageId = GeneratedColumn<int>(
-      'languageId', aliasedName, false,
-      type: DriftSqlType.int,
+  static const VerificationMeta _bibleIdMeta =
+      const VerificationMeta('bibleId');
+  late final GeneratedColumn<String> bibleId = GeneratedColumn<String>(
+      'bibleId', aliasedName, false,
+      type: DriftSqlType.string,
       requiredDuringInsert: true,
       $customConstraints: 'PRIMARY KEY');
   static const VerificationMeta _setIdMeta = const VerificationMeta('setId');
   late final GeneratedColumn<int> setId = GeneratedColumn<int>(
-      'setId', aliasedName, true,
+      'setId', aliasedName, false,
       type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      $customConstraints: '');
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
   @override
-  List<GeneratedColumn> get $columns => [languageId, setId];
+  List<GeneratedColumn> get $columns => [bibleId, setId];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -1296,31 +1292,31 @@ class PericopeAssignments extends Table
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('languageId')) {
-      context.handle(
-          _languageIdMeta,
-          languageId.isAcceptableOrUnknown(
-              data['languageId']!, _languageIdMeta));
+    if (data.containsKey('bibleId')) {
+      context.handle(_bibleIdMeta,
+          bibleId.isAcceptableOrUnknown(data['bibleId']!, _bibleIdMeta));
     } else if (isInserting) {
-      context.missing(_languageIdMeta);
+      context.missing(_bibleIdMeta);
     }
     if (data.containsKey('setId')) {
       context.handle(
           _setIdMeta, setId.isAcceptableOrUnknown(data['setId']!, _setIdMeta));
+    } else if (isInserting) {
+      context.missing(_setIdMeta);
     }
     return context;
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {languageId};
+  Set<GeneratedColumn> get $primaryKey => {bibleId};
   @override
   PericopeAssignment map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return PericopeAssignment(
-      languageId: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}languageId'])!,
+      bibleId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}bibleId'])!,
       setId: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}setId']),
+          .read(DriftSqlType.int, data['${effectivePrefix}setId'])!,
     );
   }
 
@@ -1334,34 +1330,31 @@ class PericopeAssignments extends Table
   @override
   bool get isStrict => true;
   @override
-  List<String> get customConstraints => const [
-        'FOREIGN KEY(languageId)REFERENCES languages(id)ON DELETE CASCADE',
-        'FOREIGN KEY(setId)REFERENCES pericope_sets(id)ON DELETE CASCADE'
-      ];
+  List<String> get customConstraints =>
+      const ['FOREIGN KEY(setId)REFERENCES pericope_sets(id)ON DELETE CASCADE'];
   @override
   bool get dontWriteConstraints => true;
 }
 
 class PericopeAssignment extends DataClass
     implements Insertable<PericopeAssignment> {
-  final int languageId;
-  final int? setId;
-  const PericopeAssignment({required this.languageId, this.setId});
+  final String bibleId;
+
+  /// soft reference, because I support multiple datasources
+  final int setId;
+  const PericopeAssignment({required this.bibleId, required this.setId});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['languageId'] = Variable<int>(languageId);
-    if (!nullToAbsent || setId != null) {
-      map['setId'] = Variable<int>(setId);
-    }
+    map['bibleId'] = Variable<String>(bibleId);
+    map['setId'] = Variable<int>(setId);
     return map;
   }
 
   PericopeAssignmentsCompanion toCompanion(bool nullToAbsent) {
     return PericopeAssignmentsCompanion(
-      languageId: Value(languageId),
-      setId:
-          setId == null && nullToAbsent ? const Value.absent() : Value(setId),
+      bibleId: Value(bibleId),
+      setId: Value(setId),
     );
   }
 
@@ -1369,29 +1362,27 @@ class PericopeAssignment extends DataClass
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return PericopeAssignment(
-      languageId: serializer.fromJson<int>(json['languageId']),
-      setId: serializer.fromJson<int?>(json['setId']),
+      bibleId: serializer.fromJson<String>(json['bibleId']),
+      setId: serializer.fromJson<int>(json['setId']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'languageId': serializer.toJson<int>(languageId),
-      'setId': serializer.toJson<int?>(setId),
+      'bibleId': serializer.toJson<String>(bibleId),
+      'setId': serializer.toJson<int>(setId),
     };
   }
 
-  PericopeAssignment copyWith(
-          {int? languageId, Value<int?> setId = const Value.absent()}) =>
+  PericopeAssignment copyWith({String? bibleId, int? setId}) =>
       PericopeAssignment(
-        languageId: languageId ?? this.languageId,
-        setId: setId.present ? setId.value : this.setId,
+        bibleId: bibleId ?? this.bibleId,
+        setId: setId ?? this.setId,
       );
   PericopeAssignment copyWithCompanion(PericopeAssignmentsCompanion data) {
     return PericopeAssignment(
-      languageId:
-          data.languageId.present ? data.languageId.value : this.languageId,
+      bibleId: data.bibleId.present ? data.bibleId.value : this.bibleId,
       setId: data.setId.present ? data.setId.value : this.setId,
     );
   }
@@ -1399,47 +1390,48 @@ class PericopeAssignment extends DataClass
   @override
   String toString() {
     return (StringBuffer('PericopeAssignment(')
-          ..write('languageId: $languageId, ')
+          ..write('bibleId: $bibleId, ')
           ..write('setId: $setId')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(languageId, setId);
+  int get hashCode => Object.hash(bibleId, setId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is PericopeAssignment &&
-          other.languageId == this.languageId &&
+          other.bibleId == this.bibleId &&
           other.setId == this.setId);
 }
 
 class PericopeAssignmentsCompanion extends UpdateCompanion<PericopeAssignment> {
-  final Value<int> languageId;
-  final Value<int?> setId;
+  final Value<String> bibleId;
+  final Value<int> setId;
   const PericopeAssignmentsCompanion({
-    this.languageId = const Value.absent(),
+    this.bibleId = const Value.absent(),
     this.setId = const Value.absent(),
   });
   PericopeAssignmentsCompanion.insert({
-    required int languageId,
-    this.setId = const Value.absent(),
-  }) : languageId = Value(languageId);
+    required String bibleId,
+    required int setId,
+  })  : bibleId = Value(bibleId),
+        setId = Value(setId);
   static Insertable<PericopeAssignment> custom({
-    Expression<int>? languageId,
+    Expression<String>? bibleId,
     Expression<int>? setId,
   }) {
     return RawValuesInsertable({
-      if (languageId != null) 'languageId': languageId,
+      if (bibleId != null) 'bibleId': bibleId,
       if (setId != null) 'setId': setId,
     });
   }
 
   PericopeAssignmentsCompanion copyWith(
-      {Value<int>? languageId, Value<int?>? setId}) {
+      {Value<String>? bibleId, Value<int>? setId}) {
     return PericopeAssignmentsCompanion(
-      languageId: languageId ?? this.languageId,
+      bibleId: bibleId ?? this.bibleId,
       setId: setId ?? this.setId,
     );
   }
@@ -1447,8 +1439,8 @@ class PericopeAssignmentsCompanion extends UpdateCompanion<PericopeAssignment> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (languageId.present) {
-      map['languageId'] = Variable<int>(languageId.value);
+    if (bibleId.present) {
+      map['bibleId'] = Variable<String>(bibleId.value);
     }
     if (setId.present) {
       map['setId'] = Variable<int>(setId.value);
@@ -1459,7 +1451,7 @@ class PericopeAssignmentsCompanion extends UpdateCompanion<PericopeAssignment> {
   @override
   String toString() {
     return (StringBuffer('PericopeAssignmentsCompanion(')
-          ..write('languageId: $languageId, ')
+          ..write('bibleId: $bibleId, ')
           ..write('setId: $setId')
           ..write(')'))
         .toString();
@@ -2865,13 +2857,6 @@ abstract class _$AppDb extends GeneratedDatabase {
             ],
           ),
           WritePropagation(
-            on: TableUpdateQuery.onTableName('languages',
-                limitUpdateKind: UpdateKind.delete),
-            result: [
-              TableUpdate('pericope_assignments', kind: UpdateKind.delete),
-            ],
-          ),
-          WritePropagation(
             on: TableUpdateQuery.onTableName('pericope_sets',
                 limitUpdateKind: UpdateKind.delete),
             result: [
@@ -3046,7 +3031,7 @@ typedef $LanguagesProcessedTableManager = ProcessedTableManager<
     PrefetchHooks Function()>;
 typedef $PericopeSetsCreateCompanionBuilder = PericopeSetsCompanion Function({
   Value<int> id,
-  Value<String?> fileNameImportedFrom,
+  Value<String?> pericopeName,
   required String extId,
   Value<int?> languageId,
   Value<int> versionNumber,
@@ -3054,7 +3039,7 @@ typedef $PericopeSetsCreateCompanionBuilder = PericopeSetsCompanion Function({
 });
 typedef $PericopeSetsUpdateCompanionBuilder = PericopeSetsCompanion Function({
   Value<int> id,
-  Value<String?> fileNameImportedFrom,
+  Value<String?> pericopeName,
   Value<String> extId,
   Value<int?> languageId,
   Value<int> versionNumber,
@@ -3072,9 +3057,8 @@ class $PericopeSetsFilterComposer extends Composer<_$AppDb, PericopeSets> {
   ColumnFilters<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get fileNameImportedFrom => $composableBuilder(
-      column: $table.fileNameImportedFrom,
-      builder: (column) => ColumnFilters(column));
+  ColumnFilters<String> get pericopeName => $composableBuilder(
+      column: $table.pericopeName, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get extId => $composableBuilder(
       column: $table.extId, builder: (column) => ColumnFilters(column));
@@ -3100,8 +3084,8 @@ class $PericopeSetsOrderingComposer extends Composer<_$AppDb, PericopeSets> {
   ColumnOrderings<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get fileNameImportedFrom => $composableBuilder(
-      column: $table.fileNameImportedFrom,
+  ColumnOrderings<String> get pericopeName => $composableBuilder(
+      column: $table.pericopeName,
       builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get extId => $composableBuilder(
@@ -3129,8 +3113,8 @@ class $PericopeSetsAnnotationComposer extends Composer<_$AppDb, PericopeSets> {
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<String> get fileNameImportedFrom => $composableBuilder(
-      column: $table.fileNameImportedFrom, builder: (column) => column);
+  GeneratedColumn<String> get pericopeName => $composableBuilder(
+      column: $table.pericopeName, builder: (column) => column);
 
   GeneratedColumn<String> get extId =>
       $composableBuilder(column: $table.extId, builder: (column) => column);
@@ -3169,7 +3153,7 @@ class $PericopeSetsTableManager extends RootTableManager<
               $PericopeSetsAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
-            Value<String?> fileNameImportedFrom = const Value.absent(),
+            Value<String?> pericopeName = const Value.absent(),
             Value<String> extId = const Value.absent(),
             Value<int?> languageId = const Value.absent(),
             Value<int> versionNumber = const Value.absent(),
@@ -3177,7 +3161,7 @@ class $PericopeSetsTableManager extends RootTableManager<
           }) =>
               PericopeSetsCompanion(
             id: id,
-            fileNameImportedFrom: fileNameImportedFrom,
+            pericopeName: pericopeName,
             extId: extId,
             languageId: languageId,
             versionNumber: versionNumber,
@@ -3185,7 +3169,7 @@ class $PericopeSetsTableManager extends RootTableManager<
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
-            Value<String?> fileNameImportedFrom = const Value.absent(),
+            Value<String?> pericopeName = const Value.absent(),
             required String extId,
             Value<int?> languageId = const Value.absent(),
             Value<int> versionNumber = const Value.absent(),
@@ -3193,7 +3177,7 @@ class $PericopeSetsTableManager extends RootTableManager<
           }) =>
               PericopeSetsCompanion.insert(
             id: id,
-            fileNameImportedFrom: fileNameImportedFrom,
+            pericopeName: pericopeName,
             extId: extId,
             languageId: languageId,
             versionNumber: versionNumber,
@@ -3537,13 +3521,13 @@ typedef $PericopesProcessedTableManager = ProcessedTableManager<
     PrefetchHooks Function()>;
 typedef $PericopeAssignmentsCreateCompanionBuilder
     = PericopeAssignmentsCompanion Function({
-  required int languageId,
-  Value<int?> setId,
+  required String bibleId,
+  required int setId,
 });
 typedef $PericopeAssignmentsUpdateCompanionBuilder
     = PericopeAssignmentsCompanion Function({
-  Value<int> languageId,
-  Value<int?> setId,
+  Value<String> bibleId,
+  Value<int> setId,
 });
 
 class $PericopeAssignmentsFilterComposer
@@ -3555,8 +3539,8 @@ class $PericopeAssignmentsFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get languageId => $composableBuilder(
-      column: $table.languageId, builder: (column) => ColumnFilters(column));
+  ColumnFilters<String> get bibleId => $composableBuilder(
+      column: $table.bibleId, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<int> get setId => $composableBuilder(
       column: $table.setId, builder: (column) => ColumnFilters(column));
@@ -3571,8 +3555,8 @@ class $PericopeAssignmentsOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get languageId => $composableBuilder(
-      column: $table.languageId, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<String> get bibleId => $composableBuilder(
+      column: $table.bibleId, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<int> get setId => $composableBuilder(
       column: $table.setId, builder: (column) => ColumnOrderings(column));
@@ -3587,8 +3571,8 @@ class $PericopeAssignmentsAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get languageId => $composableBuilder(
-      column: $table.languageId, builder: (column) => column);
+  GeneratedColumn<String> get bibleId =>
+      $composableBuilder(column: $table.bibleId, builder: (column) => column);
 
   GeneratedColumn<int> get setId =>
       $composableBuilder(column: $table.setId, builder: (column) => column);
@@ -3620,19 +3604,19 @@ class $PericopeAssignmentsTableManager extends RootTableManager<
           createComputedFieldComposer: () =>
               $PericopeAssignmentsAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
-            Value<int> languageId = const Value.absent(),
-            Value<int?> setId = const Value.absent(),
+            Value<String> bibleId = const Value.absent(),
+            Value<int> setId = const Value.absent(),
           }) =>
               PericopeAssignmentsCompanion(
-            languageId: languageId,
+            bibleId: bibleId,
             setId: setId,
           ),
           createCompanionCallback: ({
-            required int languageId,
-            Value<int?> setId = const Value.absent(),
+            required String bibleId,
+            required int setId,
           }) =>
               PericopeAssignmentsCompanion.insert(
-            languageId: languageId,
+            bibleId: bibleId,
             setId: setId,
           ),
           withReferenceMapper: (p0) => p0

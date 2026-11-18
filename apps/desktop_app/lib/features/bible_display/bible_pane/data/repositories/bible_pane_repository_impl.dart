@@ -81,6 +81,7 @@ class BiblePaneRepositoryImpl implements BiblePaneRepository {
   TaskEither<Failure, List<Verse>> getChapter({
     required BibleId bibleId,
     required BibleRef ref,
+    bool withPericope = true,
   }) {
     return TaskEither.tryCatch(
       () async {
@@ -110,8 +111,7 @@ class BiblePaneRepositoryImpl implements BiblePaneRepository {
           );
         }).toList();
 
-        if (_pericopeDatasource == null) return verses;
-
+        if (_pericopeDatasource == null || !withPericope) return verses;
         final pericopes = await _loadPericopes(bibleId, ref);
         return attachPericopes(verses, pericopes);
       },
@@ -152,7 +152,7 @@ class BiblePaneRepositoryImpl implements BiblePaneRepository {
     if (_pericopeDatasource == null) return const [];
     try {
       return await _pericopeDatasource.getForChapter(
-        bibleExtId: bibleId.externalId,
+        bibleId: bibleId,
         book: ref.book,
         chapter: ref.chapter,
       );

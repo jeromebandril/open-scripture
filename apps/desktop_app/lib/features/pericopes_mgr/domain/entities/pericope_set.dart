@@ -1,12 +1,14 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../../shared/domain/entities/bible_id.dart';
+
 class PericopeSet extends Equatable {
   final String? name;
   final String extId;
 
-  /// A list of language iso-codes
+  /// A list of BibleId
   /// example: ['it', 'en']
-  final List<String> assignedTo;
+  final List<BibleId> assignedTo;
   final int versionNumber;
   final String? langIsoCode;
   final String? attribution;
@@ -19,6 +21,17 @@ class PericopeSet extends Equatable {
     this.langIsoCode,
     this.attribution,
   });
+
+  PericopeSet copyWith({List<BibleId>? assignedTo}) {
+    return PericopeSet(
+      name: name,
+      extId: extId,
+      versionNumber: versionNumber,
+      assignedTo: assignedTo ?? this.assignedTo,
+      langIsoCode: langIsoCode,
+      attribution: attribution,
+    );
+  }
 
   @override
   List<Object?> get props => [

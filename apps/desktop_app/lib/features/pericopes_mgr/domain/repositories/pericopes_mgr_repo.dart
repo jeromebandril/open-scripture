@@ -5,6 +5,6 @@ import '../entities/pericope_set.dart';
 
 abstract class PericopesMgrRepo {
   TaskEither<Failure, void> import(String path);
-  TaskEither<Failure, List<PericopeSet>> removePericope(String extId);
+  TaskEither<Failure, void> removePericope(String extId);
   TaskEither<Failure, List<PericopeSet>> getInstalledPericopes();
 }

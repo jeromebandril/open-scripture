@@ -43,7 +43,13 @@ class PericopesMgrCubit extends Cubit<PericopesMgrState> {
       (f) => emit(state.copyWith(
           importStatus: PericopesMgrStatus.error,
           errorMessage: () => f.cause.toString())),
-      (_) => emit(state.copyWith(importStatus: PericopesMgrStatus.success)),
+      (_) {
+        emit(state.copyWith(
+          importStatus: PericopesMgrStatus.success,
+          errorMessage: () => null,
+        ));
+        loadInstalledPericopes();
+      },
     );
   }
 
@@ -52,12 +58,27 @@ class PericopesMgrCubit extends Cubit<PericopesMgrState> {
 
     final result = await _repo.getInstalledPericopes().run();
 
-    result.fold(
-      (f) => emit(state.copyWith(listStatus: PericopesMgrStatus.error)),
+    emit(result.fold(
+      (f) => state.copyWith(
+        listStatus: PericopesMgrStatus.error,
+      ),
       (p) => state.copyWith(
         listStatus: PericopesMgrStatus.success,
         installedPericopes: p,
       ),
+    ));
+  }
+
+  Future<void> removePericope(String id) async {
+    emit(state.copyWith(listStatus: PericopesMgrStatus.loading));
+
+    final result = await _repo.removePericope(id).run();
+
+    result.fold(
+      (f) => emit(state.copyWith(
+        listStatus: PericopesMgrStatus.error,
+      )),
+      (p) => loadInstalledPericopes(),
     );
   }
 }
