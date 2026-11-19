@@ -58,7 +58,7 @@ class _BContainerTabBarState extends State<BContainerTabBar>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final borderRadius = BorderRadius.circular(widget.height / 2);
+    final borderRadius = BorderRadius.circular(AppSpacing.md);
 
     return Column(
       mainAxisSize: MainAxisSize.min,

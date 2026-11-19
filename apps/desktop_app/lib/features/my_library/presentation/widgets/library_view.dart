@@ -59,14 +59,16 @@ class LibraryManagerPage extends StatelessWidget {
                 subtitle: subtitle,
                 isLoading: state.status == MyLibraryStatus.loading,
                 isError: state.status == MyLibraryStatus.error,
-                emptyListPlaceholder: Text('Empty'),
+                emptyListPlaceholder: state.filterQuery.isNotEmpty
+                    ? Text('No bibles match "${state.filterQuery}"')
+                    : const Text('Empty'),
                 errorPlaceholder: Text(state.errorMessage ?? 'Error'),
                 filterInitValue:
                     context.read<MyLibraryCubit>().state.filterQuery,
                 onFilter: (query) =>
                     context.read<MyLibraryCubit>().filter(query),
                 itemCount: state.filteredBibles.length,
-                separatorBuilder: (_, __) => Divider(height: 0.1),
+                separatorBuilder: (_, __) => const Divider(height: 0.1),
                 itemBuilder: (_, index) {
                   final bibles = state.filteredBibles;
                   final selIndex = state.selectedBibleIndex;
@@ -75,6 +77,7 @@ class LibraryManagerPage extends StatelessWidget {
                       : bibles[selIndex].extId == bibles[index].extId;
                   final isUninstalling =
                       state.uninstallingBibles.contains(bibles[index]);
+                  print(bibles);
 
                   return _InstalledBiblesRow(
                     index: index,
@@ -97,7 +100,7 @@ class LibraryManagerPage extends StatelessWidget {
               return const SizedBox.shrink();
             }
 
-            final bible = state.bibles[state.selectedBibleIndex!];
+            final bible = state.filteredBibles[state.selectedBibleIndex!];
             final bibleInfos = bible.toMap();
             final isPreference = pref?.key == bible.extId.key;
 

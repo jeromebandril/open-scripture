@@ -3,8 +3,9 @@ part of 'my_library_cubit.dart';
 enum MyLibraryStatus {
   initial,
   loading,
-  ready,
+  empty,
   error,
+  success,
 }
 
 final class MyLibraryState extends Equatable {

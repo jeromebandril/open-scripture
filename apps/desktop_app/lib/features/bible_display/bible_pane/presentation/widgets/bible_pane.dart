@@ -117,10 +117,6 @@ class BiblePane extends StatelessWidget {
             builder: (context, state) {
               final Widget content = switch (state.status) {
                 //
-                // INITIAL
-                //
-                BiblePaneStatus.selectBibles => BibleSelector(),
-                //
                 // LOADING SCREEN
                 //
                 BiblePaneStatus.loading =>
@@ -132,12 +128,16 @@ class BiblePane extends StatelessWidget {
                 //
                 // READY SCREEN
                 //
-                BiblePaneStatus.ready => _buildReadyContent(context, state),
+                BiblePaneStatus.ready ||
+                BiblePaneStatus.selectBibles =>
+                  _buildReadyContent(context, state),
               };
 
               return Stack(
                 children: [
                   Positioned.fill(child: content),
+                  if (state.status == BiblePaneStatus.selectBibles)
+                    Positioned.fill(child: BibleSelector()),
                   //
                   // PANE STATUS INFO
                   //

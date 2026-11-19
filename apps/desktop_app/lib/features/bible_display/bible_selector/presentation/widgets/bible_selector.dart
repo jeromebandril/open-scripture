@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../../core/di/injection_container.dart' as di;
 import '../../../../../shared/design_system/design_system.dart';
 import '../../../../../shared/enums/bible_repository_type.dart';
+import '../../../../../shared/presentation/widgets/dropdown_menu_anchor.dart';
 import '../../../../../shared/presentation/widgets/ui/b_container_tab_bar.dart';
 import '../../../../my_library/presentation/state/my_library_cubit.dart';
 import '../../../bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../../../bible_pane/presentation/widgets/pane_info.dart';
 import '../../../multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
-import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
 import '../cubit/bible_selector_cubit.dart';
 import 'shared_catalog_selector.dart';
 
@@ -48,7 +49,7 @@ class _BibleSelectorState extends State<BibleSelector> {
     ),
     BibleRepositoryType.cloudAPI: SharedCatalogSelector(
       repoType: BibleRepositoryType.cloudAPI,
-      showFilter: true, // Enables the search bar
+      showFilter: true,
       emptyWidget: const Text('No results found'),
       onRetry: (context) => context.read<MyLibraryCubit>().getBibles(),
     ),
@@ -82,11 +83,20 @@ class _BibleSelectorState extends State<BibleSelector> {
       child: Builder(builder: (context) {
         return Center(
           child: Container(
-            padding: const EdgeInsets.only(
+            margin: const EdgeInsets.only(
               top: AppSpacing.xl2,
-              bottom: AppSpacing.xl2 + PaneInfo.kHeight,
+              bottom: AppSpacing.xl + PaneInfo.kHeight,
             ),
-            width: 400,
+            padding: const EdgeInsets.only(
+              top: AppSpacing.xl,
+              right: AppSpacing.md,
+              left: AppSpacing.md,
+            ),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surfaceContainerHigh,
+              borderRadius: BorderRadius.circular(AppRadius.lg),
+            ),
+            width: 420,
             height: 580,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,15 +105,13 @@ class _BibleSelectorState extends State<BibleSelector> {
                 // Header
                 //
                 const _Header(),
-                const SizedBox(height: AppSpacing.lg),
+                const SizedBox(height: AppSpacing.xl),
                 //
                 // Tabs & Views
                 //
                 Expanded(
                   child: BContainerTabBar(
                     initialIndex: _initialIndex,
-                    viewBackgroundColor:
-                        Theme.of(context).colorScheme.surfaceContainerHigh,
                     tabs: _repoTypes.map((r) => r.label).toList(),
                     onTabChanged: (i) {
                       setState(() => _tabIndex = i);
@@ -129,14 +137,14 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewColors = BibleViewSettingsScope.colorschemeOf(context);
     final theme = Theme.of(context);
 
-    return Text(
-      'Select bibles',
-      style: theme.textTheme.headlineMedium?.copyWith(
-        color: viewColors.verseColor,
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text('  Select bibles', style: theme.textTheme.headlineSmall),
+        const _HelpAboutBibleSelector(),
+      ],
     );
   }
 }
@@ -160,35 +168,99 @@ class _FooterConfirmButton extends StatelessWidget {
     final repoType = repoTypes[tabIndex];
     final canConfirm = selectedIds.isNotEmpty && repoType != null;
 
-    return Padding(
-      padding: const EdgeInsets.all(AppSpacing.sm),
-      child: Row(
-        children: [
-          if (selectedIds.isNotEmpty)
-            TextButton(
-                onPressed: () =>
-                    context.read<BibleSelectorCubit>().setSelected([]),
-                child: Text('Unselect All (${selectedIds.length})')),
-          const Spacer(),
-          ElevatedButton(
-            onPressed: canConfirm
-                ? () => context
-                    .read<MultiPaneManagerCubit>()
-                    .activePane()
-                    .bloc
-                    .add(BiblePaneOpen(bibleIds: selectedIds))
-                : null,
-            autofocus: true,
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              spacing: 4,
-              children: [
-                Text('Confirm'),
-                Icon(Icons.arrow_forward_rounded),
+    return Column(
+      children: [
+        const Divider(),
+        Padding(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: Row(
+            children: [
+              if (selectedIds.isNotEmpty) ...[
+                Text(
+                  '${selectedIds.length} selected',
+                  style: Theme.of(context).textTheme.labelSmall,
+                ),
+                TextButton(
+                  onPressed: () =>
+                      context.read<BibleSelectorCubit>().setSelected([]),
+                  child: const Text('Clear'),
+                ),
               ],
-            ),
+              const Spacer(),
+              ElevatedButton.icon(
+                onPressed: canConfirm
+                    ? () => context
+                        .read<MultiPaneManagerCubit>()
+                        .activePane()
+                        .bloc
+                        .add(BiblePaneOpen(bibleIds: selectedIds))
+                    : null,
+                autofocus: true,
+                iconAlignment: IconAlignment.end,
+                label: const Text('Confirm'),
+                icon: const Icon(LucideIcons.arrowRight),
+              ),
+            ],
           ),
-        ],
+        ),
+      ],
+    );
+  }
+}
+
+class _HelpAboutBibleSelector extends StatefulWidget {
+  const _HelpAboutBibleSelector();
+
+  @override
+  State<_HelpAboutBibleSelector> createState() =>
+      _HelpAboutBibleSelectorState();
+}
+
+class _HelpAboutBibleSelectorState extends State<_HelpAboutBibleSelector> {
+  late final ValueNotifier<bool> _menuVisible;
+  bool isOpen = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _menuVisible = ValueNotifier(isOpen);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final h = 0.8;
+    final menuContent = ListView(
+      children: [
+        Text(
+          'You can choose between 3 sources of bibles: \n',
+          style: TextStyle(height: h),
+        ),
+        Text(
+          '-  <Canonical> are bibles installed locally\n',
+          style: TextStyle(height: h),
+        ),
+        Text(
+          '-  <Sword> are bibles installed locally for the sword engine by CrossWire\n',
+          style: TextStyle(height: h),
+        ),
+        Text(
+          '-  <GetBibleV2> are online bibles from a free API\n',
+          style: TextStyle(height: h),
+        )
+      ],
+    );
+
+    return DropdownMenuAnchor(
+      menuVisible: _menuVisible,
+      menuContent: menuContent,
+      menuHeight: 180,
+      menuPadding: const EdgeInsets.all(AppSpacing.lg),
+      trigger: IconButton(
+        tooltip: 'Help',
+        onPressed: () => setState(() {
+          _menuVisible.value = !isOpen;
+        }),
+        icon: const Icon(LucideIcons.helpCircle),
       ),
     );
   }
