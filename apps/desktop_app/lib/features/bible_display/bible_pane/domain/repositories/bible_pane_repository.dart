@@ -18,5 +18,6 @@ abstract class BiblePaneRepository {
   TaskEither<Failure, List<Verse>> getChapter({
     required BibleId bibleId,
     required BibleRef ref,
+    bool withPericope = true,
   });
 }

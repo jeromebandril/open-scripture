@@ -44,7 +44,7 @@ const Map<String, SpanType> usfxTagToSpanType = {
 /// otherwise leak into the plain verse text if we treated them as spans.
 const Set<String> _excludedFromVerseText = {'f', 'fr', 'ft', 'x', 'xo', 'xt'};
 
-class UsfxImporter implements BibleImporter {
+class UsfxImporter extends BibleImporter {
   static const int _canonicalSchemaVersion = 1;
 
   @override
@@ -191,10 +191,10 @@ class UsfxImporter implements BibleImporter {
           required('//language/nameLocal', 'BibleTranslation.langNativeName'),
       originSource: null,
       originFormat: formatId,
-      description: required(
-          '//identification/description', 'BibleTranslation.description'),
-      copyright:
-          required('//copyright/statement', 'BibleTranslation.copyright'),
+      description: normalizeParagraphs(required(
+          '//identification/description', 'BibleTranslation.description')),
+      copyright: normalizeParagraphs(
+          required('//copyright/statement', 'BibleTranslation.copyright')),
     );
   }
 

@@ -65,7 +65,7 @@ dependencies:
   url_launcher: ^6.3.2
   package_info_plus: ^9.0.1
   lucide_icons_flutter: ^3.1.15
-
+  sealed_languages: ^3.4.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

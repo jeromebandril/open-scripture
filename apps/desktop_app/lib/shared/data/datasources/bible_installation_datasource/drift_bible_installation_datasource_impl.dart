@@ -31,9 +31,9 @@ class DriftBibleInstallationDataSourceImpl
     required List<VerseSegmentInstallDto> segments,
   }) {
     return _dao.executeInstallation(
-      languageEnglishName: languageEnglishName,
-      languageIsoCode: languageIsoCode,
-      languageNativeName: languageNativeName,
+      langEnglishName: languageEnglishName,
+      langIsoCode: languageIsoCode,
+      langNativeName: languageNativeName,
       translation: translation,
       books: books,
       segments: segments,

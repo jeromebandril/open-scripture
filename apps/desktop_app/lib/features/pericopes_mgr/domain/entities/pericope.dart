@@ -1,17 +1,17 @@
 class Pericope {
-  final int? setId;
-  final int bookId;
-  final int chapter;
-  final int startVerse;
-  final int endVerse;
   final String title;
+  final int bookId;
+  final int startChapter;
+  final int startVerse;
+  final int endChapter;
+  final int endVerse;
 
   const Pericope({
-    this.setId,
-    required this.bookId,
-    required this.chapter,
-    required this.startVerse,
-    required this.endVerse,
     required this.title,
+    required this.bookId,
+    required this.startChapter,
+    required this.startVerse,
+    required this.endChapter,
+    required this.endVerse,
   });
 }

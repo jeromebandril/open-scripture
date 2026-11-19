@@ -36,7 +36,7 @@ enum SettingsPage {
   ),
   library(
     route: '/biblemanager/library',
-    name: 'My Library',
+    name: 'My Bibles',
     icon: LucideIcons.libraryBig,
     group: SettingsGroup.bibleManager,
   ),
@@ -48,7 +48,7 @@ enum SettingsPage {
   ),
   pericopes(
     route: '/biblemanager/pericopes',
-    name: 'Pericopes',
+    name: 'My Pericopes',
     icon: LucideIcons.squareDashedText,
     group: SettingsGroup.bibleManager,
   ),

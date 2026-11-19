@@ -50,6 +50,8 @@ class _PaneInfoItem extends StatelessWidget {
 
 class PaneInfo extends StatefulWidget {
   static const double kHeight = 24;
+  static const emptyDataPlaceholder = '...';
+
   const PaneInfo({super.key});
 
   @override
@@ -57,8 +59,6 @@ class PaneInfo extends StatefulWidget {
 }
 
 class _PaneInfoState extends State<PaneInfo> {
-  static const _emptyDataPlaceholder = '...';
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -111,7 +111,7 @@ class _PaneInfoState extends State<PaneInfo> {
                 return _PaneInfoItem(
                     tooltip: 'Verse count',
                     icon: LucideIcons.hash,
-                    text: '${verseCount ?? _emptyDataPlaceholder}');
+                    text: '${verseCount ?? PaneInfo.emptyDataPlaceholder}');
               },
             ),
             if (enableStrongWords)
@@ -130,7 +130,7 @@ class _PaneInfoState extends State<PaneInfo> {
                   state.content.asMap.values.map((v) => v.translation).toList(),
               builder: (context, metas) {
                 late final String text;
-                if (metas.isEmpty) text = _emptyDataPlaceholder;
+                if (metas.isEmpty) text = PaneInfo.emptyDataPlaceholder;
                 if (metas.length > 1) {
                   text = metas.map((m) => m.abbreviation).join(' - ');
                 }

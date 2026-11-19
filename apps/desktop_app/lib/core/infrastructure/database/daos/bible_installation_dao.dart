@@ -19,19 +19,20 @@ class BibleInstallationDao extends DatabaseAccessor<AppDb>
   BibleInstallationDao(super.db);
 
   Future<int> executeInstallation({
-    required String languageEnglishName,
-    required String languageIsoCode,
-    required String? languageNativeName,
+    // language info is not important
+    required String? langIsoCode,
+    required String? langEnglishName,
+    required String? langNativeName,
     required TranslationInstallDto translation,
     required List<BookInstallDto> books,
     required List<VerseSegmentInstallDto> segments,
   }) async {
     return transaction(() async {
       // 1. Resolve or Insert Language first to guarantee a valid languageId
-      final languageId = await _getOrCreateLanguageId(
-        engName: languageEnglishName,
-        isoCode: languageIsoCode,
-        nativeName: languageNativeName,
+      final languageId = await db.languagesDao.getOrCreateLanguageId(
+        code: langIsoCode,
+        engName: langEnglishName,
+        nativeName: langNativeName,
       );
 
       // 2. Map & Insert the Bible Row using the newly resolved languageId
@@ -42,7 +43,7 @@ class BibleInstallationDao extends DatabaseAccessor<AppDb>
           nameLocal: Value(translation.localName),
           abbreviation: translation.abbreviation,
           bDescription: Value(translation.description),
-          languageId: languageId,
+          languageId: Value(languageId),
           copyright: Value(translation.copyright),
           originFormat: Value(translation.originFormat),
           originSource: Value(translation.originSource),
@@ -108,35 +109,6 @@ class BibleInstallationDao extends DatabaseAccessor<AppDb>
 
   Future<void> executeUninstallation(int bibleId) async {
     await (delete(db.bibles)..where((t) => t.id.equals(bibleId))).go();
-  }
-
-  // --- Private Helpers ---
-
-  Future<int> _getOrCreateLanguageId({
-    required String engName,
-    required String isoCode,
-    String? nativeName,
-  }) async {
-    await into(db.languages).insert(
-      LanguagesCompanion.insert(
-        isoCode: isoCode,
-        engName: engName,
-        nativeName: Value(nativeName),
-      ),
-      mode: InsertMode.insertOrIgnore,
-    );
-
-    if (isoCode.isNotEmpty) {
-      final row = await (select(db.languages)
-            ..where((t) => t.isoCode.equals(isoCode)))
-          .getSingle();
-      return row.id;
-    } else {
-      final row = await (select(db.languages)
-            ..where((t) => t.engName.equals(engName)))
-          .getSingle();
-      return row.id;
-    }
   }
 
   Future<Map<String, int>> getCanonicalBookMap() async {

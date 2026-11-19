@@ -1,33 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../shared/enums/bible_repository_type.dart';
-import '../state/bible_importer_cubit/bible_importer_cubit.dart';
-
-class ImporterWidget extends StatelessWidget {
-  const ImporterWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<BibleImporterCubit, BibleImporterState>(
-      builder: (context, state) {
-        return _XmlImportDropZoneUi(
-          isDragOver: false,
-          isLoading: state.status == BibleImporterStatus.running,
-          errorText: state.errorMessage,
-          onChoosePressed: () {
-            context.read<BibleImporterCubit>().pickFile();
-          },
-        );
-      },
-    );
-  }
-}
-
-class _XmlImportDropZoneUi extends StatelessWidget {
-  const _XmlImportDropZoneUi({
+class FileDropZoneUi extends StatelessWidget {
+  const FileDropZoneUi({
+    super.key,
     required this.isDragOver,
     required this.isLoading,
+    required this.label,
     this.fileName,
     this.errorText,
     this.hintText = 'Drop an a file here, or click to choose',
@@ -39,6 +17,7 @@ class _XmlImportDropZoneUi extends StatelessWidget {
     this.onDrop,
   });
 
+  final Widget label;
   final bool isDragOver;
   final bool isLoading;
   final String? fileName;
@@ -118,19 +97,9 @@ class _XmlImportDropZoneUi extends StatelessWidget {
                       const SizedBox(height: 6),
                     ],
                     TextButton.icon(
-                      onPressed: isLoading ? null : onChoosePressed,
-                      icon: const Icon(Icons.folder_open),
-                      label:
-                          BlocBuilder<BibleImporterCubit, BibleImporterState>(
-                        builder: (context, state) {
-                          if (state.targetType == BibleRepositoryType.sword) {
-                            return const Text(
-                                'Choose a valid ZIP file from the official Crosswire Repository');
-                          }
-                          return const Text('Choose a ZIP or XML file');
-                        },
-                      ),
-                    ),
+                        onPressed: isLoading ? null : onChoosePressed,
+                        icon: const Icon(Icons.folder_open),
+                        label: label),
                   ],
                 ),
               ),
