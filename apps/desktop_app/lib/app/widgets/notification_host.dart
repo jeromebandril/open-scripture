@@ -190,12 +190,12 @@ class _NotificationCard extends StatelessWidget {
         BibleViewSettingsScope.colorschemeOf(context).brightness;
     final colors = switch (bgBrightness) {
       Brightness.dark => (
-          bgColor: colorScheme.onSurface,
-          textColor: colorScheme.surfaceContainerHighest
+          bgColor: colorScheme.surfaceContainerHighest,
+          textColor: colorScheme.onSurfaceVariant,
         ),
       Brightness.light => (
-          bgColor: colorScheme.surfaceContainerHighest,
-          textColor: colorScheme.onSurface
+          bgColor: colorScheme.onSurface,
+          textColor: colorScheme.surfaceContainerHighest,
         ),
     };
 
