@@ -25,6 +25,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
   /// How long an async operation must run before we bother showing a
   /// loading state. Prevents the UI from flashing on fast responses.
   static const _loadingIndicatorThreshold = Duration(milliseconds: 250);
+  static const maxParallelBibles = 3;
 
   BiblePaneBloc({
     required int paneId,
@@ -78,14 +79,15 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
       status: () => BiblePaneStatus.loading,
       isSelectorOpen: false,
     ));
+    final bibleIds = event.bibleIds.take(maxParallelBibles).toList();
 
-    final repoType = event.bibleIds.first.repoType;
+    final repoType = bibleIds.first.repoType;
     final repo = await _repositoryFactory.get(repoType);
     final newMap = ParallelBibleMap.from(state.content.asMap);
     bool hasAtLeastOneSuccess = false;
     late Failure failure;
 
-    for (final id in event.bibleIds) {
+    for (final id in bibleIds) {
       // check if bible actually exists
       final result = await repo.getBible(bibleId: id).run();
 
@@ -104,7 +106,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
 
     // Remove translations that are not selected
     for (final id in state.openedBiblesIds) {
-      if (!event.bibleIds.contains(id)) newMap.remove(id);
+      if (!bibleIds.contains(id)) newMap.remove(id);
     }
 
     if (hasAtLeastOneSuccess) {
@@ -114,7 +116,7 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
       emit(state.copyWith(
         status: () => BiblePaneStatus.ready,
         content: () => ParallelBibleConfig.from(newMap),
-        parallelOrder: () => event.bibleIds,
+        parallelOrder: () => bibleIds,
         repoType: () => repoType,
       ));
       // fetch and restore content with updated translations

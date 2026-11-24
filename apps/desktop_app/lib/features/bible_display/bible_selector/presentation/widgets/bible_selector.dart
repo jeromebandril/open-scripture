@@ -170,6 +170,7 @@ class _Footer extends StatelessWidget {
       (BibleSelectorCubit c) => c.state.selectedBiblesIds,
     );
     final hasSelection = selectedIds.isNotEmpty;
+    final limitReached = selectedIds.length > BiblePaneBloc.maxParallelBibles;
 
     return Column(
       children: [
@@ -190,19 +191,25 @@ class _Footer extends StatelessWidget {
                 ),
               ],
               const Spacer(),
-              ElevatedButton.icon(
-                autofocus: true,
-                iconAlignment: IconAlignment.end,
-                onPressed: hasSelection
-                    ? () => context
-                        .read<MultiPaneManagerCubit>()
-                        .activePane()
-                        .bloc
-                        .add(BiblePaneOpen(bibleIds: selectedIds))
-                    : null,
-                label: const Text('Confirm'),
-                icon: const Icon(LucideIcons.arrowRight),
-              ),
+              if (limitReached)
+                Text(
+                  'Max ${BiblePaneBloc.maxParallelBibles} bibles can be opened in parallel',
+                  style: Theme.of(context).textTheme.bodySmall,
+                )
+              else
+                ElevatedButton.icon(
+                  autofocus: true,
+                  iconAlignment: IconAlignment.end,
+                  onPressed: hasSelection
+                      ? () => context
+                          .read<MultiPaneManagerCubit>()
+                          .activePane()
+                          .bloc
+                          .add(BiblePaneOpen(bibleIds: selectedIds))
+                      : null,
+                  label: const Text('Confirm'),
+                  icon: const Icon(LucideIcons.arrowRight),
+                ),
             ],
           ),
         ),
