@@ -1,0 +1,255 @@
+import 'dart:math' as math;
+
+import 'package:flutter/material.dart';
+
+import '../draggable_divider.dart';
+
+/// Describes one pane of a [SplitPaneView].
+@immutable
+class SplitPaneEntry<Id extends Object> {
+  const SplitPaneEntry({required this.id, required this.sizeFactor});
+
+  final Id id;
+
+  /// Share of the available width. Factors of all entries should sum to 1.0.
+  final double sizeFactor;
+
+  SplitPaneEntry<Id> copyWith({Id? id, double? sizeFactor}) {
+    return SplitPaneEntry(
+      id: id ?? this.id,
+      sizeFactor: sizeFactor ?? this.sizeFactor,
+    );
+  }
+}
+
+typedef SplitPaneBuilder<Id extends Object> = Widget Function(
+  BuildContext context,
+  Id id,
+);
+
+typedef SplitPaneResizeCallback<Id extends Object> = void Function(
+  Id leftId,
+  Id rightId,
+  double deltaFactor,
+);
+
+/// Lays out panes side by side with draggable dividers between them.
+///
+/// The parent owns the sizes: it passes [entries] in and applies the changes
+/// requested through [onResize]. To remove a pane with an exit animation, set
+/// [removingId] first, then drop the entry from [entries] once
+/// [transitionDuration] has elapsed.
+class SplitPaneView<Id extends Object> extends StatefulWidget {
+  const SplitPaneView({
+    super.key,
+    required this.entries,
+    required this.paneBuilder,
+    required this.onResize,
+    this.removingId,
+    this.gap = 8,
+    this.moveDuration = const Duration(milliseconds: 250),
+    this.transitionDuration = const Duration(milliseconds: 200),
+    this.curve = Curves.easeOutCubic,
+  });
+
+  final List<SplitPaneEntry<Id>> entries;
+  final SplitPaneBuilder<Id> paneBuilder;
+  final SplitPaneResizeCallback<Id> onResize;
+  final Id? removingId;
+
+  /// Space between panes. Also the hit area of each divider.
+  final double gap;
+
+  /// Duration of position and size changes.
+  final Duration moveDuration;
+
+  /// Duration of the fade and scale when a pane is added or removed.
+  final Duration transitionDuration;
+
+  final Curve curve;
+
+  @override
+  State<SplitPaneView<Id>> createState() => _SplitPaneViewState<Id>();
+}
+
+class _SplitPaneViewState<Id extends Object> extends State<SplitPaneView<Id>> {
+  static const double _dragThreshold = 2;
+
+  bool _isDragging = false;
+  double _pendingDelta = 0;
+  double? _lastWidth;
+
+  List<Widget> _buildChildren(double totalWidth, Duration moveDuration) {
+    final entries = widget.entries;
+    final gap = widget.gap;
+
+    // Gaps are removed first so the size factors sum cleanly to 1.0.
+    final gapCount = math.max(0, entries.length - 1);
+    final available = math.max(0.0, totalWidth - gap * gapCount);
+
+    final panes = <Widget>[];
+    final dividers = <Widget>[];
+    var left = 0.0;
+
+    for (var i = 0; i < entries.length; i++) {
+      final entry = entries[i];
+      final paneWidth = entry.sizeFactor * available;
+
+      panes.add(
+        AnimatedPositioned(
+          key: ValueKey(entry.id),
+          left: left,
+          top: 0,
+          bottom: 0,
+          width: paneWidth,
+          duration: moveDuration,
+          curve: widget.curve,
+          child: _PaneTransition(
+            isRemoving: entry.id == widget.removingId,
+            duration: widget.transitionDuration,
+            child: widget.paneBuilder(context, entry.id),
+          ),
+        ),
+      );
+
+      if (i < entries.length - 1) {
+        final leftId = entry.id;
+        final rightId = entries[i + 1].id;
+
+        dividers.add(
+          AnimatedPositioned(
+            key: ValueKey(('divider', leftId)),
+            left: left + paneWidth,
+            top: 0,
+            bottom: 0,
+            width: gap,
+            duration: moveDuration,
+            curve: widget.curve,
+            child: DraggableDivider(
+              width: gap,
+              onDragStart: _handleDragStart,
+              onDragEnd: _handleDragEnd,
+              onDrag: (delta) => _handleDrag(
+                delta,
+                leftId: leftId,
+                rightId: rightId,
+                available: available,
+              ),
+            ),
+          ),
+        );
+      }
+
+      left += paneWidth + gap;
+    }
+
+    // Dividers are added last so they sit above the panes.
+    return [...panes, ...dividers];
+  }
+
+  void _handleDragStart() {
+    _pendingDelta = 0;
+    setState(() => _isDragging = true);
+  }
+
+  void _handleDragEnd() {
+    setState(() => _isDragging = false);
+  }
+
+  void _handleDrag(
+    double delta, {
+    required Id leftId,
+    required Id rightId,
+    required double available,
+  }) {
+    if (available <= 0) return;
+
+    _pendingDelta += delta;
+    if (_pendingDelta.abs() < _dragThreshold) return;
+
+    widget.onResize(leftId, rightId, _pendingDelta / available);
+    _pendingDelta = 0;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final totalWidth = constraints.maxWidth;
+
+        // A width change means the window or its padding changed, so panes
+        // must follow immediately instead of animating.
+        final widthChanged = _lastWidth != null && _lastWidth != totalWidth;
+        _lastWidth = totalWidth;
+
+        final moveDuration =
+            _isDragging || widthChanged ? Duration.zero : widget.moveDuration;
+
+        return Stack(
+          clipBehavior: Clip.none,
+          children: _buildChildren(totalWidth, moveDuration),
+        );
+      },
+    );
+  }
+}
+
+/// Fades and scales its child in on first build and out when [isRemoving]
+/// becomes true.
+class _PaneTransition extends StatefulWidget {
+  const _PaneTransition({
+    required this.isRemoving,
+    required this.duration,
+    required this.child,
+  });
+
+  final bool isRemoving;
+  final Duration duration;
+  final Widget child;
+
+  @override
+  State<_PaneTransition> createState() => _PaneTransitionState();
+}
+
+class _PaneTransitionState extends State<_PaneTransition>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final CurvedAnimation _curved;
+  late final Animation<double> _scale;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: widget.duration);
+    _curved = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
+    _scale = Tween<double>(begin: 0.94, end: 1).animate(_curved);
+    _controller.forward();
+  }
+
+  @override
+  void didUpdateWidget(_PaneTransition oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isRemoving == oldWidget.isRemoving) return;
+
+    if (widget.isRemoving) {
+      _controller.reverse();
+    } else {
+      _controller.forward();
+    }
+  }
+
+  @override
+  void dispose() {
+    _curved.dispose();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _curved,
+      child: ScaleTransition(scale: _scale, child: widget.child),
+    );
+  }
+}

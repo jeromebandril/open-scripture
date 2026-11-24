@@ -19,12 +19,12 @@ class PaneManagerState extends Equatable {
   });
 
   final SplitStatus status;
-  final List<PaneDescriptor> panes;
+  final List<SplitPaneEntry<int>> panes;
   final int activePaneId;
   final int? removingPaneId;
 
   PaneManagerState copyWith({
-    List<PaneDescriptor>? panes,
+    List<SplitPaneEntry<int>>? panes,
     int? activePaneId,
     Object? removingPaneId = _unset,
   }) {

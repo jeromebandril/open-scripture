@@ -6,9 +6,10 @@ import '../../../../../core/infrastructure/event_bus/resolved_search_intent_bus.
 import '../../../../../core/infrastructure/event_bus/search_result_bus.dart';
 import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../../shared/domain/services/book_resolver.dart';
+import '../../../../../shared/presentation/widgets/ui/split_pane_view.dart';
 import '../../../../text_scaler/presentation/state/text_scaler_cubit.dart';
 import '../../../bible_pane/presentation/state/bible_pane_bloc.dart';
-import '../models/multi_pane_data.dart';
+import '../models/pane_bloc_components.dart';
 import '../pane_animation_constants.dart';
 
 part 'multi_pane_manager_state.dart';
@@ -31,7 +32,7 @@ class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
         _bookResolver = bookResolver,
         _searchResultBus = searchResultBus,
         super(PaneManagerState(
-          panes: [PaneDescriptor(id: initialPaneId)],
+          panes: [SplitPaneEntry(id: initialPaneId, sizeFactor: 1.0)],
           activePaneId: initialPaneId,
         )) {
     _ensureBloc(initialPaneId);
@@ -64,7 +65,7 @@ class MultiPaneManagerCubit extends Cubit<PaneManagerState> {
     // redistribute all existing panes evenly, then append the new one.
     final newPanes = [
       ...state.panes.map((p) => p.copyWith(sizeFactor: evenFactor)),
-      PaneDescriptor(id: newId, sizeFactor: evenFactor),
+      SplitPaneEntry<int>(id: newId, sizeFactor: evenFactor),
     ];
 
     emit(PaneManagerState(
