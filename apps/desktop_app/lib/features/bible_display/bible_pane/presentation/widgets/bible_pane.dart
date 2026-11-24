@@ -6,7 +6,7 @@ import '../../../../../shared/domain/entities/verse.dart';
 import '../../../../../shared/error/failure.dart';
 import '../../../../text_scaler/presentation/widgets/text_scaler_host.dart';
 import '../../../bible_selector/presentation/widgets/bible_selector.dart';
-import '../../../multi_pane_manager/presentation/models/multi_pane_data.dart';
+import '../../../multi_pane_manager/presentation/models/pane_bloc_components.dart';
 import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
 import '../../domain/display_mode.dart';
 import '../../error/bible_failures.dart';
@@ -117,7 +117,9 @@ class BiblePane extends StatelessWidget {
                 prev.isSelectorOpen != curr.isSelectorOpen,
             builder: (context, state) {
               final Widget content = switch (state.status) {
-                BiblePaneStatus.initial => const InitalEmptyContentScreen(),
+                BiblePaneStatus.initial => state.isSelectorOpen
+                    ? const SizedBox.shrink()
+                    : const InitalEmptyContentScreen(),
                 //
                 // LOADING SCREEN
                 //
