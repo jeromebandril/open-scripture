@@ -6,7 +6,7 @@ import '../../../../../core/infrastructure/event_bus/resolved_search_intent_bus.
 import '../../../../../core/infrastructure/event_bus/search_result_bus.dart';
 import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../../shared/domain/services/book_resolver.dart';
-import '../../../../../shared/presentation/widgets/ui/split_pane_view.dart';
+import '../../../../../shared/presentation/widgets/ui/split_pane_view/split_pane_view.dart';
 import '../../../../text_scaler/presentation/state/text_scaler_cubit.dart';
 import '../../../bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../models/pane_bloc_components.dart';

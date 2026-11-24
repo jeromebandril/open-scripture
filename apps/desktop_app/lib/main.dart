@@ -26,7 +26,7 @@ void main() async {
     await windowManager.ensureInitialized();
     WindowOptions windowOptions = WindowOptions(
       size: Size(1000, 600),
-      minimumSize: Size(500, 300),
+      minimumSize: Size(500, 400),
       center: true,
       backgroundColor: Colors.transparent,
       skipTaskbar: false,

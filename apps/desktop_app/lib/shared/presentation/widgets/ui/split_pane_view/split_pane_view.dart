@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import '../draggable_divider.dart';
+import 'draggable_divider.dart';
 
 /// Describes one pane of a [SplitPaneView].
 @immutable
@@ -11,7 +11,7 @@ class SplitPaneEntry<Id extends Object> {
 
   final Id id;
 
-  /// Share of the available width. Factors of all entries should sum to 1.0.
+  /// Share of the available space. Factors of all entries should sum to 1.0.
   final double sizeFactor;
 
   SplitPaneEntry<Id> copyWith({Id? id, double? sizeFactor}) {
@@ -27,13 +27,14 @@ typedef SplitPaneBuilder<Id extends Object> = Widget Function(
   Id id,
 );
 
+/// [startId] is the left pane when horizontal and the top pane when vertical.
 typedef SplitPaneResizeCallback<Id extends Object> = void Function(
-  Id leftId,
-  Id rightId,
+  Id startId,
+  Id endId,
   double deltaFactor,
 );
 
-/// Lays out panes side by side with draggable dividers between them.
+/// Lays out panes in a row or a column with draggable dividers between them.
 ///
 /// The parent owns the sizes: it passes [entries] in and applies the changes
 /// requested through [onResize]. To remove a pane with an exit animation, set
@@ -45,6 +46,7 @@ class SplitPaneView<Id extends Object> extends StatefulWidget {
     required this.entries,
     required this.paneBuilder,
     required this.onResize,
+    this.axis = Axis.horizontal,
     this.removingId,
     this.gap = 8,
     this.moveDuration = const Duration(milliseconds: 250),
@@ -55,6 +57,10 @@ class SplitPaneView<Id extends Object> extends StatefulWidget {
   final List<SplitPaneEntry<Id>> entries;
   final SplitPaneBuilder<Id> paneBuilder;
   final SplitPaneResizeCallback<Id> onResize;
+
+  /// [Axis.horizontal] splits left to right, [Axis.vertical] top to bottom.
+  final Axis axis;
+
   final Id? removingId;
 
   /// Space between panes. Also the hit area of each divider.
@@ -77,33 +83,56 @@ class _SplitPaneViewState<Id extends Object> extends State<SplitPaneView<Id>> {
 
   bool _isDragging = false;
   double _pendingDelta = 0;
-  double? _lastWidth;
+  double? _lastExtent;
 
-  List<Widget> _buildChildren(double totalWidth, Duration moveDuration) {
+  bool get _isHorizontal => widget.axis == Axis.horizontal;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final totalExtent =
+            _isHorizontal ? constraints.maxWidth : constraints.maxHeight;
+        assert(totalExtent.isFinite, 'SplitPaneView needs bounded space.');
+
+        // An extent change means the window or its padding changed, so panes
+        // must follow immediately instead of animating.
+        final extentChanged = _lastExtent != null && _lastExtent != totalExtent;
+        _lastExtent = totalExtent;
+
+        final moveDuration =
+            _isDragging || extentChanged ? Duration.zero : widget.moveDuration;
+
+        return Stack(
+          clipBehavior: Clip.none,
+          children: _buildChildren(totalExtent, moveDuration),
+        );
+      },
+    );
+  }
+
+  List<Widget> _buildChildren(double totalExtent, Duration moveDuration) {
     final entries = widget.entries;
     final gap = widget.gap;
 
     // Gaps are removed first so the size factors sum cleanly to 1.0.
     final gapCount = math.max(0, entries.length - 1);
-    final available = math.max(0.0, totalWidth - gap * gapCount);
+    final available = math.max(0.0, totalExtent - gap * gapCount);
 
     final panes = <Widget>[];
     final dividers = <Widget>[];
-    var left = 0.0;
+    var offset = 0.0;
 
     for (var i = 0; i < entries.length; i++) {
       final entry = entries[i];
-      final paneWidth = entry.sizeFactor * available;
+      final paneExtent = entry.sizeFactor * available;
 
       panes.add(
-        AnimatedPositioned(
+        _slot(
           key: ValueKey(entry.id),
-          left: left,
-          top: 0,
-          bottom: 0,
-          width: paneWidth,
+          offset: offset,
+          extent: paneExtent,
           duration: moveDuration,
-          curve: widget.curve,
           child: _PaneTransition(
             isRemoving: entry.id == widget.removingId,
             duration: widget.transitionDuration,
@@ -113,38 +142,71 @@ class _SplitPaneViewState<Id extends Object> extends State<SplitPaneView<Id>> {
       );
 
       if (i < entries.length - 1) {
-        final leftId = entry.id;
-        final rightId = entries[i + 1].id;
-
         dividers.add(
-          AnimatedPositioned(
-            key: ValueKey(('divider', leftId)),
-            left: left + paneWidth,
-            top: 0,
-            bottom: 0,
-            width: gap,
+          _slot(
+            key: ValueKey(('divider', entry.id)),
+            offset: offset + paneExtent,
+            extent: gap,
             duration: moveDuration,
-            curve: widget.curve,
-            child: DraggableDivider(
-              width: gap,
-              onDragStart: _handleDragStart,
-              onDragEnd: _handleDragEnd,
-              onDrag: (delta) => _handleDrag(
-                delta,
-                leftId: leftId,
-                rightId: rightId,
-                available: available,
-              ),
+            child: _buildDivider(
+              startId: entry.id,
+              endId: entries[i + 1].id,
+              available: available,
             ),
           ),
         );
       }
 
-      left += paneWidth + gap;
+      offset += paneExtent + gap;
     }
 
     // Dividers are added last so they sit above the panes.
     return [...panes, ...dividers];
+  }
+
+  /// Places a child along the main axis and stretches it on the cross axis.
+  Widget _slot({
+    required Key key,
+    required double offset,
+    required double extent,
+    required Duration duration,
+    required Widget child,
+  }) {
+    final horizontal = _isHorizontal;
+
+    return AnimatedPositioned(
+      key: key,
+      left: horizontal ? offset : 0,
+      right: horizontal ? null : 0,
+      top: horizontal ? 0 : offset,
+      bottom: horizontal ? 0 : null,
+      width: horizontal ? extent : null,
+      height: horizontal ? null : extent,
+      duration: duration,
+      curve: widget.curve,
+      child: child,
+    );
+  }
+
+  Widget _buildDivider({
+    required Id startId,
+    required Id endId,
+    required double available,
+  }) {
+    void onDrag(double delta) => _handleDrag(
+          delta,
+          startId: startId,
+          endId: endId,
+          available: available,
+        );
+
+    return DraggableDivider(
+      axis: widget.axis,
+      gap: widget.gap,
+      onDragStart: _handleDragStart,
+      onDragEnd: _handleDragEnd,
+      onDrag: onDrag,
+    );
   }
 
   void _handleDragStart() {
@@ -158,8 +220,8 @@ class _SplitPaneViewState<Id extends Object> extends State<SplitPaneView<Id>> {
 
   void _handleDrag(
     double delta, {
-    required Id leftId,
-    required Id rightId,
+    required Id startId,
+    required Id endId,
     required double available,
   }) {
     if (available <= 0) return;
@@ -167,29 +229,34 @@ class _SplitPaneViewState<Id extends Object> extends State<SplitPaneView<Id>> {
     _pendingDelta += delta;
     if (_pendingDelta.abs() < _dragThreshold) return;
 
-    widget.onResize(leftId, rightId, _pendingDelta / available);
+    widget.onResize(startId, endId, _pendingDelta / available);
     _pendingDelta = 0;
   }
+}
+
+/// Invisible drag handle between stacked panes. Fills the gap it is given.
+class _RowResizeDivider extends StatelessWidget {
+  const _RowResizeDivider({
+    required this.onDragStart,
+    required this.onDragEnd,
+    required this.onDrag,
+  });
+
+  final VoidCallback onDragStart;
+  final VoidCallback onDragEnd;
+  final ValueChanged<double> onDrag;
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final totalWidth = constraints.maxWidth;
-
-        // A width change means the window or its padding changed, so panes
-        // must follow immediately instead of animating.
-        final widthChanged = _lastWidth != null && _lastWidth != totalWidth;
-        _lastWidth = totalWidth;
-
-        final moveDuration =
-            _isDragging || widthChanged ? Duration.zero : widget.moveDuration;
-
-        return Stack(
-          clipBehavior: Clip.none,
-          children: _buildChildren(totalWidth, moveDuration),
-        );
-      },
+    return MouseRegion(
+      cursor: SystemMouseCursors.resizeRow,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onVerticalDragStart: (_) => onDragStart(),
+        onVerticalDragUpdate: (details) => onDrag(details.delta.dy),
+        onVerticalDragEnd: (_) => onDragEnd(),
+        onVerticalDragCancel: onDragEnd,
+      ),
     );
   }
 }

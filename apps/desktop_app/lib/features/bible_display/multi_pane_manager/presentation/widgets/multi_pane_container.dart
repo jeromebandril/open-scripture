@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../../shared/presentation/widgets/ui/split_pane_view.dart';
+import '../../../../../shared/presentation/widgets/ui/split_pane_view/split_pane_view.dart';
 import '../../../bible_pane/presentation/widgets/bible_pane.dart';
 import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
 import '../pane_animation_constants.dart';
