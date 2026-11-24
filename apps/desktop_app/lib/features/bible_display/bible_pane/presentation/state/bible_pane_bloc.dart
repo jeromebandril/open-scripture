@@ -39,7 +39,6 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
         _overlayNotifier = notifier,
         super(BiblePaneState(
           paneId: paneId,
-          status: BiblePaneStatus.selectBibles,
           dMode: viewSettings.current.defaultDisplayMode,
         )) {
     on<BiblePaneOpen>(_onBiblePaneOpen);
@@ -75,7 +74,10 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     BiblePaneOpen event,
     Emitter<BiblePaneState> emit,
   ) async {
-    emit(state.copyWith(status: () => BiblePaneStatus.loading));
+    emit(state.copyWith(
+      status: () => BiblePaneStatus.loading,
+      isSelectorOpen: false,
+    ));
 
     final repoType = event.bibleIds.first.repoType;
     final repo = await _repositoryFactory.get(repoType);
@@ -354,15 +356,8 @@ class BiblePaneBloc extends Bloc<BiblePaneEvent, BiblePaneState> {
     BiblePaneChooseBibles event,
     Emitter<BiblePaneState> emit,
   ) async {
-    if (state.openedBiblesIds.isNotEmpty &&
-        state.status == BiblePaneStatus.selectBibles) {
-      emit(state.copyWith(
-        status: () => BiblePaneStatus.ready,
-      ));
-      return;
-    }
-
-    emit(state.copyWith(status: () => BiblePaneStatus.selectBibles));
+    final shouldOpen = state.openedBiblesIds.isEmpty || !state.isSelectorOpen;
+    emit(state.copyWith(isSelectorOpen: shouldOpen));
   }
 
   FutureOr<void> _onChangeDisplayMode(

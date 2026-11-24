@@ -113,9 +113,11 @@ class BiblePane extends StatelessWidget {
             buildWhen: (prev, curr) =>
                 prev.status != curr.status ||
                 prev.error != curr.error ||
-                prev.content.isContentEmpty != curr.content.isContentEmpty,
+                prev.content.isContentEmpty != curr.content.isContentEmpty ||
+                prev.isSelectorOpen != curr.isSelectorOpen,
             builder: (context, state) {
               final Widget content = switch (state.status) {
+                BiblePaneStatus.initial => const InitalEmptyContentScreen(),
                 //
                 // LOADING SCREEN
                 //
@@ -128,27 +130,22 @@ class BiblePane extends StatelessWidget {
                 //
                 // READY SCREEN
                 //
-                BiblePaneStatus.ready ||
-                BiblePaneStatus.selectBibles =>
-                  _buildReadyContent(context, state),
+                BiblePaneStatus.ready => _buildReadyContent(context, state),
               };
 
               return Stack(
                 children: [
+                  //
+                  // MAIN CONTENT VIEW
                   Positioned.fill(child: content),
-                  if (state.status == BiblePaneStatus.selectBibles)
-                    Positioned.fill(child: BibleSelector()),
                   //
                   // PANE STATUS INFO
+                  const Positioned(bottom: 0, right: 0, child: PaneInfo()),
                   //
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: DefaultTextStyle(
-                      style: const TextStyle(inherit: false),
-                      child: const PaneInfo(),
-                    ),
-                  ),
+                  // BIBLE SELECTOR OVERLAY
+                  if (state.isSelectorOpen)
+                    // TODO: should add a modal barrier but padding is applied to [MultiPaneContainer]
+                    const Positioned.fill(child: BibleSelector()),
                 ],
               );
             },

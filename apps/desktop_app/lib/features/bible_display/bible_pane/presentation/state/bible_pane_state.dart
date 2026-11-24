@@ -1,7 +1,7 @@
 part of 'bible_pane_bloc.dart';
 
 enum BiblePaneStatus {
-  selectBibles,
+  initial,
   loading,
   ready,
   error,
@@ -11,6 +11,7 @@ class BiblePaneState extends Equatable {
   const BiblePaneState._({
     required this.paneId,
     required this.status,
+    required this.isSelectorOpen,
     required this.reference,
     required this.content,
     required this.parallelOrder,
@@ -24,11 +25,12 @@ class BiblePaneState extends Equatable {
 
   factory BiblePaneState({
     required int paneId,
+    BiblePaneStatus status = BiblePaneStatus.initial,
+    bool isSelectorOpen = true,
+    BibleRef? reference,
     ParallelBibleConfig content = ParallelBibleConfig.empty,
     List<BibleId> parallelOrder = const [],
-    BiblePaneStatus status = BiblePaneStatus.selectBibles,
-    BibleRef? reference,
-    bool isMixed = false,
+    bool isNotSameBookChapter = false,
     Failure? error,
     required DisplayMode dMode,
     int? verseCount,
@@ -38,10 +40,11 @@ class BiblePaneState extends Equatable {
     return BiblePaneState._(
       paneId: paneId,
       status: status,
+      isSelectorOpen: isSelectorOpen,
       reference: reference,
       content: content,
       parallelOrder: parallelOrder,
-      isNotSameBookChapter: isMixed,
+      isNotSameBookChapter: isNotSameBookChapter,
       error: error,
       dMode: dMode,
       verseCount: verseCount,
@@ -52,6 +55,7 @@ class BiblePaneState extends Equatable {
 
   final int paneId;
   final BiblePaneStatus status;
+  final bool isSelectorOpen;
   final BibleRef? reference;
   final ParallelBibleConfig content;
   final List<BibleId> parallelOrder;
@@ -67,6 +71,7 @@ class BiblePaneState extends Equatable {
   BiblePaneState copyWith({
     int Function()? paneId,
     BiblePaneStatus Function()? status,
+    bool? isSelectorOpen,
     BibleRef Function()? reference,
     ParallelBibleConfig Function()? content,
     List<BibleId> Function()? parallelOrder,
@@ -80,11 +85,12 @@ class BiblePaneState extends Equatable {
     return BiblePaneState(
       paneId: paneId != null ? paneId() : this.paneId,
       status: status != null ? status() : this.status,
+      isSelectorOpen: isSelectorOpen ?? this.isSelectorOpen,
       reference: reference != null ? reference() : this.reference,
       content: content != null ? content() : this.content,
       parallelOrder:
           parallelOrder != null ? parallelOrder() : this.parallelOrder,
-      isMixed: isNotSameBookChapter != null
+      isNotSameBookChapter: isNotSameBookChapter != null
           ? isNotSameBookChapter()
           : this.isNotSameBookChapter,
       error: error != null ? error() : this.error,
@@ -99,6 +105,7 @@ class BiblePaneState extends Equatable {
   List<Object?> get props => [
         paneId,
         status,
+        isSelectorOpen,
         reference,
         content,
         parallelOrder,
