@@ -34,8 +34,8 @@ class AppRevealAnimation extends StatefulWidget {
     required this.child,
     this.visible,
     this.origin = AnimationOrigin.topCenter,
-    this.duration = const Duration(milliseconds: 120),
-    this.reverseDuration = const Duration(milliseconds: 80),
+    this.duration = const Duration(milliseconds: 200),
+    this.reverseDuration = const Duration(milliseconds: 100),
     this.curve = Curves.easeOutQuint,
     this.reverseCurve = Curves.easeInCubic,
   });

@@ -77,7 +77,6 @@ class LibraryManagerPage extends StatelessWidget {
                       : bibles[selIndex].extId == bibles[index].extId;
                   final isUninstalling =
                       state.uninstallingBibles.contains(bibles[index]);
-                  print(bibles);
 
                   return _InstalledBiblesRow(
                     index: index,

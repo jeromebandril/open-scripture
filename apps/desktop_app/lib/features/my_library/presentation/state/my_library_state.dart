@@ -3,7 +3,6 @@ part of 'my_library_cubit.dart';
 enum MyLibraryStatus {
   initial,
   loading,
-  empty,
   error,
   success,
 }

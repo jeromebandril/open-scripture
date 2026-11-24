@@ -11,7 +11,6 @@ final class BibleSelectorState extends Equatable {
       selectedBiblesIds.isEmpty ? null : selectedBiblesIds.first.repoType;
 
   BibleSelectorState copyWith({
-    BibleRepositoryType? repoType,
     List<BibleId>? selectedBiblesIds,
   }) {
     return BibleSelectorState(

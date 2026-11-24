@@ -43,7 +43,7 @@ class MyLibraryCubit extends Cubit<MyLibraryState> {
       ));
     }, (b) {
       emit(state.copywith(
-        status: b.isEmpty ? MyLibraryStatus.empty : MyLibraryStatus.success,
+        status: MyLibraryStatus.success,
         bibles: b,
       ));
     });

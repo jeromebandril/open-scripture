@@ -3,8 +3,10 @@ import 'package:flutter/foundation.dart';
 enum BibleRepositoryType {
   localDatabase(
     label: 'Canonical',
-    description:
-        'Bibles installed in the local database, imported from compatible source files. Currently the only repository that support formatting decoration (red lettering, strong words etc...)',
+    description: 'Bibles installed in the local database, '
+        'imported from compatible source files. '
+        'Currently the only repository that support '
+        'formatting decoration (red lettering, strong words etc...)',
   ),
   sword(
     label: 'Sword',
@@ -12,8 +14,8 @@ enum BibleRepositoryType {
   ),
   cloudAPI(
     label: 'Get Bible v2',
-    description:
-        'Bibles from api.getbible.net/v2. Ready to go, doesn\'t require installation.',
+    description: 'Bibles from api.getbible.net/v2. '
+        'Ready to go, doesn\'t require installation.',
   );
 
   const BibleRepositoryType({required this.label, this.description});
