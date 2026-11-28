@@ -272,7 +272,7 @@ class _BibleViewGeneralSettingsTabState
                   ],
                 ),
                 SettingSection(
-                  title: 'Other options',
+                  title: 'Layout',
                   children: [
                     SettingOption(
                         label: 'Splitscreen spacing gap',
@@ -290,6 +290,27 @@ class _BibleViewGeneralSettingsTabState
                                 c.state.splitscreenGap,
                           ),
                         )),
+                    SettingOption(
+                        label: 'Screen horizontal padding',
+                        description:
+                            'Set horizontal padding for the view screen',
+                        child: AppInputNumber(
+                          min: 0,
+                          max: 256,
+                          onChanged: (n) {
+                            cubit.update(
+                                (p) => p.copyWith(xPadding: n.toDouble()));
+                          },
+                          value: context.select(
+                            (SettingsCubit<BibleViewSettings> c) =>
+                                c.state.xPadding,
+                          ),
+                        )),
+                  ],
+                ),
+                SettingSection(
+                  title: 'Other options',
+                  children: [
                     SettingOption(
                       label: 'Enabled view modes',
                       description: 'Enabled view modes',

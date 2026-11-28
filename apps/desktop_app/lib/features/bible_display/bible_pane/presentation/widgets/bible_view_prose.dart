@@ -8,6 +8,7 @@ import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../../shared/domain/entities/verse.dart';
 import '../../../../../shared/presentation/models/display_option_flutter.dart';
 import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
+import '../../domain/display_mode.dart';
 import '../rendering/verse_ref_label.dart';
 import '../rendering/verse_richtext_builder.dart';
 import '../state/bible_pane_bloc.dart';
@@ -193,6 +194,7 @@ class _BibleViewProseState extends State<BibleViewProse> {
     final theme = Theme.of(context);
     final textScaler = MediaQuery.textScalerOf(context);
     final viewSettings = BibleViewSettingsScope.of(context);
+    final viewColors = BibleViewSettingsScope.colorschemeOf(context);
 
     final baseStyle = TextStyle(
       height: 1.5,
@@ -286,8 +288,12 @@ class _BibleViewProseState extends State<BibleViewProse> {
           currentSpans.add(
             TextSpan(
               text: '${ref.verseStart} ',
-              style: VerseRefLabel.style(context, isHighlighted: isHighlighted)
-                  .copyWith(fontSize: 12),
+              style: VerseRefLabel.style(
+                viewSettings,
+                viewColors,
+                isSelected: isHighlighted,
+                displayMode: DisplayMode.prose,
+              ),
               recognizer: widget.onVerseTap != null
                   ? (TapGestureRecognizer()
                     ..onTap = () =>

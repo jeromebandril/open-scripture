@@ -7,7 +7,9 @@ import '../../../../../shared/presentation/models/display_option_flutter.dart';
 import '../../../colorschemes/domain/entities/bible_view_colorscheme.dart';
 import '../../../settings/bible_view_settings.dart';
 import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
+import '../../domain/display_mode.dart';
 import '../rendering/inline_verse_number_builder.dart';
+import '../rendering/verse_ref_label.dart';
 import '../rendering/verse_richtext_builder.dart';
 import '../state/bible_pane_bloc.dart';
 
@@ -88,18 +90,22 @@ class BibleViewPresentation extends StatelessWidget {
     BibleViewSettings viewSettings,
     BibleViewColorscheme viewColors,
   ) {
-    // TODO: make english name be the fallback, prioritize the localized name
-    final title = '${ref.book.englishName} ${ref.toStringChapterAndVerse()}';
-
+    final text = VerseRefLabel.text(
+      ref,
+      viewSettings: viewSettings,
+      isSelected: true,
+      displayMode: DisplayMode.presentation,
+    );
+    final style = VerseRefLabel.style(
+      viewSettings,
+      viewColors,
+      isSelected: true,
+      displayMode: DisplayMode.presentation,
+    );
     return Text(
-      title,
+      text,
       textAlign: viewSettings.presentationTitleTextAlign.toFlutter(),
-      style: TextStyle(
-        fontWeight: viewSettings.selectedRefFontWeight.toFlutter(),
-        fontFamily: viewSettings.refFontFamily,
-        color: viewColors.selectedRefColor,
-        fontSize: 16,
-      ),
+      style: style,
     );
   }
 
@@ -168,7 +174,7 @@ class BibleViewPresentation extends StatelessWidget {
   }
 
   /// Interleaves each verse's spans with a leading verse-number marker.
-  /// Only called when the range spans more than one verse — a single
+  /// Only called when the range spans more than one verse -- a single
   /// selected verse is shown without a number, since the title already
   /// states the full reference.
   static List<InlineSpan> _interleaveVerseNumbers(

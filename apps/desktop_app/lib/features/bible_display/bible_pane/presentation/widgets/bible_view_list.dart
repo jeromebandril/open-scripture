@@ -8,6 +8,7 @@ import '../../../../../shared/domain/entities/bible_ref.dart';
 import '../../../../../shared/domain/entities/verse.dart';
 import '../../../../../shared/presentation/models/display_option_flutter.dart';
 import '../../../settings/presentation/widgets/bible_view_settings_provider.dart';
+import '../../domain/display_mode.dart';
 import '../rendering/verse_ref_label.dart';
 import '../rendering/verse_richtext_builder.dart';
 import '../state/bible_pane_bloc.dart';
@@ -224,10 +225,16 @@ class _VerseWidget extends StatelessWidget {
 
     final refLabel = VerseRefLabel.text(
       verse.ref,
-      isHighlighted: isHighlighted,
-      showFullRefAlways: viewSettings.showAlwaysFullRef,
+      isSelected: isHighlighted,
+      viewSettings: viewSettings,
+      displayMode: DisplayMode.list,
     );
-    final refStyle = VerseRefLabel.style(context, isHighlighted: isHighlighted);
+    final refStyle = VerseRefLabel.style(
+      viewSettings,
+      viewColors,
+      isSelected: isHighlighted,
+      displayMode: DisplayMode.list,
+    );
 
     final headingStyle = TextStyle(
       fontWeight: FontWeight.bold,
@@ -247,7 +254,7 @@ class _VerseWidget extends StatelessWidget {
               TextSpan(
                 children: [
                   TextSpan(text: refLabel, style: refStyle),
-                  const TextSpan(text: '  '),
+                  TextSpan(text: ' ' * viewSettings.listSpaceAfterRef),
                   ..._buildSegmentSpans(context, headingStyle, onStrongWordTap),
                 ],
               ),

@@ -83,6 +83,51 @@ class _BibleViewListSettingsTabState extends State<BibleViewListSettingsTab> {
                             value: m, label: m.label))
                         .toList(),
                   )),
+              SettingOption(
+                  label: 'Reference text case',
+                  description: 'Set verse reference text case',
+                  child: AppInputOption<TextCase>(
+                    value: context.select(
+                        (SettingsCubit<BibleViewSettings> c) =>
+                            c.state.listVerseRefCase),
+                    onChanged: (tc) {
+                      cubit.update((s) => s.copyWith(listVerseRefCase: tc));
+                    },
+                    items: TextCase.values
+                        .map((m) =>
+                            AppDropdownItem<TextCase>(value: m, label: m.label))
+                        .toList(),
+                  )),
+              SettingOption(
+                  label: 'Reference space after',
+                  description:
+                      'Set how many <space> are after the verse reference',
+                  child: AppInputNumber(
+                    max: 8,
+                    min: 1,
+                    value: context.select(
+                        (SettingsCubit<BibleViewSettings> c) =>
+                            c.state.listSpaceAfterRef),
+                    onChanged: (v) {
+                      cubit.update(
+                          (s) => s.copyWith(listSpaceAfterRef: v.toInt()));
+                    },
+                  )),
+              SettingOption(
+                  label: 'Reference size',
+                  description: 'Set verse reference size',
+                  child: AppInputOption<UiSize>(
+                    value: context.select(
+                        (SettingsCubit<BibleViewSettings> c) =>
+                            c.state.listRefSize),
+                    onChanged: (tc) {
+                      cubit.update((s) => s.copyWith(listRefSize: tc));
+                    },
+                    items: UiSize.values
+                        .map((m) =>
+                            AppDropdownItem<UiSize>(value: m, label: m.name))
+                        .toList(),
+                  )),
             ],
           ),
           SettingSection(

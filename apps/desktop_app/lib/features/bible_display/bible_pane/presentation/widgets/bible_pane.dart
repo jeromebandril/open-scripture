@@ -17,6 +17,8 @@ import 'bible_view_prose.dart';
 import 'initial_screen.dart';
 import 'pane_info.dart';
 
+const initialFontSize = 14.0;
+
 class BiblePane extends StatelessWidget {
   final int uniqueId;
   final PaneBlocComponents blocComponents;
@@ -61,7 +63,7 @@ class BiblePane extends StatelessWidget {
 
     return TextScalerHost(
       textScalerCubit: blocComponents.textScalerCubit,
-      initialiSize: 14,
+      initialiSize: initialFontSize,
       child: BlocSelector<BiblePaneBloc, BiblePaneState, DisplayMode>(
         selector: (s) => s.dMode,
         builder: _buildDisplay,

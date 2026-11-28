@@ -8,7 +8,6 @@ abstract class _Keys {
   static const enableAutoScrollToVerse = 'enableAutoScrollToVerse';
   static const verseFontFamily = 'verseFontFamily';
   static const verseFontWeight = 'verseFontWeight';
-  static const widthAdjustmentOffset = 'widthAdjustmentOffset';
   static const refFontFamily = 'refFontFamily';
   static const xPadding = 'xPadding';
   static const splitscreenGap = 'splitscreenGap';
@@ -36,6 +35,9 @@ abstract class _Keys {
   static const pericopeSpacingAfter = 'pericopeSpacingAfter';
   static const pericopeUnderline = 'pericopeUnderline';
   static const colorscheme = 'colorscheme';
+  static const listRefCase = 'listRefCase';
+  static const listSpaceAfterRef = 'listSpaceAfterRef';
+  static const listRefSize = 'listRefSize';
 }
 
 class BibleViewSettings extends Equatable {
@@ -55,7 +57,6 @@ class BibleViewSettings extends Equatable {
   final AppFontWeight selectedRefFontWeight;
   final double? verseLetterSpacing;
   // other
-  final double widthAdjustmentOffset;
   final double xPadding;
   final double splitscreenGap;
   final List<DisplayMode> enabledDisplayModes;
@@ -74,6 +75,9 @@ class BibleViewSettings extends Equatable {
   final bool showAlwaysFullRef;
   final HighlightRenderMode highlightRenderMode;
   final double listParallelSpacing;
+  final TextCase listVerseRefCase;
+  final int listSpaceAfterRef;
+  final UiSize listRefSize;
   final double verseSpacing;
 
   // --- PRESENTATION view ---
@@ -94,9 +98,8 @@ class BibleViewSettings extends Equatable {
     // ignore: avoid_init_to_null
     this.verseLetterSpacing = null,
     this.verseFontWeight = AppFontWeight.regular,
-    this.widthAdjustmentOffset = 0.0,
     this.refFontFamily = 'General Sans',
-    this.xPadding = 0.01,
+    this.xPadding = 0.0,
     this.splitscreenGap = 64,
     this.enabledDisplayModes = const [
       DisplayMode.list,
@@ -108,14 +111,17 @@ class BibleViewSettings extends Equatable {
     this.pericopeSpacingAfter = 10,
     this.pericopeUnderline = true,
     this.enableStrongWordsRender = false,
-    this.selectedRefFontWeight = AppFontWeight.semiBold,
+    this.selectedRefFontWeight = AppFontWeight.medium,
     this.refFontWeight = AppFontWeight.medium,
     this.underlineRefs = false,
     this.showVerseDivider = true,
     this.showAlwaysFullRef = true,
     this.highlightRenderMode = HighlightRenderMode.shortRefWithColor,
     this.listParallelSpacing = 32,
-    this.verseSpacing = 32,
+    this.listVerseRefCase = TextCase.sentenceCase,
+    this.listSpaceAfterRef = 2,
+    this.listRefSize = UiSize.small,
+    this.verseSpacing = 15,
     this.presentationTitleTextAlign = AppTextAlign.center,
     this.presentationSubtitleTextAlign = AppTextAlign.center,
     this.subtitleFontWeight = AppFontWeight.medium,
@@ -165,6 +171,9 @@ class BibleViewSettings extends Equatable {
     bool? showAlwaysFullRef,
     HighlightRenderMode? highlightRenderMode,
     double? listParallelSpacing,
+    TextCase? listVerseRefCase,
+    int? listSpaceAfterRef,
+    UiSize? listRefSize,
     double? verseSpacing,
     AppTextAlign? presentationTitleTextAlign,
     AppTextAlign? presentationSubtitleTextAlign,
@@ -183,8 +192,6 @@ class BibleViewSettings extends Equatable {
           ? verseLetterSpacing()
           : this.verseLetterSpacing,
       verseFontWeight: verseFontWeight ?? this.verseFontWeight,
-      widthAdjustmentOffset:
-          widthAdjustmentOffset ?? this.widthAdjustmentOffset,
       refFontFamily: refFontFamily ?? this.refFontFamily,
       xPadding: xPadding ?? this.xPadding,
       splitscreenGap: splitscreenGap ?? this.splitscreenGap,
@@ -205,6 +212,9 @@ class BibleViewSettings extends Equatable {
       showAlwaysFullRef: showAlwaysFullRef ?? this.showAlwaysFullRef,
       highlightRenderMode: highlightRenderMode ?? this.highlightRenderMode,
       listParallelSpacing: listParallelSpacing ?? this.listParallelSpacing,
+      listVerseRefCase: listVerseRefCase ?? this.listVerseRefCase,
+      listSpaceAfterRef: listSpaceAfterRef ?? this.listSpaceAfterRef,
+      listRefSize: listRefSize ?? this.listRefSize,
       verseSpacing: verseSpacing ?? this.verseSpacing,
       presentationTitleTextAlign:
           presentationTitleTextAlign ?? this.presentationTitleTextAlign,
@@ -228,7 +238,6 @@ class BibleViewSettings extends Equatable {
         _Keys.verseFontFamily: verseFontFamily,
         _Keys.verseLetterSpacing: verseLetterSpacing,
         _Keys.verseFontWeight: verseFontWeight.name,
-        _Keys.widthAdjustmentOffset: widthAdjustmentOffset,
         _Keys.refFontFamily: refFontFamily,
         _Keys.xPadding: xPadding,
         _Keys.splitscreenGap: splitscreenGap,
@@ -247,6 +256,9 @@ class BibleViewSettings extends Equatable {
         _Keys.showAlwaysFullRef: showAlwaysFullRef,
         _Keys.highlightRenderMode: highlightRenderMode.name,
         _Keys.listParallelSpacing: listParallelSpacing,
+        _Keys.listRefCase: listVerseRefCase,
+        _Keys.listSpaceAfterRef: listSpaceAfterRef,
+        _Keys.listRefSize: listRefSize,
         _Keys.verseSpacing: verseSpacing,
         _Keys.presentationTitleTextAlign: presentationTitleTextAlign.name,
         _Keys.presentationSubtitleTextAlign: presentationSubtitleTextAlign.name,
@@ -273,9 +285,6 @@ class BibleViewSettings extends Equatable {
       verseFontWeight: json[_Keys.verseFontWeight] != null
           ? AppFontWeight.values.byName(json[_Keys.verseFontWeight] as String)
           : defaults.verseFontWeight,
-      widthAdjustmentOffset:
-          (json[_Keys.widthAdjustmentOffset] as num?)?.toDouble() ??
-              defaults.widthAdjustmentOffset,
       refFontFamily:
           json[_Keys.refFontFamily] as String? ?? defaults.refFontFamily,
       xPadding: (json[_Keys.xPadding] as num?)?.toDouble() ?? defaults.xPadding,
@@ -320,6 +329,14 @@ class BibleViewSettings extends Equatable {
       listParallelSpacing:
           (json[_Keys.listParallelSpacing] as num?)?.toDouble() ??
               defaults.listParallelSpacing,
+      listVerseRefCase: json[_Keys.listRefCase] != null
+          ? TextCase.values.byName(json[_Keys.listRefCase])
+          : defaults.listVerseRefCase,
+      listSpaceAfterRef: (json[_Keys.listSpaceAfterRef] as num?)?.toInt() ??
+          defaults.listSpaceAfterRef,
+      listRefSize: json[_Keys.listRefSize] != null
+          ? UiSize.values.byName(json[_Keys.listRefSize])
+          : defaults.listRefSize,
       verseSpacing: (json[_Keys.verseSpacing] as num?)?.toDouble() ??
           defaults.verseSpacing,
       presentationTitleTextAlign: json[_Keys.presentationTitleTextAlign] != null
@@ -357,7 +374,6 @@ class BibleViewSettings extends Equatable {
         verseFontFamily,
         verseLetterSpacing,
         verseFontWeight,
-        widthAdjustmentOffset,
         refFontFamily,
         xPadding,
         splitscreenGap,
@@ -375,6 +391,9 @@ class BibleViewSettings extends Equatable {
         showAlwaysFullRef,
         highlightRenderMode,
         listParallelSpacing,
+        listVerseRefCase,
+        listSpaceAfterRef,
+        listRefSize,
         verseSpacing,
         presentationTitleTextAlign,
         presentationSubtitleTextAlign,
