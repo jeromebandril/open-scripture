@@ -48,7 +48,7 @@ abstract final class AppColors {
   static const Color onTertiaryDark = Color(0xFF0D0D0D);
 
   // ---------------------------------------------------------------------------
-  // Surfaces — 5-level scale (lowest → highest container)
+  // Surfaces -- 5-level scale (lowest → highest container)
   // ---------------------------------------------------------------------------
 
   static const Color surface = Color(0xFFF4F4F4);
@@ -86,7 +86,7 @@ abstract final class AppColors {
   static const Color outlineVariantDark = Color(0xFF333333);
 
   // ---------------------------------------------------------------------------
-  // Feedback — Error
+  // Feedback -- Error
   // ---------------------------------------------------------------------------
 
   static const Color error = Color(0xFFB3261E);
@@ -102,7 +102,7 @@ abstract final class AppColors {
   static const Color onErrorContainerDark = Color(0xFFFFDAD6);
 
   // ---------------------------------------------------------------------------
-  // Feedback — Success (filled in to match error's tonal distance)
+  // Feedback -- Success (filled in to match error's tonal distance)
   // ---------------------------------------------------------------------------
 
   static const Color success = Color(0xFF1A6B3C);
@@ -118,7 +118,7 @@ abstract final class AppColors {
   static const Color onSuccessContainerDark = Color(0xFFD3EFE1);
 
   // ---------------------------------------------------------------------------
-  // Feedback — Warning
+  // Feedback -- Warning
   // ---------------------------------------------------------------------------
 
   static const Color warning = Color(0xFF875300);
@@ -134,7 +134,7 @@ abstract final class AppColors {
   static const Color onWarningContainerDark = Color(0xFFFFF0CC);
 
   // ---------------------------------------------------------------------------
-  // Feedback — Info (teal-blue, distinct from brand primary)
+  // Feedback -- Info (teal-blue, distinct from brand primary)
   // ---------------------------------------------------------------------------
 
   static const Color info = Color(0xFF0277BD);
@@ -171,7 +171,7 @@ abstract final class AppColors {
   static const Color transparent = Colors.transparent;
 
   // ---------------------------------------------------------------------------
-  // Neutral scale — derived from the surface steps above.
+  // Neutral scale -- derived from the surface steps above.
   // Used by component themes for disabled states and internal UI chrome.
   // ---------------------------------------------------------------------------
 

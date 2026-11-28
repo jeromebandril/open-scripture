@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/di/injection_container.dart';
+import '../../../../shared/design_system/design_system.dart';
 import '../../../../shared/enums/bible_repository_type.dart';
 import '../../../../shared/presentation/widgets/ui/inputs/app_input_option.dart';
 import '../../../../shared/presentation/widgets/ui/inputs/file_dropzone.dart';
@@ -28,28 +29,35 @@ class ImporterPage extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(42, 0, 42, 42),
           child: Column(
             children: [
-              SettingSection(
+              SettingSection.single(
                 title: 'Importer',
-                children: [
-                  SettingOption(
-                    label: 'Import type',
-                    description:
-                        'Select what type of datasource you are importing to',
-                    child: AppInputOption<BibleRepositoryType>(
-                      value: targetType,
-                      onChanged: (mode) => context
-                          .read<BibleImporterCubit>()
-                          .setTargetType(mode),
-                      items: BibleRepositoryType.installableTypes
-                          .map((m) => AppDropdownItem<BibleRepositoryType>(
-                              value: m, label: m.label))
-                          .toList(),
+                child: Column(
+                  children: [
+                    SettingOption(
+                      label: 'Import type',
+                      description:
+                          'Select what type of datasource you are importing to',
+                      child: AppInputOption<BibleRepositoryType>(
+                        value: targetType,
+                        onChanged: (mode) => context
+                            .read<BibleImporterCubit>()
+                            .setTargetType(mode),
+                        items: BibleRepositoryType.installableTypes
+                            .map((m) => AppDropdownItem<BibleRepositoryType>(
+                                value: m, label: m.label))
+                            .toList(),
+                      ),
                     ),
-                  ),
-                  if (targetType == BibleRepositoryType.sword)
-                    const SwordPathSelector(),
-                  const _ImporterWidget(),
-                ],
+                    if (targetType == BibleRepositoryType.sword) ...[
+                      const SizedBox(height: AppSpacing.sm),
+                      const Divider(),
+                      const SizedBox(height: AppSpacing.sm),
+                      const SwordPathSelector(),
+                    ],
+                    const SizedBox(height: AppSpacing.lg),
+                    const _ImporterWidget(),
+                  ],
+                ),
               ),
               SettingSection.single(
                 title: 'Recommended repositories',
@@ -81,9 +89,9 @@ class _ImporterWidget extends StatelessWidget {
             builder: (context, state) {
               if (state.targetType == BibleRepositoryType.sword) {
                 return const Text(
-                    'Choose a valid ZIP file from the official Crosswire Repository');
+                    'Choose a valid zip file from the official Crosswire Repository');
               }
-              return const Text('Choose a ZIP or XML file');
+              return const Text('Choose a usfx.zip or osis.xml file');
             },
           ),
         );

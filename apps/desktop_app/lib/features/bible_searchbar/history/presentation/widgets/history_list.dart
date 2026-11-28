@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../../app/state/interface_visibility_cubit.dart';
 import '../../../../../shared/design_system/design_system.dart';
 import '../../../../bible_display/bible_pane/presentation/state/bible_pane_bloc.dart';
 import '../../../../bible_display/multi_pane_manager/presentation/state/multi_pane_manager_cubit.dart';
-import '../../../../shortcuts/domain/models/app_command.dart';
-import '../../../../shortcuts/presentation/models/app_command_shortcuts.dart';
-import '../../../../shortcuts/presentation/widgets/shortcut_view.dart';
 import '../../../search/presentation/state/search_bloc.dart';
 import '../../domain/entities/history_entry.dart';
 import '../state/history_cubit.dart';
@@ -26,50 +24,59 @@ class HistoryList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HistoryCubit, HistoryState>(
-      buildWhen: (prev, curr) => prev.history != curr.history,
-      builder: (context, state) {
-        return FocusScope(
-          autofocus: true,
-          child: FocusTraversalGroup(
-            policy: OrderedTraversalPolicy(),
-            child: Column(
-              spacing: AppSpacing.sm,
-              children: [
-                Expanded(
-                  child: state.history.isEmpty
-                      ? const Center(child: Text('Empty history'))
-                      : ListView.builder(
-                          itemCount: state.history.length,
-                          itemBuilder: (_, i) => _HistoryItem(
-                            index: i,
-                            autofocus: i == 0,
-                            historyData: state.history[i],
-                            onPressed: () => onSelected?.call(),
-                            size: size,
-                          ),
-                        ),
-                ),
-                SizedBox(
-                  height: 25,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    spacing: AppSpacing.sm,
-                    children: [
-                      Text('Press'),
-                      ShortcutView(
-                          activator:
-                              appCommandShortcuts[AppCommand.toggleHistory]),
-                      Text('to close'),
-                    ],
-                  ),
-                ),
-              ],
+    final history = context.select((HistoryCubit c) => c.state.history);
+
+    return FocusScope(
+      autofocus: true,
+      child: FocusTraversalGroup(
+        policy: OrderedTraversalPolicy(),
+        child: Column(
+          spacing: AppSpacing.sm,
+          children: [
+            Expanded(
+              child: history.isEmpty
+                  ? const Center(child: Text('Empty history'))
+                  : ListView.builder(
+                      itemCount: history.length,
+                      itemBuilder: (_, i) => _HistoryItem(
+                        index: i,
+                        autofocus: i == 0,
+                        historyData: history[i],
+                        onPressed: () => onSelected?.call(),
+                        size: size,
+                      ),
+                    ),
             ),
-          ),
-        );
-      },
+            const Divider(),
+            SizedBox(
+              height: 22,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                spacing: AppSpacing.sm,
+                children: [
+                  // IconButton(
+                  //   onPressed: () {},
+                  //   icon: Icon(LucideIcons.close),
+                  // ),
+                  IconButton(
+                    onPressed: () => context.read<HistoryCubit>().clearAll(),
+                    // tooltip: 'Clear all',
+                    icon: const Icon(LucideIcons.broom),
+                  ),
+                  IconButton(
+                    onPressed: () => context
+                        .read<InterfaceVisibilityCubit>()
+                        .toggleHistory(),
+                    // tooltip: 'Close',
+                    icon: const Icon(LucideIcons.x),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -106,12 +113,12 @@ class _HistoryItemState extends State<_HistoryItem> {
 
   @override
   Widget build(BuildContext context) {
+    final height = 30.0;
     final theme = Theme.of(context);
-    final time = '${widget.historyData.time.hour.toString().padLeft(2, '0')}:'
-        '${widget.historyData.time.minute.toString().padLeft(2, '0')}:'
-        '${widget.historyData.time.second.toString().padLeft(2, '0')}';
-
-    final refString = widget.size == HistoryListSize.small
+    final timeStr =
+        '${widget.historyData.time.hour.toString().padLeft(2, '0')}:'
+        '${widget.historyData.time.minute.toString().padLeft(2, '0')}';
+    final refStr = widget.size == HistoryListSize.small
         ? widget.historyData.ref.toString()
         : '${widget.historyData.ref.book.englishName} ${widget.historyData.ref.toStringChapterAndVerse()} ';
 
@@ -124,8 +131,8 @@ class _HistoryItemState extends State<_HistoryItem> {
         autofocus: widget.autofocus,
         onHover: (v) => setState(() => _isHovered = v),
         onFocusChange: (v) => setState(() => _hasFocus = v),
-        focusColor: theme.colorScheme.primary.withValues(alpha: 0.08),
-        hoverColor: theme.colorScheme.primary.withValues(alpha: 0.04),
+        focusColor: theme.colorScheme.primary.withValues(alpha: 0.1),
+        hoverColor: theme.colorScheme.primary.withValues(alpha: 0.1),
         onTap: () {
           context.read<MultiPaneManagerCubit>().activePane().bloc.add(
                 BiblePaneDisplayChapter(ref: widget.historyData.ref),
@@ -137,50 +144,44 @@ class _HistoryItemState extends State<_HistoryItem> {
           context.read<InterfaceVisibilityCubit>().toggleHistory();
         },
         child: SizedBox(
-          height: 32,
+          height: height,
           child: Row(
-            spacing: 8,
             children: [
-              _hasFocus
-                  ? const SizedBox(
-                      width: 20, child: Icon(Icons.arrow_right, size: 24))
-                  : const SizedBox(width: 20),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                        child: Row(
-                          spacing: 12,
-                          children: [
-                            Text(time,
-                                style: theme.textTheme.bodySmall
-                                    ?.copyWith(fontFamily: 'IBM Plex Mono')),
-                            Text(refString,
-                                style: theme.textTheme.labelMedium?.copyWith(
-                                    fontFamily: 'IBM Plex Mono',
-                                    color: theme.colorScheme.primary)),
-                          ],
-                        ),
-                      ),
-                    ),
-                    if (_isHovered)
-                      IconButton(
-                        // Skip focus, so user can navigate smoothly
-                        focusNode: FocusNode(
-                          canRequestFocus: false,
-                          skipTraversal: true,
-                        ),
-                        visualDensity: VisualDensity.compact,
-                        icon: const Icon(Icons.remove_circle, size: 18),
-                        onPressed: () =>
-                            context.read<HistoryCubit>().remove(widget.index),
-                      ),
-                  ],
-                ),
+              SizedBox(
+                width: 36,
+                child: _hasFocus || _isHovered
+                    ? const Icon(Icons.arrow_right, size: 24)
+                    : null,
               ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                spacing: AppSpacing.md,
+                children: [
+                  Text(
+                    timeStr,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      fontFamily: AppTypography.fontFamilyMono,
+                    ),
+                  ),
+                  Text(
+                    refStr,
+                    style: theme.textTheme.labelMedium,
+                  ),
+                ],
+              ),
+              const Spacer(),
+              if (_isHovered)
+                IconButton(
+                  focusNode: FocusNode(
+                    canRequestFocus: false,
+                    skipTraversal: true,
+                  ),
+                  icon: const Icon(Icons.remove_circle, size: 18),
+                  onPressed: () =>
+                      context.read<HistoryCubit>().remove(widget.index),
+                ),
             ],
           ),
         ),

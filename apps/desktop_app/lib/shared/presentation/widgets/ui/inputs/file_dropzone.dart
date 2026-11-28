@@ -1,3 +1,4 @@
+import 'package:dashed_border/dashed_border.dart';
 import 'package:flutter/material.dart';
 
 class FileDropZoneUi extends StatelessWidget {
@@ -9,7 +10,7 @@ class FileDropZoneUi extends StatelessWidget {
     this.fileName,
     this.errorText,
     this.hintText = 'Drop an a file here, or click to choose',
-    this.height = 180,
+    this.height = 150,
     this.onChoosePressed,
     this.onTap,
     this.onDragEnter,
@@ -54,7 +55,12 @@ class FileDropZoneUi extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: borderColor, width: 2),
+            border: DashedBorder(
+              color: borderColor,
+              width: 2.0,
+              dashLength: 8.0,
+              dashGap: 4.0,
+            ),
           ),
           child: Stack(
             children: [

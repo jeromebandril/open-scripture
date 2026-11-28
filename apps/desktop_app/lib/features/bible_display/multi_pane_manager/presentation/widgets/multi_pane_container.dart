@@ -19,8 +19,6 @@ class MultiPaneContainer extends StatelessWidget {
 class _PaneContainerDecoration extends StatelessWidget {
   const _PaneContainerDecoration({required this.child});
 
-  static const double _basePadding = 12;
-
   final Widget child;
 
   @override
@@ -34,7 +32,7 @@ class _PaneContainerDecoration extends StatelessWidget {
       ),
       child: Padding(
         padding: EdgeInsets.symmetric(
-          horizontal: _basePadding + viewSettings.widthAdjustmentOffset,
+          horizontal: viewSettings.xPadding,
         ),
         child: child,
       ),

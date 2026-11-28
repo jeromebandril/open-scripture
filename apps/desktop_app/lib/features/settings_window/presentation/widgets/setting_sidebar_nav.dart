@@ -97,7 +97,7 @@ class SettingSidebarNav extends StatelessWidget {
 }
 
 class _NavigationButton extends StatelessWidget {
-  static const height = 40.0;
+  static const _height = 36.0;
 
   final String text;
   final IconData? icon;
@@ -134,7 +134,7 @@ class _NavigationButton extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
             alignment: Alignment.centerLeft,
-            height: height,
+            height: _height,
             child: Row(
               spacing: AppSpacing.lg,
               mainAxisAlignment: isCompact

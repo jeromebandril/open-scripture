@@ -120,7 +120,7 @@ abstract final class AppTheme {
       primaryTextTheme: textTheme,
 
       // -----------------------------------------------------------------------
-      // Scaffold — one step below surface so content panels lift off the page
+      // Scaffold -- one step below surface so content panels lift off the page
       // -----------------------------------------------------------------------
       scaffoldBackgroundColor: isLight
           ? AppColors.surfaceContainerLow
@@ -152,7 +152,7 @@ abstract final class AppTheme {
       searchBarTheme: AppSearchBarTheme.buildBar(brightness: brightness),
 
       // -----------------------------------------------------------------------
-      // Inline — simple enough to not warrant a separate file
+      // Inline -- simple enough to not warrant a separate file
       // -----------------------------------------------------------------------
       dialogTheme: DialogThemeData(
         backgroundColor: isLight ? AppColors.surface : AppColors.surfaceDark,

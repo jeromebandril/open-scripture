@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../tokens/colors.dart';
 import '../../tokens/radius.dart';
 
-/// Scrollbar — critical on desktop where scroll wheels are the primary input.
+/// Scrollbar -- critical on desktop where scroll wheels are the primary input.
 abstract final class AppScrollbarTheme {
   AppScrollbarTheme._();
 
@@ -36,7 +36,7 @@ abstract final class AppScrollbarTheme {
       }),
       radius: AppRadius.radiusFull.topLeft,
       interactive: true,
-      // Show scrollbar on desktop — don't wait for scroll to reveal it.
+      // Show scrollbar on desktop -- don't wait for scroll to reveal it.
       thumbVisibility: WidgetStateProperty.resolveWith((states) {
         return states.contains(WidgetState.hovered) ||
             states.contains(WidgetState.dragged);

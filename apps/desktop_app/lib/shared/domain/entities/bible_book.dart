@@ -36,7 +36,7 @@ enum BibleBook {
   psalms(osis: 'Ps', usfm: 'PSA', canonical: 'PSA', osisIndex: 19, testament: Testament.oldTestament, englishName: 'Psalms', englishAliases: []),
   proverbs(osis: 'Prov', usfm: 'PRO', canonical: 'PRO', osisIndex: 20, testament: Testament.oldTestament, englishName: 'Proverbs', englishAliases: []),
   ecclesiastes(osis: 'Eccl', usfm: 'ECC', canonical: 'ECC', osisIndex: 21, testament: Testament.oldTestament, englishName: 'Ecclesiastes', englishAliases: []),
-  songOfSolomon(osis: 'Song', usfm: 'SNG', canonical: 'SNG', osisIndex: 22, testament: Testament.oldTestament, englishName: 'Song of solomon', englishAliases: ['song of songs', 'song', 'songs', 'sos', 'sng']),
+  songOfSolomon(osis: 'Song', usfm: 'SNG', canonical: 'SNG', osisIndex: 22, testament: Testament.oldTestament, englishName: 'Song of Solomon', englishAliases: ['song of songs', 'song', 'songs', 'sos', 'sng']),
   isaiah(osis: 'Isa', usfm: 'ISA', canonical: 'ISA', osisIndex: 23, testament: Testament.oldTestament, englishName: 'Isaiah', englishAliases: []),
   jeremiah(osis: 'Jer', usfm: 'JER', canonical: 'JER', osisIndex: 24, testament: Testament.oldTestament, englishName: 'Jeremiah', englishAliases: []),
   lamentations(osis: 'Lam', usfm: 'LAM', canonical: 'LAM', osisIndex: 25, testament: Testament.oldTestament, englishName: 'Lamentations', englishAliases: []),

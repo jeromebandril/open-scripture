@@ -26,7 +26,7 @@ abstract final class AppElevatedButtonTheme {
           if (states.contains(WidgetState.disabled)) return disabledFg;
           return fg;
         }),
-        // Hover/pressed feedback via overlay — keeps a single background value.
+        // Hover/pressed feedback via overlay -- keeps a single background value.
         overlayColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.pressed)) {
             return AppColors.blackOverlay(0.12);

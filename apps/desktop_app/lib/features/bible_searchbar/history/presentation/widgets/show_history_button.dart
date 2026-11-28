@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../../app/state/interface_visibility_cubit.dart';
+import '../../../../../shared/design_system/tokens/breakpoints.dart';
 import '../../../../../shared/presentation/widgets/dropdown_menu_anchor.dart';
 import 'history_list.dart';
 
@@ -47,14 +48,18 @@ class _ShowHistoryButtonState extends State<ShowHistoryButton> {
 
   @override
   Widget build(BuildContext context) {
+    final parentWidth = MediaQuery.of(context).size.width;
+    final isScreenSmall = parentWidth < AppBreakpoints.small;
+
     return BlocListener<InterfaceVisibilityCubit, InterfaceVisibilityState>(
-      listenWhen: (prev, curr) =>
-          prev.isHistoryVisible != curr.isHistoryVisible,
-      listener: (context, state) => _menuVisible.value = state.isHistoryVisible,
+      listenWhen: (prv, cur) => prv.isHistoryVisible != cur.isHistoryVisible,
+      listener: (_, state) => _menuVisible.value = state.isHistoryVisible,
       child: DropdownMenuAnchor(
-        menuWidth: 250,
+        menuWidth: isScreenSmall ? 220 : 320,
         menuHeight: 220,
-        menuContent: HistoryList(),
+        menuContent: HistoryList(
+          size: isScreenSmall ? HistoryListSize.small : HistoryListSize.big,
+        ),
         onDismiss: () => context
             .read<InterfaceVisibilityCubit>()
             .setVisibility(history: false),
@@ -62,7 +67,6 @@ class _ShowHistoryButtonState extends State<ShowHistoryButton> {
           tooltip: 'History',
           onPressed: () =>
               context.read<InterfaceVisibilityCubit>().toggleHistory(),
-          visualDensity: VisualDensity.compact,
           icon: const Icon(LucideIcons.history),
         ),
         menuVisible: _menuVisible,

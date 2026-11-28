@@ -49,7 +49,7 @@ enum SettingsPage {
   pericopes(
     route: '/biblemanager/pericopes',
     name: 'My Pericopes',
-    icon: LucideIcons.squareDashedText,
+    icon: LucideIcons.pilcrow,
     group: SettingsGroup.bibleManager,
   ),
   obsLiveOverlay(

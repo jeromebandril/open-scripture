@@ -233,11 +233,6 @@ class _ThreeTapNavigatorOverlayState extends State<_ThreeTapNavigatorOverlay> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.lg),
-                  //
-                  // Additional info
-                  //
-                  _AddInfo(loadType: state.loadType),
                 ],
               );
             },
@@ -256,10 +251,10 @@ class _AddInfo extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.sm, vertical: AppSpacing.sm),
+        horizontal: AppSpacing.sm,
+      ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppRadius.sm),
-        color: Theme.of(context).colorScheme.surfaceContainer,
       ),
       child: loadType == BookLoadType.defaulted
           ? Text(

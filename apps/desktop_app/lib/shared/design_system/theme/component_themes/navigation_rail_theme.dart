@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../tokens/colors.dart';
 import '../../tokens/typography.dart';
 
-/// Navigation rail — primary nav surface for desktop layouts.
+/// Navigation rail -- primary nav surface for desktop layouts.
 abstract final class AppNavigationRailTheme {
   AppNavigationRailTheme._();
 

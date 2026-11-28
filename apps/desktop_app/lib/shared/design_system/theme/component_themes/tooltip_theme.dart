@@ -11,8 +11,8 @@ abstract final class AppTooltipTheme {
   static TooltipThemeData build({required Brightness brightness}) {
     final bool isLight = brightness == Brightness.light;
 
-    // Tooltips intentionally invert the surface — dark tooltip on light,
-    // light tooltip on dark — for maximum contrast.
+    // Tooltips intentionally invert the surface -- dark tooltip on light,
+    // light tooltip on dark -- for maximum contrast.
     final Color bg =
         isLight ? AppColors.inverseSurface : AppColors.inverseSurfaceDark;
     final Color fg =

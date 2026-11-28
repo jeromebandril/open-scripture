@@ -36,6 +36,10 @@ class HistoryCubit extends Cubit<HistoryState> {
     emit(HistoryState(history: updatedHistory));
   }
 
+  void clearAll() {
+    emit(HistoryState(history: []));
+  }
+
   @override
   Future<void> close() async {
     await _sub?.cancel();

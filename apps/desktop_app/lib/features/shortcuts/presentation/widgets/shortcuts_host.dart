@@ -18,7 +18,6 @@ class ShortcutsHost extends StatefulWidget {
 }
 
 class _ShortcutsHostState extends State<ShortcutsHost> {
-  // FocusNode ownership lives here — disposed with this widget
   late final FocusNode _root;
   late final FocusNode _search;
   late final FocusNode _history;

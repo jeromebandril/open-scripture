@@ -62,7 +62,7 @@ class BibleViewColorschemeSelector extends StatelessWidget {
 /// default colorscheme is highlighted, because that is what is actually in use.
 class _ColorschemeSelector extends StatelessWidget {
   static const double kMinCellWidth = 128;
-  static const double kCellHeight = 52;
+  static const double kCellHeight = 48;
   static const double kSpacing = AppSpacing.md;
   static const double kSectionSpacing = AppSpacing.xl2;
 
@@ -272,7 +272,7 @@ class _ColorschemeCellState extends State<_ColorschemeCell> {
                                 _Swatch(color: swatches[i]),
                             ],
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 4),
                           Container(
                             width: 90,
                             height: 1.5,

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
-/// Resolves a GetIt singleton — sync or async registration, doesn't matter —
+/// Resolves a GetIt singleton (sync or async registration)
 /// and hands it to [builder] once ready.
+/// (Mostrly for async instances)
+///
+/// Use when you need to have the singleton instance and initialize it
+/// in the widget tree context. Useful for lazy loaded singletons.
 class AsyncSingletonBuilder<T extends Object> extends StatefulWidget {
   final Future<T> Function() resolver;
   final Widget Function(BuildContext context, T value) builder;

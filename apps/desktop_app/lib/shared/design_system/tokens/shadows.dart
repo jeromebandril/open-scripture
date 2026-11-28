@@ -13,10 +13,10 @@ abstract final class AppShadows {
   // Shadow scale
   // ---------------------------------------------------------------------------
 
-  /// No elevation — flat, inlined elements.
+  /// No elevation -- flat, inlined elements.
   static const List<BoxShadow> none = [];
 
-  /// 1 dp — subtle depth for hovered states.
+  /// 1 dp -- subtle depth for hovered states.
   static final List<BoxShadow> xs = [
     BoxShadow(
       color: AppColors.withOpacity(Colors.black, 0.04),
@@ -25,7 +25,7 @@ abstract final class AppShadows {
     ),
   ];
 
-  /// 2 dp — default resting cards.
+  /// 2 dp -- default resting cards.
   static final List<BoxShadow> sm = [
     BoxShadow(
       color: AppColors.withOpacity(Colors.black, 0.06),
@@ -39,7 +39,7 @@ abstract final class AppShadows {
     ),
   ];
 
-  /// 4 dp — elevated cards, dropdowns.
+  /// 4 dp -- elevated cards, dropdowns.
   static final List<BoxShadow> md = [
     BoxShadow(
       color: AppColors.withOpacity(Colors.black, 0.10),
@@ -53,7 +53,7 @@ abstract final class AppShadows {
     ),
   ];
 
-  /// 8 dp — dialogs, popovers.
+  /// 8 dp -- dialogs, popovers.
   static final List<BoxShadow> lg = [
     BoxShadow(
       color: AppColors.withOpacity(Colors.black, 0.12),
@@ -67,7 +67,7 @@ abstract final class AppShadows {
     ),
   ];
 
-  /// 16 dp — modals, drawers, command palette.
+  /// 16 dp -- modals, drawers, command palette.
   static final List<BoxShadow> xl = [
     BoxShadow(
       color: AppColors.withOpacity(Colors.black, 0.16),

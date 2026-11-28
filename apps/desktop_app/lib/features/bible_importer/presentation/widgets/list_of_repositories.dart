@@ -62,6 +62,7 @@ class ListOfBibleRepositories extends StatelessWidget {
           style: textTheme.bodyMedium,
         ),
         ListView.separated(
+            physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.xs),
             itemCount: _recommendedSources.length,

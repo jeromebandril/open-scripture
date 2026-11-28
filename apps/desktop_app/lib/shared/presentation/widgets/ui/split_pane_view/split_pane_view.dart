@@ -234,33 +234,6 @@ class _SplitPaneViewState<Id extends Object> extends State<SplitPaneView<Id>> {
   }
 }
 
-/// Invisible drag handle between stacked panes. Fills the gap it is given.
-class _RowResizeDivider extends StatelessWidget {
-  const _RowResizeDivider({
-    required this.onDragStart,
-    required this.onDragEnd,
-    required this.onDrag,
-  });
-
-  final VoidCallback onDragStart;
-  final VoidCallback onDragEnd;
-  final ValueChanged<double> onDrag;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.resizeRow,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onVerticalDragStart: (_) => onDragStart(),
-        onVerticalDragUpdate: (details) => onDrag(details.delta.dy),
-        onVerticalDragEnd: (_) => onDragEnd(),
-        onVerticalDragCancel: onDragEnd,
-      ),
-    );
-  }
-}
-
 /// Fades and scales its child in on first build and out when [isRemoving]
 /// becomes true.
 class _PaneTransition extends StatefulWidget {

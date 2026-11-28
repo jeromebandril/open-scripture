@@ -40,7 +40,7 @@ class AppWindow extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const SizedBox(width: 16),
+                    const SizedBox(width: AppSpacing.sm),
                     Expanded(
                       child: Text(
                         title,

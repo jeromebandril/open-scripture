@@ -300,15 +300,15 @@ class _SearchBarWithErrorFeedbackState
     );
 
     _progress = TweenSequence<double>([
-      // Beep 1 — fade in
+      // Beep 1 -- fade in
       TweenSequenceItem(
         tween: Tween<double>(begin: 0.0, end: 1.0)
             .chain(CurveTween(curve: Curves.easeInOut)),
         weight: 13,
       ),
-      // Beep 1 — hold
+      // Beep 1 -- hold
       TweenSequenceItem(tween: ConstantTween<double>(1.0), weight: 15),
-      // Beep 1 — fade out
+      // Beep 1 -- fade out
       TweenSequenceItem(
         tween: Tween<double>(begin: 1.0, end: 0.0)
             .chain(CurveTween(curve: Curves.easeInOut)),
@@ -316,15 +316,15 @@ class _SearchBarWithErrorFeedbackState
       ),
       // Gap between beeps
       TweenSequenceItem(tween: ConstantTween<double>(0.0), weight: 11),
-      // Beep 2 — fade in
+      // Beep 2 -- fade in
       TweenSequenceItem(
         tween: Tween<double>(begin: 0.0, end: 1.0)
             .chain(CurveTween(curve: Curves.easeInOut)),
         weight: 13,
       ),
-      // Beep 2 — hold
+      // Beep 2 -- hold
       TweenSequenceItem(tween: ConstantTween<double>(1.0), weight: 15),
-      // Beep 2 — fade out (longer tail)
+      // Beep 2 -- fade out (longer tail)
       TweenSequenceItem(
         tween: Tween<double>(begin: 1.0, end: 0.0)
             .chain(CurveTween(curve: Curves.easeInOut)),

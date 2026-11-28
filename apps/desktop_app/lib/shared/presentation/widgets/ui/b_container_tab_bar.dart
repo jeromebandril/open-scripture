@@ -6,7 +6,7 @@ class BContainerTabBar extends StatefulWidget {
     super.key,
     required this.tabs,
     required this.views,
-    this.height = 44.0,
+    this.height = 38.0,
     this.backgroundColor,
     this.viewBackgroundColor,
     this.onTabChanged,
